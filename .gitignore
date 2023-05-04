@@ -180,7 +180,7 @@ Temporary Items
 
 ### NextJS ###
 # dependencies
-/node_modules
+*/node_modules
 /.pnp
 .pnp.js
 
@@ -188,11 +188,11 @@ Temporary Items
 /coverage
 
 # next.js
-/.next/
+*/.next/*
 /out/
 
 # production
-/build
+*/build
 
 # misc
 *.pem
@@ -204,7 +204,7 @@ yarn-error.log*
 .pnpm-debug.log*
 
 # local env files
-.env*.local
+*/.env*
 
 # vercel
 .vercel
@@ -234,12 +234,12 @@ tags
 [._]*.un~
 
 ### VisualStudioCode ###
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
-!.vscode/*.code-snippets
+*/.vscode/*
+*/!.vscode/settings.json
+*/!.vscode/tasks.json
+*/!.vscode/launch.json
+*/!.vscode/extensions.json
+*/!.vscode/*.code-snippets
 
 # Local History for Visual Studio Code
 .history/
