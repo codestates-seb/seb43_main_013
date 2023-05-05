@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { Input, SignInput } from "../../components/login";
+import { SignInput } from "../../components/login";
 
 /** 2023/05/05 - 회원가입 페이지 컴포넌트 - by Kadesti */
 const signup = () => {
@@ -13,8 +13,8 @@ const signup = () => {
       <div className="bg-white w-2/5 flex flex-col items-center p-6  rounded-xl drop-shadow-xl">
         <h1 className="text-5xl mb-6">회원가입</h1>
         <form className="w-full">
-          <Input label="아이디" valid={idValid} />
-          <Input label="비밀번호" valid={pwValid} />
+          <SignInput label="아이디" valid={idValid} />
+          <SignInput label="비밀번호" valid={pwValid} />
           <SignInput label="닉네임" />
           <SignInput label="유튜브 주소" />
           <SignInput label="이메일" />
