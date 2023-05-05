@@ -42,10 +42,12 @@ const Header: React.FC = () => {
       )}
       {nickModal && (
         <>
-          <div className="w-1/6 p-3 bg-slate-400 text-white absolute mt-20 right-20 z-10">
-            <div className="cursor-pointer hover:text-slate-200">내 정보</div>
-            <div className="cursor-pointer hover:text-slate-200">글쓰기</div>
-            <div className="cursor-pointer hover:text-slate-200">로그아웃</div>
+          <div className="w-1/6 p-3 bg-slate-400 text-white absolute mt-20 right-20 z-10 rounded-xl">
+            {["내 정보", "글쓰기", "로그아웃"].map((text, i) => (
+              <div className="cursor-pointer hover:text-slate-200 text-xl mb-2" key={i}>
+                {text}
+              </div>
+            ))}
           </div>
           <div className="bg-none absolute w-full h-full" onClick={() => setNickModal(false)}>
             1
