@@ -2,10 +2,7 @@ package com.CreatorConnect.server.auth.config;
 
 import com.CreatorConnect.server.auth.filter.JwtAuthenticationFilter;
 import com.CreatorConnect.server.auth.filter.JwtVerificationFilter;
-import com.CreatorConnect.server.auth.handler.MemberAccessDeniedHandler;
-import com.CreatorConnect.server.auth.handler.MemberAuthenticationEntryPoint;
-import com.CreatorConnect.server.auth.handler.MemberAuthenticationFailureHandler;
-import com.CreatorConnect.server.auth.handler.MemberAuthenticationSuccessHandler;
+import com.CreatorConnect.server.auth.handler.*;
 import com.CreatorConnect.server.auth.jwt.JwtTokenizer;
 import com.CreatorConnect.server.auth.utils.CustomAuthorityUtils;
 import org.springframework.context.annotation.Bean;
@@ -13,29 +10,60 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.config.oauth2.client.CommonOAuth2Provider;
+import org.springframework.security.oauth2.client.registration.ClientRegistration;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
 import java.util.Arrays;
+import java.util.Collections;
 
 @Configuration
 @EnableWebSecurity
-public class SecurityConfiguration {
+@EnableGlobalMethodSecurity(prePostEnabled = true)
+public class SecurityConfiguration{
+
     private final JwtTokenizer jwtTokenizer;
     private final CustomAuthorityUtils authorityUtils;
+    private final OAuth2MemberSuccessHandler oAuth2MemberSuccessHandler;
 
-    public SecurityConfiguration(JwtTokenizer jwtTokenizer,
-                                 CustomAuthorityUtils authorityUtils) {
+    public SecurityConfiguration(JwtTokenizer jwtTokenizer, CustomAuthorityUtils authorityUtils, OAuth2MemberSuccessHandler oAuth2MemberSuccessHandler) {
         this.jwtTokenizer = jwtTokenizer;
         this.authorityUtils = authorityUtils;
+        this.oAuth2MemberSuccessHandler = oAuth2MemberSuccessHandler;
+    }
+
+    @Value("${spring.security.oauth2.client.registration.google.clientId}")
+    private String clientId;
+
+    @Value("${spring.security.oauth2.client.registration.google.clientSecret}")
+    private String clientSecret;
+
+    @Bean
+    public ClientRegistrationRepository clientRegistrationRepository() {
+        ClientRegistration googleRegistration = clientRegistration();
+        return new InMemoryClientRegistrationRepository(googleRegistration);
+    }
+
+    private ClientRegistration clientRegistration() {
+        return CommonOAuth2Provider
+                .GOOGLE
+                .getBuilder("google")
+                .clientId(clientId)
+                .clientSecret(clientSecret)
+                .build();
     }
 
     @Bean
@@ -44,16 +72,16 @@ public class SecurityConfiguration {
                 .headers().frameOptions().sameOrigin()
                 .and()
                 .csrf().disable()
-                .cors(Customizer.withDefaults())
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .cors(Customizer.withDefaults()) // CORS 설정 추가 (corsConfigurationSource Bean)
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.NEVER)
                 .and()
                 .formLogin().disable()
-                .logout()
-                .logoutUrl("/api/logout")
-                .logoutSuccessUrl("/")
-                .deleteCookies("JSESSIONID", "remember-me")
-                .and()
                 .httpBasic().disable()
+//                .logout()
+//                .logoutUrl("/api/logout")
+//                .logoutSuccessUrl("/")
+//                .deleteCookies("JSESSIONID", "remember-me")
+//                .and()
                 .exceptionHandling()
                 .authenticationEntryPoint(new MemberAuthenticationEntryPoint())
                 .accessDeniedHandler(new MemberAccessDeniedHandler())
@@ -68,9 +96,10 @@ public class SecurityConfiguration {
                         .antMatchers(HttpMethod.GET, "/api/feedbackboard/*","/api/feedbackboards").permitAll()
                         .antMatchers(HttpMethod.GET, "/api/promotionboard/*","/api/promotionboards").permitAll()
                         .antMatchers(HttpMethod.GET, "/api/jobboard/*","/api/jobboards").permitAll()
-                        .anyRequest().hasRole("USER")
-                );
-
+                        .antMatchers(HttpMethod.POST, "/api/category/new").hasRole("ADMIN")
+                        .anyRequest().authenticated())
+                .oauth2Login()
+                .successHandler(oAuth2MemberSuccessHandler);
         return http.build();
     }
 
@@ -82,14 +111,12 @@ public class SecurityConfiguration {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-
         configuration.setAllowCredentials(true);
-        configuration.addAllowedOriginPattern("*");
+        configuration.setAllowedOrigins(Collections.singletonList("*"));
 //        configuration.addAllowedOriginPattern("http://localhost:3000");
-        configuration.addExposedHeader("Authorization");
-        configuration.setAllowedHeaders(Arrays.asList("*"));
-        configuration.setAllowedMethods(Arrays.asList("*"));
-        configuration.setExposedHeaders(Arrays.asList("*"));
+        configuration.setAllowedHeaders(Collections.singletonList("*"));
+        configuration.setExposedHeaders(Collections.singletonList("Authorization"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PATCH", "DELETE", "HEAD", "OPTIONS"));        configuration.addExposedHeader("Authorization");
         configuration.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
@@ -98,14 +125,12 @@ public class SecurityConfiguration {
         return source;
     }
 
-
     public class CustomFilterConfigurer extends AbstractHttpConfigurer<CustomFilterConfigurer, HttpSecurity> {
         @Override
         public void configure(HttpSecurity builder) throws Exception {
             AuthenticationManager authenticationManager = builder.getSharedObject(AuthenticationManager.class);
 
             JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(authenticationManager, jwtTokenizer);
-
             jwtAuthenticationFilter.setFilterProcessesUrl("/api/login");
             jwtAuthenticationFilter.setAuthenticationSuccessHandler(new MemberAuthenticationSuccessHandler());
             jwtAuthenticationFilter.setAuthenticationFailureHandler(new MemberAuthenticationFailureHandler());
@@ -114,7 +139,9 @@ public class SecurityConfiguration {
 
             builder
                     .addFilter(jwtAuthenticationFilter)
-                    .addFilterAfter(jwtVerificationFilter, JwtAuthenticationFilter.class);
+                    .addFilterAfter(jwtVerificationFilter, JwtAuthenticationFilter.class)
+                    .addFilterAfter(jwtVerificationFilter, OAuth2LoginAuthenticationFilter.class);
         }
+
     }
 }
