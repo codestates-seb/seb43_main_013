@@ -2,6 +2,7 @@ package com.CreatorConnect.server.audit;
 
 import lombok.Getter;
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.EntityListeners;
 import javax.persistence.MappedSuperclass;
 import org.springframework.data.annotation.CreatedDate;
@@ -16,10 +17,12 @@ public abstract class Auditable {
 
     @CreatedDate
     @Column(name = "CREATED_AT", updatable = false)
+    @Convert(converter = LocalDateTimeConverter.class)
     private LocalDateTime createdAt;
 
     @LastModifiedDate
     @Column(name = "LAST_UPDATED_AT")
-    private LocalDateTime updatedAt;
+    @Convert(converter = LocalDateTimeConverter.class)
+    private LocalDateTime modifiedAt;
 
 }
