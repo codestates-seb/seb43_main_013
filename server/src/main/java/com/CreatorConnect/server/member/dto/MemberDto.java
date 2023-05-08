@@ -65,7 +65,6 @@ public class MemberDto {
 
         private String image; // fixme type 변경
 
-
     }
 
 }

@@ -33,7 +33,6 @@ public interface MemberMapper {
         member.setIntroduce(memberDtoPatch.getIntroduce());
         member.setLink(memberDtoPatch.getLink());
         member.setImage(memberDtoPatch.getImage());
-        // fixme auditable mapping 오류
 
         return member;
     };
