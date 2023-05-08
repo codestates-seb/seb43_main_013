@@ -37,14 +37,24 @@ public class Member extends Auditable {
     @Column(length = 13, nullable = false, unique = true)
     private String phone;
 
-    @Column(nullable = false)
-    private boolean oauth;
+    @Column
+    private boolean oauth = false;
+
+    @Column
+    private String introduce;
+
+    @Column
+    private String link;
+
+    @Column
+    private String image; // fixme type 변경
 
     @OneToMany(mappedBy = "follower", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Follow> follows = new ArrayList<>();
 
     @OneToMany(mappedBy = "following", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Follower> followers = new ArrayList<>();
+
 
 
 //    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
