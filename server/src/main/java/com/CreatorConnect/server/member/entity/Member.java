@@ -21,7 +21,7 @@ public class Member extends Auditable {
     private Long memberId;
 
     @Email
-    @Column(nullable = false, updatable = false, unique = true)
+    @Column(nullable = false, unique = true)
     private String email;
 
     @Column

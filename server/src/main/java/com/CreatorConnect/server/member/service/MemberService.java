@@ -39,6 +39,7 @@ public class MemberService {
     }
 
     public Member createMember(Member member) {
+
         verifyExistsEmail(member.getEmail());
 
         String encryptPassword = passwordEncoder.encode(member.getPassword());
@@ -47,12 +48,15 @@ public class MemberService {
         List<String> roles = authorityUtils.createRoles(member.getEmail());
         member.setRoles(roles);
 
-        if (member.getProfileImageUrl() == null || member.getProfileImageUrl().isEmpty()){
+        if (member.getIntroduction() == null || member.getIntroduction().isEmpty()) {
+            member.setIntroduction("자기소개를 입력해 주세요.");
+        } if (member.getLink() == null || member.getLink().isEmpty()) {
+            member.setLink("youtube link를 입력해 주세요.");
+        } if (member.getProfileImageUrl() == null || member.getProfileImageUrl().isEmpty()) {
             member.setProfileImageUrl("https://ibb.co/R7FdWWD");
         }
 
         Member savedMember = memberRepository.save(member);
-
         publisher.publishEvent(new MemberRegistrationApplicationEvent(savedMember));
 
         return savedMember;
@@ -60,15 +64,11 @@ public class MemberService {
 
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE)
     public Member updateMember(Long memberId, Member member, String email) {
+
         verifiedAuthenticatedMember(memberId, email);
 
         Member findMember = findVerifiedMember(member.getMemberId());
-        verifyActivatedMember(findMember);
 
-        Optional.ofNullable(member.getEmail())
-                .ifPresent(findMember::setEmail);
-        Optional.ofNullable(member.getName())
-                .ifPresent(findMember::setName);
         Optional.ofNullable(member.getPassword())
                 .ifPresent(findMember::setPassword);
         Optional.ofNullable(member.getNickname())
@@ -101,15 +101,12 @@ public class MemberService {
 
         return memberRepository.findAll(PageRequest.of(page, size,
                 Sort.by("memberId").descending()));
-
     }
 
     public void deleteMember(long memberId, String email) {
 
         verifiedAuthenticatedMember(memberId, email);
         Member findMember = findVerifiedMember(memberId);
-
-        verifyActivatedMember(findMember);
 
         String delEmail = "del_" + findMember.getEmail();
 
@@ -149,7 +146,7 @@ public class MemberService {
 
         Member findMember = findVerifiedMember(memberId);
 
-        if (email.isEmpty() || email == null){
+        if (email == null || email.isEmpty() ){
             throw new BusinessLogicException(ExceptionCode.MEMBER_FIELD_NOT_FOUND);
         } else if (!email.equals(findMember.getEmail())) {
             throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_ALLOWED);
