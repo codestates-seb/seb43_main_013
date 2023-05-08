@@ -22,6 +22,8 @@ public class FeedbackBoard extends Auditable {
     @Column
     private String title;
     @Column
+    private String link;
+    @Column
     private String content;
     @Column
     private Long commentCount;
