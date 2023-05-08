@@ -22,6 +22,7 @@ import java.util.*;
 @Slf4j
 @Component
 public class OAuth2MemberSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
+
     private final JwtTokenizer jwtTokenizer;
     private final CustomAuthorityUtils authorityUtils;
     private final MemberRepository memberRepository;
@@ -61,6 +62,8 @@ public class OAuth2MemberSuccessHandler extends SimpleUrlAuthenticationSuccessHa
         member.setName(name);
         member.setNickname(tempnickname);
         member.setProfileImageUrl(profileImageUrl);
+        member.setOauth(true);
+        member.setOauthProvider("GOOGLE");
 
         memberRepository.save(member);
     }
