@@ -7,6 +7,8 @@ import com.CreatorConnect.server.feedbackboard.entity.FeedbackBoard;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface FeedbackBoardMapper {
     FeedbackBoard feedbackBoardPostDtoToFeedbackBoard(FeedbackBoardDto.Post feedbackBoardPostDto);
@@ -14,5 +16,6 @@ public interface FeedbackBoardMapper {
     FeedbackBoard feedbackBoardPatchDtoToFeedbackBoard(FeedbackBoardDto.Patch feedbackBoardPostDto);
     FeedbackBoardResponseDto.Patch feedbackBoardToFeedbackBoardPatchResponse(FeedbackBoard feedbackBoard);
     FeedbackBoardResponseDto.Details feedbackBoardToFeedbackBoardDetailsResponse(FeedbackBoard feedbackBoard);
+    List<FeedbackBoardResponseDto.Details>  feedbackBoardsToFeedbackBoardDetailsResponses (List<FeedbackBoard> feedbackBoards);
 
 }
