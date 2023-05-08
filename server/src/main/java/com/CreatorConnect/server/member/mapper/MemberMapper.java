@@ -30,9 +30,9 @@ public interface MemberMapper {
         member.setPassword(memberDtoPatch.getPassword());
         member.setNickname(memberDtoPatch.getNickname());
         member.setPhone(memberDtoPatch.getPhone());
-        member.setIntroduce(memberDtoPatch.getIntroduce());
+        member.setIntroduction(memberDtoPatch.getIntroduction());
         member.setLink(memberDtoPatch.getLink());
-        member.setImage(memberDtoPatch.getImage());
+        member.setProfileImageUrl(memberDtoPatch.getProfileImageUrl());
 
         return member;
     };
