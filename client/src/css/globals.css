@@ -3,11 +3,7 @@
 @tailwind utilities;
 
 html {
-  font-size: 16px;
-
-  @media screen and (max-width: 768px) {
-    font-size: 14px;
-  }
+  @apply text-[14px] md:text-[16px]
 }
 
 /* react-quill 높이 지정 */

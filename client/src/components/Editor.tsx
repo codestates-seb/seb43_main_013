@@ -5,8 +5,11 @@ import dynamic from "next/dynamic";
 
 import "react-quill/dist/quill.snow.css";
 
-// @ts-ignore
-const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
+const ReactQuill = dynamic(() => import("react-quill"), {
+  ssr: false,
+  // layout shift 방지
+  loading: () => <div className="min-h-[calc(50vh+42px)] max-h-[calc(80vh+42px)] bg-main-100" />,
+});
 
 // type
 import type ReactQuillType from "react-quill";
@@ -39,39 +42,8 @@ interface Props {
   setContent: React.Dispatch<React.SetStateAction<string>>;
 }
 
+/** 2023/05/09 - react-quill을 이용한 wysiwyg - by 1-blue */
 const Editor: React.FC<Props> = ({ content, setContent }) => {
-  // /** 2023/05/08 - 이미지 업로드 핸들러 - by 1-blue */
-  // const imageHandler = () => {
-  //   // file input 임의 생성
-  //   const input = document.createElement("input");
-  //   input.setAttribute("type", "file");
-  //   input.click();
-
-  //   input.onchange = async () => {
-  //     const file = input.files;
-  //     const formData = new FormData();
-
-  //     if (file) {
-  //       formData.append("multipartFiles", file[0]);
-  //     }
-
-  //     console.log("file >> ", file);
-
-  //     // // file 데이터 담아서 서버에 전달하여 이미지 업로드
-  //     // const res = await axios.post("http://localhost:8080/uploadImage", formData);
-
-  //     // if (quillRef.current) {
-  //     //   // 현재 Editor 커서 위치에 서버로부터 전달받은 이미지 불러오는 url을 이용하여 이미지 태그 추가
-  //     //   const index = (quillRef.current.getEditor().getSelection() as RangeStatic).index;
-
-  //     //   const quillEditor = quillRef.current.getEditor();
-  //     //   quillEditor.setSelection(index, 1);
-
-  //     //   quillEditor.clipboard.dangerouslyPasteHTML(index, `<img src=${res.data} alt=${"alt text"} />`);
-  //     // }
-  //   };
-  // };
-
   /** 2023/05/08 - react-quill에서 사용되는 tool modules - by 1-blue */
   const modules: ReactQuillType.ReactQuillProps["modules"] = useMemo(
     () => ({
@@ -93,9 +65,6 @@ const Editor: React.FC<Props> = ({ content, setContent }) => {
           // 초기화
           ["clean"],
         ],
-        handlers: {
-          // image: imageHandler,
-        },
       },
     }),
     [],

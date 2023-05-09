@@ -7,7 +7,7 @@ interface Props extends React.InputHTMLAttributes<HTMLInputElement> {
 
 /** 2023/05/08 - 게시글 생성에 사용하는 Input component - by 1-blue */
 const Input: React.FC<Props> = ({ name, message, noMessage, ...rest }) => (
-  <label htmlFor={name} className="w-full flex flex-col">
+  <label htmlFor={name} className="flex-1 w-full flex flex-col">
     <span className="text-base font-bold text-gray-800 mb-1">{name}</span>
     <input
       id={name}
