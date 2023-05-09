@@ -15,10 +15,12 @@ import com.CreatorConnect.server.member.service.MemberService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -122,10 +124,30 @@ public class FreeBoardService {
         return freeBoardRepository.findAll(PageRequest.of(page, size, Sort.by("freeboardId").descending()));
     }
 
+    /**
+     * <자유 게시판 카테고리 별 목록>
+     */
+    public FreeBoardDto.MultiResponseDto<FreeBoardDto.Response> getFreeBoardsByCategory(long categoryId, int page, int size) {
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by("freeboardId").descending());
+        Page<FreeBoard> freeBoards = freeBoardRepository.findAll(pageRequest);
+        List<FreeBoardDto.Response> responses = findFreeBoardByCategoryId(categoryId);
+//        FreeBoardDto.PageInfo pageInfo =
+//                new FreeBoardDto.PageInfo(freeBoards.getNumber() + 1, freeBoards.getSize(),
+//                        freeBoards.getTotalElements(), freeBoards.getTotalPages());
+        return new FreeBoardDto.MultiResponseDto<>(responses, freeBoards);
+    }
+
     // 게시글이 존재 여부 검증 메서드
     private FreeBoard verifyFreeBoard(long freeboardId) {
         Optional<FreeBoard> optionalFreeBoard = freeBoardRepository.findById(freeboardId);
         return optionalFreeBoard.orElseThrow(() ->
                 new BusinessLogicException(ExceptionCode.FREEBOARD_NOT_FOUND));
     }
+
+    public List<FreeBoardDto.Response> findFreeBoardByCategoryId(long categoryId) {
+       Category category = categoryService.verifyCategory(categoryId);
+        return mapper.freeBoardToFreeBoardResponseDtos(freeBoardRepository.findByCategory(category));
+    }
+
+
 }

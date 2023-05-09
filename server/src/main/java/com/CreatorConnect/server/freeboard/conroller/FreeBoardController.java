@@ -58,4 +58,15 @@ public class FreeBoardController {
                 new FreeBoardDto.MultiResponseDto<>(mapper.freeBoardToFreeBoardResponseDtos(freeBoards),
                         pageFreeBoards), HttpStatus.OK);
     }
+
+    // 자유 게시판 카테고리 별 목록 조회
+    @GetMapping("/freboards/category/{categoryId}")
+    public ResponseEntity getFreeBoardsByCategory(@PathVariable("categoryId") long categoryId,
+                                                  @Positive @RequestParam int page,
+                                                @Positive @RequestParam int size) {
+        FreeBoardDto.MultiResponseDto<FreeBoardDto.Response> response =
+                freeBoardService.getFreeBoardsByCategory(categoryId, page, size);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 }
