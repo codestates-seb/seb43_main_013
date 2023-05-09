@@ -36,6 +36,14 @@ public class FeedbackBoardResponseDto {
     @Setter
     @AllArgsConstructor
     @NoArgsConstructor
+    public static class delete {
+        private String massage;
+    }
+
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
     public static class Details {
         private Long feedbackBoardId;
         private String title;

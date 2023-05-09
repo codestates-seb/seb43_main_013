@@ -1,7 +1,5 @@
 package com.CreatorConnect.server.feedbackboard.dto;
 
-import com.CreatorConnect.server.category.entity.Category;
-import com.CreatorConnect.server.feedbackcategory.entity.FeedbackCategory;
 import com.CreatorConnect.server.member.entity.Member;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

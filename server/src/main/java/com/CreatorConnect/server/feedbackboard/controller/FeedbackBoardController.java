@@ -43,18 +43,16 @@ public class FeedbackBoardController {
         FeedbackBoardResponseDto.Multi response = feedbackBoardService.responseFeedbacks(page, size);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-      //Todo 피드백 카테고리 아이디로 피드백 목록 조회하는 기능
-//    @GetMapping("s/category/{feedbackCategory-id}")
-//    public ResponseEntity getFeedbacksByCategory(@PathVariable("feedbackCategory-id") @Positive Long feedbackCategoryId,
-//                                                 @RequestParam("page") @Positive int page,
-//                                                 @RequestParam("size") @Positive int size) {
-//        FeedbackBoardMultiDto.Response response = feedbackBoardService.responseFeedbacksByCategory(feedbackCategoryId, page, size);
-//        return new ResponseEntity<>(response, HttpStatus.OK);
-//    }
-      @DeleteMapping("/{feedbackBoardId}")
-      public ResponseEntity<Void> deleteFeedback(@PathVariable("feedbackBoardId") @Positive Long feedbackBoardId) {
-//          questionService.deleteQuestion(questionId);
-          feedbackBoardService.deleteFeedback(feedbackBoardId);
-          return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-      }
+    @GetMapping("s/category/{feedbackCategory-id}")
+    public ResponseEntity getFeedbacksByCategory(@PathVariable("feedbackCategory-id") @Positive Long feedbackCategoryId,
+                                                 @RequestParam("page") @Positive int page,
+                                                 @RequestParam("size") @Positive int size) {
+        FeedbackBoardResponseDto.Multi response = feedbackBoardService.responseFeedbacksByCategory(feedbackCategoryId, page, size);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+    @DeleteMapping("/{feedbackBoardId}")
+    public ResponseEntity<FeedbackBoardResponseDto.delete> deleteFeedback(@PathVariable("feedbackBoardId") @Positive Long feedbackBoardId) {
+        FeedbackBoardResponseDto.delete response = feedbackBoardService.deleteFeedback(feedbackBoardId);
+        return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
+    }
 }

@@ -11,6 +11,7 @@ import com.CreatorConnect.server.feedbackboard.mapper.FeedbackBoardMapper;
 import com.CreatorConnect.server.feedbackboard.repository.FeedbackBoardRepository;
 import com.CreatorConnect.server.feedbackcategory.entity.FeedbackCategory;
 import com.CreatorConnect.server.feedbackcategory.repository.FeedbackCategoryRepository;
+import com.CreatorConnect.server.feedbackcategory.service.FeedbackCategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -29,16 +30,20 @@ public class FeedbackBoardService {
     private final FeedbackBoardMapper mapper;
     private final CategoryRepository categoryRepository;
     private final FeedbackCategoryRepository feedbackCategoryRepository;
+    private final FeedbackCategoryService feedbackCategoryService;
 
     public FeedbackBoardResponseDto.Post createFeedback(FeedbackBoardDto.Post postDto){
-        //매핑
+        // Dto-Entity 변환
         FeedbackBoard feedbackBoard = mapper.feedbackBoardPostDtoToFeedbackBoard(postDto);
         Optional<Category> category = categoryRepository.findByCategoryName(postDto.getCategoryName());
         feedbackBoard.setCategory(category.orElseThrow(() -> new BusinessLogicException(ExceptionCode.CATEGORY_NOT_FOUND)));
         Optional<FeedbackCategory> feedbackCategory = feedbackCategoryRepository.findByFeedbackCategoryName(postDto.getFeedbackCategoryName());
         feedbackBoard.setFeedbackCategory(feedbackCategory.orElseThrow(() -> new BusinessLogicException(ExceptionCode.FEEDBACK_CATEGORY_NOT_FOUND)));
 
+        //저장
         FeedbackBoard savedfeedbackBoard = feedbackBoardRepository.save(feedbackBoard);
+
+        // Entity-Dto 변환
         FeedbackBoardResponseDto.Post responseDto = mapper.feedbackBoardToFeedbackBoardPostResponse(savedfeedbackBoard);
         responseDto.setMassage("게시글이 등록되었습니다.");
         return responseDto;
@@ -81,18 +86,20 @@ public class FeedbackBoardService {
         return new FeedbackBoardResponseDto.Multi<>(responses, pageInfo);
     }
 
-//    public FeedbackBoardResponseDto.Multi<FeedbackBoardResponseDto.Details> responseFeedbacksByCategory(Long feedbackCategoryId, int page, int size){
-//        PageRequest pageRequest = PageRequest.of(page - 1, size, Sort.by("questionId").descending());
-//        Page<FeedbackBoard> feedbackBoardsPage = feedbackBoardRepository.findAll(pageRequest);
-//        // Todo 피드백 카테고리 아이디로 피드백 목록 찾는 메서드(2)
-//        List<FeedbackBoardResponseDto.Details> responses = findFeedbacksByCategoryId(feedbackCategoryId);
-//       FeedbackBoardResponseDto.PageInfo pageInfo = new FeedbackBoardResponseDto.PageInfo(feedbackBoardsPage.getNumber() + 1, feedbackBoardsPage.getSize(), feedbackBoardsPage.getTotalElements(), feedbackBoardsPage.getTotalPages());
-//        return new FeedbackBoardResponseDto.Multi<>(responses, pageInfo);
-//    }
+    public FeedbackBoardResponseDto.Multi<FeedbackBoardResponseDto.Details> responseFeedbacksByCategory(Long feedbackCategoryId, int page, int size){
+        PageRequest pageRequest = PageRequest.of(page - 1, size, Sort.by("feedbackBoardId").descending());
+        Page<FeedbackBoard> feedbackBoardsPage = feedbackBoardRepository.findAll(pageRequest);
+        List<FeedbackBoardResponseDto.Details> responses = findFeedbacksByCategoryId(feedbackCategoryId);
+        FeedbackBoardResponseDto.PageInfo pageInfo = new FeedbackBoardResponseDto.PageInfo(feedbackBoardsPage.getNumber() + 1, feedbackBoardsPage.getSize(), feedbackBoardsPage.getTotalElements(), feedbackBoardsPage.getTotalPages());
+        return new FeedbackBoardResponseDto.Multi<>(responses, pageInfo);
+    }
 
-    public void deleteFeedback(Long feedbackBoardId) {
+    public FeedbackBoardResponseDto.delete deleteFeedback(Long feedbackBoardId) {
         FeedbackBoard feedbackBoard = findVerifiedFeedbackBoard(feedbackBoardId);
         feedbackBoardRepository.delete(feedbackBoard);
+        FeedbackBoardResponseDto.delete response = new FeedbackBoardResponseDto.delete();
+        response.setMassage("게시글이 삭제되었습니다.");
+        return response;
     }
 
 
@@ -102,9 +109,9 @@ public class FeedbackBoardService {
         return FeedbackBoard.orElseThrow(() -> new BusinessLogicException(ExceptionCode.FEEDBACK_NOT_FOUND));
     }
 
-    // Todo 피드백 카테고리 아이디로 피드백 목록 찾는 메서드
-//    public List<FeedbackBoardMultiDto.Response> findFeedbacksByCategoryId(Long feedbackCategoryId) {
-//        FeedbackCategory feedbackCategory = FeedbackCategoryService.findVerifiedCategory(feedbackCategoryId);
-//        mapper.feedbackBoardsToFeedbackBoardDetailsResponses(FeedbackBoardRepository.findByCategory(feedbackCategory));
-//    }
+    //피드백 카테고리 아이디로 피드백 목록 찾는 메서드
+    public List<FeedbackBoardResponseDto.Details> findFeedbacksByCategoryId(Long feedbackCategoryId) {
+        FeedbackCategory feedbackCategory = feedbackCategoryService.findverifiedFeedbackCategory(feedbackCategoryId);
+        return mapper.feedbackBoardsToFeedbackBoardDetailsResponses(feedbackBoardRepository.findByFeedbackCategory(feedbackCategory));
+    }
 }
