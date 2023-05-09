@@ -6,25 +6,19 @@ import com.CreatorConnect.server.freeboard.entity.FreeBoard;
 import com.CreatorConnect.server.member.entity.Member;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.ReportingPolicy;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface FreeBoardMapper {
     // FreeBoardDto.Post -> FreeBoard
 //    @Mapping(source = "memberId",target = "member.memberId")
-    default FreeBoard freeBoardPostDtoToFreeBoard(FreeBoardDto.Post post){
-        FreeBoard freeBoard = new FreeBoard();
+//    @Mapping(source = "categoryId", target = "category.categoryId")
+   FreeBoard freeBoardPostDtoToFreeBoard(FreeBoardDto.Post post);
 
-        Member member = new Member();
-        member.setMemberId(post.getMemberId());
 
-        Category category = new Category();
-        category.setCategory(post.getCategory());
 
-        freeBoard.setMember(member);
-        freeBoard.setCategory(category);
-        freeBoard.setTitle(post.getTitle());
-        freeBoard.setContent(post.getContent());
-        return freeBoard;
-    }
+
+
+
 
 }
