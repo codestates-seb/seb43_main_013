@@ -10,7 +10,9 @@ import javax.validation.constraints.NotBlank;
 
 public class FeedbackCategoryDto {
     @AllArgsConstructor
+    @NoArgsConstructor
     @Getter
+    @Setter
     public static class Post{
         @Valid
         @NotBlank(message = "카테고리를 입력하세요.")

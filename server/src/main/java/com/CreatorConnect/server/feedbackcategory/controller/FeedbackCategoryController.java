@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("/api/FeedbackCategory")
+@RequestMapping("/api/feedbackCategory")
 @Validated
 public class FeedbackCategoryController {
     private final FeedbackCategoryService feedbackCategoryService;

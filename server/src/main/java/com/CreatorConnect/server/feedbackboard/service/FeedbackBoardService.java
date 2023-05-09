@@ -1,5 +1,7 @@
 package com.CreatorConnect.server.feedbackboard.service;
 
+import com.CreatorConnect.server.category.entity.Category;
+import com.CreatorConnect.server.category.repository.CategoryRepository;
 import com.CreatorConnect.server.exception.BusinessLogicException;
 import com.CreatorConnect.server.exception.ExceptionCode;
 import com.CreatorConnect.server.feedbackboard.dto.FeedbackBoardDto;
@@ -7,6 +9,8 @@ import com.CreatorConnect.server.feedbackboard.dto.FeedbackBoardResponseDto;
 import com.CreatorConnect.server.feedbackboard.entity.FeedbackBoard;
 import com.CreatorConnect.server.feedbackboard.mapper.FeedbackBoardMapper;
 import com.CreatorConnect.server.feedbackboard.repository.FeedbackBoardRepository;
+import com.CreatorConnect.server.feedbackcategory.entity.FeedbackCategory;
+import com.CreatorConnect.server.feedbackcategory.repository.FeedbackCategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -23,9 +27,17 @@ import java.util.Optional;
 public class FeedbackBoardService {
     private final FeedbackBoardRepository feedbackBoardRepository;
     private final FeedbackBoardMapper mapper;
+    private final CategoryRepository categoryRepository;
+    private final FeedbackCategoryRepository feedbackCategoryRepository;
 
     public FeedbackBoardResponseDto.Post createFeedback(FeedbackBoardDto.Post postDto){
+        //매핑
         FeedbackBoard feedbackBoard = mapper.feedbackBoardPostDtoToFeedbackBoard(postDto);
+        Optional<Category> category = categoryRepository.findByCategoryName(postDto.getCategoryName());
+        feedbackBoard.setCategory(category.orElseThrow(() -> new BusinessLogicException(ExceptionCode.CATEGORY_NOT_FOUND)));
+        Optional<FeedbackCategory> feedbackCategory = feedbackCategoryRepository.findByFeedbackCategoryName(postDto.getFeedbackCategoryName());
+        feedbackBoard.setFeedbackCategory(feedbackCategory.orElseThrow(() -> new BusinessLogicException(ExceptionCode.FEEDBACK_CATEGORY_NOT_FOUND)));
+
         FeedbackBoard savedfeedbackBoard = feedbackBoardRepository.save(feedbackBoard);
         FeedbackBoardResponseDto.Post responseDto = mapper.feedbackBoardToFeedbackBoardPostResponse(savedfeedbackBoard);
         responseDto.setMassage("게시글이 등록되었습니다.");

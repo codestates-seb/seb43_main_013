@@ -1,8 +1,11 @@
 package com.CreatorConnect.server.feedbackcategory.entity;
 
+import com.CreatorConnect.server.feedbackboard.entity.FeedbackBoard;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -21,5 +24,8 @@ public class FeedbackCategory {
 //    // category - freeboard 일대다 양방향 매핑
 //    @OneToMany(mappedBy = "category")
 //    private List<FreeBoard> freeBoards = new ArrayList<>();
+
+    @OneToMany(mappedBy = "feedbackCategory", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<FeedbackBoard> feedbackBoards = new ArrayList<>();
 
 }

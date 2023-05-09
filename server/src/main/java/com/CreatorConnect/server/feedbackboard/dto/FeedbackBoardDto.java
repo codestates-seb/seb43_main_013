@@ -23,21 +23,7 @@ public class FeedbackBoardDto {
         public Member getMember() {
             Member member = new Member();
             member.setMemberId(memberId);
-
             return member;
-        }
-        public Category getCategory() {
-            Category category = new Category();
-            category.setCategoryName(categoryName);
-
-            return category;
-        }
-
-        public FeedbackCategory getFeedbackCategory() {
-            FeedbackCategory feedbackCategory = new FeedbackCategory();
-            feedbackCategory.setFeedbackCategoryName(feedbackCategoryName);
-
-            return feedbackCategory;
         }
     }
 

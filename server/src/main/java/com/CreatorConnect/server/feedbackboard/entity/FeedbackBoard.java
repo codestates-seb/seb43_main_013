@@ -46,8 +46,15 @@ public class FeedbackBoard extends Auditable {
         return category.getCategoryName();
     }
 
+    public void setCategory(Category category) {
+        this.category = category;
+        if (!this.category.getFeedbackBoards().contains(this)) {
+            this.category.getFeedbackBoards().add(this);
+        }
+    }
+
     @ManyToOne
-    @JoinColumn(name = "feedbackcategory_id")
+    @JoinColumn(name = "feedback_category_id")
     @JsonBackReference
     private FeedbackCategory feedbackCategory;
     //매핑용
@@ -58,6 +65,12 @@ public class FeedbackBoard extends Auditable {
         return feedbackCategory.getFeedbackCategoryName();
     }
 
+    public void setFeedbackCategory(FeedbackCategory feedbackCategory) {
+        this.feedbackCategory = feedbackCategory;
+        if (!this.feedbackCategory.getFeedbackBoards().contains(this)) {
+            this.feedbackCategory.getFeedbackBoards().add(this);
+        }
+    }
 
     @ManyToOne
     @JoinColumn(name = "member_id")
@@ -70,6 +83,7 @@ public class FeedbackBoard extends Auditable {
     public String getNickname() {
         return member.getNickname();
     }
+    public String getEmail() {return member.getEmail();}
 
     public void setMember(Member member) {
         this.member = member;
@@ -80,5 +94,6 @@ public class FeedbackBoard extends Auditable {
 //    Todo FeedbackBoard-tag연결
 //    @OneToMany(mappedBy = "feedbackBoard", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 //    private List<TagBoard> tagBoards = new ArrayList<>();
+
 
 }

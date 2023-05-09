@@ -25,6 +25,6 @@ public class Category {
 //    @OneToMany(mappedBy = "category")
 //    private List<FreeBoard> freeBoards = new ArrayList<>();
 
-    @OneToMany(mappedBy = "category")
+    @OneToMany(mappedBy = "category", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<FeedbackBoard> feedbackBoards = new ArrayList<>();
 }
