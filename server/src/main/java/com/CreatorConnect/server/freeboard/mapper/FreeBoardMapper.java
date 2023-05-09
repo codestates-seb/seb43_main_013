@@ -8,6 +8,8 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface FreeBoardMapper {
     // FreeBoardDto.Post -> FreeBoard
@@ -20,6 +22,8 @@ public interface FreeBoardMapper {
 
     // FreeBoard -> FreeBoardDto.Response
     FreeBoardDto.Response freeBoardToFreeBoardResponseDto(FreeBoard freeBoard);
+
+    List<FreeBoardDto.Response> freeBoardToFreeBoardResponseDtos(List<FreeBoard> freeBoards);
 
 
 

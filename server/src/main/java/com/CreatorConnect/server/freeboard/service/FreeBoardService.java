@@ -13,6 +13,9 @@ import com.CreatorConnect.server.member.entity.Member;
 import com.CreatorConnect.server.member.repository.MemberRepository;
 import com.CreatorConnect.server.member.service.MemberService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -110,6 +113,13 @@ public class FreeBoardService {
         // 4. 수정된 값 저장
         return freeBoardRepository.save(checkedFreeBoard);
 
+    }
+
+    /**
+     * <자유 게시판 게시글 목록>
+     */
+    public Page<FreeBoard> getFreeBoards(int page, int size) {
+        return freeBoardRepository.findAll(PageRequest.of(page, size, Sort.by("freeboardId").descending()));
     }
 
     // 게시글이 존재 여부 검증 메서드
