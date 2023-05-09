@@ -48,11 +48,7 @@ public class MemberService {
         List<String> roles = authorityUtils.createRoles(member.getEmail());
         member.setRoles(roles);
 
-        if (member.getIntroduction() == null || member.getIntroduction().isEmpty()) {
-            member.setIntroduction("자기소개를 입력해 주세요.");
-        } if (member.getLink() == null || member.getLink().isEmpty()) {
-            member.setLink("youtube link를 입력해 주세요.");
-        } if (member.getProfileImageUrl() == null || member.getProfileImageUrl().isEmpty()) {
+        if (member.getProfileImageUrl() == null || member.getProfileImageUrl().isEmpty()) {
             member.setProfileImageUrl("https://ibb.co/R7FdWWD");
         }
 

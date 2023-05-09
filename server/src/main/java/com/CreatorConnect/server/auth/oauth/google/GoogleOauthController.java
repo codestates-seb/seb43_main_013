@@ -14,6 +14,7 @@ public class GoogleOauthController {
         this.authorizedClientService = authorizedClientService;
     }
 
+    // http://localhost:8080/oauth2/authorization/google
     @GetMapping("/api/oauth/google")
     public String oauth (Authentication authentication) {
         var authorizedClient = authorizedClientService.loadAuthorizedClient("google", authentication.getName());
