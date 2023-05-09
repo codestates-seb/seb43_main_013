@@ -13,7 +13,7 @@ import javax.persistence.*;
 public class FeedbackCategory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long categoryId;
+    private long feedbackCategoryId;
 
     @Column(nullable = false)
     private String feedbackCategoryName; // 카테고리 이름

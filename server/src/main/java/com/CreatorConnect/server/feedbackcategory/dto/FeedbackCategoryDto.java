@@ -22,7 +22,7 @@ public class FeedbackCategoryDto {
     @Getter
     @Setter
     public static class Response{
-        private String category;
+        private String feedbackCategoryName;
     }
 }
 

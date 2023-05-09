@@ -22,7 +22,7 @@ public class CategoryService {
      */
     public Category createCategory(Category category) {
         // 1. 카테고리 중복 검사
-        verifyCategory(category.getCategory());
+        verifyCategory(category.getCategoryName());
 
         // 2. 등록
         return categoryRepository.save(category);
