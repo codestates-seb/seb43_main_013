@@ -32,7 +32,7 @@ import java.util.Collections;
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+@EnableGlobalMethodSecurity(prePostEnabled = true) // 특정 주소로 접근하면 권한 및 인증을 미리 체크
 public class SecurityConfiguration{
 
     private final JwtTokenizer jwtTokenizer;
@@ -80,6 +80,7 @@ public class SecurityConfiguration{
                 .logout()
                 .logoutUrl("/api/logout")
                 .logoutSuccessUrl("/")
+                .invalidateHttpSession(true)
                 .deleteCookies("JSESSIONID", "remember-me")
                 .and()
                 .exceptionHandling()
