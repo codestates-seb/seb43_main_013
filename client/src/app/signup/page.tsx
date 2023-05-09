@@ -9,8 +9,8 @@ const signup = () => {
   const [disabled, setDisabled] = useState(false);
 
   return (
-    <div className="w-screen flex justify-center mt-16 px-auto">
-      <div className="bg-white w-2/5 flex flex-col items-center p-6  rounded-xl drop-shadow-xl">
+    <div className="w-full flex justify-center my-16 px-auto">
+      <div className="bg-white w-1/2 flex flex-col items-center p-6 rounded-xl drop-shadow-xl">
         <h1 className="text-5xl mb-6">회원가입</h1>
         <form className="w-full">
           <SignInput label="아이디" valid={idValid} />
@@ -21,9 +21,10 @@ const signup = () => {
           <SignInput label="휴대폰 번호" />
           <SignInput label="자기소개" />
         </form>
+        <div className="w-full h-44 border-2 border-black flex justify-center items-center rounded-lg mt-6">사진</div>
         <button
           disabled={disabled}
-          className={`w-4/5 h-16 mb-6 flex justify-center items-center text-3xl rounded-2xl ${
+          className={`w-4/5 h-16 mt-5 mb-6 flex justify-center items-center text-3xl rounded-2xl ${
             disabled ? "bg-slate-300 text-white" : "bg-green-400 hover:bg-green-200 hover:text-slate-400"
           }`}
         >
