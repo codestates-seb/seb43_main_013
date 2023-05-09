@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 
 public class FreeBoardDto {
@@ -17,8 +18,8 @@ public class FreeBoardDto {
     @Setter
     public static class Post {
         @Valid
-        @NotBlank
-        private long memberId; // 작성자 id
+        @NotNull
+        private Long memberId; // 작성자 id
 
         @Valid
         @NotBlank(message = "게시글의 제목을 입력하세요.")
@@ -30,10 +31,10 @@ public class FreeBoardDto {
 
         @Valid
         @NotBlank(message = "카테고리를 선택학세요.")
-        private Category category;
+        private String category;
 
         // 태그 추가 예정
-        public void addMemberId(long memberId) {
+        public void addMemberId(Long memberId) {
             this.memberId = memberId;
         }
     }
@@ -55,13 +56,13 @@ public class FreeBoardDto {
     @Setter
     public static class Response{
         @Positive
-        private long freeboardId;
+        private Long freeboardId;
 
         private String title;
 
         private String content;
 
-        private Category category;
+        private String category;
 
 //        private long memberId;
 
