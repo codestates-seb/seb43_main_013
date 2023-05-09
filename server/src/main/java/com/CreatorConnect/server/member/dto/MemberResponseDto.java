@@ -17,6 +17,9 @@ public class MemberResponseDto extends Auditable {
     private String nickname;
     private String phone;
     private boolean oauth;
+    private String introduction;
+    private String link;
+    private String profileImageUrl;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 

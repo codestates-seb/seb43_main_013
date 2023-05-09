@@ -1,8 +1,6 @@
 package com.CreatorConnect.server.member.dto;
 
 import com.CreatorConnect.server.audit.Auditable;
-import com.CreatorConnect.server.validator.NotSpace;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -10,7 +8,6 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-import java.time.LocalDateTime;
 
 public class MemberDto {
 
@@ -36,11 +33,18 @@ public class MemberDto {
         @Pattern(regexp = "^01(?:0|1|[6-9])-(\\d{3,4})-(\\d{4})$")
         private String phone;
 
-        private String introduce;
+        private String introduction;
 
         private String link;
 
-        private String image; // fixme type 변경
+        private String profileImageUrl;
+    }
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    public static class CheckPassword {
+        @NotNull
+        private String password;
     }
 
     @Getter
@@ -52,19 +56,16 @@ public class MemberDto {
         @NotNull
         private String password;
 
-        @NotBlank(message = "닉네임은 필수 입력사항입니다.")
         private String nickname;
 
-        @NotBlank(message = "휴대폰 번호는 필수 입력사항입니다.")
         @Pattern(regexp = "^01(?:0|1|[6-9])-(\\d{3,4})-(\\d{4})$")
         private String phone;
 
-        private String introduce;
+        private String introduction;
 
         private String link;
 
-        private String image; // fixme type 변경
-
+        private String profileImageUrl;
 
     }
 
