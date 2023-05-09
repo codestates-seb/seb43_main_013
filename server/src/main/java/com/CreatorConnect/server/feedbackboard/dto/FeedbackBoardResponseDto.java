@@ -28,8 +28,8 @@ public class FeedbackBoardResponseDto {
         private String title;
         private String content;
         private String tag;
-        private String category;
-        private String feedbackCategory;
+        private String categoryName;
+        private String feedbackCategoryName;
     }
 
     @Getter
@@ -45,8 +45,8 @@ public class FeedbackBoardResponseDto {
         private Long commentCount;
         private Long likeCount;
         private Long viewCount;
-        private String category;
-        private String feedbackCategory;
+        private String categoryName;
+        private String feedbackCategoryName;
         private LocalDateTime createdAt;
         private LocalDateTime modifiedAt;
         private long memberId;

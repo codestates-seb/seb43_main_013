@@ -29,8 +29,8 @@ public class FeedbackCategoryService {
     }
 
     // 카티고리 이름 중복 검사 메서드
-    private void verifyFeedbackCategory(String name) {
-        Optional<FeedbackCategory> optionalFeedbackCategory = feedbackCategoryRepository.findByFeedbackCategory(name);
+    private void verifyFeedbackCategory(String feedbackCategoryName) {
+        Optional<FeedbackCategory> optionalFeedbackCategory = feedbackCategoryRepository.findByFeedbackCategoryName(feedbackCategoryName);
         if (optionalFeedbackCategory.isPresent()) {
             throw new BusinessLogicException(ExceptionCode.CATEGORY_EXISTS);
         }

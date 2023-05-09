@@ -49,8 +49,8 @@ public class FeedbackBoardDto {
         private String link;
         private String content;
         private String tag;
-        private String category;
-        private String feedbackCategory;
+        private String categoryName;
+        private String feedbackCategoryName;
     }
 
 }

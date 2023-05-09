@@ -1,8 +1,11 @@
 package com.CreatorConnect.server.category.entity;
 
+import com.CreatorConnect.server.feedbackboard.entity.FeedbackBoard;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -22,4 +25,6 @@ public class Category {
 //    @OneToMany(mappedBy = "category")
 //    private List<FreeBoard> freeBoards = new ArrayList<>();
 
+    @OneToMany(mappedBy = "category")
+    private List<FeedbackBoard> feedbackBoards = new ArrayList<>();
 }

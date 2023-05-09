@@ -8,5 +8,5 @@ import java.util.Optional;
 
 @Repository
 public interface FeedbackCategoryRepository extends JpaRepository<FeedbackCategory, Long> {
-    Optional<FeedbackCategory> findByFeedbackCategory(String name);
+    Optional<FeedbackCategory> findByFeedbackCategoryName(String feedbackCategoryName);
 }
