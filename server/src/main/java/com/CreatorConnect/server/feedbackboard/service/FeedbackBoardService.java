@@ -3,7 +3,6 @@ package com.CreatorConnect.server.feedbackboard.service;
 import com.CreatorConnect.server.exception.BusinessLogicException;
 import com.CreatorConnect.server.exception.ExceptionCode;
 import com.CreatorConnect.server.feedbackboard.dto.FeedbackBoardDto;
-import com.CreatorConnect.server.feedbackboard.dto.FeedbackBoardMultiDto;
 import com.CreatorConnect.server.feedbackboard.dto.FeedbackBoardResponseDto;
 import com.CreatorConnect.server.feedbackboard.entity.FeedbackBoard;
 import com.CreatorConnect.server.feedbackboard.mapper.FeedbackBoardMapper;
@@ -62,21 +61,21 @@ public class FeedbackBoardService {
         FeedbackBoard foundFeedbackBoard = findVerifiedFeedbackBoard(FeedbackBoardId);
         return mapper.feedbackBoardToFeedbackBoardDetailsResponse(foundFeedbackBoard);
     }
-    public FeedbackBoardMultiDto.Response<FeedbackBoardResponseDto.Details> responseFeedbacks(int page, int size){
+    public FeedbackBoardResponseDto.Multi<FeedbackBoardResponseDto.Details> responseFeedbacks(int page, int size){
         PageRequest pageRequest = PageRequest.of(page - 1, size, Sort.by("feedbackBoardId").descending());
         Page<FeedbackBoard> feedbackBoardsPage = feedbackBoardRepository.findAll(pageRequest);
         List<FeedbackBoardResponseDto.Details> responses = mapper.feedbackBoardsToFeedbackBoardDetailsResponses(feedbackBoardsPage.getContent());
-        FeedbackBoardMultiDto.PageInfo pageInfo = new FeedbackBoardMultiDto.PageInfo(feedbackBoardsPage.getNumber() + 1, feedbackBoardsPage.getSize(), feedbackBoardsPage.getTotalElements(), feedbackBoardsPage.getTotalPages());
-        return new FeedbackBoardMultiDto.Response<>(responses, pageInfo);
+        FeedbackBoardResponseDto.PageInfo pageInfo = new FeedbackBoardResponseDto.PageInfo(feedbackBoardsPage.getNumber() + 1, feedbackBoardsPage.getSize(), feedbackBoardsPage.getTotalElements(), feedbackBoardsPage.getTotalPages());
+        return new FeedbackBoardResponseDto.Multi<>(responses, pageInfo);
     }
 
-//    public FeedbackBoardMultiDto.Response<FeedbackBoardResponseDto.Details> responseFeedbacksByCategory(Long feedbackCategoryId, int page, int size){
+//    public FeedbackBoardResponseDto.Multi<FeedbackBoardResponseDto.Details> responseFeedbacksByCategory(Long feedbackCategoryId, int page, int size){
 //        PageRequest pageRequest = PageRequest.of(page - 1, size, Sort.by("questionId").descending());
 //        Page<FeedbackBoard> feedbackBoardsPage = feedbackBoardRepository.findAll(pageRequest);
 //        // Todo 피드백 카테고리 아이디로 피드백 목록 찾는 메서드(2)
 //        List<FeedbackBoardResponseDto.Details> responses = findFeedbacksByCategoryId(feedbackCategoryId);
-//        FeedbackBoardMultiDto.PageInfo pageInfo = new FeedbackBoardMultiDto.PageInfo(feedbackBoardsPage.getNumber() + 1, feedbackBoardsPage.getSize(), feedbackBoardsPage.getTotalElements(), feedbackBoardsPage.getTotalPages());
-//        return new FeedbackBoardMultiDto.Response<>(responses, pageInfo);
+//       FeedbackBoardResponseDto.PageInfo pageInfo = new FeedbackBoardResponseDto.PageInfo(feedbackBoardsPage.getNumber() + 1, feedbackBoardsPage.getSize(), feedbackBoardsPage.getTotalElements(), feedbackBoardsPage.getTotalPages());
+//        return new FeedbackBoardResponseDto.Multi<>(responses, pageInfo);
 //    }
 
     public void deleteFeedback(Long feedbackBoardId) {

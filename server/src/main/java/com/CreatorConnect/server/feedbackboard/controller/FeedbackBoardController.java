@@ -1,7 +1,6 @@
 package com.CreatorConnect.server.feedbackboard.controller;
 
 import com.CreatorConnect.server.feedbackboard.dto.FeedbackBoardDto;
-import com.CreatorConnect.server.feedbackboard.dto.FeedbackBoardMultiDto;
 import com.CreatorConnect.server.feedbackboard.dto.FeedbackBoardResponseDto;
 import com.CreatorConnect.server.feedbackboard.service.FeedbackBoardService;
 import lombok.RequiredArgsConstructor;
@@ -41,7 +40,7 @@ public class FeedbackBoardController {
     @GetMapping("s")
     public ResponseEntity getFeedbacks(@RequestParam("page") @Positive int page,
                                        @RequestParam("size") @Positive int size) {
-        FeedbackBoardMultiDto.Response response = feedbackBoardService.responseFeedbacks(page, size);
+        FeedbackBoardResponseDto.Multi response = feedbackBoardService.responseFeedbacks(page, size);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
       //Todo 피드백 카테고리 아이디로 피드백 목록 조회하는 기능

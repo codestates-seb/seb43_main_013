@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class FeedbackBoardResponseDto {
     @Getter
@@ -51,5 +52,21 @@ public class FeedbackBoardResponseDto {
         private long memberId;
         private String nickname;
         private String email;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public static class Multi<T> {
+        private List<T> data;
+        private PageInfo pageInfo;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public static class PageInfo {
+        private int page;
+        private int size;
+        private long totalElements;
+        private int totalPages;
     }
 }
