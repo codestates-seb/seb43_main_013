@@ -32,6 +32,7 @@ public class FeedbackBoardService {
     private final FeedbackCategoryRepository feedbackCategoryRepository;
     private final FeedbackCategoryService feedbackCategoryService;
 
+    //post
     public FeedbackBoardResponseDto.Post createFeedback(FeedbackBoardDto.Post postDto){
         // Dto-Entity 변환
         FeedbackBoard feedbackBoard = mapper.feedbackBoardPostDtoToFeedbackBoard(postDto);
@@ -49,6 +50,7 @@ public class FeedbackBoardService {
         return responseDto;
     }
 
+    //patch
     public FeedbackBoardResponseDto.Patch updateFeedback(Long feedbackBoardId, FeedbackBoardDto.Patch patchDto){
         patchDto.setFeedbackBoardId(feedbackBoardId);
         FeedbackBoard feedbackBoard = mapper.feedbackBoardPatchDtoToFeedbackBoard(patchDto);
@@ -74,10 +76,13 @@ public class FeedbackBoardService {
         return responseDto;
     }
 
+    // 하나 조회
     public FeedbackBoardResponseDto.Details responseFeedback(Long FeedbackBoardId){
         FeedbackBoard foundFeedbackBoard = findVerifiedFeedbackBoard(FeedbackBoardId);
         return mapper.feedbackBoardToFeedbackBoardDetailsResponse(foundFeedbackBoard);
     }
+
+    //목록 조회
     public FeedbackBoardResponseDto.Multi<FeedbackBoardResponseDto.Details> responseFeedbacks(int page, int size){
         PageRequest pageRequest = PageRequest.of(page - 1, size, Sort.by("feedbackBoardId").descending());
         Page<FeedbackBoard> feedbackBoardsPage = feedbackBoardRepository.findAll(pageRequest);
@@ -86,6 +91,7 @@ public class FeedbackBoardService {
         return new FeedbackBoardResponseDto.Multi<>(responses, pageInfo);
     }
 
+    //피드백 카테고리로 목록 조회
     public FeedbackBoardResponseDto.Multi<FeedbackBoardResponseDto.Details> responseFeedbacksByCategory(Long feedbackCategoryId, int page, int size){
         PageRequest pageRequest = PageRequest.of(page - 1, size, Sort.by("feedbackBoardId").descending());
         Page<FeedbackBoard> feedbackBoardsPage = feedbackBoardRepository.findAll(pageRequest);
@@ -94,6 +100,7 @@ public class FeedbackBoardService {
         return new FeedbackBoardResponseDto.Multi<>(responses, pageInfo);
     }
 
+    //삭제
     public FeedbackBoardResponseDto.delete deleteFeedback(Long feedbackBoardId) {
         FeedbackBoard feedbackBoard = findVerifiedFeedbackBoard(feedbackBoardId);
         feedbackBoardRepository.delete(feedbackBoard);
