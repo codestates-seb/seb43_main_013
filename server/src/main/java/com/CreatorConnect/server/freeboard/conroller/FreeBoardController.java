@@ -64,9 +64,11 @@ public class FreeBoardController {
     public ResponseEntity getFreeBoardsByCategory(@PathVariable("categoryId") long categoryId,
                                                   @Positive @RequestParam int page,
                                                 @Positive @RequestParam int size) {
-        FreeBoardDto.MultiResponseDto<FreeBoardDto.Response> response =
-                freeBoardService.getFreeBoardsByCategory(categoryId, page, size);
+        Page<FreeBoard> pageFreeBoards = freeBoardService.getFreeBoardsByCategory(categoryId, page-1, size);
+        List<FreeBoard> freeBoards = pageFreeBoards.getContent();
 
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return new ResponseEntity<>(
+                new FreeBoardDto.MultiResponseDto<>(mapper.freeBoardToFreeBoardResponseDtos(freeBoards),
+                        pageFreeBoards),HttpStatus.OK);
     }
 }

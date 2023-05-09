@@ -16,7 +16,7 @@ public interface FreeBoardRepository extends JpaRepository<FreeBoard, Long> {
     List<FreeBoard> findByCategory(Category category);
 
 
-//    @Query("select f from FreeBoard f where f.category.categoryId = :categoryId")
-//    Page<FreeBoard> findFreeBoardsByCategoryId(@Param("categoryId") long categoryId, Pageable pageable);
+    @Query("select f from FreeBoard f where f.category.categoryId = :categoryId")
+    Page<FreeBoard> findFreeBoardsByCategoryId(@Param("categoryId") long categoryId, Pageable pageable);
 
 }

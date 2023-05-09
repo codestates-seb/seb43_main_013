@@ -127,14 +127,12 @@ public class FreeBoardService {
     /**
      * <자유 게시판 카테고리 별 목록>
      */
-    public FreeBoardDto.MultiResponseDto<FreeBoardDto.Response> getFreeBoardsByCategory(long categoryId, int page, int size) {
-        PageRequest pageRequest = PageRequest.of(page, size, Sort.by("freeboardId").descending());
-        Page<FreeBoard> freeBoards = freeBoardRepository.findAll(pageRequest);
-        List<FreeBoardDto.Response> responses = findFreeBoardByCategoryId(categoryId);
-//        FreeBoardDto.PageInfo pageInfo =
-//                new FreeBoardDto.PageInfo(freeBoards.getNumber() + 1, freeBoards.getSize(),
-//                        freeBoards.getTotalElements(), freeBoards.getTotalPages());
-        return new FreeBoardDto.MultiResponseDto<>(responses, freeBoards);
+    public Page<FreeBoard> getFreeBoardsByCategory(long categoryId, int page, int size) {
+        return freeBoardRepository.findFreeBoardsByCategoryId(categoryId, PageRequest.of(page, size, Sort.by("freeboardId").descending()));
+//        Page<FreeBoard> freeBoards = freeBoardRepository.findAll(pageRequest);
+//        List<FreeBoardDto.Response> responses = findFreeBoardByCategoryId(categoryId);
+//
+//        return new FreeBoardDto.MultiResponseDto<>(responses, freeBoards);
     }
 
     // 게시글이 존재 여부 검증 메서드
