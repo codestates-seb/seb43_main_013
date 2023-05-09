@@ -15,6 +15,12 @@ public interface FreeBoardMapper {
 //    @Mapping(source = "categoryId", target = "category.categoryId")
    FreeBoard freeBoardPostDtoToFreeBoard(FreeBoardDto.Post post);
 
+    // FreeBoardDto.Patch -> FreeBoard
+    FreeBoard freeBoardPatchDtoToFreeBoard(FreeBoardDto.Patch patch);
+
+    // FreeBoard -> FreeBoardDto.Response
+    FreeBoardDto.Response freeBoardToFreeBoardResponseDto(FreeBoard freeBoard);
+
 
 
 

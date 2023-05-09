@@ -46,11 +46,18 @@ public class FreeBoardDto {
     @Getter
     @Setter
     public static class Patch{
+        private long freeBoardId;
+  //      private long memberId;
         @Valid
         private String title;
 
         @Valid
         private String content;
+
+        @Valid
+        private String categoryName;
+
+        // 태그 추가 예정
     }
 
     @AllArgsConstructor
@@ -66,7 +73,7 @@ public class FreeBoardDto {
         private String content;
 
         // 현재 카테고리 이름을 받아서 id 추출해서 저장하면 Category 테이블에 카테고리가 중복 저장되는 이슈로 인해 request로 categoryId를 받도록 임시조치
-        private Category category;
+        private String categoryName;
 
 //        private long memberId;
 

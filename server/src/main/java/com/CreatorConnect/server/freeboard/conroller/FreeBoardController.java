@@ -8,10 +8,7 @@ import com.CreatorConnect.server.freeboard.service.FreeBoardService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -36,5 +33,15 @@ public class FreeBoardController {
         FreeBoard freeBoardPost = freeBoardService.createFreeBoard(post);
 
         return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    // 자유 게시판 게시글 수정
+    @PatchMapping("/{freeboardId}")
+    public ResponseEntity patchFreeBoard(@Valid @RequestBody FreeBoardDto.Patch patch,
+                                         @PathVariable("freeboardId") long freeboardId) {
+//        patch.setFreeBoardId(freeboardId);
+        FreeBoard freeBoardPatch = freeBoardService.updateFreeBoard(patch,freeboardId);
+
+        return new ResponseEntity<>(mapper.freeBoardToFreeBoardResponseDto(freeBoardPatch), HttpStatus.OK);
     }
 }
