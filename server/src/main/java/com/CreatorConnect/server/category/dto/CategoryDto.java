@@ -16,7 +16,7 @@ public class CategoryDto {
     public static class Post{
         @Valid
         @NotBlank(message = "카테고리를 입력하세요.")
-        private String category;
+        private String categoryname;
 
     }
     @AllArgsConstructor
@@ -24,7 +24,7 @@ public class CategoryDto {
     @Getter
     @Setter
     public static class Response{
-        private String category;
+        private String categoryname;
     }
 }
 

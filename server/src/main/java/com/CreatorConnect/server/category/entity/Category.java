@@ -16,7 +16,7 @@ public class Category {
     private long categoryId;
 
     @Column(nullable = false)
-    private String category; // 카테고리 이름
+    private String categoryname; // 카테고리 이름
 
 //    // category - freeboard 일대다 양방향 매핑
 //    @OneToMany(mappedBy = "category")
