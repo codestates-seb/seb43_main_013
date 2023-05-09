@@ -26,15 +26,15 @@ public class FeedbackBoardController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    @PatchMapping("/{feedbackBoard-id}")
-    public ResponseEntity<FeedbackBoardResponseDto.Patch> patchFeedback(@PathVariable("feedbackBoard-id") Long feedbackBoardId,
+    @PatchMapping("/{feedbackBoardId}")
+    public ResponseEntity<FeedbackBoardResponseDto.Patch> patchFeedback(@PathVariable("feedbackBoardId") Long feedbackBoardId,
                                                                         @Valid @RequestBody FeedbackBoardDto.Patch patchDto){
         FeedbackBoardResponseDto.Patch response = feedbackBoardService.updateFeedback(feedbackBoardId, patchDto);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping("/{feedbackBoard-id}")
-    public ResponseEntity<FeedbackBoardResponseDto.Details> getFeedback(@PathVariable("feedbackBoard-id") @Positive Long feedbackBoardId){
+    @GetMapping("/{feedbackBoardId}")
+    public ResponseEntity<FeedbackBoardResponseDto.Details> getFeedback(@PathVariable("feedbackBoardId") @Positive Long feedbackBoardId){
         FeedbackBoardResponseDto.Details response = feedbackBoardService.responseFeedback(feedbackBoardId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -44,7 +44,7 @@ public class FeedbackBoardController {
         FeedbackBoardMultiDto.Response response = feedbackBoardService.responseFeedbacks(page, size);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-      //Todo 피드백 카테고리 아이디로 피드백 목록 찾는 기능
+      //Todo 피드백 카테고리 아이디로 피드백 목록 조회하는 기능
 //    @GetMapping("s/category/{feedbackCategory-id}")
 //    public ResponseEntity getFeedbacksByCategory(@PathVariable("feedbackCategory-id") @Positive Long feedbackCategoryId,
 //                                                 @RequestParam("page") @Positive int page,
@@ -52,5 +52,10 @@ public class FeedbackBoardController {
 //        FeedbackBoardMultiDto.Response response = feedbackBoardService.responseFeedbacksByCategory(feedbackCategoryId, page, size);
 //        return new ResponseEntity<>(response, HttpStatus.OK);
 //    }
-
+      @DeleteMapping("/{feedbackBoardId}")
+      public ResponseEntity<Void> deleteFeedback(@PathVariable("feedbackBoardId") @Positive Long feedbackBoardId) {
+//          questionService.deleteQuestion(questionId);
+          feedbackBoardService.deleteFeedback(feedbackBoardId);
+          return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+      }
 }

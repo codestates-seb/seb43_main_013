@@ -79,6 +79,12 @@ public class FeedbackBoardService {
 //        return new FeedbackBoardMultiDto.Response<>(responses, pageInfo);
 //    }
 
+    public void deleteFeedback(Long feedbackBoardId) {
+        FeedbackBoard feedbackBoard = findVerifiedFeedbackBoard(feedbackBoardId);
+        feedbackBoardRepository.delete(feedbackBoard);
+    }
+
+
     //피드백 아이디로 피드백 찾는 메서드
     public FeedbackBoard findVerifiedFeedbackBoard(Long feedbackBoardId) {
         Optional<FeedbackBoard> FeedbackBoard = feedbackBoardRepository.findById(feedbackBoardId);

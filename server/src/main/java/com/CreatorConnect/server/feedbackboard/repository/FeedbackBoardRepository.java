@@ -9,5 +9,5 @@ import java.util.List;
 
 @Repository
 public interface FeedbackBoardRepository extends JpaRepository<FeedbackBoard, Long> {
-    List<FeedbackBoard> findByMember(Member member);
+//    List<FeedbackBoard> findByFeedbackCategory(FeedbackCategory feedbackCategory);
 }

@@ -1,6 +1,7 @@
 package com.CreatorConnect.server.feedbackboard.entity;
 
 import com.CreatorConnect.server.audit.Auditable;
+import com.CreatorConnect.server.category.entity.Category;
 import com.CreatorConnect.server.member.entity.Member;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.AllArgsConstructor;
@@ -31,15 +32,24 @@ public class FeedbackBoard extends Auditable {
     private Long likeCount;
     @Column
     private Long viewCount;
-    @Column
-    private String category;
+
     @Column
     private String feedbackCategory;
+
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    @JsonBackReference
+    private Category category;
+    //매핑용
+    public long getCategoryId() {
+        return category.getCategoryId();
+    }
 
     @ManyToOne
     @JoinColumn(name = "member_id")
     @JsonBackReference
     private Member member;
+    //매핑용
     public long getMemberId() {
         return member.getMemberId();
     }
