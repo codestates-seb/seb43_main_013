@@ -35,5 +35,19 @@ public class CategoryService {
             throw new BusinessLogicException(ExceptionCode.CATEGORY_EXISTS);
         }
     }
+
+    // 카테고리 이름을 통해 해당 카테고리의 id 추출
+    public long findCategoryId(String name) {
+        Optional<Category> optionalCategory = categoryRepository.findByCategory(name);
+
+        // 카테고리 이름이 존재하지 않는 경우
+        if (!optionalCategory.isPresent()) {
+            throw new BusinessLogicException(ExceptionCode.CATEGORY_NOT_FOUND);
+        }
+
+        Long categoryId = optionalCategory.get().getCategoryId();
+
+        return categoryId;
+    }
 }
 
