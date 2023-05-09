@@ -71,4 +71,13 @@ public class FreeBoardController {
                 new FreeBoardDto.MultiResponseDto<>(mapper.freeBoardToFreeBoardResponseDtos(freeBoards),
                         pageFreeBoards),HttpStatus.OK);
     }
+
+    // 자유 게시판 게시글 상세 조회
+    @GetMapping("/freeboard/{freeboardId}")
+    public ResponseEntity getFreeBoardDetail(@Positive @PathVariable("freeboardId") long freeboardId) {
+        FreeBoard freeBoardDetail = freeBoardService.getFreeBoardDetail(freeboardId);
+
+        return new ResponseEntity<>(mapper.freeBoardToFreeBoardResponseDto(freeBoardDetail), HttpStatus.OK);
+    }
+
 }

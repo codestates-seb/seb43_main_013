@@ -135,6 +135,21 @@ public class FreeBoardService {
 //        return new FreeBoardDto.MultiResponseDto<>(responses, freeBoards);
     }
 
+    /**
+     * <자유 게시판 게시글 상세 조회>
+     * 1. 게시글 존재 여부 확인
+     * 2. 조회수 증가
+     */
+    public FreeBoard getFreeBoardDetail(long freeboardId) {
+        // 1. 게시글 존재 여부 확인
+        FreeBoard freeBoard = verifyFreeBoard(freeboardId);
+
+        // 2. 조회수 증가
+        addViews(freeBoard);
+
+        return freeBoard;
+    }
+
     // 게시글이 존재 여부 검증 메서드
     private FreeBoard verifyFreeBoard(long freeboardId) {
         Optional<FreeBoard> optionalFreeBoard = freeBoardRepository.findById(freeboardId);
@@ -142,9 +157,15 @@ public class FreeBoardService {
                 new BusinessLogicException(ExceptionCode.FREEBOARD_NOT_FOUND));
     }
 
-    public List<FreeBoardDto.Response> findFreeBoardByCategoryId(long categoryId) {
-       Category category = categoryService.verifyCategory(categoryId);
-        return mapper.freeBoardToFreeBoardResponseDtos(freeBoardRepository.findByCategory(category));
+//    public List<FreeBoardDto.Response> findFreeBoardByCategoryId(long categoryId) {
+//       Category category = categoryService.verifyCategory(categoryId);
+//        return mapper.freeBoardToFreeBoardResponseDtos(freeBoardRepository.findByCategory(category));
+//    }
+
+    // 조회수 증가 메서드
+    private void addViews(FreeBoard freeBoard) {
+        freeBoard.setViewCount(freeBoard.getViewCount() + 1);
+        freeBoardRepository.save(freeBoard);
     }
 
 
