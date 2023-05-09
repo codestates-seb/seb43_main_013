@@ -16,6 +16,7 @@ public interface FreeBoardRepository extends JpaRepository<FreeBoard, Long> {
     List<FreeBoard> findByCategory(Category category);
 
 
+    // categoryId에 해당하는 게시글 목록 조회
     @Query("select f from FreeBoard f where f.category.categoryId = :categoryId")
     Page<FreeBoard> findFreeBoardsByCategoryId(@Param("categoryId") long categoryId, Pageable pageable);
 
