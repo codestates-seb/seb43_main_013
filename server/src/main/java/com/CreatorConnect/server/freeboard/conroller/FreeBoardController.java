@@ -80,4 +80,12 @@ public class FreeBoardController {
         return new ResponseEntity<>(mapper.freeBoardToFreeBoardResponseDto(freeBoardDetail), HttpStatus.OK);
     }
 
+    // 자유 게시판 게시글 삭제
+    @DeleteMapping("/freeboard/{freeboardId}")
+    public ResponseEntity deleteFreeBoard(@Positive @PathVariable("freeboardId") long freeboardId) {
+        freeBoardService.removeFreeBoard(freeboardId);
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
 }

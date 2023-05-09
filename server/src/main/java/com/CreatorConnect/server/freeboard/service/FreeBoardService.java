@@ -150,6 +150,19 @@ public class FreeBoardService {
         return freeBoard;
     }
 
+    /**
+     * <자유 게시판 게시글 삭제>
+     * 1. 게시글 존재 여부 확인
+     * 2. 삭제
+     */
+    public void removeFreeBoard(long freeboardId) {
+        // 1. 게시글 존재 여부 획인
+        FreeBoard freeBoard = verifyFreeBoard(freeboardId);
+
+        // 2. 삭제
+        freeBoardRepository.delete(freeBoard);
+    }
+
     // 게시글이 존재 여부 검증 메서드
     private FreeBoard verifyFreeBoard(long freeboardId) {
         Optional<FreeBoard> optionalFreeBoard = freeBoardRepository.findById(freeboardId);
