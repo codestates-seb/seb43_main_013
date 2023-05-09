@@ -1,8 +1,11 @@
 package com.CreatorConnect.server.category.entity;
 
+import com.CreatorConnect.server.freeboard.entity.FreeBoard;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -16,10 +19,10 @@ public class Category {
     private long categoryId;
 
     @Column(nullable = false)
-    private String categoryname; // 카테고리 이름
+    private String categoryName; // 카테고리 이름
 
-//    // category - freeboard 일대다 양방향 매핑
-//    @OneToMany(mappedBy = "category")
-//    private List<FreeBoard> freeBoards = new ArrayList<>();
+    // category - freeboard 일대다 양방향 매핑
+    @OneToMany(mappedBy = "category")
+    private List<FreeBoard> freeBoards = new ArrayList<>();
 
 }
