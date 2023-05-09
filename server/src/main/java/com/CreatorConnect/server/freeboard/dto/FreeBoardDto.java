@@ -1,6 +1,7 @@
 package com.CreatorConnect.server.freeboard.dto;
 
 import com.CreatorConnect.server.category.entity.Category;
+import com.CreatorConnect.server.member.entity.Member;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,7 +20,7 @@ public class FreeBoardDto {
     public static class Post {
         @Valid
         @NotNull
-        private Long memberId; // 작성자 id
+        private long memberId; // 작성자 id
 
         @Valid
         @NotBlank(message = "게시글의 제목을 입력하세요.")
@@ -30,13 +31,15 @@ public class FreeBoardDto {
         private String content;
 
         @Valid
-        @NotBlank(message = "카테고리를 선택학세요.")
-        private String category;
+        @NotNull(message = "카테고리를 선택학세요.")
+        // 현재 카테고리 이름을 받아서 id 추출해서 저장하면 Category 테이블에 카테고리가 중복 저장되는 이슈로 인해 request로 categoryId를 받도록 임시조치
+        //private long categoryId;
+        private String categoryName;
 
         // 태그 추가 예정
-        public void addMemberId(Long memberId) {
-            this.memberId = memberId;
-        }
+//        public void addMemberId(Long memberId) {
+//            this.memberId = memberId;
+//        }
     }
     @AllArgsConstructor
     @NoArgsConstructor
@@ -56,13 +59,14 @@ public class FreeBoardDto {
     @Setter
     public static class Response{
         @Positive
-        private Long freeboardId;
+        private long freeboardId;
 
         private String title;
 
         private String content;
 
-        private String category;
+        // 현재 카테고리 이름을 받아서 id 추출해서 저장하면 Category 테이블에 카테고리가 중복 저장되는 이슈로 인해 request로 categoryId를 받도록 임시조치
+        private Category category;
 
 //        private long memberId;
 

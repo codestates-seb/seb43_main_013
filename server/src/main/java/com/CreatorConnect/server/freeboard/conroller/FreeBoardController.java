@@ -1,5 +1,6 @@
 package com.CreatorConnect.server.freeboard.conroller;
 
+import com.CreatorConnect.server.category.service.CategoryService;
 import com.CreatorConnect.server.freeboard.dto.FreeBoardDto;
 import com.CreatorConnect.server.freeboard.entity.FreeBoard;
 import com.CreatorConnect.server.freeboard.mapper.FreeBoardMapper;
@@ -20,17 +21,19 @@ import javax.validation.Valid;
 public class FreeBoardController {
     private final FreeBoardService freeBoardService;
     private final FreeBoardMapper mapper;
+    private final CategoryService categoryService;
 
-    public FreeBoardController(FreeBoardService freeBoardService, FreeBoardMapper mapper) {
+    public FreeBoardController(FreeBoardService freeBoardService, FreeBoardMapper mapper,
+                               CategoryService categoryService) {
         this.freeBoardService = freeBoardService;
         this.mapper = mapper;
+        this.categoryService = categoryService;
     }
 
     // 자유 게시판 게시글 등록
     @PostMapping("/new")
     public ResponseEntity postFreeBoard(@Valid @RequestBody FreeBoardDto.Post post) {
-        FreeBoard freeBoard = mapper.freeBoardPostDtoToFreeBoard(post);
-        FreeBoard createdBoard = freeBoardService.createFreeBoard(freeBoard);
+        FreeBoard freeBoardPost = freeBoardService.createFreeBoard(post);
 
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
