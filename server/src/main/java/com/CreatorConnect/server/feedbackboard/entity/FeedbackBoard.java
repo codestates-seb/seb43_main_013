@@ -21,7 +21,7 @@ public class FeedbackBoard extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long feedbackBoardId;
-    @Column
+    @Column(nullable = false)
     private String title;
     @Column
     private String link;
