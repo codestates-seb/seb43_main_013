@@ -1,31 +1,38 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { useToast } from "@chakra-ui/react";
 import { PhotoIcon, ArrowPathIcon } from "@heroicons/react/24/solid";
 
 // api
-import { apiCreateFeedbackBoard } from "@/apis";
+import { apiUpdateFeedbackBoard } from "@/apis";
 
 // util
 import { validateYoutubeURL } from "@/libs";
 
 // hook
 import useTags from "@/hooks/useTags";
+import { useFetchFeedbackBoard } from "@/hooks/query/useFetchFeedbackBoard";
 
 // component
 import Input from "@/components/BoardForm/Input";
 import Editor from "@/components/Editor";
 import Category from "@/components/BoardForm/Category";
 import Tag from "@/components/BoardForm/Tag";
+import FullSpinner from "@/components/Spinner/FullSpinner";
+
+// type
+interface Props {
+  boardId: number;
+}
 
 /** 2023/05/09 - 피드백 게시글 작성 form 컴포넌트 - by 1-blue */
-const Form = () => {
+const Form: React.FC<Props> = ({ boardId }) => {
   const toast = useToast();
 
   /** 2023/05/09 - 작성한 태그들 - by 1-blue */
-  const [selectedTags, onSelectedTag, onDeleteTag] = useTags();
+  const [selectedTags, onSelectedTag, onDeleteTag, setSelectedTags] = useTags();
 
   /** 2023/05/09 - 썸네일 ref - by 1-blue */
   const ThumbnailRef = useRef<HTMLInputElement>(null);
@@ -54,6 +61,20 @@ const Form = () => {
   /** 2023/05/09 - 선택한 category - by 1-blue */
   const [selectedNormalCategory, setSelectedNormalCategory] = useState("");
   const [selectedFeedbackCategory, setSelectedFeedbackCategory] = useState("");
+
+  /** 2023/05/10 - 내용 불러오기 - by 1-blue */
+  const { data, isLoading } = useFetchFeedbackBoard({ feedbackBoardId: boardId });
+
+  /** 2023/05/10 - 작성된 내용 채워넣기 - by 1-blue */
+  useEffect(() => {
+    if (!data) return;
+
+    // TODO: thumbnail
+    setSelectedTags(data.data.tag);
+    setContent(data.data.content);
+    setSelectedNormalCategory(data.data.categoryName);
+    setSelectedFeedbackCategory(data.data.feedbackCateogoryName);
+  }, [data]);
 
   /** 2023/05/09 - 피드백 게시글 생성 - by 1-blue */
   const onSubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
@@ -103,9 +124,9 @@ const Form = () => {
       });
 
     try {
-      // TODO: memberId && thumbnail url 넣어서 보내주기 ( memberId )
-      await apiCreateFeedbackBoard({
-        memberId: 1,
+      // TODO: thumbnail url 넣어서 보내주기 ( memberId )
+      await apiUpdateFeedbackBoard({
+        feedbackBoardId: boardId,
         title,
         link,
         content,
@@ -115,7 +136,7 @@ const Form = () => {
       });
 
       toast({
-        description: "게시글 생성했습니다.\n생성된 게시글 페이지로 이동됩니다.",
+        description: "게시글 수정했습니다.\n생성된 게시글 페이지로 이동됩니다.",
         status: "success",
         duration: 2500,
         isClosable: true,
@@ -135,14 +156,21 @@ const Form = () => {
     }
   };
 
+  if (isLoading) return <FullSpinner />;
+
   return (
     <form className="flex flex-col space-y-4 mb-4 px-4" onSubmit={onSubmit}>
       {/* title, link, tag, category, thumbnail */}
       <section className="flex space-y-4 md:space-y-0 md:space-x-4 z-[1] flex-col md:flex-row flex-1">
         {/* title, link, tag, category */}
         <div className="w-full md:w-0 md:flex-1 space-y-2 z-[1]">
-          <Input name="제목" type="text" placeholder="제목을 입력해주세요!" />
-          <Input name="유튜브 링크" type="text" placeholder="유튜브 링크을 입력해주세요!" />
+          <Input name="제목" type="text" placeholder="제목을 입력해주세요!" defaultValue={data?.data.title} />
+          <Input
+            name="유튜브 링크"
+            type="text"
+            placeholder="유튜브 링크을 입력해주세요!"
+            defaultValue={data?.data.link}
+          />
           <div className="flex flex-col pb-3 md:flex-row space-y-4 md:space-x-4 md:space-y-0">
             <Category
               type="normal"
@@ -212,7 +240,7 @@ const Form = () => {
         type="submit"
         className="self-end px-3.5 py-2.5 bg-main-400 text-white text-base font-bold rounded-md transition-colors hover:bg-main-500"
       >
-        작성 완료
+        수정 완료
       </button>
     </form>
   );

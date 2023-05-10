@@ -2,6 +2,7 @@
 export const QUERY_KEYS = {
   categories: "categories",
   freeBoard: "freeBoard",
+  feedbackBoard: "feedbackBoard",
 };
 
 export * from "./useFetchCategories";
