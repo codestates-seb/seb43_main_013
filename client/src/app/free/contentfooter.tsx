@@ -1,9 +1,10 @@
 "use client";
-
-import { EyeIcon as ViewIcon } from "@heroicons/react/24/outline";
-import { HandThumbUpIcon as LikeIcon } from "@heroicons/react/24/outline";
-import { ChatBubbleLeftRightIcon as CommentsIcon } from "@heroicons/react/24/outline";
-import { UserCircleIcon as DefaultAvatarIcon } from "@heroicons/react/24/outline";
+import {
+  EyeIcon as ViewIcon,
+  HandThumbUpIcon as LikeIcon,
+  ChatBubbleLeftRightIcon as CommentsIcon,
+  UserCircleIcon as DefaultAvatarIcon,
+} from "@heroicons/react/24/outline";
 
 interface ContentFooterProps {
   position: "side" | "main";
@@ -25,11 +26,11 @@ const ContentFooter: React.FC<ContentFooterProps> = ({
   commentCount,
 }) => {
   return (
-    <div className="flex justify-between ml-2.5 mt-3 ">
-      <div className={` gap-x-1 flex items-center justify-start flex-1`}>
+    <div className="flex justify-between w-full px-3 py-1">
+      <div className={` gap-x-1 flex items-center justify-start w-full`}>
         <DefaultAvatarIcon className={`${position === "side" ? " w-5 h-5 text-gray-500" : "w-7 h-7"} `} />
 
-        <div className="flex flex-col items-start justify-center ">
+        <div className="flex flex-col items-start justify-center w-full">
           <div className={`${position === "side" ? "text-xs text-gray-500" : "text-sm font-bold"} cursor-pointer `}>
             {nickName}
           </div>
