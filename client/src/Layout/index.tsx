@@ -1,3 +1,7 @@
+"use client";
+
+import { LoadingProvider } from "@/context/LoadingProvider";
+
 // component
 import Header from "./Header";
 import Nav from "./Nav";
@@ -8,7 +12,7 @@ import { ModalProvider, Modal } from "../components/login";
 
 /** 2023/05/10 - 화면 구성의 Root 경로 - by Kadesti */
 const Layout: React.FC<React.PropsWithChildren> = ({ children }) => (
-  <>
+  <LoadingProvider>
     <ModalProvider>
       <Modal />
       <div id="root">
@@ -18,7 +22,7 @@ const Layout: React.FC<React.PropsWithChildren> = ({ children }) => (
         <Footer />
       </div>
     </ModalProvider>
-  </>
+  </LoadingProvider>
 );
 
 export default Layout;
