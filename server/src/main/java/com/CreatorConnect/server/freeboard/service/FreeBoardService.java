@@ -73,24 +73,25 @@ public class FreeBoardService {
 
     /**
      * <자유 게시판 게시글 수정>
-     * 1. FreeBoardDto.Patch에 freeboardId 설정 및 FreeBoard 객체로 변환
-     * 2. 게시글이 존재하는 지 확인
-     * 3. 수정
-     * 4. 수정된 값 저장
+     * 1. 게시글 존재 여부 확인
+     * 2. 카테고리 유효성 검증 (변경한 카테고리가 존재하는 카테고리?)
+     * 3. 수정된 값 저장
      */
     public FreeBoard updateFreeBoard(FreeBoardDto.Patch patch, long freeboardId) {
-        // 1. FreeBoardDto.Patch에 freeboardId 설정 및 FreeBoard 객체로 변환
+        // 1. 게시글 존재 여부 확인
         patch.setFreeBoardId(freeboardId);
         FreeBoard freeBoard = mapper.freeBoardPatchDtoToFreeBoard(patch);
+        FreeBoard checkedFreeBoard = verifyFreeBoard(freeBoard.getFreeBoardId());
 
-        // 2. 게시글이 존재하는 지 확인
-        FreeBoard checkedFreeBoard = verifyFreeBoard(freeboardId);
 
-//        // 회원 매핑
-//        Optional<Member> member = memberRepository.findById(patch.getMemberId());
-//        freeBoard.setMember(member.orElseThrow(() ->
-//                new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND)));
-//
+        // 2. 카테고리를 수정할 경우 카테고리 유효성 검증 (변경한 카테고리가 존재하는 카테고리?)
+        if (patch.getCategoryName() != null) {
+            categoryService.verifyCategory(patch.getCategoryName());
+            Optional<Category> category = categoryRepository.findByCategoryName(patch.getCategoryName());
+            checkedFreeBoard.setCategory(category.orElseThrow(() ->
+                    new BusinessLogicException(ExceptionCode.CATEGORY_NOT_FOUND)));
+        }
+
 
         // 3. 수정
         Optional.ofNullable(freeBoard.getTitle())
@@ -99,14 +100,8 @@ public class FreeBoardService {
         Optional.ofNullable(freeBoard.getContent())
                 .ifPresent(content -> checkedFreeBoard.setContent(content)); // 게시글 내용 수정
 
-        Optional.ofNullable(freeBoard.getCategory())
-                .ifPresent(category -> checkedFreeBoard.setCategory(category)); // 카테고리 수정
-
-
-        // 카테고리 매핑
-//        Optional<Category> optionalCategory = categoryRepository.findByCategoryName(checkedFreeBoard.getCategoryName());
-//        checkedFreeBoard.setCategory(optionalCategory.orElseThrow(() ->
-//                new BusinessLogicException(ExceptionCode.CATEGORY_NOT_FOUND)));
+//        Optional.ofNullable(freeBoard.getCategory())
+//                .ifPresent(category -> checkedFreeBoard.setCategory(category)); // 카테고리 수정
 
         log.info("categoryName : {}",checkedFreeBoard.getCategoryName());
 
@@ -121,14 +116,14 @@ public class FreeBoardService {
      * <자유 게시판 게시글 목록>
      */
     public Page<FreeBoard> getFreeBoards(int page, int size) {
-        return freeBoardRepository.findAll(PageRequest.of(page, size, Sort.by("freeboardId").descending()));
+        return freeBoardRepository.findAll(PageRequest.of(page, size, Sort.by("freeBoardId").descending()));
     }
 
     /**
      * <자유 게시판 카테고리 별 목록>
      */
     public Page<FreeBoard> getFreeBoardsByCategory(long categoryId, int page, int size) {
-        return freeBoardRepository.findFreeBoardsByCategoryId(categoryId, PageRequest.of(page, size, Sort.by("freeboardId").descending()));
+        return freeBoardRepository.findFreeBoardsByCategoryId(categoryId, PageRequest.of(page, size, Sort.by("freeBoardId").descending()));
 //        Page<FreeBoard> freeBoards = freeBoardRepository.findAll(pageRequest);
 //        List<FreeBoardDto.Response> responses = findFreeBoardByCategoryId(categoryId);
 //
