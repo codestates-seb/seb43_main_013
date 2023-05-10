@@ -62,8 +62,10 @@ public class FeedbackBoardService {
                 .ifPresent(foundFeedbackBoard::setLink);
         Optional.ofNullable(feedbackBoard.getContent())
                 .ifPresent(foundFeedbackBoard::setContent);
-        foundFeedbackBoard.getCategory().setCategoryName(patchDto.getCategoryName());
-        foundFeedbackBoard.getFeedbackCategory().setFeedbackCategoryName(patchDto.getFeedbackCategoryName());
+        Optional<Category> category = categoryRepository.findByCategoryName(patchDto.getCategoryName());
+        foundFeedbackBoard.setCategory(category.orElseThrow(() -> new BusinessLogicException(ExceptionCode.CATEGORY_NOT_FOUND)));
+        Optional<FeedbackCategory> feedbackCategory = feedbackCategoryRepository.findByFeedbackCategoryName(patchDto.getFeedbackCategoryName());
+        foundFeedbackBoard.setFeedbackCategory(feedbackCategory.orElseThrow(() -> new BusinessLogicException(ExceptionCode.FEEDBACK_CATEGORY_NOT_FOUND)));
         // Todo FeedbackBoard-tag연결(2)
 //        Optional.ofNullable(feedbackBoard.getTag())
 //                .ifPresent(foundFeedbackBoard::setTag);
