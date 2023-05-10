@@ -1,13 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useToast } from "@chakra-ui/react";
-import { useRouter } from "next/navigation";
 
 // api
-import { apiCreateFreeBoard } from "@/apis";
+import { apiUpdateFreeBoard } from "@/apis";
 
 // hook
+import { useFetchFreeBoard } from "@/hooks/query";
 import useTags from "@/hooks/useTags";
 
 // component
@@ -15,22 +15,39 @@ import Input from "@/components/BoardForm/Input";
 import Editor from "@/components/Editor";
 import Category from "@/components/BoardForm/Category";
 import Tag from "@/components/BoardForm/Tag";
+import FullSpinner from "@/components/Spinner/FullSpinner";
 
-/** 2023/05/08 - 자유 게시글 작성 form 컴포넌트 - by 1-blue */
-const Form = () => {
+// type
+interface Props {
+  boardId: number;
+}
+
+/** 2023/05/10 - 자유 게시글 수정 form 컴포넌트 - by 1-blue */
+const Form: React.FC<Props> = ({ boardId }) => {
   const toast = useToast();
-  const router = useRouter();
 
-  /** 2023/05/09 - 작성한 태그들 - by 1-blue */
-  const [selectedTags, onSelectedTag, onDeleteTag] = useTags();
+  /** 2023/05/10 - 작성한 태그들 - by 1-blue */
+  const [selectedTags, onSelectedTag, onDeleteTag, setSelectedTags] = useTags();
 
-  /** 2023/05/08 - wysiwyg 으로 받는 content - by 1-blue */
+  /** 2023/05/10 - wysiwyg 으로 받는 content - by 1-blue */
   const [content, setContent] = useState("");
 
-  /** 2023/05/09 - 선택한 category - by 1-blue */
+  /** 2023/05/10 - 선택한 category - by 1-blue */
   const [selectedNormalCategory, setSelectedNormalCategory] = useState("");
 
-  /** 2023/05/08 - 자유 게시글 생성 - by 1-blue */
+  /** 2023/05/10 - 내용 불러오기 - by 1-blue */
+  const { data, isLoading } = useFetchFreeBoard({ freeBoardId: boardId });
+
+  /** 2023/05/10 - 작성된 내용 채워넣기 - by 1-blue */
+  useEffect(() => {
+    if (!data) return;
+
+    setSelectedTags(data.data.tag);
+    setContent(data.data.content);
+    setSelectedNormalCategory(data.data.categoryName);
+  }, [data]);
+
+  /** 2023/05/10 - 자유 게시글 수정 - by 1-blue */
   const onSubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
 
@@ -62,9 +79,8 @@ const Form = () => {
       });
 
     try {
-      // TODO: 유저 식별자 넣어서 보내주기 ( memberId )
-      const { freeBoardId } = await apiCreateFreeBoard({
-        memberId: 1,
+      await apiUpdateFreeBoard({
+        freeBoardId: boardId,
         title,
         tag: selectedTags,
         categoryName: selectedNormalCategory,
@@ -72,14 +88,14 @@ const Form = () => {
       });
 
       toast({
-        description: "게시글 생성했습니다.\n생성된 게시글 페이지로 이동됩니다.",
+        description: "게시글 수정했습니다.\n생성된 게시글 페이지로 이동됩니다.",
         status: "success",
         duration: 2500,
         isClosable: true,
       });
 
       // TODO: 화면 이동 + 스피너
-      // router.push(`/free/${freeBoardId}`);
+      // router.push(`/free/${boardId}`);
     } catch (error) {
       console.error(error);
 
@@ -92,13 +108,15 @@ const Form = () => {
     }
   };
 
+  if (isLoading) return <FullSpinner />;
+
   return (
     <form className="flex flex-col space-y-4 mb-4 px-4" onSubmit={onSubmit}>
       {/* title, link, tag, category, thumbnail */}
       <section className="flex space-y-4 md:space-y-0 md:space-x-4 z-[1] flex-col md:flex-row flex-1">
         {/* title, link, tag, category */}
         <div className="w-full md:w-0 md:flex-1 space-y-2 z-[1]">
-          <Input name="제목" type="text" placeholder="제목을 입력해주세요!" />
+          <Input name="제목" type="text" placeholder="제목을 입력해주세요!" defaultValue={data?.data.title} />
           <div className="flex flex-col md:flex-row space-y-4 md:space-x-4 md:space-y-0">
             <Input name="태그" type="text" placeholder="태그를 입력해주세요!" noMessage onKeyDown={onSelectedTag} />
             <Category
@@ -130,7 +148,7 @@ const Form = () => {
         type="submit"
         className="self-end px-3.5 py-2.5 bg-main-400 text-white text-base font-bold rounded-md transition-colors hover:bg-main-500"
       >
-        작성 완료
+        수정 완료
       </button>
     </form>
   );

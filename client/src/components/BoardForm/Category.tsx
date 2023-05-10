@@ -4,7 +4,7 @@ import { CheckIcon } from "@heroicons/react/24/solid";
 import { twMerge } from "tailwind-merge";
 
 // hook
-import useFetchCategories from "@/hooks/query/useFetchCategories";
+import { useFetchCategories } from "@/hooks/query";
 
 // type
 import type { CategoryType } from "@/types/api";
@@ -21,10 +21,11 @@ const NormalCategory: React.FC<Props> = ({ type, selectedCategory, setSelectedCa
 
   /** 2023/05/09 - 카테고리 초깃값 - by 1-blue */
   useEffect(() => {
+    if (selectedCategory) return;
     if (!categories) return;
 
     setSelectedCategory(categories[0]);
-  }, [categories, setSelectedCategory]);
+  }, [selectedCategory, categories, setSelectedCategory]);
 
   const [query, setQuery] = useState("");
 

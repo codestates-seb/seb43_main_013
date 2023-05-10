@@ -89,7 +89,7 @@ const useTags = (ininitalTags: string[] = []) => {
     });
   };
 
-  return [selectedTags, onSelectedTag, onDeleteTag] as const;
+  return [selectedTags, onSelectedTag, onDeleteTag, setSelectedTags] as const;
 };
 
 export default useTags;

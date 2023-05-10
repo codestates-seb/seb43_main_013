@@ -21,4 +21,4 @@ const useFetchCategories = ({ type }: Props) => {
   return { categories: data?.categories, isLoading };
 };
 
-export default useFetchCategories;
+export { useFetchCategories };
