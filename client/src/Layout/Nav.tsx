@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import { useState } from "react";
 
 /** 2023/05/04 - 네브 컴포넌트 - by Kadesti */
@@ -51,30 +52,38 @@ const Nav = () => {
     <nav className="bg-white relative h-[64px] shadow-xl flex justify-center items-center px-7">
       <div className="max-w-[1080px] w-full flex justify-between items-center">
         <div className="max-w-[300px] w-80 flex justify-between text-xl ">
-          <div className="cursor-pointer text-black hover:text-rose-400">자유</div>
-          <div className="cursor-pointer text-black hover:text-rose-400">피드백</div>
-          <div className="cursor-pointer text-black hover:text-rose-400">홍보</div>
-          <div className="cursor-pointer text-black hover:text-rose-400">구인</div>
+          <Link href="/free">
+            <div className="text-black cursor-pointer hover:text-rose-400">자유</div>
+          </Link>
+          <Link href="feedback">
+            <div className="text-black cursor-pointer hover:text-rose-400">피드백</div>
+          </Link>
+          <Link href="/promotion">
+            <div className="text-black cursor-pointer hover:text-rose-400">홍보</div>
+          </Link>
+          <Link href="/job">
+            <div className="text-black cursor-pointer hover:text-rose-400">구인</div>
+          </Link>
         </div>
-        <div className="flex w-20 justify-between mr-6 cursor-default">
+        <div className="flex justify-between w-20 mr-6 cursor-default">
           <div>1</div>
           <div
             onClick={() => {
               setRankModal(!rankModal);
             }}
-            className="text-black hover:text-rose-400 cursor-pointer"
+            className="text-black cursor-pointer hover:text-rose-400"
           >
             해방일지
           </div>
         </div>
 
         {rankModal && (
-          <div className="flex flex-col p-2 w-28 absolute right-0 top-16 justify-between mr-6 cursor-default bg-white shadow-xl rounded-b-lg">
+          <div className="absolute right-0 flex flex-col justify-between p-2 mr-6 bg-white rounded-b-lg shadow-xl cursor-default w-28 top-16">
             {currentRank.map((el) => {
               return (
                 <div className="flex justify-between p-2">
                   <div>{el.id}</div>
-                  <div className="text-black hover:text-rose-400 cursor-pointer">{el.content}</div>
+                  <div className="text-black cursor-pointer hover:text-rose-400">{el.content}</div>
                 </div>
               );
             })}
