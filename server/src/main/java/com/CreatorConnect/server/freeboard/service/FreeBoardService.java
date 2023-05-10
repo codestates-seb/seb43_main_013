@@ -75,7 +75,8 @@ public class FreeBoardService {
      * <자유 게시판 게시글 수정>
      * 1. 게시글 존재 여부 확인
      * 2. 카테고리 유효성 검증 (변경한 카테고리가 존재하는 카테고리?)
-     * 3. 수정된 값 저장
+     * 3. 수정
+     * 4. 수정된 데이터 저장
      */
     public FreeBoard updateFreeBoard(FreeBoardDto.Patch patch, long freeboardId) {
         // 1. 게시글 존재 여부 확인
@@ -85,8 +86,9 @@ public class FreeBoardService {
 
 
         // 2. 카테고리를 수정할 경우 카테고리 유효성 검증 (변경한 카테고리가 존재하는 카테고리?)
-        if (patch.getCategoryName() != null) {
-            categoryService.verifyCategory(patch.getCategoryName());
+        if (patch.getCategoryName() != null) { // 카테고리 변경이 된 경우
+            categoryService.verifyCategory(patch.getCategoryName()); // 수정된 카테고리 존재 여부 확인
+            // 카테고리 수정
             Optional<Category> category = categoryRepository.findByCategoryName(patch.getCategoryName());
             checkedFreeBoard.setCategory(category.orElseThrow(() ->
                     new BusinessLogicException(ExceptionCode.CATEGORY_NOT_FOUND)));
@@ -100,14 +102,12 @@ public class FreeBoardService {
         Optional.ofNullable(freeBoard.getContent())
                 .ifPresent(content -> checkedFreeBoard.setContent(content)); // 게시글 내용 수정
 
-//        Optional.ofNullable(freeBoard.getCategory())
-//                .ifPresent(category -> checkedFreeBoard.setCategory(category)); // 카테고리 수정
 
         log.info("categoryName : {}",checkedFreeBoard.getCategoryName());
 
         // 태그 수정 추가 예정
 
-        // 4. 수정된 값 저장
+        // 4. 수정된 데이터 저장
         return freeBoardRepository.save(checkedFreeBoard);
 
     }
