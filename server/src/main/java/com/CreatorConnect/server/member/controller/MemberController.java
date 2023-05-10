@@ -5,10 +5,10 @@ import com.CreatorConnect.server.member.dto.MemberResponseDto;
 import com.CreatorConnect.server.member.entity.Member;
 import com.CreatorConnect.server.member.mapper.MemberMapper;
 import com.CreatorConnect.server.member.service.MemberService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -16,8 +16,8 @@ import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import java.util.List;
 
-@RestController
 @Validated
+@RestController
 public class MemberController {
     private static final String MEMBER_DEFAULT_URL = "/api/member";
     private static final String MEMBER_ALL_MAPPING_URL = "/api/members";
@@ -32,7 +32,7 @@ public class MemberController {
 
     @GetMapping("/")
     public ResponseEntity home(){
-        return new ResponseEntity("home", HttpStatus.OK);
+        return new ResponseEntity(HttpStatus.OK);
     }
 
     @PostMapping("/api/signup")
@@ -84,6 +84,7 @@ public class MemberController {
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
 
+    @Secured("ROLE_ADMIN")
     @GetMapping(MEMBER_ALL_MAPPING_URL)
     public ResponseEntity getMembers(@RequestParam @Positive int page,
                                      @RequestParam @Positive int size) {
@@ -104,4 +105,5 @@ public class MemberController {
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
 }
