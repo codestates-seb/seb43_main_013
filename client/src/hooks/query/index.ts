@@ -3,7 +3,10 @@ export const QUERY_KEYS = {
   categories: "categories",
   freeBoard: "freeBoard",
   feedbackBoard: "feedbackBoard",
+  promotionBoard: "promotionBoard",
 };
 
 export * from "./useFetchCategories";
 export * from "./useFetchFreeBoard";
+export * from "./useFetchFeedbackBoard";
+export * from "./useFetchPromotionBoard";
