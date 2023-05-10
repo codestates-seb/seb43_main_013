@@ -8,6 +8,7 @@ import Nav from "./Nav";
 import Main from "./Main";
 import Footer from "./Footer";
 
+// Login Modal
 import ModalProvider from "@/components/Login/contextAPI/ModalProvider";
 import LoginModal from "../components/Login/LoginModal";
 
