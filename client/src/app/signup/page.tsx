@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { SignInput } from "../../components/login";
+import { SignInput } from "../../components/Login/LoginModal";
 
 /** 2023/05/05 - 회원가입 페이지 컴포넌트 - by Kadesti */
 const signup = () => {
