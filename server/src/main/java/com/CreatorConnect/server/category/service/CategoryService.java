@@ -51,12 +51,13 @@ public class CategoryService {
     }
 
     // 카테고리 존재 여부 검증 메서드
-    public Category verifyCategory(long categoryId) {
+    public void verifyCategory(String name) {
+        long categoryId = findCategoryId(name);
         Optional<Category> optionalCategory = categoryRepository.findById(categoryId);
 
-        Category category = optionalCategory.orElseThrow(() ->
-                new BusinessLogicException(ExceptionCode.CATEGORY_NOT_FOUND));
-        return category;
+        if (!optionalCategory.isPresent()) {
+            throw new BusinessLogicException(ExceptionCode.CATEGORY_NOT_FOUND);
+        }
     }
 }
 
