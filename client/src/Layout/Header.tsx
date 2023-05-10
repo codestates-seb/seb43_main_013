@@ -25,10 +25,10 @@ const Header: React.FC = () => {
       <div className="flex w-full max-w-[1440px] items-center">
         <h1 className="text-6xl mr-10 cursor-pointer">CC</h1>
         <CommuTrend />
-        <SearchDiv />
+        <SearchDiv setInputModal={setInputModal} />
       </div>
       {isLogin ? <IsLoginSide nickState={nickState} /> : <NoneLoginSide />}
-      {inputModal && <InputModal />}
+      {inputModal && <InputModal setInputModal={setInputModal} />}
     </header>
   );
 };
