@@ -15,12 +15,10 @@ const Layout: React.FC<React.PropsWithChildren> = ({ children }) => (
   <LoadingProvider>
     <ModalProvider>
       <Modal />
-      <div id="root">
-        <Header />
-        <Nav />
-        <Main>{children}</Main>
-        <Footer />
-      </div>
+      <Header />
+      <Nav />
+      <Main>{children}</Main>
+      <Footer />
     </ModalProvider>
   </LoadingProvider>
 );

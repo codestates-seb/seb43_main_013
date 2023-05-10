@@ -164,9 +164,7 @@ const Modal = () => {
   if (modalValue) {
     return (
       <>
-        <div id="backdrop-root">
-          <div id="overlay" className="w-screen h-screen absolute bg-black/20 z-10" />
-        </div>
+        <div id="backdrop-root" className="w-screen h-screen absolute bg-black/20 z-10" />
         <div id="modal-root" className="w-screen h-screen absolute flex justify-center items-center z-20">
           <LoginWindow />
         </div>
