@@ -4,13 +4,20 @@ import Nav from "./Nav";
 import Main from "./Main";
 import Footer from "./Footer";
 
-/** 2023/05/04 - 레이아웃을 적용하는 컴포넌트 - by 1-blue */
+import { ModalProvider, Modal } from "../components/login";
+
+/** 2023/05/10 - 화면 구성의 Root 경로 - by Kadesti */
 const Layout: React.FC<React.PropsWithChildren> = ({ children }) => (
   <>
-    <Header />
-    <Nav />
-    <Main>{children}</Main>
-    <Footer />
+    <ModalProvider>
+      <Modal />
+      <div id="root">
+        <Header />
+        <Nav />
+        <Main>{children}</Main>
+        <Footer />
+      </div>
+    </ModalProvider>
   </>
 );
 
