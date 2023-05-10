@@ -16,13 +16,7 @@ const Input = ({ label, valid }: { label: "아이디" | "비밀번호"; valid: b
 };
 
 /** 2023/05/05 - 회원가입 인풋 창 - by Kadesti */
-const SignInput = ({
-  label,
-  valid,
-}: {
-  label: "아이디" | "비밀번호" | "닉네임" | "유튜브 주소" | "이메일" | "휴대폰 번호" | "자기소개";
-  valid?: boolean | undefined;
-}) => {
+const SignInput = ({ label, valid }: { label: string; valid?: boolean; isSubmit?: boolean }) => {
   return (
     <button className="w-full h-28">
       <div className="flex text-xl mb-1">{label}</div>
