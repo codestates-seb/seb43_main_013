@@ -1,7 +1,7 @@
-import SideCategories from "../../components/SideCategories";
+import SideCategories from "@/components/SideCategories";
+import SortPosts from "@/components/SortPosts";
 import ContentItem from "./ContentItem";
 import PopularPosts from "./PopularPosts";
-import SortPosts from "../../components/SortPosts";
 
 const categoryDummyData = ["전체", "먹방", "게임", "스포츠", "이슈", "음악", "뷰티", "영화", "쿠킹", "동물", "IT"];
 
@@ -50,7 +50,7 @@ const FreeMain = () => {
           {/* freeboard list header */}
           <div className="flex justify-between">
             <h1 className="py-1 text-3xl font-bold text-left"> 전체 </h1>
-            <div className="">
+            <div className="self-end px-2 py-1 text-gray-600 bg-white border border-gray-600 rounded-lg cursor-pointer outline outline-2 outline-gray-600">
               <SortPosts />
             </div>
           </div>

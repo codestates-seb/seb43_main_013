@@ -1,6 +1,6 @@
+import SideCategories from "@/components/SideCategories";
 import SortPosts from "@/components/SortPosts";
 import ContentItem from "../feedback/ContentItem";
-import SideCategories from "../../components/SideCategories";
 import FeedbackCategories from "./FeedbackCategories";
 
 const categoryDummyData = ["전체", "먹방", "게임", "스포츠", "이슈", "음악", "뷰티", "영화", "쿠킹", "동물", "IT"];
