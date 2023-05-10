@@ -6,7 +6,7 @@ import Footer from "./Footer";
 
 import { ModalProvider, Modal } from "../components/login";
 
-/** 2023/05/04 - 레이아웃을 적용하는 컴포넌트 - by 1-blue */
+/** 2023/05/10 - 화면 구성의 Root 경로 - by Kadesti */
 const Layout: React.FC<React.PropsWithChildren> = ({ children }) => (
   <>
     <ModalProvider>
