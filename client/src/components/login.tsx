@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useContext, createContext, useMemo } from "react";
 
 /** 2023/05/05 - 로그인 인풋 창 - by Kadesti */
 const Input = ({ label, valid }: { label: "아이디" | "비밀번호"; valid: boolean }) => {
@@ -106,12 +106,62 @@ const LoginWindow = () => {
   );
 };
 
+const ModalValueContext = createContext(false);
+const ModalActionContext = createContext({});
+
+// console.log("ModalValueContext: ", ModalValueContext);
+// console.log("ModalValueContext.Provider: ", ModalValueContext.Provider);
+// console.log("typeof(ModalValueContext.Provider): ", typeof ModalValueContext.Provider);
+// console.log("ModalActionContext: ", ModalActionContext);
+// console.log("ModalActionContext.Provider: ", ModalActionContext.Provider);
+
+/** 2023/05/10 - Modal 전역상태 Provider - by Kadesti */
+const ModalProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
+  const [modalState, setModalState] = useState(false);
+  const modalActions = useMemo(
+    () => ({
+      openModal() {
+        // setModalState(true);
+        console.log("open");
+      },
+      closeModal() {
+        // setModalState(false);
+        console.log("close");
+      },
+    }),
+    [],
+  );
+
+  console.log("modalactions: ", modalActions);
+
+  return (
+    <ModalActionContext.Provider value={modalActions}>
+      <ModalValueContext.Provider value={modalState}>{children}</ModalValueContext.Provider>
+    </ModalActionContext.Provider>
+  );
+};
+
+const useModalValue = () => {
+  const value = useContext(ModalValueContext);
+  if (value === undefined) {
+    throw new Error("useModalValue should be used within CounterProvider");
+  }
+  return value;
+};
+
+const useModalActions = () => {
+  const value = useContext(ModalActionContext);
+  if (value === undefined) {
+    throw new Error("useModalActions should be used within CounterProvider");
+  }
+  return value;
+};
+
 /** 2023/05/10 - 최상단에 띄울 Modal 컴포넌트 - by Kadesti */
 const Modal = () => {
-  // contextAPI로 setLoginModal 관리가 필요 (헤더에 로그인 클릭시 모달 팝업)
-  const [loginModal, setLoginModal] = useState(false);
+  const modalValue = useModalValue();
 
-  if (loginModal) {
+  if (modalValue) {
     return (
       <>
         <div id="backdrop-root">
@@ -127,4 +177,5 @@ const Modal = () => {
   return <></>;
 };
 
-export { Input, OAuthCon, SignInput, SmallBtn, Modal };
+export { Input, OAuthCon, SignInput, SmallBtn };
+export { ModalProvider, useModalActions, Modal };

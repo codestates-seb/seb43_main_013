@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { useModalActions } from "../components/login";
 
 /** 2023/05/04 - 헤더 컴포넌트 - by Kadesti */
 const Header: React.FC = () => {
@@ -9,10 +10,12 @@ const Header: React.FC = () => {
   const [isLogin, setIsLogin] = useState(false);
   const [inputModal, setInputModal] = useState(false);
   const [nickModal, setNickModal] = useState(false);
-  // const [loginModal, setLoginModal] = useState(false);
 
   // contextAPI로 setLoginModal 관리가 필요 (헤더에 로그인 클릭시 모달 팝업)
-  const [loginModal, setLoginModal] = useState<boolean>(false);
+  // const [loginModal, setLoginModal] = useState<boolean>(false);
+  const modalActions = useModalActions();
+
+  // console.log("modalActions: ", modalActions);
 
   return (
     <header className="bg-white h-[96px] border-b-4 flex justify-center">
@@ -44,9 +47,7 @@ const Header: React.FC = () => {
       ) : (
         <div className="flex items-center">
           <h3
-            onClick={() => {
-              setLoginModal(true);
-            }}
+            // onClick={modalActions.openModal}
             className="text-2xl mr-5 break-keep cursor-pointer text-black hover:text-rose-400"
           >
             로그인
