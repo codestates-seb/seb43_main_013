@@ -3,8 +3,6 @@
 import Link from "next/link";
 import { useState } from "react";
 
-import { Input, OAuthCon, SmallBtn } from "../../src/components/login";
-
 /** 2023/05/04 - 헤더 컴포넌트 - by Kadesti */
 const Header: React.FC = () => {
   // const [isLogin, setIsLogin] = useState(false);
@@ -12,9 +10,9 @@ const Header: React.FC = () => {
   const [inputModal, setInputModal] = useState(false);
   const [nickModal, setNickModal] = useState(false);
   // const [loginModal, setLoginModal] = useState(false);
-  const [loginModal, setLoginModal] = useState<boolean>(false);
 
-  const { idValid, pwValid } = useInputValid();
+  // contextAPI로 setLoginModal 관리가 필요 (헤더에 로그인 클릭시 모달 팝업)
+  const [loginModal, setLoginModal] = useState<boolean>(false);
 
   return (
     <header className="bg-white h-[96px] border-b-4 flex justify-center">
@@ -53,7 +51,9 @@ const Header: React.FC = () => {
           >
             로그인
           </h3>
-          <h3 className="text-2xl break-keep cursor-pointer text-black hover:text-rose-400">회원가입</h3>
+          <Link href="/signup">
+            <h3 className="text-2xl break-keep cursor-pointer text-black hover:text-rose-400">회원가입</h3>
+          </Link>
         </div>
       )}
       {nickModal && (
@@ -75,7 +75,6 @@ const Header: React.FC = () => {
           <div>1</div>
         </div>
       )}
-      {loginModal && <LoginWindow setLoginModal={setLoginModal} />};
     </header>
   );
 };
@@ -145,39 +144,5 @@ const ChevronUp = () => {
         clipRule="evenodd"
       />
     </svg>
-  );
-};
-
-/** 2023/05/05 - 로그인 유효성 체크 상태값 - by Kadesti */
-const useInputValid = () => {
-  const [idValid, setIdValid] = useState(false);
-  const [pwValid, setPWValid] = useState(false);
-
-  return { idValid, pwValid };
-};
-
-/** 2023/05/05 - 로그인 페이지 컴포넌트 - by Kadesti */
-const LoginWindow = ({ setLoginModal }: { setLoginModal: Function }) => {
-  const { idValid, pwValid } = useInputValid();
-
-  return (
-    <div className="fixed w-screen flex justify-center items-center z-10">
-      <div
-        onClick={(e) => {
-          e.preventDefault();
-          setLoginModal(false);
-        }}
-        className="bg-black/50 w-screen h-screen hover:cursor-pointer"
-      />
-      <div className="fixed bg-white w-2/5 flex flex-col items-center p-6 rounded-xl drop-shadow-xl">
-        <h1 className="text-5xl mb-6">로그인</h1>
-        <form className="w-full">
-          <Input label="아이디" valid={idValid} />
-          <Input label="비밀번호" valid={pwValid} />
-        </form>
-        <SmallBtn />
-        <OAuthCon />
-      </div>
-    </div>
   );
 };
