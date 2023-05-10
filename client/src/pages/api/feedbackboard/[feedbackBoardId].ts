@@ -12,7 +12,7 @@ import type {
   FeedbackBoard,
 } from "@/types/api";
 
-// 임의로 정의한 카테고리
+// 임의로 피드백 게시글 상세 내용
 const dummyFeedbackBoard: FeedbackBoard = {
   feedbackBoardId: 1111,
   title: faker.lorem.paragraph(),
@@ -58,10 +58,9 @@ const handler: NextApiHandler<
     if (req.method === "PATCH") {
       const body = req.body as ApiUpdateFeedbackBoardRequest;
 
-      return res.status(200).json({
-        ...body,
-        feedbackBoardId,
-      });
+      console.log("body >> ", body);
+
+      return res.status(200).json({});
     }
     if (req.method === "DELETE") {
       return res.status(204).end();

@@ -31,12 +31,9 @@ export interface ApiCreateFreeBoardRequest {
 /** 2023/05/10 - 자유 게시판 생성 요청 수신 타입 - by 1-blue */
 export interface ApiCreateFreeBoardResponse {
   freeBoardId: number;
-  title: string;
-  content: string;
-  tag: string[];
-  categoryName: string;
 }
-/** 2023/05/10 - 자유 게시판 삭제 요청 핸들러 - by 1-blue */
+
+/** 2023/05/10 - 자유 게시판 생성 요청 핸들러 - by 1-blue */
 export interface ApiCreateFreeBoardHandler {
   (body: ApiCreateFreeBoardRequest): Promise<ApiCreateFreeBoardResponse>;
 }
@@ -54,6 +51,7 @@ export interface ApiFetchFreeBoardResponse {
 export interface ApiFetchFreeBoardHandler {
   (body: ApiFetchFreeBoardRequest): Promise<ApiFetchFreeBoardResponse>;
 }
+
 // ============================== U 자유 게시판 수정 ==============================
 /** 2023/05/10 - 자유 게시판 수정 요청 송신 타입 - by 1-blue */
 export interface ApiUpdateFreeBoardRequest {
@@ -64,17 +62,12 @@ export interface ApiUpdateFreeBoardRequest {
   categoryName: string;
 }
 /** 2023/05/10 - 자유 게시판 수정 요청 수신 타입 - by 1-blue */
-export interface ApiUpdateFreeBoardResponse {
-  freeBoardId: number;
-  title: string;
-  content: string;
-  tag: string[];
-  categoryName: string;
-}
+export interface ApiUpdateFreeBoardResponse {}
 /** 2023/05/10 - 자유 게시판 수정 요청 핸들러 - by 1-blue */
 export interface ApiUpdateFreeBoardHandler {
   (body: ApiUpdateFreeBoardRequest): Promise<ApiUpdateFreeBoardResponse>;
 }
+
 // ============================== D 자유 게시판 삭제 ==============================
 /** 2023/05/10 - 자유 게시판 삭제 요청 송신 타입 - by 1-blue */
 export interface ApiDeleteFreeBoardRequest {

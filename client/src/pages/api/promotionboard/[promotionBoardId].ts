@@ -59,10 +59,9 @@ const handler: NextApiHandler<
     if (req.method === "PATCH") {
       const body = req.body as ApiUpdatePromotionBoardRequest;
 
-      return res.status(200).json({
-        ...body,
-        promotionBoardId,
-      });
+      console.log("body >> ", body);
+
+      return res.status(200).json({});
     }
     if (req.method === "DELETE") {
       return res.status(204).end();

@@ -6,6 +6,9 @@ import type { PageInfo } from "..";
 export interface PromotionBoard {
   promotionBoardId: number;
   title: string; // 게시글 제목
+  link: string; // 유튜브 링크
+  channelName: string; // 유튜브 채널명
+  subscriberCount: number; // 구독자수
   content: string; // 게시글 내용
   commentCount: number; // 댓글수
   likeCount: number; // 좋아요수
@@ -17,11 +20,6 @@ export interface PromotionBoard {
   memberId: number;
   email: string; // 작성자 이메일
   nickname: string; // 작성자 닉네임
-
-  // FIXME:
-  link: string; // 유튜브 링크
-  channelName: string; // 유튜브 채널명
-  subscriberCount: number; // 구독자수
 }
 
 // ============================== C 홍보 게시판 생성 ==============================
@@ -39,13 +37,6 @@ export interface ApiCreatePromotionBoardRequest {
 /** 2023/05/10 - 홍보 게시판 생성 요청 수신 타입 - by 1-blue */
 export interface ApiCreatePromotionBoardResponse {
   promotionBoardId: number;
-  title: string;
-  link: string;
-  channelName: string;
-  subscriberCount: number;
-  content: string;
-  tag: string[];
-  categoryName: string;
 }
 /** 2023/05/10 - 홍보 게시판 생성 요청 핸들러 - by 1-blue */
 export interface ApiCreatePromotionBoardHandler {
@@ -80,16 +71,7 @@ export interface ApiUpdatePromotionBoardRequest {
   categoryName: string;
 }
 /** 2023/05/10 - 홍보 게시판 수정 요청 수신 타입 - by 1-blue */
-export interface ApiUpdatePromotionBoardResponse {
-  promotionBoardId: number;
-  title: string;
-  link: string;
-  channelName: string;
-  subscriberCount: number;
-  content: string;
-  tag: string[];
-  categoryName: string;
-}
+export interface ApiUpdatePromotionBoardResponse {}
 /** 2023/05/10 - 홍보 게시판 수정 요청 핸들러 - by 1-blue */
 export interface ApiUpdatePromotionBoardHandler {
   (body: ApiUpdatePromotionBoardRequest): Promise<ApiUpdatePromotionBoardResponse>;

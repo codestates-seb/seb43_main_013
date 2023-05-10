@@ -29,15 +29,12 @@ export interface ApiCreateJobBoardRequest {
 /** 2023/05/10 - 구인구직 게시판 생성 요청 수신 타입 - by 1-blue */
 export interface ApiCreateJobBoardResponse {
   jobBoardId: number;
-  title: string;
-  content: string;
-  jobCategoryName: string;
 }
-
 /** 2023/05/10 - 구인구직 게시판 생성 요청 핸들러 - by 1-blue */
 export interface ApiCreateJobBoardHandler {
   (body: ApiCreateJobBoardRequest): Promise<ApiCreateJobBoardResponse>;
 }
+
 // ============================== R 구인구직 게시판 상세 정보 ==============================
 /** 2023/05/10 - 구인구직 게시판 상세 정보 요청 송신 타입 - by 1-blue */
 export interface ApiFetchJobBoardRequest {
@@ -62,12 +59,7 @@ export interface ApiUpdateJobBoardRequest {
   jobCategoryName: string;
 }
 /** 2023/05/10 - 구인구직 게시판 수정 요청 수신 타입 - by 1-blue */
-export interface ApiUpdateJobBoardResponse {
-  jobBoardId: number;
-  title: string;
-  content: string;
-  jobCategoryName: string;
-}
+export interface ApiUpdateJobBoardResponse {}
 /** 2023/05/10 - 구인구직 게시판 수정 요청 핸들러 - by 1-blue */
 export interface ApiUpdateJobBoardHandler {
   (body: ApiUpdateJobBoardRequest): Promise<ApiUpdateJobBoardResponse>;

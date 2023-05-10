@@ -35,17 +35,12 @@ export interface ApiCreateFeedbackBoardRequest {
 /** 2023/05/10 - 피드백 게시판 생성 요청 수신 타입 - by 1-blue */
 export interface ApiCreateFeedbackBoardResponse {
   feedbackBoardId: number;
-  title: string;
-  link: string;
-  content: string;
-  tag: string[];
-  categoryName: string;
-  feedbackCateogoryName: string;
 }
-/** 2023/05/10 - 피드백 게시판 삭제 요청 핸들러 - by 1-blue */
+/** 2023/05/10 - 피드백 게시판 생성 요청 핸들러 - by 1-blue */
 export interface ApiCreateFeedbackBoardHandler {
   (body: ApiCreateFeedbackBoardRequest): Promise<ApiCreateFeedbackBoardResponse>;
 }
+
 // ============================== R 피드백 게시판 상세 정보 ==============================
 /** 2023/05/10 - 피드백 게시판 상세 정보 요청 송신 타입 - by 1-blue */
 export interface ApiFetchFeedbackBoardRequest {
@@ -60,31 +55,17 @@ export interface ApiFetchFeedbackBoardResponse {
 export interface ApiFetchFeedbackBoardHandler {
   (body: ApiFetchFeedbackBoardRequest): Promise<ApiFetchFeedbackBoardResponse>;
 }
+
 // ============================== U 피드백 게시판 수정 ==============================
 /** 2023/05/10 - 피드백 게시판 수정 요청 송신 타입 - by 1-blue */
-export interface ApiUpdateFeedbackBoardRequest {
-  feedbackBoardId: number;
-  title: string;
-  link: string;
-  content: string;
-  tag: string[];
-  categoryName: string;
-  feedbackCateogoryName: string;
-}
+export interface ApiUpdateFeedbackBoardRequest {}
 /** 2023/05/10 - 피드백 게시판 수정 요청 수신 타입 - by 1-blue */
-export interface ApiUpdateFeedbackBoardResponse {
-  feedbackBoardId: number;
-  title: string;
-  link: string;
-  content: string;
-  tag: string[];
-  categoryName: string;
-  feedbackCateogoryName: string;
-}
+export interface ApiUpdateFeedbackBoardResponse {}
 /** 2023/05/10 - 피드백 게시판 수정 요청 핸들러 - by 1-blue */
 export interface ApiUpdateFeedbackBoardHandler {
   (body: ApiUpdateFeedbackBoardRequest): Promise<ApiUpdateFeedbackBoardResponse>;
 }
+
 // ============================== D 피드백 게시판 삭제 ==============================
 /** 2023/05/10 - 피드백 게시판 삭제 요청 송신 타입 - by 1-blue */
 export interface ApiDeleteFeedbackBoardRequest {

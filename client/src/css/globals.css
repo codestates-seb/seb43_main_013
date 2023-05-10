@@ -17,7 +17,7 @@ html {
   max-height: 600px;
 }
 
-/* spinner */
+/* spinner ( https://projects.lukehaas.me/css-loaders/ ) */
 .full-spinner {
   @apply relative text-main-300;
   

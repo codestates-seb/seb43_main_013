@@ -23,11 +23,11 @@ const dummyJobCategories = ["회사", "편집자", "pd", "작가"];
 
 /** 2023/05/09 - 카테고리 요청 - by 1-blue */
 const handler: NextApiHandler = async (req, res) => {
+  await timer(1500);
+
   try {
     if (req.method === "GET") {
       const { type } = req.query;
-
-      await timer(1500);
 
       if (type === "normal") {
         return res.status(200).json({ categories: dummyNormalCategories });

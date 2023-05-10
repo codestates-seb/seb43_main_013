@@ -9,6 +9,7 @@ import { apiUpdateFreeBoard } from "@/apis";
 // hook
 import { useFetchFreeBoard } from "@/hooks/query";
 import useTags from "@/hooks/useTags";
+import useLoading from "@/hooks/useLoading";
 
 // component
 import Input from "@/components/BoardForm/Input";
@@ -25,6 +26,7 @@ interface Props {
 /** 2023/05/10 - 자유 게시글 수정 form 컴포넌트 - by 1-blue */
 const Form: React.FC<Props> = ({ boardId }) => {
   const toast = useToast();
+  const loadingAction = useLoading();
 
   /** 2023/05/10 - 작성한 태그들 - by 1-blue */
   const [selectedTags, onSelectedTag, onDeleteTag, setSelectedTags] = useTags();
@@ -79,6 +81,8 @@ const Form: React.FC<Props> = ({ boardId }) => {
       });
 
     try {
+      loadingAction.startLoading();
+
       await apiUpdateFreeBoard({
         freeBoardId: boardId,
         title,
@@ -87,8 +91,10 @@ const Form: React.FC<Props> = ({ boardId }) => {
         content,
       });
 
+      loadingAction.endLoading();
+
       toast({
-        description: "게시글 수정했습니다.\n생성된 게시글 페이지로 이동됩니다.",
+        description: "게시글 수정했습니다.\n수정된 게시글 페이지로 이동됩니다.",
         status: "success",
         duration: 2500,
         isClosable: true,

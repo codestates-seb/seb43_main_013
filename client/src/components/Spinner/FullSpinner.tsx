@@ -12,7 +12,7 @@ const FullSpinner = () => {
   }, []);
 
   return (
-    <article className="fixed inset-0 z-[1] bg-black/80 flex justify-center items-center">
+    <article className="fixed inset-0 z-[2] bg-black/80 flex justify-center items-center">
       <div className="full-spinner -translate-x-1/2 -translate-y-1/2" />
     </article>
   );

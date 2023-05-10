@@ -8,6 +8,7 @@ import { apiUpdateJobBoard } from "@/apis";
 
 // hook
 import { useFetchJobBoard } from "@/hooks/query";
+import useLoading from "@/hooks/useLoading";
 
 // component
 import Input from "@/components/BoardForm/Input";
@@ -23,6 +24,7 @@ interface Props {
 /** 2023/05/10 - 구인구직 게시글 수정 form 컴포넌트 - by 1-blue */
 const Form: React.FC<Props> = ({ boardId }) => {
   const toast = useToast();
+  const loadingAction = useLoading();
 
   /** 2023/05/10 - wysiwyg 으로 받는 content - by 1-blue */
   const [content, setContent] = useState("");
@@ -73,13 +75,16 @@ const Form: React.FC<Props> = ({ boardId }) => {
       });
 
     try {
-      // TODO: 유저 식별자 넣어서 보내주기 ( memberId )
-      const { jobBoardId } = await apiUpdateJobBoard({
+      loadingAction.startLoading();
+
+      await apiUpdateJobBoard({
         jobBoardId: boardId,
         title,
         content,
         jobCategoryName: selectedJobCategory,
       });
+
+      loadingAction.endLoading();
 
       toast({
         description: "게시글 수정했습니다.\n수정된 게시글 페이지로 이동됩니다.",
@@ -89,7 +94,7 @@ const Form: React.FC<Props> = ({ boardId }) => {
       });
 
       // TODO: 화면 이동 + 스피너
-      // router.push(`/job/${jobBoardId}`);
+      // router.push(`/job/${boardId}`);
     } catch (error) {
       console.error(error);
 

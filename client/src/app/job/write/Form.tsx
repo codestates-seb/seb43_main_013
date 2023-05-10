@@ -3,6 +3,12 @@
 import { useState } from "react";
 import { useToast } from "@chakra-ui/react";
 
+// api
+import { apiCreateJobBoard } from "@/apis";
+
+// hook
+import useLoading from "@/hooks/useLoading";
+
 // component
 import Input from "@/components/BoardForm/Input";
 import Editor from "@/components/Editor";
@@ -11,15 +17,16 @@ import Category from "@/components/BoardForm/Category";
 /** 2023/05/09 - 구인구직 게시글 작성 form 컴포넌트 - by 1-blue */
 const Form = () => {
   const toast = useToast();
+  const loadingAction = useLoading();
 
   /** 2023/05/09 - wysiwyg 으로 받는 content - by 1-blue */
   const [content, setContent] = useState("");
 
   /** 2023/05/09 - 선택한 category - by 1-blue */
-  const [selectedNormalCategory, setSelectedNormalCategory] = useState("");
+  const [selectedJobCategory, setSelectedJobCategory] = useState("");
 
   /** 2023/05/09 - 구인구직 게시글 생성 - by 1-blue */
-  const onSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
+  const onSubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
 
     const values: string[] = [];
@@ -31,7 +38,7 @@ const Form = () => {
       values.push(value);
     }
 
-    const [title, link] = values;
+    const [title] = values;
 
     // 제목 유효성 검사
     if (title.trim().length <= 1)
@@ -49,15 +56,37 @@ const Form = () => {
         isClosable: true,
       });
 
-    // TODO: 유저 식별자 넣어서 보내주기 ( memberId )
-    const body = {
-      title,
-      link,
-      selectedNormalCategory,
-      content,
-    };
+    try {
+      loadingAction.startLoading();
 
-    console.log("body >> ", body);
+      const { jobBoardId } = await apiCreateJobBoard({
+        memberId: 1,
+        title,
+        content,
+        jobCategoryName: selectedJobCategory,
+      });
+
+      loadingAction.endLoading();
+
+      toast({
+        description: "게시글 생성했습니다.\n생성된 게시글 페이지로 이동됩니다.",
+        status: "success",
+        duration: 2500,
+        isClosable: true,
+      });
+
+      // TODO: 화면 이동 + 스피너
+      // router.push(`/job/${jobBoardId}`);
+    } catch (error) {
+      console.error(error);
+
+      return toast({
+        description: "에러가 발생했습니다.\n잠시후에 다시 시도해주세요!",
+        status: "error",
+        duration: 2500,
+        isClosable: true,
+      });
+    }
   };
 
   return (
@@ -68,11 +97,7 @@ const Form = () => {
         <div className="w-full md:w-0 md:flex-1 space-y-2 z-[1]">
           <Input name="제목" type="text" placeholder="제목을 입력해주세요!" />
           <div className="flex flex-col md:flex-row space-y-4 md:space-x-4 md:space-y-0">
-            <Category
-              type="job"
-              selectedCategory={selectedNormalCategory}
-              setSelectedCategory={setSelectedNormalCategory}
-            />
+            <Category type="job" selectedCategory={selectedJobCategory} setSelectedCategory={setSelectedJobCategory} />
           </div>
         </div>
       </section>

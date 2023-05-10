@@ -13,6 +13,7 @@ import { validateYoutubeURL } from "@/libs";
 
 // hook
 import useTags from "@/hooks/useTags";
+import useLoading from "@/hooks/useLoading";
 
 // component
 import Input from "@/components/BoardForm/Input";
@@ -23,6 +24,7 @@ import Tag from "@/components/BoardForm/Tag";
 /** 2023/05/09 - 피드백 게시글 작성 form 컴포넌트 - by 1-blue */
 const Form = () => {
   const toast = useToast();
+  const loadingAction = useLoading();
 
   /** 2023/05/09 - 작성한 태그들 - by 1-blue */
   const [selectedTags, onSelectedTag, onDeleteTag] = useTags();
@@ -103,6 +105,8 @@ const Form = () => {
       });
 
     try {
+      loadingAction.startLoading();
+
       // TODO: memberId && thumbnail url 넣어서 보내주기 ( memberId )
       await apiCreateFeedbackBoard({
         memberId: 1,
@@ -113,6 +117,8 @@ const Form = () => {
         categoryName: selectedNormalCategory,
         feedbackCateogoryName: selectedFeedbackCategory,
       });
+
+      loadingAction.endLoading();
 
       toast({
         description: "게시글 생성했습니다.\n생성된 게시글 페이지로 이동됩니다.",

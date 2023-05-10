@@ -13,7 +13,9 @@ const handler: NextApiHandler<ApiCreateFreeBoardResponse> = async (req, res) => 
     if (req.method === "POST") {
       const body = req.body as ApiCreateFreeBoardRequest;
 
-      return res.status(200).json({ ...body, freeBoardId: 1 });
+      console.log("body >> ", body);
+
+      return res.status(200).json({ freeBoardId: 1 });
     }
   } catch (error) {
     console.error("/api/freeboard/new error >> ", error);

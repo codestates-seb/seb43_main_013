@@ -12,7 +12,7 @@ import type {
   FreeBoard,
 } from "@/types/api";
 
-// 임의로 정의한 카테고리
+// 임의로 자유 게시글 상세 내용
 const dummyFreeBoard: FreeBoard = {
   freeBoardId: 1111,
   title: faker.lorem.paragraph(),
@@ -56,10 +56,9 @@ const handler: NextApiHandler<
     if (req.method === "PATCH") {
       const body = req.body as ApiUpdateFreeBoardRequest;
 
-      return res.status(200).json({
-        ...body,
-        freeBoardId,
-      });
+      console.log("body >> ", body);
+
+      return res.status(200).json({});
     }
     if (req.method === "DELETE") {
       return res.status(204).end();

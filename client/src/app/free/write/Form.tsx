@@ -9,6 +9,7 @@ import { apiCreateFreeBoard } from "@/apis";
 
 // hook
 import useTags from "@/hooks/useTags";
+import useLoading from "@/hooks/useLoading";
 
 // component
 import Input from "@/components/BoardForm/Input";
@@ -18,8 +19,9 @@ import Tag from "@/components/BoardForm/Tag";
 
 /** 2023/05/08 - 자유 게시글 작성 form 컴포넌트 - by 1-blue */
 const Form = () => {
-  const toast = useToast();
   const router = useRouter();
+  const toast = useToast();
+  const loadingAction = useLoading();
 
   /** 2023/05/09 - 작성한 태그들 - by 1-blue */
   const [selectedTags, onSelectedTag, onDeleteTag] = useTags();
@@ -62,6 +64,8 @@ const Form = () => {
       });
 
     try {
+      loadingAction.startLoading();
+
       // TODO: 유저 식별자 넣어서 보내주기 ( memberId )
       const { freeBoardId } = await apiCreateFreeBoard({
         memberId: 1,
@@ -70,6 +74,8 @@ const Form = () => {
         categoryName: selectedNormalCategory,
         content,
       });
+
+      loadingAction.endLoading();
 
       toast({
         description: "게시글 생성했습니다.\n생성된 게시글 페이지로 이동됩니다.",
