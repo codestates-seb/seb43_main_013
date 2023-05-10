@@ -2,6 +2,7 @@ package com.CreatorConnect.server.member.entity;
 
 import com.CreatorConnect.server.audit.Auditable;
 import com.CreatorConnect.server.freeboard.entity.FreeBoard;
+import com.CreatorConnect.server.feedbackboard.entity.FeedbackBoard;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -22,8 +23,14 @@ public class Member extends Auditable {
     private Long memberId;
 
     @Email
-    @Column(nullable = false, updatable = false, unique = true)
+    @Column(nullable = false, unique = true)
     private String email;
+
+    @Column
+    private boolean oauth = false;
+
+    @Column
+    private String oauthProvider;
 
     @Column(length = 300, nullable = false)
     private String password;
@@ -35,20 +42,17 @@ public class Member extends Auditable {
     private String nickname;
 
     @Pattern(regexp = "^01(?:0|1|[6-9])-(\\d{3,4})-(\\d{4})$")
-    @Column(length = 13, nullable = false, unique = true)
+    @Column(length = 13, unique = true)
     private String phone;
 
     @Column
-    private boolean oauth = false;
-
-    @Column
-    private String introduce;
+    private String introduction;
 
     @Column
     private String link;
 
     @Column
-    private String image; // fixme type 변경
+    private String profileImageUrl;
 
     @OneToMany(mappedBy = "follower", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Follow> follows = new ArrayList<>();
@@ -61,8 +65,8 @@ public class Member extends Auditable {
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<FreeBoard> freeBoards = new ArrayList<>();
 //
-//    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-//    private List<FeedBackBoard> feedbackBoards = new ArrayList<>();
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<FeedbackBoard> feedbackBoards = new ArrayList<>();
 //
 //    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 //    private List<PromotionBoard> promotionBoards = new ArrayList<>();

@@ -1,6 +1,7 @@
 package com.CreatorConnect.server.category.entity;
 
 import com.CreatorConnect.server.freeboard.entity.FreeBoard;
+import com.CreatorConnect.server.feedbackboard.entity.FeedbackBoard;
 import lombok.*;
 
 import javax.persistence.*;
@@ -25,4 +26,6 @@ public class Category {
     @OneToMany(mappedBy = "category")
     private List<FreeBoard> freeBoards = new ArrayList<>();
 
+    @OneToMany(mappedBy = "category", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<FeedbackBoard> feedbackBoards = new ArrayList<>();
 }

@@ -8,6 +8,7 @@ import com.CreatorConnect.server.member.entity.Member;
 import com.CreatorConnect.server.member.repository.MemberRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -26,10 +27,11 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final ApplicationEventPublisher publisher;
-    private final PasswordEncoder passwordEncoder;
     private final CustomAuthorityUtils authorityUtils;
+    private final PasswordEncoder passwordEncoder;
 
-    public MemberService(MemberRepository memberRepository, ApplicationEventPublisher publisher, PasswordEncoder passwordEncoder, CustomAuthorityUtils authorityUtils) {
+    public MemberService(MemberRepository memberRepository, ApplicationEventPublisher publisher,
+                         PasswordEncoder passwordEncoder, CustomAuthorityUtils authorityUtils) {
         this.memberRepository = memberRepository;
         this.publisher = publisher;
         this.passwordEncoder = passwordEncoder;
@@ -37,6 +39,7 @@ public class MemberService {
     }
 
     public Member createMember(Member member) {
+
         verifyExistsEmail(member.getEmail());
 
         String encryptPassword = passwordEncoder.encode(member.getPassword());
@@ -45,37 +48,35 @@ public class MemberService {
         List<String> roles = authorityUtils.createRoles(member.getEmail());
         member.setRoles(roles);
 
-        Member savedMember = memberRepository.save(member);
+        if (member.getProfileImageUrl() == null || member.getProfileImageUrl().isEmpty()) {
+            member.setProfileImageUrl("https://ibb.co/R7FdWWD");
+        }
 
+        Member savedMember = memberRepository.save(member);
         publisher.publishEvent(new MemberRegistrationApplicationEvent(savedMember));
+
         return savedMember;
     }
 
-    @Transactional(readOnly = true)
-    public Member findMember(Long memberId) {
-        return findVerifiedMember(memberId);
-    }
-
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE)
-    public Member updateMember(Member member) {
+    public Member updateMember(Long memberId, Member member, String email) {
+
+        verifiedAuthenticatedMember(memberId, email);
+
         Member findMember = findVerifiedMember(member.getMemberId());
 
-        Optional.ofNullable(member.getEmail())
-                .ifPresent(findMember::setEmail);
-        Optional.ofNullable(member.getName())
-                .ifPresent(findMember::setName);
         Optional.ofNullable(member.getPassword())
                 .ifPresent(findMember::setPassword);
         Optional.ofNullable(member.getNickname())
                 .ifPresent(findMember::setNickname);
         Optional.ofNullable(member.getPhone())
                 .ifPresent(findMember::setPhone);
-        Optional.ofNullable(member.getIntroduce())
-                .ifPresent(findMember::setIntroduce);
+        Optional.ofNullable(member.getIntroduction())
+                .ifPresent(findMember::setIntroduction);
         Optional.ofNullable(member.getLink())
                 .ifPresent(findMember::setLink);
-        Optional.ofNullable(member.getImage())
-                .ifPresent(findMember::setImage);
+        Optional.ofNullable(member.getProfileImageUrl())
+                .ifPresent(findMember::setProfileImageUrl);
 
         if (member.getPassword() != null) {
             findMember.setPassword(
@@ -86,43 +87,77 @@ public class MemberService {
     }
 
     @Transactional(readOnly = true)
+    public Member findMember(Long memberId) {
+
+        return findVerifiedMember(memberId);
+    }
+
+    @Transactional(readOnly = true)
     public Page<Member> findMembers(int page, int size) {
+
         return memberRepository.findAll(PageRequest.of(page, size,
                 Sort.by("memberId").descending()));
     }
 
-    public void deleteMember(long memberId) {
+    public void deleteMember(long memberId, String email) {
+
+        verifiedAuthenticatedMember(memberId, email);
         Member findMember = findVerifiedMember(memberId);
 
-        memberRepository.delete(findMember);
+        String delEmail = "del_" + findMember.getEmail();
+
+        findMember.setEmail(delEmail);
+        findMember.setMemberStatus(Member.MemberStatus.MEMBER_QUIT);
+
+        memberRepository.save(findMember);
     }
 
-    public Long findMemberId(String email) {
-        Optional<Member> optionalMember = memberRepository.findByEmail(email);
-        Member findMember = optionalMember.orElseThrow(() -> new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND));
-        return findMember.getMemberId();
+    public void verifyExistsEmail(String email) {
+
+        Optional<Member> member = memberRepository.findByEmail(email);
+
+        if (member.isPresent())
+            throw new BusinessLogicException(ExceptionCode.MEMBER_EXISTS, String.format(" %s : 이미 등록된 이메일입니다. 다른 이메일을 사용해주세요. ", email));
     }
 
-    public Member findVerifiedMemberByEmail(String email) {
-        Optional<Member> optionalMember = memberRepository.findByEmail(email);
-        Member findMember = optionalMember.orElseThrow(() -> new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND));
-        log.info("member: id[{}], email[{}], names[{}]", findMember.getMemberId(), findMember.getEmail(), findMember.getName());
+    public Member findVerifiedMember(long memberId) {
+
+        Optional<Member> optionalMember = memberRepository.findById(memberId);
+        Member findMember = optionalMember.orElseThrow(()
+                -> new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND));
+
+        verifyActivatedMember(findMember);
 
         return findMember;
     }
+    public boolean checkPassword (Long memberId, String password, String email){
 
-    private void verifyExistsEmail(String email) {
-        Optional<Member> member = memberRepository.findByEmail(email);
-        if (member.isPresent())
-            throw new BusinessLogicException(ExceptionCode.MEMBER_EXISTS);
+        verifiedAuthenticatedMember(memberId, email);
+        Member findMember = memberRepository.findByEmail(email).get();
+        return passwordEncoder.matches(password, findMember.getPassword());
     }
 
-    @Transactional(readOnly = true)
-    public Member findVerifiedMember(long memberId) {
-        Optional<Member> optionalMember =
-                memberRepository.findById(memberId);
-        return optionalMember.orElseThrow(() ->
-                new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND));
+
+    public void verifiedAuthenticatedMember(Long memberId, String email) {
+
+        Member findMember = findVerifiedMember(memberId);
+
+        if (email == null || email.isEmpty() ){
+            throw new BusinessLogicException(ExceptionCode.MEMBER_FIELD_NOT_FOUND);
+        } else if (!email.equals(findMember.getEmail())) {
+            throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_ALLOWED);
+        }
+
+    }
+
+    public void verifyActivatedMember (Member member) {
+
+        if (member.getMemberStatus() == Member.MemberStatus.MEMBER_QUIT) {
+            throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND, String.format("탈퇴한 회원입니다."));
+        } else if (member.getMemberStatus() == Member.MemberStatus.MEMBER_SLEEP) {
+            throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND, String.format("휴먼 상태의 회원입니다."));
+        }
+
     }
 
 
