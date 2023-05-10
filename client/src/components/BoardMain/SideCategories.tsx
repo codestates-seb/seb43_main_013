@@ -19,15 +19,18 @@ const SideCategories: React.FC<SideCategoriesProps> = ({ categoryData }) => {
       <div className="m-5 ">
         {categoryData &&
           categoryData.map((item) => (
-            <div
-              key={item}
-              className="px-5 text-sm leading-10 duration-200 bg-gray-100 rounded w-53 hover:bg-main-400 hover:text-white hover:scale-105 transtition hover:shadow-md hover:shadow-gray-500/50"
-              onClick={() => {
-                categoryClickHandler(item);
-              }}
-            >
-              {item}
-            </div>
+            <li className="list-none">
+              <button
+                type="button"
+                key={item}
+                className="w-full px-5 text-sm leading-10 duration-200 bg-gray-100 rounded hover:bg-main-400 hover:text-white hover:scale-105 transtition hover:shadow-md hover:shadow-gray-500/50"
+                onClick={() => {
+                  categoryClickHandler(item);
+                }}
+              >
+                {item}
+              </button>
+            </li>
           ))}
       </div>
     </div>

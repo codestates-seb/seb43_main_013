@@ -1,10 +1,12 @@
-import SideCategories from "@/components/SideCategories";
-import SortPosts from "@/components/SortPosts";
+import SideCategories from "@/components/BoardMain/SideCategories";
+import SortPosts from "@/components/BoardMain/SortPosts";
 import ContentItem from "./ContentItem";
 import PopularPosts from "./PopularPosts";
 
+/** 2023/05/09 - 자유게시판 메인 화면테스트용 더미데이터 - by leekoby */
 const categoryDummyData = ["전체", "먹방", "게임", "스포츠", "이슈", "음악", "뷰티", "영화", "쿠킹", "동물", "IT"];
 
+/** 2023/05/09 - 자유게시판 메인 화면테스트용 더미데이터 - by leekoby */
 const contentItemDummyData1 = {
   freeboardID: 1,
   title: " 차냥해 갓상은!",
@@ -18,6 +20,7 @@ const contentItemDummyData1 = {
   nickname: "인생은갓상은처럼",
 };
 
+/** 2023/05/09 - 자유게시판 메인 화면테스트용 더미데이터 - by leekoby */
 const contentItemDummyData2 = {
   freeboardID: 1,
   title: " 차냥해 갓상은!",

@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { BookmarkIcon as BookmarkIconUnchecked } from "@heroicons/react/24/outline";
 import defaultThumnail from "@/public/images/default-thumnail.jpg";
-import ContentFooter from "./ContentFooter";
+import ContentFooter from "../../components/BoardMain/ContentFooter";
 import TagItem from "./TagItem";
 
 interface ContentItemProps {

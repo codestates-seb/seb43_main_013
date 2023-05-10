@@ -1,11 +1,13 @@
-import SideCategories from "@/components/SideCategories";
-import SortPosts from "@/components/SortPosts";
+import SideCategories from "@/components/BoardMain/SideCategories";
+import SortPosts from "@/components/BoardMain/SortPosts";
 import ContentItem from "../feedback/ContentItem";
 import FeedbackCategories from "./FeedbackCategories";
 
+/** 2023/05/09 - 피드백 게시판 화면테스트용 더미데이터 - by leekoby */
 const categoryDummyData = ["전체", "먹방", "게임", "스포츠", "이슈", "음악", "뷰티", "영화", "쿠킹", "동물", "IT"];
 const feedbackCateogoryName = ["영상", "채널", "썸네일"];
 
+/** 2023/05/09 - 피드백 게시판 화면테스트용 더미데이터 - by leekoby */
 const contentItemDummyData1 = {
   feedbackCateogoryName: 1,
   title: " 차냥해 갓상은!",
@@ -19,6 +21,7 @@ const contentItemDummyData1 = {
   nickname: "인생은갓상은처럼",
 };
 
+/** 2023/05/09 - 피드백 게시판 화면테스트용 더미데이터 - by leekoby */
 const contentItemDummyData2 = {
   feedbackCateogoryName: 1,
   title: " 차냥해 갓상은!",
@@ -32,7 +35,7 @@ const contentItemDummyData2 = {
   nickname: "인생은갓상은처럼",
 };
 
-/** 2023/05/08 - 자유게시판 메인 화면 - by leekoby */
+/** 2023/05/08 - 피드백 메인 화면 - by leekoby */
 const FeedbackMain = () => {
   return (
     //  전체 컨테이너
