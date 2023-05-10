@@ -22,15 +22,15 @@ public class CategoryService {
      */
     public Category createCategory(Category category) {
         // 1. 카테고리 중복 검사
-        verifyCategory(category.getCategory());
+        verifyCategory(category.getCategoryName());
 
         // 2. 등록
         return categoryRepository.save(category);
     }
 
     // 카티고리 이름 중복 검사 메서드
-    private void verifyCategory(String name) {
-        Optional<Category> optionalCategory = categoryRepository.findByCategory(name);
+    private void verifyCategory(String categoryName) {
+        Optional<Category> optionalCategory = categoryRepository.findByCategoryName(categoryName);
         if (optionalCategory.isPresent()) {
             throw new BusinessLogicException(ExceptionCode.CATEGORY_EXISTS);
         }
