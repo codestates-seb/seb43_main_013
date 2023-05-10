@@ -14,7 +14,6 @@ public class FeedbackBoardResponseDto {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class Post {
-        private String massage;
         private long feedbackBoardId;
     }
 
@@ -23,21 +22,12 @@ public class FeedbackBoardResponseDto {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class Patch {
-        private String massage;
         private long feedbackBoardId;
         private String title;
         private String content;
         private String tag;
         private String categoryName;
         private String feedbackCategoryName;
-    }
-
-    @Getter
-    @Setter
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class delete {
-        private String massage;
     }
 
     @Getter

@@ -46,14 +46,13 @@ public class FeedbackBoardService {
 
         // Entity-Dto 변환
         FeedbackBoardResponseDto.Post responseDto = mapper.feedbackBoardToFeedbackBoardPostResponse(savedfeedbackBoard);
-        responseDto.setMassage("게시글이 등록되었습니다.");
         return responseDto;
     }
 
     //patch
     public FeedbackBoardResponseDto.Patch updateFeedback(Long feedbackBoardId, FeedbackBoardDto.Patch patchDto){
-        patchDto.setFeedbackBoardId(feedbackBoardId);
         FeedbackBoard feedbackBoard = mapper.feedbackBoardPatchDtoToFeedbackBoard(patchDto);
+        feedbackBoard.setFeedbackBoardId(feedbackBoardId);
         FeedbackBoard foundFeedbackBoard = findVerifiedFeedbackBoard(feedbackBoard.getFeedbackBoardId());
 
         Optional.ofNullable(feedbackBoard.getTitle())
@@ -72,7 +71,6 @@ public class FeedbackBoardService {
 
         FeedbackBoard updatedFeedbackBoard = feedbackBoardRepository.save(foundFeedbackBoard);
         FeedbackBoardResponseDto.Patch responseDto = mapper.feedbackBoardToFeedbackBoardPatchResponse(updatedFeedbackBoard);
-        responseDto.setMassage("게시글이 수정되었습니다.");
         return responseDto;
     }
 
@@ -101,12 +99,9 @@ public class FeedbackBoardService {
     }
 
     //삭제
-    public FeedbackBoardResponseDto.delete deleteFeedback(Long feedbackBoardId) {
+    public void deleteFeedback(Long feedbackBoardId) {
         FeedbackBoard feedbackBoard = findVerifiedFeedbackBoard(feedbackBoardId);
         feedbackBoardRepository.delete(feedbackBoard);
-        FeedbackBoardResponseDto.delete response = new FeedbackBoardResponseDto.delete();
-        response.setMassage("게시글이 삭제되었습니다.");
-        return response;
     }
 
 

@@ -48,8 +48,8 @@ public class FeedbackBoardController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
     @DeleteMapping("/{feedbackBoardId}")
-    public ResponseEntity<FeedbackBoardResponseDto.delete> deleteFeedback(@PathVariable("feedbackBoardId") @Positive Long feedbackBoardId) {
-        FeedbackBoardResponseDto.delete response = feedbackBoardService.deleteFeedback(feedbackBoardId);
-        return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
+    public ResponseEntity<HttpStatus> deleteFeedback(@PathVariable("feedbackBoardId") @Positive Long feedbackBoardId) {
+        feedbackBoardService.deleteFeedback(feedbackBoardId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

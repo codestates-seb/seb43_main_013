@@ -28,7 +28,6 @@ public class FeedbackBoardDto {
     @Getter
     @Setter
     public static class Patch {
-        private long feedbackBoardId;
         private String title;
         private String link;
         private String content;
