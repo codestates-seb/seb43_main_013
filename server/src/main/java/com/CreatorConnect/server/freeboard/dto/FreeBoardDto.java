@@ -1,7 +1,5 @@
 package com.CreatorConnect.server.freeboard.dto;
 
-import com.CreatorConnect.server.category.entity.Category;
-import com.CreatorConnect.server.member.entity.Member;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -69,7 +67,7 @@ public class FreeBoardDto {
     @Setter
     public static class Response{
         @Positive
-        private long freeboardId;
+        private long freeBoardId;
 
         private String title;
 
