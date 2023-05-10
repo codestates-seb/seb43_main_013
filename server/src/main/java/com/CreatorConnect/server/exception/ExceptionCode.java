@@ -10,9 +10,10 @@ public enum ExceptionCode {
     FEEDBACK_NOT_FOUND(404, "Feedback not found. Please check the Feedback ID and try again."),
     FEEDBACK_CATEGORY_NOT_FOUND(404, "FeedbackCategory not found. Please check the FeedbackCategory and try again."),
     MEMBER_EXISTS(409, "Member already exists. Please provide a different member ID."),
-    CATEGORY_EXISTS(409, "Category already exists. Please provide a different category"),
-    MEMBER_FIELD_NOT_FOUND(500, "Member field not found. Please check the object and try again.");
-
+    MEMBER_FIELD_NOT_FOUND(500, "Member field not found. Please check the object and try again."),
+    CATEGORY_EXISTS(409, "Category already exists. Please provide a different category"), 
+    FREEBOARD_NOT_FOUND(404, "FreeBoard not found, Please check the FreeBoard ID and try again.");   
+    
     @Getter
     private int status;
 

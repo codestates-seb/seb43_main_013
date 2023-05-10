@@ -1,6 +1,7 @@
 package com.CreatorConnect.server.member.entity;
 
 import com.CreatorConnect.server.audit.Auditable;
+import com.CreatorConnect.server.freeboard.entity.FreeBoard;
 import com.CreatorConnect.server.feedbackboard.entity.FeedbackBoard;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -61,8 +62,8 @@ public class Member extends Auditable {
 
 
 
-//    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-//    private List<FreeBoard> freeBoards = new ArrayList<>();
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<FreeBoard> freeBoards = new ArrayList<>();
 //
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<FeedbackBoard> feedbackBoards = new ArrayList<>();
