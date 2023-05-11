@@ -84,6 +84,7 @@ public class FeedbackBoard extends Auditable {
         return member.getNickname();
     }
     public String getEmail() {return member.getEmail();}
+    public String getProfileImageUrl() {return member.getProfileImageUrl();}
 
     public void setMember(Member member) {
         this.member = member;

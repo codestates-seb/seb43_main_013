@@ -1,5 +1,6 @@
 package com.CreatorConnect.server.auth.handler;
 
+import com.CreatorConnect.server.member.entity.Member;
 import com.CreatorConnect.server.member.repository.MemberRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +12,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 @Slf4j
 @Component
@@ -30,14 +34,22 @@ public class MemberAuthenticationSuccessHandler implements AuthenticationSuccess
         // 인증 성공 후, 로그를 기록하거나 사용자 정보를 response로 전송하는 등의 추가 작업을 할 수 있다.
         log.info("# Authenticated successfully!");
 
-        // 인증된 사용자의 memberId 가져오기
+        // 인증된 사용자의 username 가져오기
         String username = ((UserDetails)authentication.getPrincipal()).getUsername();
 
-        Long memberId = memberRepository.findByEmail(username).get().getMemberId();
+        Member member = memberRepository.findByEmail(username).orElseThrow();
+        Long memberId = member.getMemberId();
+        String nickname = member.getNickname();
+        String profileImageUrl = member.getProfileImageUrl();
 
-        // memberId를 JSON 형식으로 응답하기
+        // response JSON 형식으로 응답하기
         ObjectMapper objectMapper = new ObjectMapper();
-        String jsonResult = objectMapper.writeValueAsString(Collections.singletonMap("memberId", memberId));
+        LinkedHashMap<String, Object> resultMap = new LinkedHashMap<>(); // 순서대로 정렬
+        resultMap.put("memberId", memberId);
+        resultMap.put("email", username);
+        resultMap.put("nickname", nickname);
+        resultMap.put("profileImageUrl", profileImageUrl);
+        String jsonResult = objectMapper.writeValueAsString(resultMap);
 
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
