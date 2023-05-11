@@ -7,6 +7,7 @@ import CommuTrend from "@/components/Header/CommuTrend";
 import SearchDiv from "@/components/Header/SearchDiv";
 import { IsLoginSide, NoneLoginSide } from "@/components/Header/LoginSide";
 import InputModal from "@/components/Header/InputModal";
+import HeaderLogo from "@/components/Header/HeaderLogo";
 
 /** 2023/05/04 - 헤더 컴포넌트 - by Kadesti */
 const Header: React.FC = () => {
@@ -23,7 +24,7 @@ const Header: React.FC = () => {
   return (
     <header className="bg-white h-[96px] border-b-4 flex justify-center">
       <div className="flex w-full max-w-[1440px] items-center">
-        <h1 className="text-6xl mr-10 cursor-pointer">CC</h1>
+        <HeaderLogo />
         <CommuTrend />
         <SearchDiv setInputModal={setInputModal} />
         {isLogin ? <IsLoginSide nickState={nickState} /> : <NoneLoginSide />}
