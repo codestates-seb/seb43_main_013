@@ -1,20 +1,29 @@
 package com.CreatorConnect.server.category.service;
 
+import com.CreatorConnect.server.category.dto.CategoryDto;
+import com.CreatorConnect.server.category.dto.CategoryResponseDto;
 import com.CreatorConnect.server.category.entity.Category;
+import com.CreatorConnect.server.category.mapper.CategoryMapper;
 import com.CreatorConnect.server.category.repository.CategoryRepository;
 import com.CreatorConnect.server.exception.BusinessLogicException;
 import com.CreatorConnect.server.exception.ExceptionCode;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
+@RequiredArgsConstructor
+@Transactional
 @Service
 public class CategoryService {
     private final CategoryRepository categoryRepository;
+    private final CategoryMapper mapper;
 
-    public CategoryService(CategoryRepository categoryRepository) {
-        this.categoryRepository = categoryRepository;
-    }
     /**
      * <카테고리 등록 - 임시 기능>
      * 1. 카테고리 중복 검사
@@ -26,6 +35,41 @@ public class CategoryService {
 
         // 2. 등록
         return categoryRepository.save(category);
+    }
+
+    // 패치
+    public CategoryResponseDto.Patch updateCategory(Long categoryId, CategoryDto.Patch patchDto){
+        Category category = mapper.categoryPatchDtoToCategory(patchDto);
+        category.setCategoryId(categoryId);
+        Category foundCategory = findVerifiedCategory(category.getCategoryId());
+
+        Optional.ofNullable(category.getCategoryName())
+                .ifPresent(foundCategory::setCategoryName);
+
+        Category updatedCategory = categoryRepository.save(foundCategory);
+        CategoryResponseDto.Patch responseDto = mapper.categoryToCategoryPatchResponse(updatedCategory);
+        return responseDto;
+    }
+
+    //조회
+    public CategoryResponseDto.Details responseCategory(Long CategoryId){
+        Category foundCategory = findVerifiedCategory(CategoryId);
+        return mapper.categoryToCategoryDetailsResponse(foundCategory);
+    }
+
+    //목록 조회
+    public CategoryResponseDto.Multi<CategoryResponseDto.Details> responseCategorys(int page, int size){
+        PageRequest pageRequest = PageRequest.of(page - 1, size, Sort.by("categoryId").descending());
+        Page<Category> categorysPage = categoryRepository.findAll(pageRequest);
+        List<CategoryResponseDto.Details> responses = mapper.categorysToCategoryDetailsResponses(categorysPage.getContent());
+        CategoryResponseDto.PageInfo pageInfo = new CategoryResponseDto.PageInfo(categorysPage.getNumber() + 1, categorysPage.getSize(), categorysPage.getTotalElements(), categorysPage.getTotalPages());
+        return new CategoryResponseDto.Multi<>(responses, pageInfo);
+    }
+
+    //삭제
+    public void deleteCategory(Long categoryId) {
+        Category category = findVerifiedCategory(categoryId);
+        categoryRepository.delete(category);
     }
 
     // 카티고리 이름 중복 검사 메서드
@@ -58,5 +102,11 @@ public class CategoryService {
         if (!optionalCategory.isPresent()) {
             throw new BusinessLogicException(ExceptionCode.CATEGORY_NOT_FOUND);
         }
+    }
+    // 피드백 카테고리 조회 메서드
+    public Category findVerifiedCategory(Long categoryId){
+        Optional<Category> optionalCategory = categoryRepository.findById(categoryId);
+        Category category = optionalCategory.orElseThrow(() -> new BusinessLogicException(ExceptionCode.CATEGORY_NOT_FOUND));
+        return  category;
     }
 }

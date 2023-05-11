@@ -19,12 +19,12 @@ public class CategoryDto {
         private String categoryName;
 
     }
-    @AllArgsConstructor
-    @NoArgsConstructor
+
     @Getter
     @Setter
-    public static class Response{
-        private long categoryId;
+    public static class Patch {
+        @Valid
+        @NotBlank(message = "카테고리를 입력하세요.")
         private String categoryName;
     }
 }

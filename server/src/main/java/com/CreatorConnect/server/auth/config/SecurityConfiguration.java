@@ -4,7 +4,6 @@ import com.CreatorConnect.server.auth.filter.JwtAuthenticationFilter;
 import com.CreatorConnect.server.auth.filter.JwtVerificationFilter;
 import com.CreatorConnect.server.auth.handler.*;
 import com.CreatorConnect.server.auth.jwt.JwtTokenizer;
-import com.CreatorConnect.server.auth.oauth.config.OAuth2Configuration;
 import com.CreatorConnect.server.auth.oauth.handler.OAuth2MemberSuccessHandler;
 import com.CreatorConnect.server.auth.oauth.service.OAuth2MemberService;
 import com.CreatorConnect.server.auth.utils.CustomAuthorityUtils;
@@ -37,14 +36,12 @@ public class SecurityConfiguration {
     private final JwtTokenizer jwtTokenizer;
     private final CustomAuthorityUtils authorityUtils;
     private final OAuth2MemberSuccessHandler oAuth2MemberSuccessHandler;
-    private final OAuth2MemberService oAuth2MemberService;
     private final MemberRepository memberRepository;
 
-    public SecurityConfiguration(JwtTokenizer jwtTokenizer, CustomAuthorityUtils authorityUtils, OAuth2MemberSuccessHandler oAuth2MemberSuccessHandler, OAuth2MemberService oAuth2MemberService, MemberRepository memberRepository) {
+    public SecurityConfiguration(JwtTokenizer jwtTokenizer, CustomAuthorityUtils authorityUtils, OAuth2MemberSuccessHandler oAuth2MemberSuccessHandler, MemberRepository memberRepository) {
         this.jwtTokenizer = jwtTokenizer;
         this.authorityUtils = authorityUtils;
         this.oAuth2MemberSuccessHandler = oAuth2MemberSuccessHandler;
-        this.oAuth2MemberService = oAuth2MemberService;
         this.memberRepository = memberRepository;
     }
 
@@ -80,6 +77,8 @@ public class SecurityConfiguration {
                         .antMatchers(HttpMethod.GET, "/api/feedbackboard/**","/api/feedbackboards").permitAll()
                         .antMatchers(HttpMethod.GET, "/api/promotionboard/**","/api/promotionboards").permitAll()
                         .antMatchers(HttpMethod.GET, "/api/jobboard/**","/api/jobboards").permitAll()
+                        .antMatchers(HttpMethod.GET, "/api/feedbackcategory/**","/api/feedbackcategorys").permitAll()
+                        .antMatchers(HttpMethod.GET, "/api/category/**","/api/categorys").permitAll()
                         .anyRequest().authenticated()
                         )
                 .oauth2Login()
