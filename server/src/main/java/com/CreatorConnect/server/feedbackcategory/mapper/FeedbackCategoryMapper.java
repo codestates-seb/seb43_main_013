@@ -1,8 +1,14 @@
 package com.CreatorConnect.server.feedbackcategory.mapper;
 
+import com.CreatorConnect.server.feedbackboard.dto.FeedbackBoardDto;
+import com.CreatorConnect.server.feedbackboard.dto.FeedbackBoardResponseDto;
+import com.CreatorConnect.server.feedbackboard.entity.FeedbackBoard;
 import com.CreatorConnect.server.feedbackcategory.dto.FeedbackCategoryDto;
+import com.CreatorConnect.server.feedbackcategory.dto.FeedbackCategoryResponseDto;
 import com.CreatorConnect.server.feedbackcategory.entity.FeedbackCategory;
 import org.mapstruct.Mapper;
+
+import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface FeedbackCategoryMapper {
@@ -10,6 +16,11 @@ public interface FeedbackCategoryMapper {
     FeedbackCategory feedbackCategoryPostDtoToFeedbackCategory(FeedbackCategoryDto.Post post);
 
     // Category -> CategoryDto.Response
-    FeedbackCategoryDto.Response feedbackCategoryToFeedbackCategoryResponseDto(FeedbackCategory feedbackCategory);
+    FeedbackCategoryResponseDto.Post feedbackCategoryToFeedbackCategoryResponseDto(FeedbackCategory feedbackCategory);
+
+    FeedbackCategory feedbackCategoryPatchDtoToFeedbackCategory(FeedbackCategoryDto.Patch feedbackCategoryPatchDto);
+    FeedbackCategoryResponseDto.Patch feedbackCategoryToFeedbackCategoryPatchResponse(FeedbackCategory feedbackCategory);
+    FeedbackCategoryResponseDto.Details feedbackCategoryToFeedbackCategoryDetailsResponse(FeedbackCategory feedbackCategory);
+    List<FeedbackCategoryResponseDto.Details> feedbackCategorysToFeedbackBoardCategorysResponses (List<FeedbackCategory> feedbackCategorys);
 }
 

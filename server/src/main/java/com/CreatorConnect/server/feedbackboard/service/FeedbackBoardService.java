@@ -113,7 +113,7 @@ public class FeedbackBoardService {
 
     //피드백 카테고리 아이디로 피드백 목록 찾는 메서드
     public List<FeedbackBoardResponseDto.Details> findFeedbacksByCategoryId(Long feedbackCategoryId) {
-        FeedbackCategory feedbackCategory = feedbackCategoryService.findverifiedFeedbackCategory(feedbackCategoryId);
+        FeedbackCategory feedbackCategory = feedbackCategoryService.findVerifiedFeedbackCategory(feedbackCategoryId);
         return mapper.feedbackBoardsToFeedbackBoardDetailsResponses(feedbackBoardRepository.findByFeedbackCategory(feedbackCategory));
     }
 }
