@@ -11,8 +11,6 @@ interface ContentItemProps {
 }
 
 const ContentItem: React.FC<ContentItemProps> = ({ props }) => {
-  console.log("props:", props);
-  console.log(typeof props);
   return (
     <>
       {/*  list container */}
