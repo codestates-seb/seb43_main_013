@@ -95,4 +95,8 @@ public class FreeBoard extends Auditable {
         }
     }
 
+    @OneToMany(mappedBy = "freeBoard", cascade = CascadeType.REMOVE)
+    @JsonBackReference
+    private List<TagBoard> tagBoards = new ArrayList<>();
+
 }
