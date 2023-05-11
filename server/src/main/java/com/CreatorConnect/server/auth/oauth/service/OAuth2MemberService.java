@@ -1,24 +1,18 @@
 package com.CreatorConnect.server.auth.oauth.service;
 
-import com.CreatorConnect.server.auth.oauth.attribute.OAuth2Attribute;
-import com.CreatorConnect.server.auth.userdetails.MemberDetailsService;
 import com.CreatorConnect.server.auth.utils.CustomAuthorityUtils;
 import com.CreatorConnect.server.member.entity.Member;
 import com.CreatorConnect.server.member.repository.MemberRepository;
 import lombok.extern.slf4j.Slf4j;
 
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
-import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -26,7 +20,7 @@ import java.util.UUID;
  * */
 @Slf4j
 @Component
-public class OAuth2MemberService extends DefaultOAuth2UserService {
+public class OAuth2MemberService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
     private final MemberRepository memberRepository;
     private final CustomAuthorityUtils authorityUtils;
@@ -34,7 +28,6 @@ public class OAuth2MemberService extends DefaultOAuth2UserService {
     public OAuth2MemberService(MemberRepository memberRepository, CustomAuthorityUtils authorityUtils) {
         this.memberRepository = memberRepository;
         this.authorityUtils = authorityUtils;
-
     }
 
     @Override
@@ -42,25 +35,31 @@ public class OAuth2MemberService extends DefaultOAuth2UserService {
 
         log.info("{}",userRequest.getClientRegistration());
         log.info("{}",userRequest.getAccessToken().getTokenValue());
-        log.info("{}",super.loadUser(userRequest).getAttributes());
 
-        OAuth2UserService<OAuth2UserRequest, OAuth2User> oAuth2UserService = new DefaultOAuth2UserService();
+        OAuth2UserService delegate = new DefaultOAuth2UserService();
+        OAuth2User oAuth2User = delegate.loadUser(userRequest);
 
-        OAuth2User oAuth2User = oAuth2UserService.loadUser(userRequest);
+        String registrationId = userRequest.getClientRegistration().getRegistrationId();
 
-        String registrationId = userRequest.getClientRegistration().getRegistrationId(); // google
+        log.info("{}", registrationId);
 
-        OAuth2Attribute oAuth2Attribute = OAuth2Attribute.of(registrationId, oAuth2User.getAttributes());
+        return oAuth2User;
 
-        Map<String, Object> attributes = oAuth2Attribute.convertToMap();
-
-        return new DefaultOAuth2User(Collections.singleton(new SimpleGrantedAuthority("ROLE_USER")), attributes, "email");
     }
 
+
     public void saveOauthMember (OAuth2User oAuth2User) {
+
         String email = String.valueOf(oAuth2User.getAttributes().get("email"));
         String name = String.valueOf(oAuth2User.getAttributes().get("name"));
-        String profileImageUrl = String.valueOf(oAuth2User.getAttributes().get("picture"));
+        String profileImageUrl;
+        if (oAuth2User.getAttributes().containsKey("picture")) {
+            profileImageUrl = String.valueOf(oAuth2User.getAttributes().get("picture"));
+        } else if (oAuth2User.getAttributes().containsKey("profileImage")) {
+            profileImageUrl = String.valueOf(oAuth2User.getAttributes().get("profileImage"));
+        } else {
+            profileImageUrl = null;
+        }
 
         List<String> authorities = authorityUtils.createRoles(email);
 
@@ -83,10 +82,7 @@ public class OAuth2MemberService extends DefaultOAuth2UserService {
             member.setProfileImageUrl(profileImageUrl);
             member.setOauth(true);
 
-
             memberRepository.save(member);
         }
     }
-
-
 }

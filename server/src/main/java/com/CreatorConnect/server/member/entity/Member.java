@@ -3,6 +3,7 @@ package com.CreatorConnect.server.member.entity;
 import com.CreatorConnect.server.audit.Auditable;
 import com.CreatorConnect.server.freeboard.entity.FreeBoard;
 import com.CreatorConnect.server.feedbackboard.entity.FeedbackBoard;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
