@@ -8,6 +8,8 @@ import org.springframework.security.oauth2.client.registration.ClientRegistratio
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
+import org.springframework.web.client.RestTemplate;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -58,7 +60,7 @@ public class OAuth2Configuration {
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
                 .authorizationUri("https://nid.naver.com/oauth2.0/authorize")
                 .redirectUri("http://localhost:8080/login/oauth2/code/kakao")
-                .scope("email","name","profile_image")
+                .scope("profile","email")
                 .tokenUri("https://nid.naver.com/oauth2.0/token")
                 .userInfoUri("https://openapi.naver.com/v1/nid/me")
                 .userNameAttributeName("id")
@@ -73,12 +75,17 @@ public class OAuth2Configuration {
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
                 .authorizationUri("https://kauth.kakao.com/oauth/authorize")
                 .redirectUri("http://localhost:8080/login/oauth2/code/kakao")
-                .scope("account_email","profile_nickname","profile_image")
+                .scope("profile","email")
                 .tokenUri("https://kauth.kakao.com/oauth/token")
                 .userInfoUri("https://kapi.kakao.com/v2/user/me")
                 .userNameAttributeName("id")
                 .clientName("Kakao")
                 .build();
+    }
+
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
     }
 
 }

@@ -37,12 +37,14 @@ public class SecurityConfiguration {
     private final JwtTokenizer jwtTokenizer;
     private final CustomAuthorityUtils authorityUtils;
     private final OAuth2MemberSuccessHandler oAuth2MemberSuccessHandler;
+    private final OAuth2MemberService oAuth2MemberService;
     private final MemberRepository memberRepository;
 
-    public SecurityConfiguration(JwtTokenizer jwtTokenizer, CustomAuthorityUtils authorityUtils, OAuth2MemberSuccessHandler oAuth2MemberSuccessHandler, MemberRepository memberRepository) {
+    public SecurityConfiguration(JwtTokenizer jwtTokenizer, CustomAuthorityUtils authorityUtils, OAuth2MemberSuccessHandler oAuth2MemberSuccessHandler, OAuth2MemberService oAuth2MemberService, MemberRepository memberRepository) {
         this.jwtTokenizer = jwtTokenizer;
         this.authorityUtils = authorityUtils;
         this.oAuth2MemberSuccessHandler = oAuth2MemberSuccessHandler;
+        this.oAuth2MemberService = oAuth2MemberService;
         this.memberRepository = memberRepository;
     }
 
@@ -70,22 +72,24 @@ public class SecurityConfiguration {
                 .apply(new CustomFilterConfigurer())
                 .and()
                 .authorizeHttpRequests(authorize -> authorize
-                        .antMatchers("/h2/**").permitAll()
-                        .antMatchers(HttpMethod.OPTIONS).permitAll()
-                        .antMatchers(HttpMethod.POST, "/api/signup", "/api/login").permitAll()
-                        .antMatchers(HttpMethod.GET, "/", "/login/**").permitAll()
-                        .antMatchers(HttpMethod.POST, "/login/**").permitAll()
-                        .antMatchers(HttpMethod.GET, "/api/freeboard/*", "/api/freeboards").permitAll()
-                        .antMatchers(HttpMethod.GET, "/api/feedbackboard/*","/api/feedbackboards").permitAll()
-                        .antMatchers(HttpMethod.GET, "/api/promotionboard/*","/api/promotionboards").permitAll()
-                        .antMatchers(HttpMethod.GET, "/api/jobboard/*","/api/jobboards").permitAll()
-                        .anyRequest().authenticated()
+//                        .antMatchers("/h2/**").permitAll()
+//                        .antMatchers(HttpMethod.OPTIONS).permitAll()
+//                        .antMatchers(HttpMethod.POST, "/api/signup", "/api/login").permitAll()
+//                        .antMatchers(HttpMethod.GET, "/", "/login/**").permitAll()
+//                        .antMatchers(HttpMethod.POST, "/login/**").permitAll()
+//                        .antMatchers(HttpMethod.GET, "/api/freeboard/*", "/api/freeboards").permitAll()
+//                        .antMatchers(HttpMethod.GET, "/api/feedbackboard/*","/api/feedbackboards").permitAll()
+//                        .antMatchers(HttpMethod.GET, "/api/promotionboard/*","/api/promotionboards").permitAll()
+//                        .antMatchers(HttpMethod.GET, "/api/jobboard/*","/api/jobboards").permitAll()
+//                        .anyRequest().authenticated()
+                                .anyRequest().permitAll()
                         )
-
                 .oauth2Login()
+                .userInfoEndpoint()
+                .userService(oAuth2MemberService)
+                .and()
                 .successHandler(oAuth2MemberSuccessHandler)
                 ;
-
         return http.build();
     }
 

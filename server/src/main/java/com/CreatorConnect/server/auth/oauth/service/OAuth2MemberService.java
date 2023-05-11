@@ -26,7 +26,7 @@ import java.util.UUID;
  * */
 @Slf4j
 @Component
-public class OAuth2MemberService extends DefaultOAuth2UserService {
+public class OAuth2MemberService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
     private final MemberRepository memberRepository;
     private final CustomAuthorityUtils authorityUtils;
@@ -41,16 +41,19 @@ public class OAuth2MemberService extends DefaultOAuth2UserService {
 
         log.info("{}",userRequest.getClientRegistration());
         log.info("{}",userRequest.getAccessToken().getTokenValue());
-        log.info("{}",super.loadUser(userRequest).getAttributes());
 
-        OAuth2UserService<OAuth2UserRequest, OAuth2User> oAuth2UserService = new DefaultOAuth2UserService();
-        OAuth2User oAuth2User = oAuth2UserService.loadUser(userRequest);
-        String registrationId = userRequest.getClientRegistration().getRegistrationId(); // google
-        OAuth2Attribute oAuth2Attribute = OAuth2Attribute.of(registrationId, oAuth2User.getAttributes());
-        Map<String, Object> attributes = oAuth2Attribute.convertToMap();
+        OAuth2UserService delegate = new DefaultOAuth2UserService();
+        OAuth2User oAuth2User = delegate.loadUser(userRequest);
 
-        return new DefaultOAuth2User(Collections.singleton(new SimpleGrantedAuthority("ROLE_USER")), attributes, "email");
+        String registrationId = userRequest.getClientRegistration().getRegistrationId();
+
+        log.info("{}", registrationId);
+
+        return oAuth2User;
+
     }
+
+
 
     public void saveOauthMember (OAuth2User oAuth2User) {
 
