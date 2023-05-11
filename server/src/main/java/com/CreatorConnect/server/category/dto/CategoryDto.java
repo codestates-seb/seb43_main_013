@@ -24,8 +24,8 @@ public class CategoryDto {
     @Getter
     @Setter
     public static class Response{
+        private String categoryName;
         private long categoryId;
-        private String category;
     }
 }
 
