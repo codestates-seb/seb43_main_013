@@ -23,25 +23,17 @@ public class KakaoController {
                 authorizationRequestUrl);
     }
 
-//    @GetMapping("/login/oauth2/code/kakao")
-//    public ResponseEntity kakaoLogin(@RequestParam("code") String code, RedirectAttributes ra,
-//                                     HttpSession session, HttpServletResponse response, Model model) throws IOException {
-//
-//        System.out.println("kakao code:" + code);
-//        return new ResponseEntity(HttpStatus.OK);
-//    }
+    @GetMapping("/login/oauth2/code/kakao")
+    public ResponseEntity kakaoLogin(@RequestParam("code") String code) throws IOException {
+
+        System.out.println("kakao code:" + code);
+        return new ResponseEntity(HttpStatus.OK);
+    }
 
     @GetMapping("/login")
     public ResponseEntity login() throws IOException {
 
         return new ResponseEntity(HttpStatus.OK);
     }
-
-    @GetMapping("/login/oauth2/code/kakao")
-    public ResponseEntity kakaoCallback() {
-
-        return new ResponseEntity(HttpStatus.OK);
-    }
-
 }
 

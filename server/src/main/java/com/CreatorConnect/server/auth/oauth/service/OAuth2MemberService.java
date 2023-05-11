@@ -34,7 +34,6 @@ public class OAuth2MemberService extends DefaultOAuth2UserService {
     public OAuth2MemberService(MemberRepository memberRepository, CustomAuthorityUtils authorityUtils) {
         this.memberRepository = memberRepository;
         this.authorityUtils = authorityUtils;
-
     }
 
     @Override
@@ -45,19 +44,16 @@ public class OAuth2MemberService extends DefaultOAuth2UserService {
         log.info("{}",super.loadUser(userRequest).getAttributes());
 
         OAuth2UserService<OAuth2UserRequest, OAuth2User> oAuth2UserService = new DefaultOAuth2UserService();
-
         OAuth2User oAuth2User = oAuth2UserService.loadUser(userRequest);
-
         String registrationId = userRequest.getClientRegistration().getRegistrationId(); // google
-
         OAuth2Attribute oAuth2Attribute = OAuth2Attribute.of(registrationId, oAuth2User.getAttributes());
-
         Map<String, Object> attributes = oAuth2Attribute.convertToMap();
 
         return new DefaultOAuth2User(Collections.singleton(new SimpleGrantedAuthority("ROLE_USER")), attributes, "email");
     }
 
     public void saveOauthMember (OAuth2User oAuth2User) {
+
         String email = String.valueOf(oAuth2User.getAttributes().get("email"));
         String name = String.valueOf(oAuth2User.getAttributes().get("name"));
         String profileImageUrl = String.valueOf(oAuth2User.getAttributes().get("picture"));
@@ -83,10 +79,7 @@ public class OAuth2MemberService extends DefaultOAuth2UserService {
             member.setProfileImageUrl(profileImageUrl);
             member.setOauth(true);
 
-
             memberRepository.save(member);
         }
     }
-
-
 }

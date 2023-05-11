@@ -57,7 +57,7 @@ public class OAuth2Configuration {
                 .clientSecret(naverClientSecret)
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
                 .authorizationUri("https://nid.naver.com/oauth2.0/authorize")
-                .redirectUri("http://localhost:8080/login/oauth2/code/naver")
+                .redirectUri("http://localhost:8080/login/oauth2/code/kakao")
                 .scope("email","name","profile_image")
                 .tokenUri("https://nid.naver.com/oauth2.0/token")
                 .userInfoUri("https://openapi.naver.com/v1/nid/me")
