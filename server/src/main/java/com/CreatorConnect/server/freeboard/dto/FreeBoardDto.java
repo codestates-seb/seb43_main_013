@@ -1,5 +1,6 @@
 package com.CreatorConnect.server.freeboard.dto;
 
+import com.CreatorConnect.server.tag.dto.TagDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,6 +12,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public class FreeBoardDto {
@@ -37,10 +39,7 @@ public class FreeBoardDto {
         //private long categoryId;
         private String categoryName;
 
-        // 태그 추가 예정
-//        public void addMemberId(Long memberId) {
-//            this.memberId = memberId;
-//        }
+        private List<TagDto> tags = new ArrayList<>(); // 태그
     }
     @AllArgsConstructor
     @NoArgsConstructor
@@ -58,7 +57,7 @@ public class FreeBoardDto {
         @Valid
         private String categoryName;
 
-        // 태그 추가 예정
+        private List<TagDto> tags = new ArrayList<>();
     }
 
     @AllArgsConstructor
@@ -79,10 +78,9 @@ public class FreeBoardDto {
 
         private long viewCount;
 
-        // 현재 카테고리 이름을 받아서 id 추출해서 저장하면 Category 테이블에 카테고리가 중복 저장되는 이슈로 인해 request로 categoryId를 받도록 임시조치
         private String categoryName;
 
-        // 태그 추가 예정
+        private List<TagDto> tags = new ArrayList<>();
 
         private LocalDateTime createdAt;
 
