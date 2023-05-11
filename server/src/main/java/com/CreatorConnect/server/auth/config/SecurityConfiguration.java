@@ -79,6 +79,8 @@ public class SecurityConfiguration {
                         .antMatchers(HttpMethod.GET, "/api/feedbackboard/*","/api/feedbackboards").permitAll()
                         .antMatchers(HttpMethod.GET, "/api/promotionboard/*","/api/promotionboards").permitAll()
                         .antMatchers(HttpMethod.GET, "/api/jobboard/*","/api/jobboards").permitAll()
+                        .antMatchers(HttpMethod.GET, "/api/feedbackcategory/*","/api/feedbackcategorys").permitAll()
+                        .antMatchers(HttpMethod.GET, "/api/category/*","/api/categorys").permitAll()
                         .anyRequest().authenticated()
                         )
 

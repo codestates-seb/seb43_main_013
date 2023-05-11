@@ -10,9 +10,13 @@ import com.CreatorConnect.server.feedbackcategory.entity.FeedbackCategory;
 import com.CreatorConnect.server.feedbackcategory.mapper.FeedbackCategoryMapper;
 import com.CreatorConnect.server.feedbackcategory.repository.FeedbackCategoryRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 @RequiredArgsConstructor
 @Transactional
@@ -58,6 +62,22 @@ public class FeedbackCategoryService {
         FeedbackCategory foundFeedbackCategory = findVerifiedFeedbackCategory(FeedbackCategoryId);
         return mapper.feedbackCategoryToFeedbackCategoryDetailsResponse(foundFeedbackCategory);
     }
+
+    //목록 조회
+    public FeedbackCategoryResponseDto.Multi<FeedbackCategoryResponseDto.Details> responseFeedbackCategorys(int page, int size){
+        PageRequest pageRequest = PageRequest.of(page - 1, size, Sort.by("feedbackCategoryId").descending());
+        Page<FeedbackCategory> feedbackCategorysPage = feedbackCategoryRepository.findAll(pageRequest);
+        List<FeedbackCategoryResponseDto.Details> responses = mapper.feedbackCategorysToFeedbackCategoryDetailsResponses(feedbackCategorysPage.getContent());
+        FeedbackCategoryResponseDto.PageInfo pageInfo = new FeedbackCategoryResponseDto.PageInfo(feedbackCategorysPage.getNumber() + 1, feedbackCategorysPage.getSize(), feedbackCategorysPage.getTotalElements(), feedbackCategorysPage.getTotalPages());
+        return new FeedbackCategoryResponseDto.Multi<>(responses, pageInfo);
+    }
+
+    //삭제
+    public void deleteFeedbackCategory(Long feedbackCategoryId) {
+        FeedbackCategory feedbackCategory = findVerifiedFeedbackCategory(feedbackCategoryId);
+        feedbackCategoryRepository.delete(feedbackCategory);
+    }
+
 
     // 카티고리 이름 중복 검사 메서드
     private void verifyFeedbackCategory(String feedbackCategoryName) {
