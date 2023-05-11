@@ -1,8 +1,6 @@
 package com.CreatorConnect.server.feedbackcategory.mapper;
 
-import com.CreatorConnect.server.feedbackboard.dto.FeedbackBoardDto;
-import com.CreatorConnect.server.feedbackboard.dto.FeedbackBoardResponseDto;
-import com.CreatorConnect.server.feedbackboard.entity.FeedbackBoard;
+
 import com.CreatorConnect.server.feedbackcategory.dto.FeedbackCategoryDto;
 import com.CreatorConnect.server.feedbackcategory.dto.FeedbackCategoryResponseDto;
 import com.CreatorConnect.server.feedbackcategory.entity.FeedbackCategory;

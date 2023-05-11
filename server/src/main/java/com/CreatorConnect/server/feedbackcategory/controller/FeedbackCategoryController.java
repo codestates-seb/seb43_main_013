@@ -1,6 +1,5 @@
 package com.CreatorConnect.server.feedbackcategory.controller;
 
-import com.CreatorConnect.server.feedbackboard.dto.FeedbackBoardResponseDto;
 import com.CreatorConnect.server.feedbackcategory.dto.FeedbackCategoryDto;
 import com.CreatorConnect.server.feedbackcategory.dto.FeedbackCategoryResponseDto;
 import com.CreatorConnect.server.feedbackcategory.entity.FeedbackCategory;
@@ -8,6 +7,7 @@ import com.CreatorConnect.server.feedbackcategory.mapper.FeedbackCategoryMapper;
 import com.CreatorConnect.server.feedbackcategory.service.FeedbackCategoryService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,6 +26,7 @@ public class FeedbackCategoryController {
         this.mapper = mapper;
     }
 
+    @Secured("ROLE_ADMIN")
     @PostMapping("/feedbackcategory/new")
     public ResponseEntity postFeedbackCategory(@Valid @RequestBody FeedbackCategoryDto.Post feedbackCategoryPost) {
         FeedbackCategory feedbackCategory = mapper.feedbackCategoryPostDtoToFeedbackCategory(feedbackCategoryPost);
@@ -34,6 +35,7 @@ public class FeedbackCategoryController {
         return new ResponseEntity<>(mapper.feedbackCategoryToFeedbackCategoryResponseDto(createdFeedbackCategory), HttpStatus.CREATED);
     }
 
+    @Secured("ROLE_ADMIN")
     @PatchMapping("/feedbackcategory/{feedbackCategoryId}")
     public ResponseEntity<FeedbackCategoryResponseDto.Patch> patchFeedbackCategory(@PathVariable("feedbackCategoryId") Long feedbackCategoryId,
                                                                            @Valid @RequestBody FeedbackCategoryDto.Patch patchDto){
@@ -54,7 +56,8 @@ public class FeedbackCategoryController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @DeleteMapping("/feedbackcategory/{feedbackBoardId}")
+    @Secured("ROLE_ADMIN")
+    @DeleteMapping("/feedbackcategory/{feedbackcategoryId}")
     public ResponseEntity<HttpStatus> deleteCategory(@PathVariable("feedbackCategoryId") @Positive Long feedbackCategoryId) {
         feedbackCategoryService.deleteFeedbackCategory(feedbackCategoryId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

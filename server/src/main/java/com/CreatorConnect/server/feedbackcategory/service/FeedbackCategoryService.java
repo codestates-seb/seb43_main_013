@@ -2,8 +2,6 @@ package com.CreatorConnect.server.feedbackcategory.service;
 
 import com.CreatorConnect.server.exception.BusinessLogicException;
 import com.CreatorConnect.server.exception.ExceptionCode;
-import com.CreatorConnect.server.feedbackboard.dto.FeedbackBoardResponseDto;
-import com.CreatorConnect.server.feedbackboard.entity.FeedbackBoard;
 import com.CreatorConnect.server.feedbackcategory.dto.FeedbackCategoryDto;
 import com.CreatorConnect.server.feedbackcategory.dto.FeedbackCategoryResponseDto;
 import com.CreatorConnect.server.feedbackcategory.entity.FeedbackCategory;
@@ -78,7 +76,7 @@ public class FeedbackCategoryService {
         feedbackCategoryRepository.delete(feedbackCategory);
     }
 
-    // 카티고리 이름 중복 검사 메서드
+    // 피드백 카테고리 이름 중복 검사 메서드
     private void verifyFeedbackCategory(String feedbackCategoryName) {
         Optional<FeedbackCategory> optionalFeedbackCategory = feedbackCategoryRepository.findByFeedbackCategoryName(feedbackCategoryName);
         if (optionalFeedbackCategory.isPresent()) {

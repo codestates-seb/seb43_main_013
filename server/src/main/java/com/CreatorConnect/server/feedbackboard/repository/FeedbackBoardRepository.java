@@ -2,7 +2,6 @@ package com.CreatorConnect.server.feedbackboard.repository;
 
 import com.CreatorConnect.server.feedbackboard.entity.FeedbackBoard;
 import com.CreatorConnect.server.feedbackcategory.entity.FeedbackCategory;
-import com.CreatorConnect.server.member.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
