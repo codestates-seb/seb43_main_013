@@ -1,4 +1,4 @@
-package com.CreatorConnect.server.category.dto;
+package com.CreatorConnect.server.feedbackcategory.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -8,7 +8,7 @@ import lombok.Setter;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 
-public class CategoryDto {
+public class FeedbackCategoryDto {
     @AllArgsConstructor
     @NoArgsConstructor
     @Getter
@@ -16,7 +16,7 @@ public class CategoryDto {
     public static class Post{
         @Valid
         @NotBlank(message = "카테고리를 입력하세요.")
-        private String categoryName;
+        private String feedbackCategoryName;
 
     }
     @AllArgsConstructor
@@ -24,8 +24,7 @@ public class CategoryDto {
     @Getter
     @Setter
     public static class Response{
-        private long categoryId;
-        private String categoryName;
+        private String feedbackCategoryName;
     }
 }
 
