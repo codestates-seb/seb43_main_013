@@ -6,6 +6,7 @@ import com.CreatorConnect.server.category.mapper.CategoryMapper;
 import com.CreatorConnect.server.category.service.CategoryService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,7 +26,7 @@ public class CategoryController {
         this.categoryService = categoryService;
         this.mapper = mapper;
     }
-
+    @Secured("ROLE_ADMIN")
     @PostMapping("/new")
     public ResponseEntity postCategory(@Valid @RequestBody CategoryDto.Post categoryPost) {
         Category category = mapper.categoryPostDtoToCategory(categoryPost);
