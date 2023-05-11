@@ -21,6 +21,8 @@ public class TagBoard {
     @JoinColumn(name = "FREEBOARD_ID")
     private FreeBoard freeBoard;
 
+    // 나머지 게시판 매핑 추가 예정
+
     @ManyToOne
     @JoinColumn(name = "FEEDBACKBOARD_ID")
     private FeedbackBoard feedbackBoard;
@@ -29,5 +31,8 @@ public class TagBoard {
     @JoinColumn(name = "TAG_ID")
     private Tag tag;
 
-
+    public TagBoard(FreeBoard freeBoard, Tag tag) {
+        this.freeBoard = freeBoard;
+        this.tag = tag;
+    }
 }
