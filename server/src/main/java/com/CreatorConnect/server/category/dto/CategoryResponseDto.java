@@ -1,4 +1,4 @@
-package com.CreatorConnect.server.feedbackcategory.dto;
+package com.CreatorConnect.server.category.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,13 +7,13 @@ import lombok.Setter;
 
 import java.util.List;
 
-public class FeedbackCategoryResponseDto {
+public class CategoryResponseDto {
     @Getter
     @Setter
     @AllArgsConstructor
     @NoArgsConstructor
     public static class Post {
-        private String feedbackCategoryName;
+        private String categoryName;
     }
 
     @Getter
@@ -21,7 +21,7 @@ public class FeedbackCategoryResponseDto {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class Patch {
-        private String feedbackCategoryName;
+        private String categoryName;
     }
 
     @Getter
@@ -29,8 +29,8 @@ public class FeedbackCategoryResponseDto {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class Details {
-        private Long feedbackCategoryId;
-        private String feedbackCategoryName;
+        private Long categoryId;
+        private String categoryName;
     }
 
     @Getter

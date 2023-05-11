@@ -1,16 +1,24 @@
 package com.CreatorConnect.server.category.mapper;
 
 import com.CreatorConnect.server.category.dto.CategoryDto;
+import com.CreatorConnect.server.category.dto.CategoryResponseDto;
 import com.CreatorConnect.server.category.entity.Category;
 import org.mapstruct.Mapper;
-import org.springframework.stereotype.Component;
+import org.mapstruct.ReportingPolicy;
 
-@Mapper(componentModel = "spring")
+import java.util.List;
+
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface CategoryMapper {
     // CategoryDto.Post -> Category
     Category categoryPostDtoToCategory(CategoryDto.Post post);
 
     // Category -> CategoryDto.Response
-    CategoryDto.Response categoryToCategoryResponseDto(Category category);
+    CategoryResponseDto.Post categoryToCategoryResponseDto(Category category);
+
+    Category categoryPatchDtoToCategory(CategoryDto.Patch categoryPatchDto);
+    CategoryResponseDto.Patch categoryToCategoryPatchResponse(Category category);
+    CategoryResponseDto.Details categoryToCategoryDetailsResponse(Category category);
+    List<CategoryResponseDto.Details> categorysToCategoryDetailsResponses (List<Category> categorys);
 }
 
