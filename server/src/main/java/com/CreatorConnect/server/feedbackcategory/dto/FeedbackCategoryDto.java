@@ -19,11 +19,11 @@ public class FeedbackCategoryDto {
         private String feedbackCategoryName;
 
     }
-    @AllArgsConstructor
-    @NoArgsConstructor
+
     @Getter
     @Setter
-    public static class Response{
+    public static class Patch {
+
         private String feedbackCategoryName;
     }
 }

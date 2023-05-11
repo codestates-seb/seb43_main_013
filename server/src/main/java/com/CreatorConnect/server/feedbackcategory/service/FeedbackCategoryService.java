@@ -2,12 +2,21 @@ package com.CreatorConnect.server.feedbackcategory.service;
 
 import com.CreatorConnect.server.exception.BusinessLogicException;
 import com.CreatorConnect.server.exception.ExceptionCode;
+import com.CreatorConnect.server.feedbackboard.dto.FeedbackBoardResponseDto;
+import com.CreatorConnect.server.feedbackboard.entity.FeedbackBoard;
+import com.CreatorConnect.server.feedbackcategory.dto.FeedbackCategoryDto;
+import com.CreatorConnect.server.feedbackcategory.dto.FeedbackCategoryResponseDto;
 import com.CreatorConnect.server.feedbackcategory.entity.FeedbackCategory;
+import com.CreatorConnect.server.feedbackcategory.mapper.FeedbackCategoryMapper;
 import com.CreatorConnect.server.feedbackcategory.repository.FeedbackCategoryRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 @RequiredArgsConstructor
 @Transactional
@@ -15,10 +24,16 @@ import java.util.Optional;
 public class FeedbackCategoryService {
     private final FeedbackCategoryRepository feedbackCategoryRepository;
 
+    private final FeedbackCategoryMapper mapper;
+
     /**
-     * <카테고리 등록 - 임시 기능>
-     * 1. 카테고리 중복 검사
-     * 2. 등록
+     * <피드백 카테고리 기능>
+     * 1. 등록
+     * 2. 패치
+     * 3. 삭제
+     * 4. 조회
+     * 5. 목록 조회
+     * 6. 카테고리 중복 검사
      */
     public FeedbackCategory createFeedbackCategory(FeedbackCategory feedbackCategory) {
         // 1. 카테고리 중복 검사
@@ -26,6 +41,41 @@ public class FeedbackCategoryService {
 
         // 2. 등록
         return feedbackCategoryRepository.save(feedbackCategory);
+    }
+
+    // 패치
+    public FeedbackCategoryResponseDto.Patch updateFeedbackCategory(Long feedbackCategoryId, FeedbackCategoryDto.Patch patchDto){
+        FeedbackCategory feedbackCategory = mapper.feedbackCategoryPatchDtoToFeedbackCategory(patchDto);
+        feedbackCategory.setFeedbackCategoryId(feedbackCategoryId);
+        FeedbackCategory foundFeedbackCategory = findVerifiedFeedbackCategory(feedbackCategory.getFeedbackCategoryId());
+
+        Optional.ofNullable(feedbackCategory.getFeedbackCategoryName())
+                .ifPresent(foundFeedbackCategory::setFeedbackCategoryName);
+
+        FeedbackCategory updatedFeedbackCategory = feedbackCategoryRepository.save(foundFeedbackCategory);
+        FeedbackCategoryResponseDto.Patch responseDto = mapper.feedbackCategoryToFeedbackCategoryPatchResponse(updatedFeedbackCategory);
+        return responseDto;
+    }
+
+    //조회
+    public FeedbackCategoryResponseDto.Details responseFeedbackCategory(Long FeedbackCategoryId){
+        FeedbackCategory foundFeedbackCategory = findVerifiedFeedbackCategory(FeedbackCategoryId);
+        return mapper.feedbackCategoryToFeedbackCategoryDetailsResponse(foundFeedbackCategory);
+    }
+
+    //목록 조회
+    public FeedbackCategoryResponseDto.Multi<FeedbackCategoryResponseDto.Details> responseFeedbackCategorys(int page, int size){
+        PageRequest pageRequest = PageRequest.of(page - 1, size, Sort.by("feedbackCategoryId").descending());
+        Page<FeedbackCategory> feedbackCategorysPage = feedbackCategoryRepository.findAll(pageRequest);
+        List<FeedbackCategoryResponseDto.Details> responses = mapper.feedbackCategorysToFeedbackCategoryDetailsResponses(feedbackCategorysPage.getContent());
+        FeedbackCategoryResponseDto.PageInfo pageInfo = new FeedbackCategoryResponseDto.PageInfo(feedbackCategorysPage.getNumber() + 1, feedbackCategorysPage.getSize(), feedbackCategorysPage.getTotalElements(), feedbackCategorysPage.getTotalPages());
+        return new FeedbackCategoryResponseDto.Multi<>(responses, pageInfo);
+    }
+
+    //삭제
+    public void deleteFeedbackCategory(Long feedbackCategoryId) {
+        FeedbackCategory feedbackCategory = findVerifiedFeedbackCategory(feedbackCategoryId);
+        feedbackCategoryRepository.delete(feedbackCategory);
     }
 
     // 카티고리 이름 중복 검사 메서드
@@ -37,7 +87,7 @@ public class FeedbackCategoryService {
     }
 
     // 피드백 카테고리 조회 메서드
-    public FeedbackCategory findverifiedFeedbackCategory(Long feedbackCategoryId){
+    public FeedbackCategory findVerifiedFeedbackCategory(Long feedbackCategoryId){
         Optional<FeedbackCategory> optionalFeedbackCategory = feedbackCategoryRepository.findById(feedbackCategoryId);
         FeedbackCategory feedbackCategory = optionalFeedbackCategory.orElseThrow(() -> new BusinessLogicException(ExceptionCode.FEEDBACK_CATEGORY_NOT_FOUND));
         return  feedbackCategory;
