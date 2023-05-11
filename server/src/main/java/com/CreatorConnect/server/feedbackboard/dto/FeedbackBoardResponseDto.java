@@ -50,6 +50,7 @@ public class FeedbackBoardResponseDto {
         private long memberId;
         private String nickname;
         private String email;
+        private String profileImageUrl;
     }
 
     @Getter
