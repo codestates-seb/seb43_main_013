@@ -5,6 +5,8 @@ import com.CreatorConnect.server.freeboard.dto.FreeBoardDto;
 import com.CreatorConnect.server.freeboard.entity.FreeBoard;
 import com.CreatorConnect.server.freeboard.mapper.FreeBoardMapper;
 import com.CreatorConnect.server.freeboard.service.FreeBoardService;
+import com.CreatorConnect.server.tag.entity.Tag;
+import com.CreatorConnect.server.tag.mapper.TagMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,18 +24,21 @@ public class FreeBoardController {
     private final FreeBoardService freeBoardService;
     private final FreeBoardMapper mapper;
     private final CategoryService categoryService;
+    private final TagMapper tagMapper;
 
     public FreeBoardController(FreeBoardService freeBoardService, FreeBoardMapper mapper,
-                               CategoryService categoryService) {
+                               CategoryService categoryService, TagMapper tagMapper) {
         this.freeBoardService = freeBoardService;
         this.mapper = mapper;
         this.categoryService = categoryService;
+        this.tagMapper = tagMapper;
     }
 
     // 자유 게시판 게시글 등록
     @PostMapping("/freeboard/new")
     public ResponseEntity postFreeBoard(@Valid @RequestBody FreeBoardDto.Post post) {
-        FreeBoard freeBoardPost = freeBoardService.createFreeBoard(post);
+        List<Tag> tags = tagMapper.tagPostDtosToTag(post.getTags());
+        FreeBoard freeBoardPost = freeBoardService.createFreeBoard(post,tags);
 
         return new ResponseEntity<>(HttpStatus.CREATED);
     }

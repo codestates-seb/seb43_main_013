@@ -12,6 +12,10 @@ import com.CreatorConnect.server.freeboard.repository.FreeBoardRepository;
 import com.CreatorConnect.server.member.entity.Member;
 import com.CreatorConnect.server.member.repository.MemberRepository;
 import com.CreatorConnect.server.member.service.MemberService;
+import com.CreatorConnect.server.tag.dto.TagDto;
+import com.CreatorConnect.server.tag.entity.Tag;
+import com.CreatorConnect.server.tag.entity.TagBoard;
+import com.CreatorConnect.server.tag.service.TagService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,6 +23,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -31,19 +36,22 @@ public class FreeBoardService {
     private final FreeBoardMapper mapper;
     private final MemberRepository memberRepository;
     private final CategoryService categoryService;
+    private final TagService tagService;
 
     public FreeBoardService(FreeBoardRepository freeBoardRepository,
                             MemberService memberService,
                             CategoryRepository categoryRepository,
                             FreeBoardMapper mapper,
                             MemberRepository memberRepository,
-                            CategoryService categoryService) {
+                            CategoryService categoryService,
+                            TagService tagService) {
         this.freeBoardRepository = freeBoardRepository;
         this.memberService = memberService;
         this.categoryRepository = categoryRepository;
         this.mapper = mapper;
         this.memberRepository = memberRepository;
         this.categoryService = categoryService;
+        this.tagService = tagService;
     }
 
     /**
@@ -51,8 +59,10 @@ public class FreeBoardService {
      * 1. 회원 매핑
      * 2. 카테고리 매핑
      * 3. 게시글 등록
+     * 4. 태그 저장
      */
-    public FreeBoard createFreeBoard(FreeBoardDto.Post post) {
+    public FreeBoard createFreeBoard(FreeBoardDto.Post post, List<Tag> tags) {
+
         FreeBoard freeBoard = mapper.freeBoardPostDtoToFreeBoard(post);
 
         // 회원 매핑
@@ -66,7 +76,12 @@ public class FreeBoardService {
                 new BusinessLogicException(ExceptionCode.CATEGORY_EXISTS)));
 
         // 3. 게시글 등록
-        return freeBoardRepository.save(freeBoard);
+        FreeBoard createdFreeBoard =  freeBoardRepository.save(freeBoard);
+
+        // 4. 태그 저장
+        List<Tag> createTags = tagService.createFreeBoardTag(tags, createdFreeBoard);
+
+        return createdFreeBoard;
     }
 
     /**
