@@ -93,6 +93,8 @@ public class FreeBoardDto {
         private String email;
 
         private String nickname;
+
+        private String profileImageUrl;
     }
 
     // 페이지네이션 관련 dto
