@@ -27,9 +27,6 @@ public class Member extends Auditable {
     @Column
     private boolean oauth = false;
 
-    @Column
-    private String oauthProvider;
-
     @Column(length = 300, nullable = false)
     private String password;
 
@@ -57,8 +54,6 @@ public class Member extends Auditable {
 
     @OneToMany(mappedBy = "following", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Follower> followers = new ArrayList<>();
-
-
 
 //    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 //    private List<FreeBoard> freeBoards = new ArrayList<>();

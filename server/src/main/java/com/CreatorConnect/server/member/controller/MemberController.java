@@ -32,7 +32,7 @@ public class MemberController {
 
     @GetMapping("/")
     public ResponseEntity home(){
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity("home", HttpStatus.OK);
     }
 
     @PostMapping("/api/signup")
