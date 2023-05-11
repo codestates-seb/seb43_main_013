@@ -1,24 +1,18 @@
 package com.CreatorConnect.server.auth.oauth.service;
 
-import com.CreatorConnect.server.auth.oauth.attribute.OAuth2Attribute;
-import com.CreatorConnect.server.auth.userdetails.MemberDetailsService;
 import com.CreatorConnect.server.auth.utils.CustomAuthorityUtils;
 import com.CreatorConnect.server.member.entity.Member;
 import com.CreatorConnect.server.member.repository.MemberRepository;
 import lombok.extern.slf4j.Slf4j;
 
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
-import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -54,12 +48,18 @@ public class OAuth2MemberService implements OAuth2UserService<OAuth2UserRequest,
     }
 
 
-
     public void saveOauthMember (OAuth2User oAuth2User) {
 
         String email = String.valueOf(oAuth2User.getAttributes().get("email"));
         String name = String.valueOf(oAuth2User.getAttributes().get("name"));
-        String profileImageUrl = String.valueOf(oAuth2User.getAttributes().get("picture"));
+        String profileImageUrl;
+        if (oAuth2User.getAttributes().containsKey("picture")) {
+            profileImageUrl = String.valueOf(oAuth2User.getAttributes().get("picture"));
+        } else if (oAuth2User.getAttributes().containsKey("profileImage")) {
+            profileImageUrl = String.valueOf(oAuth2User.getAttributes().get("profileImage"));
+        } else {
+            profileImageUrl = null;
+        }
 
         List<String> authorities = authorityUtils.createRoles(email);
 

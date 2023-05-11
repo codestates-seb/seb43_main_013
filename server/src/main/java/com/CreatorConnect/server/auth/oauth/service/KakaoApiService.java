@@ -1,70 +1,57 @@
 package com.CreatorConnect.server.auth.oauth.service;
 
-import com.CreatorConnect.server.auth.oauth.attribute.AccessTokenDto;
-import com.CreatorConnect.server.auth.oauth.attribute.KakaoUserInfoDto;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.RequestEntity;
-import org.springframework.http.ResponseEntity;
+import com.CreatorConnect.server.auth.oauth.dto.KakaoProfile;
+import com.CreatorConnect.server.auth.oauth.dto.OAuthToken;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
-
-import java.net.URI;
 
 @Service
 public class KakaoApiService {
     private final RestTemplate restTemplate;
-    private static final String kakaoApiKey = "e6722e9848c6db656a44edaf1bbe8f09";
-    private static final String kakaoRedirectUri = "http://localhost:8080/login/oauth2/code/kakao";
-    private static final String kakaoTokenUri = "https://kauth.kakao.com/oauth/token";
-    private static final String kakaoUserInfoUri = "https://kapi.kakao.com/v2/user/me";
+    private static final String clientId = "d7774b0de8bd81c958657f202701d306";
 
     public KakaoApiService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
 
-    public AccessTokenDto getAccessToken(String code) {
+    public OAuthToken tokenRequest(String code) {
+
+        // POST 방식으로 데이터 요청
+        RestTemplate restTemplate = new RestTemplate();
+
+        //HttpHeader
         HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 
-        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        params.add("grant_type", "authorization_code");
-        params.add("client_id", kakaoApiKey);
-        params.add("redirect_uri", kakaoRedirectUri);
-        params.add("code", code);
+        //HttpBody
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.add("grant_type", "authorization_code");
+        body.add("client_id", clientId);
+        body.add("redirect_uri", "http://localhost:8080/auth/kakao/callback");
+        body.add("code", code);
 
-        URI uri = UriComponentsBuilder.fromUriString(kakaoTokenUri)
-                .queryParams(params)
-                .build()
-                .toUri();
+        //HttpHeader와 HttpBody 담기기
+        HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest = new HttpEntity<>(body, headers); // params : body
 
-        RequestEntity<Void> request = RequestEntity.post(uri)
-                .headers(headers)
-                .build();
-
-        ResponseEntity<AccessTokenDto> response = restTemplate.exchange(request, AccessTokenDto.class);
-
-        return response.getBody();
+        return restTemplate.exchange("https://kauth.kakao.com/oauth/token", HttpMethod.POST, kakaoTokenRequest, OAuthToken.class).getBody();
     }
 
-    public KakaoUserInfoDto getKakaoUserInfo(String accessToken) {
+    public KakaoProfile userInfoRequest(OAuthToken oAuthToken) {
+
+        ///유저정보 요청
+        RestTemplate restTemplate = new RestTemplate();
+
+        //HttpHeader
         HttpHeaders headers = new HttpHeaders();
-        headers.setBearerAuth(accessToken);
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        headers.add("Authorization", "Bearer " + oAuthToken.getAccess_token());
+        headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 
-        URI uri = UriComponentsBuilder.fromUriString(kakaoUserInfoUri)
-                .build()
-                .toUri();
+        //HttpHeader와 HttpBody 담기기
+        HttpEntity<MultiValueMap<String, String>> kakaoProfileRequest = new HttpEntity<>(headers);
 
-        RequestEntity<Void> request = RequestEntity.get(uri)
-                .headers(headers)
-                .build();
-
-        ResponseEntity<KakaoUserInfoDto> response = restTemplate.exchange(request, KakaoUserInfoDto.class);
-
-        return response.getBody();
+        return restTemplate.exchange("https://kapi.kakao.com/v2/user/me", HttpMethod.POST, kakaoProfileRequest, KakaoProfile.class).getBody();
     }
 }
