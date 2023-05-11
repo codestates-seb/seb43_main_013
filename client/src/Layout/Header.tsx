@@ -26,8 +26,8 @@ const Header: React.FC = () => {
         <h1 className="text-6xl mr-10 cursor-pointer">CC</h1>
         <CommuTrend />
         <SearchDiv setInputModal={setInputModal} />
+        {isLogin ? <IsLoginSide nickState={nickState} /> : <NoneLoginSide />}
       </div>
-      {isLogin ? <IsLoginSide nickState={nickState} /> : <NoneLoginSide />}
       {inputModal && <InputModal setInputModal={setInputModal} />}
     </header>
   );
