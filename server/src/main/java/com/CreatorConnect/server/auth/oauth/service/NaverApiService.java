@@ -1,28 +1,31 @@
 package com.CreatorConnect.server.auth.oauth.service;
 
 import com.CreatorConnect.server.auth.oauth.dto.KakaoProfile;
+import com.CreatorConnect.server.auth.oauth.dto.NaverProfile;
 import com.CreatorConnect.server.auth.oauth.dto.OAuthToken;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 @Service
-public class KakaoApiService {
+public class NaverApiService {
     private final RestTemplate restTemplate;
-    private static final String clientId = "d7774b0de8bd81c958657f202701d306";
+    private static final String clientId = "JAnr85GxwFcBiBMCvdpL";
+    private static final String clientSecret = "JsHcHlI0Gl";
 
-    public KakaoApiService(RestTemplate restTemplate) {
+    public NaverApiService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
 
     public OAuthToken tokenRequest(String code) {
 
-        // POST 방식으로 데이터 요청
         RestTemplate restTemplate = new RestTemplate();
 
-        //HttpHeader
+        // HttpHeader
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 
@@ -30,16 +33,16 @@ public class KakaoApiService {
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
         body.add("client_id", clientId);
-        body.add("redirect_uri", "http://localhost:8080/auth/kakao/callback");
+        body.add("client_secret", clientSecret);
         body.add("code", code);
 
-        //HttpHeader 와 HttpBody 담기
-        HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest = new HttpEntity<>(body, headers); // params : body
+        // HttpHeader 와 HttpBody 담기
+        HttpEntity<MultiValueMap<String, String>> naverTokenRequest = new HttpEntity<>(body, headers); // params : body
 
-        return restTemplate.exchange("https://kauth.kakao.com/oauth/token", HttpMethod.POST, kakaoTokenRequest, OAuthToken.class).getBody();
+        return restTemplate.exchange("https://nid.naver.com/oauth2.0/token", HttpMethod.POST, naverTokenRequest, OAuthToken.class).getBody();
     }
 
-    public KakaoProfile userInfoRequest(OAuthToken oAuthToken) {
+    public NaverProfile userInfoRequest(OAuthToken oAuthToken) {
 
         ///유저정보 요청
         RestTemplate restTemplate = new RestTemplate();
@@ -49,9 +52,8 @@ public class KakaoApiService {
         headers.add("Authorization", "Bearer " + oAuthToken.getAccess_token());
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 
-        //HttpHeader와 HttpBody 담기기
-        HttpEntity<MultiValueMap<String, String>> kakaoProfileRequest = new HttpEntity<>(headers);
+        HttpEntity<MultiValueMap<String, String>> naverProfileRequest = new HttpEntity<>(headers);
 
-        return restTemplate.exchange("https://kapi.kakao.com/v2/user/me", HttpMethod.POST, kakaoProfileRequest, KakaoProfile.class).getBody();
+        return restTemplate.exchange("https://openapi.naver.com/v1/nid/me", HttpMethod.POST, naverProfileRequest, NaverProfile.class).getBody();
     }
 }

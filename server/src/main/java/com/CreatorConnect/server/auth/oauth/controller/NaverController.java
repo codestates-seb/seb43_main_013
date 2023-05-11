@@ -1,66 +1,84 @@
 package com.CreatorConnect.server.auth.oauth.controller;
 
+import com.CreatorConnect.server.auth.jwt.JwtTokenizer;
+import com.CreatorConnect.server.auth.oauth.dto.KakaoProfile;
+import com.CreatorConnect.server.auth.oauth.dto.NaverProfile;
+import com.CreatorConnect.server.auth.oauth.dto.OAuthToken;
+import com.CreatorConnect.server.auth.oauth.handler.OAuth2MemberSuccessHandler;
+import com.CreatorConnect.server.auth.oauth.service.KakaoApiService;
+import com.CreatorConnect.server.auth.oauth.service.NaverApiService;
+import com.CreatorConnect.server.auth.oauth.service.OAuth2MemberService;
+import com.CreatorConnect.server.auth.utils.CustomAuthorityUtils;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import javax.servlet.http.HttpSession;
-import java.math.BigInteger;
-import java.security.SecureRandom;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.oauth2.core.OAuth2AccessToken;
+import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
+import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.net.URLEncoder;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
+@Slf4j
 @RestController
 public class NaverController {
-    private static final String CLIENT_ID = "kWyzXRG7eYBVviajn1kX";
-    private static final String CLIENT_SECRET = "33pIJWiW3P";
-    private static final String REDIRECT_URI = "http://localhost:8080/login/oauth2/code/naver";
-    private static final String AUTHORIZATION_ENDPOINT = "https://nid.naver.com/oauth2.0/authorize";
-    private static final String TOKEN_ENDPOINT = "https://nid.naver.com/oauth2.0/token";
 
-    public String generateState() {
-        SecureRandom random = new SecureRandom();
-        return new BigInteger(130, random).toString(32);
-    }
+        private final JwtTokenizer jwtTokenizer;
+        private final CustomAuthorityUtils authorityUtils;
+        private final OAuth2MemberService oAuth2MemberService;
+        private final NaverApiService naverApiService;
 
-    private final String STATE = generateState();
+        public NaverController(JwtTokenizer jwtTokenizer, CustomAuthorityUtils authorityUtils, OAuth2MemberService oAuth2MemberService, NaverApiService naverApiService) {
+                this.jwtTokenizer = jwtTokenizer;
+                this.authorityUtils = authorityUtils;
+                this.oAuth2MemberService = oAuth2MemberService;
+                this.naverApiService = naverApiService;
+        }
 
-    @GetMapping("/login/oauth2/naver")
-    public String naverLogin(HttpSession session) {
+        @GetMapping("/auth/naver/callback")
+        public ResponseEntity naverCallback(@RequestParam("code") String code, @RequestParam("state") String state,
+                                            HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        session.setAttribute("state", STATE);
+                OAuthToken oAuthToken = naverApiService.tokenRequest(code); // 1.토큰 가져오기
 
-        String authorizationRequestUrl = String.format("%s?response_type=code&client_id=%s&redirect_uri=%s&state=%s",
-                AUTHORIZATION_ENDPOINT, CLIENT_ID, REDIRECT_URI, STATE);
-        return String.format("<a href='%s'><img height='50' src='http://static.nid.naver.com/oauth/small_g_in.PNG'/></a>", authorizationRequestUrl);
-    }
+                NaverProfile naverProfile = naverApiService.userInfoRequest(oAuthToken); // 2.유저정보 가져오기
 
-//    @GetMapping("/login/oauth2/code/naver")
-//    public String naverCallback(@RequestParam("code") String code, @RequestParam("state") String state) throws IOException, InterruptedException {
-//
-//        if (!STATE.equals(state)) {
-//            return "Invalid State";
-//        }
-//
-//        String tokenRequestUrl = String.format("%s?grant_type=authorization_code&client_id=%s&client_secret=%s&redirect_uri=%s&code=%s",
-//                TOKEN_ENDPOINT, CLIENT_ID, CLIENT_SECRET, REDIRECT_URI, code);
-//
-//        HttpClient client = HttpClient.newHttpClient();
-//        HttpRequest request = HttpRequest.newBuilder()
-//                .uri(URI.create(tokenRequestUrl))
-//                .header("X-Naver-Client-Id", CLIENT_ID)
-//                .header("X-Naver-Client-Secret", CLIENT_SECRET)
-//                .build();
-//        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-//
-//        if (response.statusCode() == 200) {
-//            return response.body();
-//        } else {
-//            return String.format("Error: %d", response.statusCode());
-//        }
-//    }
+                Map<String, Object> attributes = new HashMap<>();
+                attributes.put("id", naverProfile.getResponse().getId());
+                attributes.put("email",naverProfile.getResponse().getEmail());
+                attributes.put("name", naverProfile.getResponse().getName());
+                attributes.put("profileImage", naverProfile.getResponse().getProfile_image());
 
-    @GetMapping("/login/oauth2/code/naver")
-    public ResponseEntity naverCallback() {
+                OAuth2User oAuth2User = new DefaultOAuth2User(
+                        Collections.singleton(new SimpleGrantedAuthority("ROLE_USER")),
+                        attributes,
+                        "id"
+                );
 
-        return new ResponseEntity(HttpStatus.OK);
-    }
+                Authentication authentication = new OAuth2AuthenticationToken(oAuth2User, Collections.emptyList(), "kakao");
+
+                AuthenticationSuccessHandler successHandler = new OAuth2MemberSuccessHandler(jwtTokenizer, authorityUtils, oAuth2MemberService);
+
+                successHandler.onAuthenticationSuccess(request, response, authentication);
+
+                return new ResponseEntity(HttpStatus.OK);
+        }
 
 }
