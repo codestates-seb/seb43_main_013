@@ -1,21 +1,11 @@
 // https://main-project.gitbook.io/main-project/undefined-1/undefined-3
 
-import type { PageInfo } from "../";
+import type { Board } from "./";
 
 /** 2023/05/10 - 구인구직 게시판 타입 - by 1-blue */
-export interface JobBoard {
+export interface JobBoard extends Board {
   jobBoardId: number;
-  title: string; // 게시글 제목
-  content: string; // 게시글 내용
-  commentCount: number; // 댓글수
-  likeCount: number; // 좋아요수
-  viewCount: number; // 조회수
   jobCategoryName: string; // 카테고리
-  createdAt: Date; // 작성 시간
-  modifiedAt: Date; // 수정 시간
-  memberId: number;
-  email: string; // 작성자 이메일
-  nickname: string; // 작성자 닉네임
 }
 
 // ============================== C 구인구직 게시판 생성 ==============================
@@ -41,10 +31,7 @@ export interface ApiFetchJobBoardRequest {
   jobBoardId: number;
 }
 /** 2023/05/10 - 구인구직 게시판 상세 정보 요청 수신 타입 - by 1-blue */
-export interface ApiFetchJobBoardResponse {
-  data: JobBoard;
-  pageInfo: PageInfo;
-}
+export interface ApiFetchJobBoardResponse extends JobBoard {}
 /** 2023/05/10 - 구인구직 게시판 상세 정보 요청 핸들러 - by 1-blue */
 export interface ApiFetchJobBoardHandler {
   (body: ApiFetchJobBoardRequest): Promise<ApiFetchJobBoardResponse>;

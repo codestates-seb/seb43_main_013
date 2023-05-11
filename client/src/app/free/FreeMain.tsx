@@ -1,51 +1,47 @@
+"use client";
 import SideCategories from "@/components/BoardMain/SideCategories";
 import SortPosts from "@/components/BoardMain/SortPosts";
+import { useEffect } from "react";
+import axios from "axios";
 import ContentItem from "./ContentItem";
 import PopularPosts from "./PopularPosts";
-
-/** 2023/05/09 - 자유게시판 메인 화면테스트용 더미데이터 - by leekoby */
-const categoryDummyData = ["전체", "먹방", "게임", "스포츠", "이슈", "음악", "뷰티", "영화", "쿠킹", "동물", "IT"];
-
-/** 2023/05/09 - 자유게시판 메인 화면테스트용 더미데이터 - by leekoby */
-const contentItemDummyData1 = {
-  freeboardID: 1,
-  title: " 차냥해 갓상은!",
-  content: "인생은 나처럼",
-  commentCount: 999,
-  viewCount: 999,
-  likeCount: 999,
-  tag: ["먹방", "코딩", "IT"],
-  category: "",
-  createdAt: new Date(),
-  nickname: "인생은갓상은처럼",
-};
-
-/** 2023/05/09 - 자유게시판 메인 화면테스트용 더미데이터 - by leekoby */
-const contentItemDummyData2 = {
-  freeboardID: 1,
-  title: " 차냥해 갓상은!",
-  content:
-    "Lorem ipsum dolor sit amet consectetur adipisicing elit. Odit saepe eaque quam repudiandae facere sit tenetur nesciunt, voluptatum harum iure minima quasi quos inventore perferendis voluptatem expedita eius aspernatur deleniti placeat consectetur corporis impedit delectus consequuntur laboriosam. Cum voluptatibus officia minima eveniet harum quidem ullam est provident magni. Ea dicta porro aspernatur illum. Dolorem itaque laudantium voluptas commodi soluta amet!",
-  commentCount: 999,
-  viewCount: 999,
-  likeCount: 999,
-  tag: ["먹방", "코딩", "IT"],
-  category: "",
-  createdAt: new Date(),
-  nickname: "인생은갓상은처럼",
-};
+import { useFetchFreeBoardList } from "@/hooks/query/useFetchFreeBoardList";
+import { useFetchCategories } from "@/hooks/query";
+import { others } from "@chakra-ui/react";
+import Link from "next/link";
 
 /** 2023/05/08 - 자유게시판 메인 화면 - by leekoby */
 const FreeMain = () => {
+  useEffect(() => {
+    const getFreeBoardPosts = async () => {
+      try {
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/api/freeboards?page=1&size=10`);
+        console.log(response);
+      } catch (e) {
+        console.log(e);
+      }
+    };
+    getFreeBoardPosts();
+  }, []);
+
+  const { data, fetchNextPage, hasNextPage, isFetching } = useFetchFreeBoardList({ page: 1, size: 10 });
+  const { categories } = useFetchCategories({ type: "normal" });
+
+  // console.log(data?.pages[0].data);
+  if (!categories) return;
+  if (!data) return;
+
   return (
     //  전체 컨테이너
     <div className="mx-auto mt-6 min-w-min">
-      <h1 className="text-3xl font-bold text-left">🔥 자유게시판 🔥</h1>
+      <h1 className="text-3xl font-bold text-left" onClick={() => fetchNextPage()}>
+        🔥 자유게시판 🔥
+      </h1>
       <div className="flex flex-col md:flex-row ">
         {/* Left Side */}
         <aside className=" flex flex-row md:flex-col items-center justify-center md:justify-start  md:w-0 md:grow-[2]  ">
           {/* category  */}
-          <SideCategories categoryData={categoryDummyData} />
+          <SideCategories categoryData={categories} />
           <PopularPosts />
         </aside>
         {/* rightside freeboard post list */}
@@ -59,8 +55,12 @@ const FreeMain = () => {
           </div>
 
           {/* post item */}
-          <ContentItem {...contentItemDummyData1} />
-          <ContentItem {...contentItemDummyData2} />
+          {data &&
+            data?.pages[0].data.map((item) => (
+              <Link href={`/free/${item.freeBoardId}`}>
+                <ContentItem props={item} />
+              </Link>
+            ))}
 
           <div className="flex flex-col items-center m-auto">페이지네이션</div>
         </section>

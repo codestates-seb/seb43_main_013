@@ -25,6 +25,7 @@ const ContentFooter: React.FC<ContentFooterProps> = ({
   likeCount,
   commentCount,
 }) => {
+  console.log("date", typeof createdAt);
   return (
     <div className="flex justify-between w-full px-3 py-1">
       <div className={` gap-x-1 flex items-center justify-start w-full`}>
@@ -34,7 +35,7 @@ const ContentFooter: React.FC<ContentFooterProps> = ({
           <div className={`${position === "side" ? "text-xs text-gray-500" : "text-sm font-bold"} cursor-pointer `}>
             {nickName}
           </div>
-          {createdAt && <div className={`text-xs  text-gray-500`}>{createdAt.toLocaleDateString()}</div>}
+          {createdAt && <div className={`text-xs  text-gray-500`}>{new Date(createdAt).toLocaleString()}</div>}
         </div>
       </div>
       <div className={`flex gap-x-1 ${position === "main" && "self-end"}`}>

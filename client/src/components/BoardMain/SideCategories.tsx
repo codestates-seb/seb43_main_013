@@ -6,9 +6,7 @@ interface SideCategoriesProps {
 
 /** 2023/05/09 - 게시판 공통 카테고리 - by leekoby */
 const SideCategories: React.FC<SideCategoriesProps> = ({ categoryData }) => {
-  const categoryClickHandler: (item: string) => void = (item) => {
-    console.log(item);
-  };
+  const categoryClickHandler: (item: string) => void = (item) => {};
 
   return (
     /* category Container */

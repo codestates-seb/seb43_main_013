@@ -3,22 +3,16 @@ import { BookmarkIcon as BookmarkIconUnchecked } from "@heroicons/react/24/outli
 import defaultThumnail from "@/public/images/default-thumnail.jpg";
 import ContentFooter from "../../components/BoardMain/ContentFooter";
 import TagItem from "./TagItem";
+import { FreeBoard } from "@/types/api";
 
+// /** 2023/05/08 - 자유게시판 메인 화면 게시글 - by leekoby */
 interface ContentItemProps {
-  freeboardID?: number;
-  title: string;
-  content: string;
-  commentCount: number;
-  viewCount: number;
-  likeCount: number;
-  tag: string[];
-  category: string;
-  createdAt: Date;
-  nickname: string;
+  props: FreeBoard;
 }
 
-/** 2023/05/08 - 자유게시판 메인 화면 게시글 - by leekoby */
-const ContentItem: React.FC<ContentItemProps> = (props) => {
+const ContentItem: React.FC<ContentItemProps> = ({ props }) => {
+  console.log("props:", props);
+  console.log(typeof props);
   return (
     <>
       {/*  list container */}
