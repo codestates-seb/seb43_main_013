@@ -39,7 +39,7 @@ public class FreeBoardDto {
         //private long categoryId;
         private String categoryName;
 
-        private List<TagDto> tags = new ArrayList<>(); // 태그
+        private List<TagDto.Post> tags; // 태그
     }
     @AllArgsConstructor
     @NoArgsConstructor
@@ -57,7 +57,7 @@ public class FreeBoardDto {
         @Valid
         private String categoryName;
 
-        private List<TagDto> tags = new ArrayList<>();
+        private List<TagDto> tags;
     }
 
     @AllArgsConstructor
@@ -80,7 +80,7 @@ public class FreeBoardDto {
 
         private String categoryName;
 
-        private List<TagDto> tags = new ArrayList<>();
+        private List<TagDto> tags;
 
         private LocalDateTime createdAt;
 
