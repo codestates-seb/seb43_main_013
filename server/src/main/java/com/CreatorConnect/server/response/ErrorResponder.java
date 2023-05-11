@@ -1,6 +1,5 @@
 package com.CreatorConnect.server.response;
 
-import com.CreatorConnect.server.response.ErrorResponse;
 import com.google.gson.Gson;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;

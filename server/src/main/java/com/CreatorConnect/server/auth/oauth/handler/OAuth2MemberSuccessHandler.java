@@ -1,9 +1,8 @@
-package com.CreatorConnect.server.auth.handler;
+package com.CreatorConnect.server.auth.oauth.handler;
 
 import com.CreatorConnect.server.auth.jwt.JwtTokenizer;
+import com.CreatorConnect.server.auth.oauth.service.OAuth2MemberService;
 import com.CreatorConnect.server.auth.utils.CustomAuthorityUtils;
-import com.CreatorConnect.server.member.entity.Member;
-import com.CreatorConnect.server.member.repository.MemberRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -25,47 +24,23 @@ public class OAuth2MemberSuccessHandler extends SimpleUrlAuthenticationSuccessHa
 
     private final JwtTokenizer jwtTokenizer;
     private final CustomAuthorityUtils authorityUtils;
-    private final MemberRepository memberRepository;
+    private final OAuth2MemberService oAuth2MemberService;
 
-    public OAuth2MemberSuccessHandler(JwtTokenizer jwtTokenizer,
-                                      CustomAuthorityUtils authorityUtils,
-                                      MemberRepository memberRepository) {
+    public OAuth2MemberSuccessHandler(JwtTokenizer jwtTokenizer, CustomAuthorityUtils authorityUtils, OAuth2MemberService oAuth2MemberService) {
         this.jwtTokenizer = jwtTokenizer;
         this.authorityUtils = authorityUtils;
-        this.memberRepository = memberRepository;
+        this.oAuth2MemberService = oAuth2MemberService;
     }
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         var oAuth2User = (OAuth2User)authentication.getPrincipal();
         String email = String.valueOf(oAuth2User.getAttributes().get("email"));
-        String name = String.valueOf(oAuth2User.getAttributes().get("name"));
-        String profileImageUrl = String.valueOf(oAuth2User.getAttributes().get("picture"));
-
         List<String> authorities = authorityUtils.createRoles(email);
 
-        saveMember(email, name, profileImageUrl);
+        oAuth2MemberService.saveOauthMember(oAuth2User);
+
         redirect(request, response, email, authorities);
-    }
-
-    private void saveMember(String email, String name, String profileImageUrl) {
-
-        String tempPw = UUID.randomUUID().toString().replace("-", "");
-        tempPw = tempPw.substring(0,20);
-
-        String tempnickname = UUID.randomUUID().toString().replace("-", "");
-        tempnickname = tempnickname.substring(0,7);
-
-        Member member = new Member();
-        member.setEmail(email);
-        member.setPassword(tempPw);
-        member.setName(name);
-        member.setNickname(tempnickname);
-        member.setProfileImageUrl(profileImageUrl);
-        member.setOauth(true);
-        member.setOauthProvider("GOOGLE");
-
-        memberRepository.save(member);
     }
 
     private void redirect(HttpServletRequest request, HttpServletResponse response, String username, List<String> authorities) throws IOException {
@@ -112,7 +87,7 @@ public class OAuth2MemberSuccessHandler extends SimpleUrlAuthenticationSuccessHa
                 .host("localhost")
 //                .port(3000)
                 .port(8080)
-                .path("api/oauth/google")
+                .path("/login/oauth2")
                 .queryParams(queryParams)
                 .build()
                 .toUri();
