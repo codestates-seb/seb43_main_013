@@ -37,14 +37,11 @@ const IsLoginSide = ({ nickState }: { nickState: [boolean, React.Dispatch<boolea
 const NoneLoginSide = () => {
   return (
     <div className="flex items-center">
-      <h3
-        // onClick={modalActions.openModal}
-        className="text-2xl mr-5 break-keep cursor-pointer text-black hover:text-rose-400"
-      >
+      <Link href="/login" className="text-2xl mr-5 break-keep cursor-pointer text-black hover:text-rose-400">
         로그인
-      </h3>
-      <Link href="/signup">
-        <h3 className="text-2xl break-keep cursor-pointer text-black hover:text-rose-400">회원가입</h3>
+      </Link>
+      <Link href="/signup" className="text-2xl break-keep cursor-pointer text-black hover:text-rose-400">
+        회원가입
       </Link>
     </div>
   );
