@@ -16,7 +16,7 @@ import type {
 const dummyFeedbackBoard: FeedbackBoard = {
   feedbackBoardId: 1111,
   title: faker.lorem.paragraph(),
-  link: "https://www.youtube.com/watch?v=Lv8CXRY3ViI&list=RDLv8CXRY3ViI&start_radio=1",
+  link: "https://www.youtube.com/watch?v=wPsVStI1M4w",
   content: faker.lorem.paragraphs(),
   commentCount: faker.datatype.number(), // 댓글수
   likeCount: faker.datatype.number(), // 좋아요수
@@ -31,13 +31,7 @@ const dummyFeedbackBoard: FeedbackBoard = {
   memberId: 1,
   email: "1-blue@naver.com", // 작성자 이메일
   nickname: "1-blue", // 작성자 닉네임
-};
-
-const pageInfo = {
-  page: 1,
-  size: 10,
-  totalElements: 2,
-  totalPages: 1,
+  profileImageUrl: faker.image.avatar(),
 };
 
 /** 2023/05/10 - 피드백 게시글 생성/수정/삭제 요청 - by 1-blue */
@@ -51,8 +45,8 @@ const handler: NextApiHandler<
 
     if (req.method === "GET") {
       return res.status(201).json({
-        data: { ...dummyFeedbackBoard, feedbackBoardId },
-        pageInfo,
+        ...dummyFeedbackBoard,
+        feedbackBoardId,
       });
     }
     if (req.method === "PATCH") {

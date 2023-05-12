@@ -16,7 +16,7 @@ const handler: NextApiHandler<ApiCreateFeedbackBoardResponse> = async (req, res)
       return res.status(200).json({ ...body, feedbackBoardId: 1 });
     }
   } catch (error) {
-    console.error("/api/feebackboard/new error >> ", error);
+    console.error("/api/feedbackboard/new error >> ", error);
 
     return res.status(500).end();
   }
