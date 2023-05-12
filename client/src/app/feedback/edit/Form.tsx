@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useToast } from "@chakra-ui/react";
 import { PhotoIcon, ArrowPathIcon } from "@heroicons/react/24/solid";
@@ -11,17 +12,19 @@ import { apiUpdateFeedbackBoard } from "@/apis";
 // util
 import { validateYoutubeURL } from "@/libs";
 
+// store
+import { useLoadingStore } from "@/store";
+
 // hook
 import useTags from "@/hooks/useTags";
 import { useFetchFeedbackBoard } from "@/hooks/query";
-import useLoading from "@/hooks/useLoading";
 
 // component
-import Input from "@/components/BoardForm/Input";
+import Input from "@/components/Board/Form/Input";
 import Editor from "@/components/Editor";
-import Category from "@/components/BoardForm/Category";
-import Tag from "@/components/BoardForm/Tag";
-import FullSpinner from "@/components/Spinner/FullSpinner";
+import Category from "@/components/Board/Form/Category";
+import Tag from "@/components/Board/Form/Tag";
+import Skeleton from "@/components/Skeleton";
 
 // type
 interface Props {
@@ -31,7 +34,8 @@ interface Props {
 /** 2023/05/09 - 피드백 게시글 작성 form 컴포넌트 - by 1-blue */
 const Form: React.FC<Props> = ({ boardId }) => {
   const toast = useToast();
-  const loadingAction = useLoading();
+  const router = useRouter();
+  const { start, end } = useLoadingStore((state) => state);
 
   /** 2023/05/09 - 작성한 태그들 - by 1-blue */
   const [selectedTags, onSelectedTag, onDeleteTag, setSelectedTags] = useTags();
@@ -72,10 +76,10 @@ const Form: React.FC<Props> = ({ boardId }) => {
     if (!data) return;
 
     // TODO: thumbnail
-    setSelectedTags(data.data.tag);
-    setContent(data.data.content);
-    setSelectedNormalCategory(data.data.categoryName);
-    setSelectedFeedbackCategory(data.data.feedbackCateogoryName);
+    setSelectedTags(data.tag);
+    setContent(data.content);
+    setSelectedNormalCategory(data.categoryName);
+    setSelectedFeedbackCategory(data.feedbackCateogoryName);
   }, [data]);
 
   /** 2023/05/09 - 피드백 게시글 생성 - by 1-blue */
@@ -126,7 +130,7 @@ const Form: React.FC<Props> = ({ boardId }) => {
       });
 
     try {
-      loadingAction.startLoading();
+      start();
 
       // TODO: thumbnail url 넣어서 보내주기 ( memberId )
       await apiUpdateFeedbackBoard({
@@ -139,7 +143,7 @@ const Form: React.FC<Props> = ({ boardId }) => {
         feedbackCateogoryName: selectedFeedbackCategory,
       });
 
-      loadingAction.endLoading();
+      end();
 
       toast({
         description: "게시글 수정했습니다.\n수정된 게시글 페이지로 이동됩니다.",
@@ -148,8 +152,7 @@ const Form: React.FC<Props> = ({ boardId }) => {
         isClosable: true,
       });
 
-      // TODO: 화면 이동 + 스피너
-      // router.push(`/feedback/${boardId}`);
+      router.push(`/feedback/${boardId}`);
     } catch (error) {
       console.error(error);
 
@@ -162,21 +165,16 @@ const Form: React.FC<Props> = ({ boardId }) => {
     }
   };
 
-  if (isLoading) return <FullSpinner />;
+  if (isLoading) return <Skeleton.BoardEdit />;
 
   return (
-    <form className="flex flex-col space-y-4 mb-4 px-4" onSubmit={onSubmit}>
+    <form className="flex flex-col space-y-4 px-4 p-8 bg-white shadow-lg m-4 mt-0 rounded-md" onSubmit={onSubmit}>
       {/* title, link, tag, category, thumbnail */}
       <section className="flex space-y-4 md:space-y-0 md:space-x-4 z-[1] flex-col md:flex-row flex-1">
         {/* title, link, tag, category */}
         <div className="w-full md:w-0 md:flex-1 space-y-2 z-[1]">
-          <Input name="제목" type="text" placeholder="제목을 입력해주세요!" defaultValue={data?.data.title} />
-          <Input
-            name="유튜브 링크"
-            type="text"
-            placeholder="유튜브 링크을 입력해주세요!"
-            defaultValue={data?.data.link}
-          />
+          <Input name="제목" type="text" placeholder="제목을 입력해주세요!" defaultValue={data?.title} />
+          <Input name="유튜브 링크" type="text" placeholder="유튜브 링크을 입력해주세요!" defaultValue={data?.link} />
           <div className="flex flex-col pb-3 md:flex-row space-y-4 md:space-x-4 md:space-y-0">
             <Category
               type="normal"
