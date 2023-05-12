@@ -1,5 +1,6 @@
 // https://main-project.gitbook.io/main-project/undefined-1/undefined-3
 
+import { PageInfo } from "..";
 import type { Board } from "./";
 
 /** 2023/05/10 - 구인구직 게시판 타입 - by 1-blue */
@@ -62,4 +63,20 @@ export interface ApiDeleteJobBoardResponse {}
 /** 2023/05/10 - 구인구직 게시판 삭제 요청 핸들러 - by 1-blue */
 export interface ApiDeleteJobBoardHandler {
   (body: ApiDeleteJobBoardRequest): Promise<ApiDeleteJobBoardResponse>;
+}
+
+// ============================== 구인구직 게시판 게시글리스트 조회 ==============================
+/** 2023/05/12- 구인구직 게시판 게시글리스트 조회 요청 송신 타입 - by leekoby */
+export interface ApiFetchJobBoardListRequest {
+  page: number;
+  size: number;
+}
+/** 2023/05/12 - 구인구직 게시판 게시글리스트 조회 요청 수신 타입 - by leekoby */
+export interface ApiFetchJobBoardListResponse {
+  data: JobBoard[];
+  pageInfo: PageInfo;
+}
+/** 2023/05/12 - 구인구직 게시판 게시글리스트 조회 요청 핸들러 - by leekoby */
+export interface ApiFetchJobBoardListHandler {
+  (body: ApiFetchJobBoardListRequest): Promise<ApiFetchJobBoardListResponse>;
 }

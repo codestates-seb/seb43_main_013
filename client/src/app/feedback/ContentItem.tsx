@@ -3,27 +3,18 @@ import { BookmarkIcon as BookmarkIconUnchecked } from "@heroicons/react/24/outli
 import defaultThumnail from "@/public/images/default-thumnail.jpg";
 import sample_thumnail1 from "@/public/images/sample_thumnail1.png";
 import ContentFooter from "../../components/BoardMain/ContentFooter";
-import TagItem from "../free/TagItem";
+import TagItem from "../../components/BoardMain/TagItem";
+import { FeedbackBoard } from "@/types/api";
 
 interface ContentItemProps {
-  freeboardID?: number;
-  title: string;
-  link?: string;
-  content: string;
-  commentCount: number;
-  viewCount: number;
-  likeCount: number;
-  tag: string[];
-  category: string;
-  createdAt: Date;
-  nickname: string;
+  props: FeedbackBoard;
 }
 /** 2023/05/09 - 피드백 게시판 게시글 - by leekoby */
-const ContentItem: React.FC<ContentItemProps> = (props) => {
+const ContentItem: React.FC<ContentItemProps> = ({ props }) => {
   return (
     <>
       {/*  list container */}
-      <div className="flex flex-col items-center m-2 bg-white rounded-md shadow-md md:flex-row md:w-full lg:w-[48%]">
+      <div className="flex flex-col items-center m-2 bg-white rounded-md shadow-md md:flex-row md:w-full ">
         {/* List Item * */}
         <div className="flex flex-col items-center w-full h-full p-5 bg-gray-100 rounded-md ">
           {/* Thumnail */}

@@ -9,7 +9,7 @@ import { QUERY_KEYS } from "@/hooks/query";
 // type
 import type { ApiFetchFreeBoardListRequest, ApiFetchFreeBoardListResponse } from "@/types/api";
 
-/** 2023/05/11 - 자유 게시글 목록 정보 패치하는 훅 - by leekoby */
+/** 2023/05/11 - 자유 게시판 게시글 리스트 정보 패치하는 훅 - by leekoby */
 const useFetchFreeBoardList = ({ page, size }: ApiFetchFreeBoardListRequest) => {
   const { data, fetchNextPage, hasNextPage, isFetching } = useInfiniteQuery<ApiFetchFreeBoardListResponse>(
     [QUERY_KEYS.freeBoardList, page],

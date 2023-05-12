@@ -1,27 +1,22 @@
 "use client";
+import { useFetchFreeBoardList } from "@/hooks/query/useFetchFreeBoardList";
 import SideCategories from "@/components/BoardMain/SideCategories";
 import SortPosts from "@/components/BoardMain/SortPosts";
-import { useEffect, useState } from "react";
-import axios from "axios";
 import ContentItem from "./ContentItem";
 import PopularPosts from "./PopularPosts";
 import Link from "next/link";
-import { ApiFetchFreeBoardListResponse } from "@/types/api";
-import { useFetchCategories } from "@/hooks/query";
-import { useFetchFreeBoardList } from "@/hooks/query/useFetchFreeBoardList";
+// import { useFetchCategories } from "@/hooks/query";
 
 /** 2023/05/08 - 자유게시판 메인 화면 - by leekoby */
 const FreeMain = () => {
   // 자유게시판 목록 get 요청
-  const [fetchData, setFetchData] = useState<ApiFetchFreeBoardListResponse>();
-
   const { data, fetchNextPage, hasNextPage, isFetching } = useFetchFreeBoardList({ page: 1, size: 10 });
-  console.log(data?.pages);
   // const { categories } = useFetchCategories({ type: "normal" });
 
   // if (!categories) return;
+  console.log(data?.pages);
   if (!data) return;
-
+  if (data.pages.length < 1) return;
   return (
     //  전체 컨테이너
     <div className="mx-auto mt-6 min-w-min">
@@ -47,12 +42,14 @@ const FreeMain = () => {
           </div>
 
           {/* post item */}
-          {data &&
-            data.data.map((item) => (
-              <Link href={`/free/${item.freeBoardId}`}>
-                <ContentItem props={item} />
-              </Link>
-            ))}
+          {data.pages &&
+            data.pages.map((item) =>
+              item.data.map((innerData) => (
+                <Link href={`/free/${innerData.freeBoardId}`}>
+                  <ContentItem props={innerData} />
+                </Link>
+              )),
+            )}
 
           <div className="flex flex-col items-center m-auto"></div>
         </section>

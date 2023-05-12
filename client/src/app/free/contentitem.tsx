@@ -2,7 +2,7 @@ import Image from "next/image";
 import { BookmarkIcon as BookmarkIconUnchecked } from "@heroicons/react/24/outline";
 import defaultThumnail from "@/public/images/default-thumnail.jpg";
 import ContentFooter from "../../components/BoardMain/ContentFooter";
-import TagItem from "./TagItem";
+import TagItem from "../../components/BoardMain/TagItem";
 import { FreeBoard } from "@/types/api";
 
 // /** 2023/05/08 - 자유게시판 메인 화면 게시글 - by leekoby */

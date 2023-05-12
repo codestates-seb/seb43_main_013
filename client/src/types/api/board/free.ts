@@ -68,18 +68,18 @@ export interface ApiDeleteFreeBoardHandler {
   (body: ApiDeleteFreeBoardRequest): Promise<ApiDeleteFreeBoardResponse>;
 }
 
-// ============================== 자유 게시판들 조회 ==============================
-/** 2023/05/11 - 자유 게시판들 조회 요청 송신 타입 - by leekoby */
+// ============================== 자유 게시판 게시글리스트 조회 ==============================
+/** 2023/05/11 - 자유 게시판 게시글리스트 조회 요청 송신 타입 - by leekoby */
 export interface ApiFetchFreeBoardListRequest {
   page: number;
   size: number;
 }
-/** 2023/05/11 - 자유 게시판들 조회 요청 수신 타입 - by leekoby */
+/** 2023/05/11 - 자유 게시판 게시글리스트 조회 요청 수신 타입 - by leekoby */
 export interface ApiFetchFreeBoardListResponse {
   data: FreeBoard[];
   pageInfo: PageInfo;
 }
-/** 2023/05/11 - 자유 게시판 목록 조회 요청 핸들러 - by leekoby */
+/** 2023/05/11 - 자유 게시판 게시글리스트 조회 요청 핸들러 - by leekoby */
 export interface ApiFetchFreeBoardListHandler {
   (body: ApiFetchFreeBoardListRequest): Promise<ApiFetchFreeBoardListResponse>;
 }

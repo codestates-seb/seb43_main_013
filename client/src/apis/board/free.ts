@@ -38,7 +38,7 @@ export const apiDeleteFreeBoard: ApiDeleteFreeBoardHandler = async ({ freeBoardI
 
   return data;
 };
-/** 2023/05/11 - 자유 게시판 목록 요청 - by leekoby */
+/** 2023/05/11 - 자유 게시판 게시글 리스트 요청 - by leekoby */
 export const apiFetchFreeBoardList: ApiFetchFreeBoardListHandler = async ({ page, size }) => {
   const { data } = await serverInstance.get<ApiFetchFreeBoardListResponse>(`/freeboards?page=${page}&size=${size}`);
 

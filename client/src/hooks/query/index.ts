@@ -5,7 +5,12 @@ export const QUERY_KEYS = {
   feedbackBoard: "feedbackBoard",
   promotionBoard: "promotionBoard",
   jobBoard: "jobBoard",
+
+  /** 2023/05/12 - "react-query"에서 사용하는 key - by leekoby */
   freeBoardList: "freeBoardList",
+  feedbackBoardList: "feedbackBoardList",
+  promotionBoardList: "promotionBoardList",
+  jobBoardList: "jobBoardList",
 };
 
 export * from "./useFetchCategories";

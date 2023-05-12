@@ -1,7 +1,7 @@
 "use client";
 
 import ContentFooter from "../../components/BoardMain/ContentFooter";
-import TagItem from "./TagItem";
+import TagItem from "../../components/BoardMain/TagItem";
 
 /** 2023/05/09 - 임시 자유게시판 사이드 인기게시글 - by leekoby */
 const PopularPosts = () => {

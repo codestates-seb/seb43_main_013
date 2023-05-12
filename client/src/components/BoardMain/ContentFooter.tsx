@@ -21,11 +21,10 @@ const ContentFooter: React.FC<ContentFooterProps> = ({
   position,
   nickName,
   createdAt,
-  viewCount,
-  likeCount,
-  commentCount,
+  viewCount = 0,
+  likeCount = 0,
+  commentCount = 0,
 }) => {
-  console.log("date", typeof createdAt);
   return (
     <div className="flex justify-between w-full px-3 py-1">
       <div className={` gap-x-1 flex items-center justify-start w-full`}>

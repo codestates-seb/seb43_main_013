@@ -10,6 +10,8 @@ import type {
   ApiUpdateFeedbackBoardResponse,
   ApiDeleteFeedbackBoardHandler,
   ApiDeleteFeedbackBoardResponse,
+  ApiFetchFeedbackBoardListHandler,
+  ApiFetchFeedbackBoardListResponse,
 } from "@/types/api";
 
 /** 2023/05/10 - 피드백 게시판 생성 요청 - by 1-blue */
@@ -36,6 +38,15 @@ export const apiUpdateFeedbackBoard: ApiUpdateFeedbackBoardHandler = async ({ fe
 /** 2023/05/10 - 피드백 게시판 삭제 요청 - by 1-blue */
 export const apiDeleteFeedbackBoard: ApiDeleteFeedbackBoardHandler = async ({ feedbackBoardId }) => {
   const { data } = await serverInstance.delete<ApiDeleteFeedbackBoardResponse>(`/feedbackboard/${feedbackBoardId}`);
+
+  return data;
+};
+
+/** 2023/05/12 - 피드백 게시판 게시글 리스트 요청 - by leekoby */
+export const apiFetchFeedbackBoardList: ApiFetchFeedbackBoardListHandler = async ({ page, size }) => {
+  const { data } = await serverInstance.get<ApiFetchFeedbackBoardListResponse>(
+    `/feedbackboards?page=${page}&size=${size}`,
+  );
 
   return data;
 };
