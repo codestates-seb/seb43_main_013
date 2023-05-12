@@ -33,15 +33,21 @@ public class FeedbackBoard extends Auditable {
     private Long likeCount;
     @Column
     private Long viewCount;
+    @Column
+    private String tag;
+
+    @PrePersist
+    public void prePersist() {
+        this.commentCount = this.commentCount == null ? 0 : this.commentCount;
+        this.likeCount = this.likeCount == null ? 0 : this.likeCount;
+        this.viewCount = this.viewCount == null ? 0 : this.viewCount;
+    }
 
     @ManyToOne
     @JoinColumn(name = "category_id")
     @JsonBackReference
     private Category category;
     //매핑용
-    public long getCategoryId() {
-        return category.getCategoryId();
-    }
     public String getCategoryName() {
         return category.getCategoryName();
     }
@@ -58,9 +64,6 @@ public class FeedbackBoard extends Auditable {
     @JsonBackReference
     private FeedbackCategory feedbackCategory;
     //매핑용
-    public long getFeedbackCategoryId() {
-        return feedbackCategory.getFeedbackCategoryId();
-    }
     public String getFeedbackCategoryName() {
         return feedbackCategory.getFeedbackCategoryName();
     }
