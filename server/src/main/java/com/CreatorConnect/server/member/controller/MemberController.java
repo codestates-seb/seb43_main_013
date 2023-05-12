@@ -41,9 +41,7 @@ public class MemberController {
         Member member = mapper.memberPostDtoToMember(memberDtoPost);
         Member createdMember = memberService.createMember(member);
 
-        MemberResponseDto responseDto = mapper.memberToMemberResponseDto(createdMember);
-
-        return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @PostMapping("/api/member/{member-id}/password")

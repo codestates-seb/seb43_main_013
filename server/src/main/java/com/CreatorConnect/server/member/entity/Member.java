@@ -3,7 +3,7 @@ package com.CreatorConnect.server.member.entity;
 import com.CreatorConnect.server.audit.Auditable;
 import com.CreatorConnect.server.freeboard.entity.FreeBoard;
 import com.CreatorConnect.server.feedbackboard.entity.FeedbackBoard;
-import lombok.Builder;
+import com.CreatorConnect.server.member.follow.entity.Follow;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -52,11 +52,8 @@ public class Member extends Auditable {
     @Column
     private String profileImageUrl;
 
-    @OneToMany(mappedBy = "follower", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<Follow> follows = new ArrayList<>();
-
-    @OneToMany(mappedBy = "following", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<Follower> followers = new ArrayList<>();
+//    @OneToMany(mappedBy = "follower", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+//    private List<Follow> follows = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<FreeBoard> freeBoards = new ArrayList<>();
