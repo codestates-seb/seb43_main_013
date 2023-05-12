@@ -1,25 +1,15 @@
 // https://main-project.gitbook.io/main-project/undefined-1/undefined-2
 
-import type { PageInfo } from "..";
+import type { Board } from "./";
 
 /** 2023/05/10 - 홍보 게시판 타입 - by 1-blue */
-export interface PromotionBoard {
+export interface PromotionBoard extends Board {
   promotionBoardId: number;
-  title: string; // 게시글 제목
   link: string; // 유튜브 링크
   channelName: string; // 유튜브 채널명
   subscriberCount: number; // 구독자수
-  content: string; // 게시글 내용
-  commentCount: number; // 댓글수
-  likeCount: number; // 좋아요수
-  viewCount: number; // 조회수
   tag: string[]; // 태그
   categoryName: string; // 카테고리
-  createdAt: Date; // 작성 시간
-  modifiedAt: Date; // 수정 시간
-  memberId: number;
-  email: string; // 작성자 이메일
-  nickname: string; // 작성자 닉네임
 }
 
 // ============================== C 홍보 게시판 생성 ==============================
@@ -49,10 +39,7 @@ export interface ApiFetchPromotionBoardRequest {
   promotionBoardId: number;
 }
 /** 2023/05/10 - 홍보 게시판 상세 정보 요청 수신 타입 - by 1-blue */
-export interface ApiFetchPromotionBoardResponse {
-  data: PromotionBoard;
-  pageInfo: PageInfo;
-}
+export interface ApiFetchPromotionBoardResponse extends PromotionBoard {}
 /** 2023/05/10 - 홍보 게시판 상세 정보 요청 핸들러 - by 1-blue */
 export interface ApiFetchPromotionBoardHandler {
   (body: ApiFetchPromotionBoardRequest): Promise<ApiFetchPromotionBoardResponse>;
