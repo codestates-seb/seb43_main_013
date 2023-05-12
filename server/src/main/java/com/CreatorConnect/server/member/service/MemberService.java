@@ -131,13 +131,25 @@ public class MemberService {
 
         return findMember;
     }
+
+    // todo 코드 중복
+    public Member findVerifiedMember(String email) {
+
+        Optional<Member> optionalMember = memberRepository.findByEmail(email);
+        Member findMember = optionalMember.orElseThrow(()
+                -> new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND));
+
+        verifyActivatedMember(findMember);
+
+        return findMember;
+    }
+
     public boolean checkPassword (Long memberId, String password, String email){
 
         verifiedAuthenticatedMember(memberId, email);
         Member findMember = memberRepository.findByEmail(email).get();
         return passwordEncoder.matches(password, findMember.getPassword());
     }
-
 
     public void verifiedAuthenticatedMember(Long memberId, String email) {
 
