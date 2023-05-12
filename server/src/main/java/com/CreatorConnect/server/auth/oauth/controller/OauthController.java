@@ -17,7 +17,7 @@ public class OauthController {
     // naver
     // https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=JAnr85GxwFcBiBMCvdpL&state=vninaeonfd&redirect_uri=http://localhost:8080/auth/naver/callback
 
-    @GetMapping("/login/oauth2")
+    @GetMapping("/api/login/oauth2")
     public ResponseEntity oauthSuccessController(Authentication authentication) {
 
         return new ResponseEntity("oauth login", HttpStatus.OK);
