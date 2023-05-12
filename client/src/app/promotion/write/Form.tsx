@@ -14,10 +14,10 @@ import useTags from "@/hooks/useTags";
 import useLoading from "@/hooks/useLoading";
 
 // component
-import Input from "@/components/BoardForm/Input";
+import Input from "@/components/Board/Form/Input";
 import Editor from "@/components/Editor";
-import Category from "@/components/BoardForm/Category";
-import Tag from "@/components/BoardForm/Tag";
+import Category from "@/components/Board/Form/Category";
+import Tag from "@/components/Board/Form/Tag";
 
 /** 2023/05/09 - 홍보 게시글 작성 form 컴포넌트 - by 1-blue */
 const Form = () => {

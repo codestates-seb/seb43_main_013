@@ -1,8 +1,10 @@
+import { faker } from "@faker-js/faker";
+
+import { timer } from "@/libs";
+
 // type
 import type { NextApiHandler } from "next";
 import type { ApiFetchCommentsResponse, Comment, Recomment } from "@/types/api";
-import { faker } from "@faker-js/faker";
-import { timer } from "@/libs";
 
 // 더미 답글
 const getDummyRecomments: (n: number) => Recomment[] = (n) =>

@@ -10,9 +10,9 @@ import { apiCreateJobBoard } from "@/apis";
 import useLoading from "@/hooks/useLoading";
 
 // component
-import Input from "@/components/BoardForm/Input";
+import Input from "@/components/Board/Form/Input";
 import Editor from "@/components/Editor";
-import Category from "@/components/BoardForm/Category";
+import Category from "@/components/Board/Form/Category";
 
 /** 2023/05/09 - 구인구직 게시글 작성 form 컴포넌트 - by 1-blue */
 const Form = () => {

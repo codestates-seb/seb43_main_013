@@ -11,9 +11,9 @@ import { useFetchJobBoard } from "@/hooks/query";
 import useLoading from "@/hooks/useLoading";
 
 // component
-import Input from "@/components/BoardForm/Input";
+import Input from "@/components/Board/Form/Input";
 import Editor from "@/components/Editor";
-import Category from "@/components/BoardForm/Category";
+import Category from "@/components/Board/Form/Category";
 import FullSpinner from "@/components/Spinner/FullSpinner";
 
 // type
@@ -39,8 +39,8 @@ const Form: React.FC<Props> = ({ boardId }) => {
   useEffect(() => {
     if (!data) return;
 
-    setContent(data.data.content);
-    setSelectedJobCategory(data.data.jobCategoryName);
+    setContent(data.content);
+    setSelectedJobCategory(data.jobCategoryName);
   }, [data]);
 
   /** 2023/05/10 - 구인구직 게시글 수정 - by 1-blue */
@@ -115,7 +115,7 @@ const Form: React.FC<Props> = ({ boardId }) => {
       <section className="flex space-y-4 md:space-y-0 md:space-x-4 z-[1] flex-col md:flex-row flex-1">
         {/* title, link, tag, category */}
         <div className="w-full md:w-0 md:flex-1 space-y-2 z-[1]">
-          <Input name="제목" type="text" placeholder="제목을 입력해주세요!" defaultValue={data?.data.title} />
+          <Input name="제목" type="text" placeholder="제목을 입력해주세요!" defaultValue={data?.title} />
           <div className="flex flex-col md:flex-row space-y-4 md:space-x-4 md:space-y-0">
             <Category type="job" selectedCategory={selectedJobCategory} setSelectedCategory={setSelectedJobCategory} />
           </div>

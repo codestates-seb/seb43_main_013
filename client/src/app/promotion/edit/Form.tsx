@@ -14,10 +14,10 @@ import useTags from "@/hooks/useTags";
 import { useFetchPromotionBoard } from "@/hooks/query";
 
 // component
-import Input from "@/components/BoardForm/Input";
+import Input from "@/components/Board/Form/Input";
 import Editor from "@/components/Editor";
-import Category from "@/components/BoardForm/Category";
-import Tag from "@/components/BoardForm/Tag";
+import Category from "@/components/Board/Form/Category";
+import Tag from "@/components/Board/Form/Tag";
 import FullSpinner from "@/components/Spinner/FullSpinner";
 
 // type
@@ -45,9 +45,9 @@ const Form: React.FC<Props> = ({ boardId }) => {
   useEffect(() => {
     if (!data) return;
 
-    setSelectedTags(data.data.tag);
-    setContent(data.data.content);
-    setSelectedNormalCategory(data.data.categoryName);
+    setSelectedTags(data.tag);
+    setContent(data.content);
+    setSelectedNormalCategory(data.categoryName);
   }, [data]);
 
   /** 2023/05/09 - 홍보 게시글 수정 - by 1-blue */
@@ -105,7 +105,7 @@ const Form: React.FC<Props> = ({ boardId }) => {
       });
 
     try {
-      const { promotionBoardId } = await apiUpdatePromotionBoard({
+      await apiUpdatePromotionBoard({
         promotionBoardId: boardId,
         title,
         link,
@@ -124,7 +124,7 @@ const Form: React.FC<Props> = ({ boardId }) => {
       });
 
       // TODO: 화면 이동 + 스피너
-      // router.push(`/promotion/${promotionBoardId}`);
+      // router.push(`/promotion/${boardId}`);
     } catch (error) {
       console.error(error);
 
@@ -145,25 +145,15 @@ const Form: React.FC<Props> = ({ boardId }) => {
       <section className="flex space-y-4 md:space-y-0 md:space-x-4 z-[1] flex-col md:flex-row flex-1">
         {/* title, link, tag, category */}
         <div className="w-full md:w-0 md:flex-1 space-y-2 z-[1]">
-          <Input name="제목" type="text" placeholder="제목을 입력해주세요!" defaultValue={data?.data.title} />
-          <Input
-            name="유튜브 링크"
-            type="text"
-            placeholder="유튜브 링크을 입력해주세요!"
-            defaultValue={data?.data.link}
-          />
+          <Input name="제목" type="text" placeholder="제목을 입력해주세요!" defaultValue={data?.title} />
+          <Input name="유튜브 링크" type="text" placeholder="유튜브 링크을 입력해주세요!" defaultValue={data?.link} />
           <div className="flex flex-col md:flex-row md:space-x-4">
-            <Input
-              name="채널명"
-              type="text"
-              placeholder="채널명을 입력해주세요!"
-              defaultValue={data?.data.channelName}
-            />
+            <Input name="채널명" type="text" placeholder="채널명을 입력해주세요!" defaultValue={data?.channelName} />
             <Input
               name="구독자 수"
               type="number"
               placeholder="구독자 수를 입력해주세요!"
-              defaultValue={data?.data.subscriberCount}
+              defaultValue={data?.subscriberCount}
             />
           </div>
           <div className="flex flex-col md:flex-row space-y-4 md:space-x-4 md:space-y-0">

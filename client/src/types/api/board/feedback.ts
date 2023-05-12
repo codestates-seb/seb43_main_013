@@ -1,24 +1,14 @@
 // https://main-project.gitbook.io/main-project/undefined-1/undefined-1
 
-import type { PageInfo } from "../";
+import type { Board } from "./";
 
 /** 2023/05/10 - 피드백 게시판 타입 - by 1-blue */
-export interface FeedbackBoard {
+export interface FeedbackBoard extends Board {
   feedbackBoardId: number;
-  title: string; // 게시글 제목
   link: string;
-  content: string; // 게시글 내용
-  commentCount: number; // 댓글수
-  likeCount: number; // 좋아요수
-  viewCount: number; // 조회수
   tag: string[]; // 태그
   categoryName: string; // 카테고리
   feedbackCateogoryName: string; // 피드백 게시판 카테고리 (영상, 채널, 썸네일)
-  createdAt: Date; // 작성 시간
-  modifiedAt: Date; // 수정 시간
-  memberId: number;
-  email: string; // 작성자 이메일
-  nickname: string; // 작성자 닉네임
 }
 
 // ============================== C 피드백 게시판 생성 ==============================
@@ -47,10 +37,7 @@ export interface ApiFetchFeedbackBoardRequest {
   feedbackBoardId: number;
 }
 /** 2023/05/10 - 피드백 게시판 상세 정보 요청 수신 타입 - by 1-blue */
-export interface ApiFetchFeedbackBoardResponse {
-  data: FeedbackBoard;
-  pageInfo: PageInfo;
-}
+export interface ApiFetchFeedbackBoardResponse extends FeedbackBoard {}
 /** 2023/05/10 - 피드백 게시판 상세 정보 요청 핸들러 - by 1-blue */
 export interface ApiFetchFeedbackBoardHandler {
   (body: ApiFetchFeedbackBoardRequest): Promise<ApiFetchFeedbackBoardResponse>;
