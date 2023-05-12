@@ -24,21 +24,18 @@ public class FreeBoardController {
     private final FreeBoardService freeBoardService;
     private final FreeBoardMapper mapper;
     private final CategoryService categoryService;
-    private final TagMapper tagMapper;
 
     public FreeBoardController(FreeBoardService freeBoardService, FreeBoardMapper mapper,
-                               CategoryService categoryService, TagMapper tagMapper) {
+                               CategoryService categoryService) {
         this.freeBoardService = freeBoardService;
         this.mapper = mapper;
         this.categoryService = categoryService;
-        this.tagMapper = tagMapper;
     }
 
     // 자유 게시판 게시글 등록
     @PostMapping("/freeboard/new")
     public ResponseEntity postFreeBoard(@Valid @RequestBody FreeBoardDto.Post post) {
-        List<Tag> tags = tagMapper.tagPostDtosToTag(post.getTags());
-        FreeBoard freeBoardPost = freeBoardService.createFreeBoard(post,tags);
+        FreeBoard freeBoardPost = freeBoardService.createFreeBoard(post);
 
         return new ResponseEntity<>(HttpStatus.CREATED);
     }

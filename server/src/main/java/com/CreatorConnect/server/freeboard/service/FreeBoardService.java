@@ -12,9 +12,8 @@ import com.CreatorConnect.server.freeboard.repository.FreeBoardRepository;
 import com.CreatorConnect.server.member.entity.Member;
 import com.CreatorConnect.server.member.repository.MemberRepository;
 import com.CreatorConnect.server.member.service.MemberService;
-import com.CreatorConnect.server.tag.dto.TagDto;
 import com.CreatorConnect.server.tag.entity.Tag;
-import com.CreatorConnect.server.tag.entity.TagBoard;
+import com.CreatorConnect.server.tag.mapper.TagMapper;
 import com.CreatorConnect.server.tag.service.TagService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -37,6 +36,7 @@ public class FreeBoardService {
     private final MemberRepository memberRepository;
     private final CategoryService categoryService;
     private final TagService tagService;
+    private final TagMapper tagMapper;
 
     public FreeBoardService(FreeBoardRepository freeBoardRepository,
                             MemberService memberService,
@@ -44,7 +44,8 @@ public class FreeBoardService {
                             FreeBoardMapper mapper,
                             MemberRepository memberRepository,
                             CategoryService categoryService,
-                            TagService tagService) {
+                            TagService tagService,
+                            TagMapper tagMapper) {
         this.freeBoardRepository = freeBoardRepository;
         this.memberService = memberService;
         this.categoryRepository = categoryRepository;
@@ -52,6 +53,7 @@ public class FreeBoardService {
         this.memberRepository = memberRepository;
         this.categoryService = categoryService;
         this.tagService = tagService;
+        this.tagMapper = tagMapper;
     }
 
     /**
@@ -61,7 +63,8 @@ public class FreeBoardService {
      * 3. 게시글 등록
      * 4. 태그 저장
      */
-    public FreeBoard createFreeBoard(FreeBoardDto.Post post, List<Tag> tags) {
+    public FreeBoard createFreeBoard(FreeBoardDto.Post post) {
+        List<Tag> tags = tagMapper.tagPostDtosToTag(post.getTags());
 
         FreeBoard freeBoard = mapper.freeBoardPostDtoToFreeBoard(post);
 
