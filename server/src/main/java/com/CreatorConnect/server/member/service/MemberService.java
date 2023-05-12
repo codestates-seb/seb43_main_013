@@ -50,7 +50,7 @@ public class MemberService {
         member.setRoles(roles);
 
         if (member.getProfileImageUrl() == null || member.getProfileImageUrl().isEmpty()) {
-            member.setProfileImageUrl("https://ibb.co/R7FdWWD");
+            member.setProfileImageUrl("https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/754.jpg");
         }
 
         Member savedMember = memberRepository.save(member);
@@ -131,13 +131,25 @@ public class MemberService {
 
         return findMember;
     }
+
+    // todo 코드 중복
+    public Member findVerifiedMember(String email) {
+
+        Optional<Member> optionalMember = memberRepository.findByEmail(email);
+        Member findMember = optionalMember.orElseThrow(()
+                -> new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND));
+
+        verifyActivatedMember(findMember);
+
+        return findMember;
+    }
+
     public boolean checkPassword (Long memberId, String password, String email){
 
         verifiedAuthenticatedMember(memberId, email);
         Member findMember = memberRepository.findByEmail(email).get();
         return passwordEncoder.matches(password, findMember.getPassword());
     }
-
 
     public void verifiedAuthenticatedMember(Long memberId, String email) {
 
