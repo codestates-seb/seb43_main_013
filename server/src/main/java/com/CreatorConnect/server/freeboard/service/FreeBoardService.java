@@ -64,8 +64,6 @@ public class FreeBoardService {
      * 4. 태그 저장
      */
     public FreeBoard createFreeBoard(FreeBoardDto.Post post) {
-        List<Tag> tags = tagMapper.tagPostDtosToTag(post.getTags());
-
         FreeBoard freeBoard = mapper.freeBoardPostDtoToFreeBoard(post);
 
         // 회원 매핑
@@ -82,6 +80,7 @@ public class FreeBoardService {
         FreeBoard createdFreeBoard =  freeBoardRepository.save(freeBoard);
 
         // 4. 태그 저장
+        List<Tag> tags = tagMapper.tagPostDtosToTag(post.getTags());
         List<Tag> createTags = tagService.createFreeBoardTag(tags, createdFreeBoard);
 
         return createdFreeBoard;
@@ -118,6 +117,7 @@ public class FreeBoardService {
         Optional.ofNullable(freeBoard.getContent())
                 .ifPresent(content -> checkedFreeBoard.setContent(content)); // 게시글 내용 수정
 
+        List<Tag> tags = tagMapper.tagPostDtosToTag(patch.getTags());
 
         log.info("categoryName : {}",checkedFreeBoard.getCategoryName());
 

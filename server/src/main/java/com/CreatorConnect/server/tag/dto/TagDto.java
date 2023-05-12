@@ -1,12 +1,9 @@
 package com.CreatorConnect.server.tag.dto;
 
-import com.CreatorConnect.server.tag.entity.Tag;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import javax.validation.constraints.NotBlank;
 
 
 public class TagDto {
@@ -14,10 +11,11 @@ public class TagDto {
     @Setter
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class Post{
+    public static class TagInfo {
 //        private long tagId;
 
         private String tagName;
     }
+
 
 }

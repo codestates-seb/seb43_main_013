@@ -12,7 +12,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 public class FreeBoardDto {
@@ -39,7 +38,7 @@ public class FreeBoardDto {
         //private long categoryId;
         private String categoryName;
 
-        private List<TagDto.Post> tags; // 태그
+        private List<TagDto.TagInfo> tags; // 태그
     }
     @AllArgsConstructor
     @NoArgsConstructor
@@ -57,7 +56,7 @@ public class FreeBoardDto {
         @Valid
         private String categoryName;
 
-        private List<TagDto> tags;
+        private List<TagDto.TagInfo> tags;
     }
 
     @AllArgsConstructor

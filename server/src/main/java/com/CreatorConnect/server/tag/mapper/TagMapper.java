@@ -10,7 +10,7 @@ import java.util.List;
 public interface TagMapper {
 
     // TagDto.Post -> Tag
-    default Tag tagPostDtoToTag(TagDto.Post post) {
+    default Tag tagPostDtoToTag(TagDto.TagInfo post) {
         if (post.getTagName() == null) { // 태그를 입력하지 않은 경우 null 리턴
             return null;
         }
@@ -18,5 +18,6 @@ public interface TagMapper {
         return tag;
     }
 
-    List<Tag> tagPostDtosToTag(List<TagDto.Post> posts);
+    List<Tag> tagPostDtosToTag(List<TagDto.TagInfo> tagInfos);
+
 }
