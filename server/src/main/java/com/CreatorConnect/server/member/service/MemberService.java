@@ -50,7 +50,7 @@ public class MemberService {
         member.setRoles(roles);
 
         if (member.getProfileImageUrl() == null || member.getProfileImageUrl().isEmpty()) {
-            member.setProfileImageUrl("https://ibb.co/R7FdWWD");
+            member.setProfileImageUrl("https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/754.jpg");
         }
 
         Member savedMember = memberRepository.save(member);
