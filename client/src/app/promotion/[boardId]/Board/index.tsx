@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { notFound } from "next/navigation";
 
 // hook
 import { useFetchPromotionBoard } from "@/hooks/query";
@@ -25,8 +26,9 @@ const Board: React.FC<Props> = ({ boardId }) => {
 
   // Skeleton UI
   if (isLoading) return <Skeleton.Board />;
-  // TODO: 에러 페이지로 이동시키기
-  if (!data) return <span>Error 페이지...</span>;
+  if (!data) return <Skeleton.Board />;
+  // 에러
+  if (!data && !isLoading) return notFound();
 
   return (
     <article className="p-8 space-y-2 bg-white shadow-lg m-4 rounded-md">
@@ -34,7 +36,7 @@ const Board: React.FC<Props> = ({ boardId }) => {
       {/* 제목 */}
       {/* 이름/작성일 */}
       {/* 태그 */}
-      <BoardHeader {...data} />
+      <BoardHeader type="promotion" boardId={boardId} {...data} />
 
       {/* 라인 */}
       <div>

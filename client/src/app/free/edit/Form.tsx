@@ -1,22 +1,25 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { useToast } from "@chakra-ui/react";
 
 // api
 import { apiUpdateFreeBoard } from "@/apis";
 
+// store
+import { useLoadingStore } from "@/store";
+
 // hook
 import { useFetchFreeBoard } from "@/hooks/query";
 import useTags from "@/hooks/useTags";
-import useLoading from "@/hooks/useLoading";
 
 // component
 import Input from "@/components/Board/Form/Input";
 import Editor from "@/components/Editor";
 import Category from "@/components/Board/Form/Category";
 import Tag from "@/components/Board/Form/Tag";
-import FullSpinner from "@/components/Spinner/FullSpinner";
+import Skeleton from "@/components/Skeleton";
 
 // type
 interface Props {
@@ -26,7 +29,8 @@ interface Props {
 /** 2023/05/10 - 자유 게시글 수정 form 컴포넌트 - by 1-blue */
 const Form: React.FC<Props> = ({ boardId }) => {
   const toast = useToast();
-  const loadingAction = useLoading();
+  const router = useRouter();
+  const { start, end } = useLoadingStore((state) => state);
 
   /** 2023/05/10 - 작성한 태그들 - by 1-blue */
   const [selectedTags, onSelectedTag, onDeleteTag, setSelectedTags] = useTags();
@@ -81,7 +85,7 @@ const Form: React.FC<Props> = ({ boardId }) => {
       });
 
     try {
-      loadingAction.startLoading();
+      start();
 
       await apiUpdateFreeBoard({
         freeBoardId: boardId,
@@ -91,7 +95,7 @@ const Form: React.FC<Props> = ({ boardId }) => {
         content,
       });
 
-      loadingAction.endLoading();
+      end();
 
       toast({
         description: "게시글 수정했습니다.\n수정된 게시글 페이지로 이동됩니다.",
@@ -100,8 +104,7 @@ const Form: React.FC<Props> = ({ boardId }) => {
         isClosable: true,
       });
 
-      // TODO: 화면 이동 + 스피너
-      // router.push(`/free/${boardId}`);
+      router.push(`/free/${boardId}`);
     } catch (error) {
       console.error(error);
 
@@ -114,10 +117,10 @@ const Form: React.FC<Props> = ({ boardId }) => {
     }
   };
 
-  if (isLoading) return <FullSpinner />;
+  if (isLoading) return <Skeleton.BoardEdit />;
 
   return (
-    <form className="flex flex-col space-y-4 mb-4 px-4" onSubmit={onSubmit}>
+    <form className="flex flex-col space-y-4 px-4 p-8 bg-white shadow-lg m-4 mt-0 rounded-md" onSubmit={onSubmit}>
       {/* title, link, tag, category, thumbnail */}
       <section className="flex space-y-4 md:space-y-0 md:space-x-4 z-[1] flex-col md:flex-row flex-1">
         {/* title, link, tag, category */}

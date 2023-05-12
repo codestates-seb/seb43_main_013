@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { useToast } from "@chakra-ui/react";
 
 // api
@@ -8,6 +9,9 @@ import { apiUpdatePromotionBoard } from "@/apis";
 
 // util
 import { validateYoutubeURL } from "@/libs";
+
+// store
+import { useLoadingStore } from "@/store";
 
 // hook
 import useTags from "@/hooks/useTags";
@@ -18,7 +22,7 @@ import Input from "@/components/Board/Form/Input";
 import Editor from "@/components/Editor";
 import Category from "@/components/Board/Form/Category";
 import Tag from "@/components/Board/Form/Tag";
-import FullSpinner from "@/components/Spinner/FullSpinner";
+import Skeleton from "@/components/Skeleton";
 
 // type
 interface Props {
@@ -28,6 +32,8 @@ interface Props {
 /** 2023/05/09 - 홍보 게시글 작성 form 컴포넌트 - by 1-blue */
 const Form: React.FC<Props> = ({ boardId }) => {
   const toast = useToast();
+  const router = useRouter();
+  const { start, end } = useLoadingStore((state) => state);
 
   /** 2023/05/09 - 작성한 태그들 - by 1-blue */
   const [selectedTags, onSelectedTag, onDeleteTag, setSelectedTags] = useTags();
@@ -105,6 +111,8 @@ const Form: React.FC<Props> = ({ boardId }) => {
       });
 
     try {
+      start();
+
       await apiUpdatePromotionBoard({
         promotionBoardId: boardId,
         title,
@@ -116,6 +124,8 @@ const Form: React.FC<Props> = ({ boardId }) => {
         content,
       });
 
+      end();
+
       toast({
         description: "게시글 수정했습니다.\n수정된 게시글 페이지로 이동됩니다.",
         status: "success",
@@ -123,8 +133,7 @@ const Form: React.FC<Props> = ({ boardId }) => {
         isClosable: true,
       });
 
-      // TODO: 화면 이동 + 스피너
-      // router.push(`/promotion/${boardId}`);
+      router.push(`/promotion/${boardId}`);
     } catch (error) {
       console.error(error);
 
@@ -137,10 +146,10 @@ const Form: React.FC<Props> = ({ boardId }) => {
     }
   };
 
-  if (isLoading) return <FullSpinner />;
+  if (isLoading) return <Skeleton.BoardEdit />;
 
   return (
-    <form className="flex flex-col space-y-4 mb-4 px-4" onSubmit={onSubmit}>
+    <form className="flex flex-col space-y-4 px-4 p-8 bg-white shadow-lg m-4 mt-0 rounded-md" onSubmit={onSubmit}>
       {/* title, link, tag, category, thumbnail */}
       <section className="flex space-y-4 md:space-y-0 md:space-x-4 z-[1] flex-col md:flex-row flex-1">
         {/* title, link, tag, category */}

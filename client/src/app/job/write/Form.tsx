@@ -1,13 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { useToast } from "@chakra-ui/react";
 
 // api
 import { apiCreateJobBoard } from "@/apis";
 
-// hook
-import useLoading from "@/hooks/useLoading";
+// store
+import { useLoadingStore } from "@/store";
 
 // component
 import Input from "@/components/Board/Form/Input";
@@ -17,7 +18,8 @@ import Category from "@/components/Board/Form/Category";
 /** 2023/05/09 - 구인구직 게시글 작성 form 컴포넌트 - by 1-blue */
 const Form = () => {
   const toast = useToast();
-  const loadingAction = useLoading();
+  const router = useRouter();
+  const { start, end } = useLoadingStore((state) => state);
 
   /** 2023/05/09 - wysiwyg 으로 받는 content - by 1-blue */
   const [content, setContent] = useState("");
@@ -57,7 +59,7 @@ const Form = () => {
       });
 
     try {
-      loadingAction.startLoading();
+      start();
 
       const { jobBoardId } = await apiCreateJobBoard({
         memberId: 1,
@@ -66,7 +68,7 @@ const Form = () => {
         jobCategoryName: selectedJobCategory,
       });
 
-      loadingAction.endLoading();
+      end();
 
       toast({
         description: "게시글 생성했습니다.\n생성된 게시글 페이지로 이동됩니다.",
@@ -75,8 +77,7 @@ const Form = () => {
         isClosable: true,
       });
 
-      // TODO: 화면 이동 + 스피너
-      // router.push(`/job/${jobBoardId}`);
+      router.push(`/job/${jobBoardId}`);
     } catch (error) {
       console.error(error);
 
@@ -90,7 +91,7 @@ const Form = () => {
   };
 
   return (
-    <form className="flex flex-col space-y-4 mb-4 px-4" onSubmit={onSubmit}>
+    <form className="flex flex-col space-y-4 px-4 p-8 bg-white shadow-lg m-4 mt-0 rounded-md" onSubmit={onSubmit}>
       {/* title, link, tag, category, thumbnail */}
       <section className="flex space-y-4 md:space-y-0 md:space-x-4 z-[1] flex-col md:flex-row flex-1">
         {/* title, link, tag, category */}

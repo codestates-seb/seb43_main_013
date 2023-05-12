@@ -24,9 +24,9 @@ const Board: React.FC<Props> = ({ boardId }) => {
 
   // Skeleton UI
   if (isLoading) return <Skeleton.Board />;
+  if (!data) return <Skeleton.Board />;
   // 존재하지 않는 게시판
   if (!data && !isLoading) return notFound();
-  if (!data) return <Skeleton.Board />;
 
   return (
     <article className="p-8 space-y-2 bg-white shadow-lg m-4 rounded-md">
@@ -34,7 +34,7 @@ const Board: React.FC<Props> = ({ boardId }) => {
       {/* 제목 */}
       {/* 이름/작성일 */}
       {/* 태그 */}
-      <BoardHeader {...data} />
+      <BoardHeader type="job" boardId={boardId} {...data} />
 
       {/* 라인 */}
       <div>

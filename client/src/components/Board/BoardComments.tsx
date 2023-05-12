@@ -7,9 +7,11 @@ import { QUERY_KEYS } from "@/hooks/query";
 // api
 import { apiDeleteComment } from "@/apis";
 
+// store
+import { useLoadingStore } from "@/store";
+
 // hook
 import { useFetchComments } from "@/hooks/query/useFetchComments";
-import useLoading from "@/hooks/useLoading";
 
 // component
 import BoardComment from "./BoardComment";
@@ -25,7 +27,7 @@ interface Props {
 /** 2023/05/11 - 게시판의 댓글들 컴포넌트 - by 1-blue */
 const BoardComments: React.FC<Props> = ({ type, boardId }) => {
   const toast = useToast();
-  const actions = useLoading();
+  const { start, end } = useLoadingStore((state) => state);
 
   const { data, fetchNextPage, hasNextPage, isFetching } = useFetchComments({
     type,
@@ -46,11 +48,11 @@ const BoardComments: React.FC<Props> = ({ type, boardId }) => {
       const commentId = +e.target.dataset.commentId;
 
       try {
-        actions.startLoading();
+        start();
 
         await apiDeleteComment(type, { boardId, commentId });
 
-        actions.endLoading();
+        end();
 
         queryClient.setQueryData<InfiniteData<ApiFetchCommentsResponse> | undefined>(
           [QUERY_KEYS.comment, type],

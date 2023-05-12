@@ -1,16 +1,32 @@
 import { useCallback } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
 import { useToast } from "@chakra-ui/react";
 import moment from "moment";
-import { BookmarkIcon as OBookmarkIcon, LinkIcon as OLinkIcon, EyeIcon as OEyeIcon } from "@heroicons/react/24/outline";
+import {
+  BookmarkIcon as OBookmarkIcon,
+  LinkIcon as OLinkIcon,
+  EyeIcon as OEyeIcon,
+  TrashIcon as OTrashIcon,
+  PencilSquareIcon as OPencilSquareIcon,
+} from "@heroicons/react/24/outline";
 // import { LinkIcon as SLinkIcon } from "@heroicons/react/24/solid";
+
+// api
+import { apiDeleteFeedbackBoard, apiDeleteFreeBoard, apiDeleteJobBoard, apiDeletePromotionBoard } from "@/apis";
+
+// store
+import { useLoadingStore } from "@/store";
 
 // component
 import Avatar from "@/components/Avatar";
 
 // type
-import type { Board } from "@/types/api";
+import type { Board, BoardType } from "@/types/api";
 interface Props extends Board {
+  type: BoardType;
+  boardId: number;
   tag?: string[];
   categoryName?: string;
   feedbackCateogoryName?: string;
@@ -21,6 +37,8 @@ interface Props extends Board {
 
 /** 2023/05/11 - 보드 상단 컴포넌트 - by 1-blue */
 const BoardHeader: React.FC<Props> = ({
+  type,
+  boardId,
   title,
   tag,
   memberId,
@@ -35,9 +53,11 @@ const BoardHeader: React.FC<Props> = ({
   subscriberCount,
 }) => {
   const toast = useToast();
+  const router = useRouter();
   const pathname = usePathname();
+  const { start, end } = useLoadingStore((state) => state);
 
-  /** 2023/04/11 - copy clipboard - by 1-blue */
+  /** 2023/05/12 - copy clipboard - by 1-blue */
   const copyLink = useCallback(() => {
     navigator.clipboard.writeText(window.location.origin + pathname).then(() =>
       toast({
@@ -49,10 +69,50 @@ const BoardHeader: React.FC<Props> = ({
     );
   }, []);
 
+  /** 2023/05/12 - 게시판 삭제 핸들러 - by 1-blue */
+  const onDeleteBoard = useCallback(async () => {
+    if (!confirm("정말 게시판을 삭제하시겠습니까?")) return;
+
+    try {
+      start();
+
+      switch (type) {
+        case "feedback":
+          await apiDeleteFeedbackBoard({ feedbackBoardId: boardId });
+        case "free":
+          await apiDeleteFreeBoard({ freeBoardId: boardId });
+        case "job":
+          await apiDeleteJobBoard({ jobBoardId: boardId });
+        case "promotion":
+          await apiDeletePromotionBoard({ promotionBoardId: boardId });
+      }
+
+      end();
+
+      toast({
+        description: "게시판을 삭제했습니다.\n메인 페이지로 이동됩니다!",
+        status: "success",
+        duration: 2500,
+        isClosable: true,
+      });
+
+      router.replace("/");
+    } catch (error) {
+      console.error(error);
+
+      toast({
+        description: "게시판 삭제에 실패했습니다.\n잠시후에 다시 시도해주세요!",
+        status: "error",
+        duration: 2500,
+        isClosable: true,
+      });
+    }
+  }, [boardId, start, end]);
+
   return (
     <>
-      {/* 아바타, 북마크, 링크 */}
-      <section className="flex">
+      {/* 아바타, 북마크, 링크, 수정 삭제 */}
+      <section className="flex items-center">
         <Avatar src={profileImageUrl} alt={`${nickname}님의 프로필 이미지`} className="w-16 h-16 object-fill" />
 
         <button type="button" className="ml-auto" onClick={copyLink}>
@@ -63,6 +123,18 @@ const BoardHeader: React.FC<Props> = ({
           <OBookmarkIcon className="w-6 h-6 hover:text-main-400 hover:stroke-2 active:text-main-500" />
           {/* <SBookmarkIcon className="w-6 h-6" /> */}
         </button>
+
+        {/* TODO: 본인 게시글인 경우 */}
+        {true && (
+          <>
+            <Link href={`/${type}/edit?boardId=${boardId}`} className="ml-2">
+              <OPencilSquareIcon className="w-6 h-6 hover:text-main-400 hover:stroke-2 active:text-main-500" />
+            </Link>
+            <button type="button" className="ml-2" onClick={onDeleteBoard}>
+              <OTrashIcon className="w-6 h-6 hover:text-main-400 hover:stroke-2 active:text-main-500" />
+            </button>
+          </>
+        )}
       </section>
 
       {/* 제목 */}

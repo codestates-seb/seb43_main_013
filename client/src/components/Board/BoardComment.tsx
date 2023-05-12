@@ -8,9 +8,11 @@ import { QUERY_KEYS } from "@/hooks/query";
 // api
 import { apiUpdateComment } from "@/apis";
 
+// store
+import { useLoadingStore } from "@/store";
+
 // hook
 import useResizeTextarea from "@/hooks/useResizeTextarea";
-import useLoading from "@/hooks/useLoading";
 
 // component
 import Avatar from "@/components/Avatar";
@@ -26,7 +28,7 @@ interface Props {
 /** 2023/05/11 - 게시판의 댓글들 컴포넌트 - by 1-blue */
 const BoardComment: React.FC<Props> = ({ type, boardId, comment }) => {
   const toast = useToast();
-  const actions = useLoading();
+  const { start, end } = useLoadingStore((state) => state);
 
   /** 2023/05/11 - 답글 더 보기  */
   const [isShow, setIsShow] = useState(false);
@@ -57,12 +59,12 @@ const BoardComment: React.FC<Props> = ({ type, boardId, comment }) => {
       });
 
     try {
-      actions.startLoading();
+      start();
 
       // TODO: memberId 넣기
       await apiUpdateComment(type, { boardId, commentId: comment.commentId, content, memberId: 1 });
 
-      actions.endLoading();
+      end();
 
       queryClient.setQueryData<InfiniteData<ApiFetchCommentsResponse> | undefined>(
         [QUERY_KEYS.comment, type],

@@ -7,9 +7,11 @@ import { useRouter } from "next/navigation";
 // api
 import { apiCreateFreeBoard } from "@/apis";
 
+// store
+import { useLoadingStore } from "@/store";
+
 // hook
 import useTags from "@/hooks/useTags";
-import useLoading from "@/hooks/useLoading";
 
 // component
 import Input from "@/components/Board/Form/Input";
@@ -19,9 +21,9 @@ import Tag from "@/components/Board/Form/Tag";
 
 /** 2023/05/08 - 자유 게시글 작성 form 컴포넌트 - by 1-blue */
 const Form = () => {
-  const router = useRouter();
   const toast = useToast();
-  const loadingAction = useLoading();
+  const router = useRouter();
+  const { start, end } = useLoadingStore((state) => state);
 
   /** 2023/05/09 - 작성한 태그들 - by 1-blue */
   const [selectedTags, onSelectedTag, onDeleteTag] = useTags();
@@ -64,7 +66,7 @@ const Form = () => {
       });
 
     try {
-      loadingAction.startLoading();
+      start();
 
       // TODO: 유저 식별자 넣어서 보내주기 ( memberId )
       const { freeBoardId } = await apiCreateFreeBoard({
@@ -75,7 +77,7 @@ const Form = () => {
         content,
       });
 
-      loadingAction.endLoading();
+      end();
 
       toast({
         description: "게시글 생성했습니다.\n생성된 게시글 페이지로 이동됩니다.",
@@ -84,8 +86,7 @@ const Form = () => {
         isClosable: true,
       });
 
-      // TODO: 화면 이동 + 스피너
-      // router.push(`/free/${freeBoardId}`);
+      router.push(`/free/${freeBoardId}`);
     } catch (error) {
       console.error(error);
 
@@ -99,7 +100,7 @@ const Form = () => {
   };
 
   return (
-    <form className="flex flex-col space-y-4 mb-4 px-4" onSubmit={onSubmit}>
+    <form className="flex flex-col space-y-4 px-4 p-8 bg-white shadow-lg m-4 mt-0 rounded-md" onSubmit={onSubmit}>
       {/* title, link, tag, category, thumbnail */}
       <section className="flex space-y-4 md:space-y-0 md:space-x-4 z-[1] flex-col md:flex-row flex-1">
         {/* title, link, tag, category */}

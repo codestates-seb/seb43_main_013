@@ -7,8 +7,8 @@ import { apiCreateComment } from "@/apis";
 
 import { QUERY_KEYS } from "@/hooks/query";
 
-// hook
-import useLoading from "@/hooks/useLoading";
+// store
+import { useLoadingStore } from "@/store";
 
 // type
 import type { ApiFetchCommentsResponse, BoardType } from "@/types/api";
@@ -21,7 +21,7 @@ interface Props {
 /** 2023/05/11 - 댓글 폼 컴포넌트 - by 1-blue */
 const BoardCommentForm: React.FC<Props> = ({ type, boardId }) => {
   const toast = useToast();
-  const actions = useLoading();
+  const { start, end } = useLoadingStore((state) => state);
 
   const [content, setContent] = useState("");
 
@@ -47,12 +47,12 @@ const BoardCommentForm: React.FC<Props> = ({ type, boardId }) => {
       });
 
     try {
-      actions.startLoading();
+      start();
 
       // TODO: memberId 넣기
       const { commentId } = await apiCreateComment(type, { boardId, content, memberId: 1 });
 
-      actions.endLoading();
+      end();
 
       // TODO: 멤버 데이터 넣기
       queryClient.setQueryData<InfiniteData<ApiFetchCommentsResponse> | undefined>(
