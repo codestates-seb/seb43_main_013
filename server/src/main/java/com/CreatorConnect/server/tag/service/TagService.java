@@ -38,7 +38,7 @@ public class TagService {
 
             TagBoard tagBoard = new TagBoard(freeBoard, savedTag);
             // 3. 태그 저장
-            saveTagBoard(tagBoard);
+            tagBoardRepository.save(tagBoard);
         }
         return tags;
     }
@@ -55,11 +55,6 @@ public class TagService {
         // db에 태그가 존재하지 않으면 해당 태그 테이블에 저장
         Tag findTag = optionalTag.orElse(tagRepository.save(tag));
         return findTag;
-    }
-
-    // TagBoard 테이블에 태그 저장
-    private void saveTagBoard(TagBoard tagBoard) {
-        tagBoardRepository.save(tagBoard);
     }
 
     // TAG_ID 추출 메서드

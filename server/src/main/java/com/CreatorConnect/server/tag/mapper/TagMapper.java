@@ -11,7 +11,7 @@ public interface TagMapper {
 
     // TagDto.Post -> Tag
     default Tag tagPostDtoToTag(TagDto.Post post) {
-        if (post == null) { // 태그를 입력하지 않은 경우 null 리턴
+        if (post.getTagName() == null) { // 태그를 입력하지 않은 경우 null 리턴
             return null;
         }
         Tag tag = new Tag(post.getTagName());
