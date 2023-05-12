@@ -3,15 +3,18 @@ package com.CreatorConnect.server.member.entity;
 import com.CreatorConnect.server.audit.Auditable;
 import com.CreatorConnect.server.freeboard.entity.FreeBoard;
 import com.CreatorConnect.server.feedbackboard.entity.FeedbackBoard;
-import com.CreatorConnect.server.member.follow.entity.Follow;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Pattern;
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -52,8 +55,26 @@ public class Member extends Auditable {
     @Column
     private String profileImageUrl;
 
-//    @OneToMany(mappedBy = "follower", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-//    private List<Follow> follows = new ArrayList<>();
+    @ManyToMany(cascade = CascadeType.MERGE)
+    @JoinTable(name = "FOLLOW_FOLLOWING",
+            joinColumns = @JoinColumn(name = "FOLLOWING_ID"),
+            inverseJoinColumns = @JoinColumn(name = "FOLLOWER_ID"))
+    @JsonIgnoreProperties("followings") // Jackson 에서 순환 참조 처리
+    private Set<Member> followers = new HashSet<>(); // SET : 중복 방지
+
+    @ManyToMany(mappedBy = "followers")
+    @JsonIgnoreProperties("followers")
+    private Set<Member> followings = new HashSet<>();
+
+    public void follow (Member member) { // 다른 사람이 나를 팔로우 하는 로직
+        followers.add(member);
+        member.followings.add(this);
+    }
+
+    public void unfollow (Member member) {
+        followers.remove(member);
+        member.followings.remove(this);
+    }
 
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<FreeBoard> freeBoards = new ArrayList<>();
