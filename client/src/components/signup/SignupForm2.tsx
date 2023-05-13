@@ -5,7 +5,6 @@ import SignupBind from "./SignupBind";
 
 const SignupForm = () => {
   const { mustBind, optionBind, profileImageUrl, setProfileImageUrl, onsubmit, isSubmit } = SignupBind();
-
   const disabled = mustBind.findIndex((el) => el.valid === false) !== -1;
 
   return (
