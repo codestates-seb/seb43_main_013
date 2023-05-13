@@ -19,6 +19,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -113,15 +114,15 @@ public class FreeBoardService {
     /**
      * <자유 게시판 게시글 목록>
      */
-    public Page<FreeBoard> getFreeBoards(int page, int size) {
-        return freeBoardRepository.findAll(PageRequest.of(page, size, Sort.by("freeBoardId").descending()));
+    public Page<FreeBoard> getFreeBoards(String sort, int page, int size) {
+        return  freeBoardRepository.findAll(sortedPage(sort, page, size));
     }
 
     /**
      * <자유 게시판 카테고리 별 목록>
      */
-    public Page<FreeBoard> getFreeBoardsByCategory(long categoryId, int page, int size) {
-        return freeBoardRepository.findFreeBoardsByCategoryId(categoryId, PageRequest.of(page, size, Sort.by("freeBoardId").descending()));
+    public Page<FreeBoard> getFreeBoardsByCategory(long categoryId, String sort, int page, int size) {
+        return freeBoardRepository.findFreeBoardsByCategoryId(categoryId, sortedPage(sort, page, size));
 //        Page<FreeBoard> freeBoards = freeBoardRepository.findAll(pageRequest);
 //        List<FreeBoardDto.Response> responses = findFreeBoardByCategoryId(categoryId);
 //
@@ -174,5 +175,17 @@ public class FreeBoardService {
         freeBoardRepository.save(freeBoard);
     }
 
+    //페이지 정렬 메서드
+    private PageRequest sortedPage(String sort, int page, int size) {
+        if(Objects.equals(sort,"최신순")){
+            return PageRequest.of(page, size, Sort.by("freeBoardId").descending());
+        } else if(Objects.equals(sort,"등록순")){
+            return PageRequest.of(page, size, Sort.by("freeBoardId").ascending());
+        } else if(Objects.equals(sort,"인기순")){
+            return PageRequest.of(page, size, Sort.by("viewCount","freeBoardId").descending());
+        } else {
+            return PageRequest.of(page, size, Sort.by("freeBoardId").descending());
+        }
+    }
 
 }
