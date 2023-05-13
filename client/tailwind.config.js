@@ -19,6 +19,16 @@ module.exports = {
           950: "#4c0519",
         },
       },
+      keyframes: {
+        "skeleton-gradient": {
+          "0%": { "background-color": "rgba(165, 165, 165, 0.2)" },
+          "50%": { "background-color": "rgba(165, 165, 165, 0.4)" },
+          "100%": { "background-color": "rgba(165, 165, 165, 0.6)" },
+        },
+      },
+      animation: {
+        "skeleton-gradient": "skeleton-gradient 0.8s linear infinite alternate",
+      },
     },
   },
   plugins: [],

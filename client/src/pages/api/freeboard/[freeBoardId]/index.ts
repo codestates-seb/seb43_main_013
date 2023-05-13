@@ -5,58 +5,53 @@ import { timer } from "@/libs";
 // type
 import type { NextApiHandler } from "next";
 import type {
-  ApiDeleteFeedbackBoardResponse,
-  ApiFetchFeedbackBoardResponse,
-  ApiUpdateFeedbackBoardRequest,
-  ApiUpdateFeedbackBoardResponse,
-  FeedbackBoard,
+  ApiDeleteFreeBoardResponse,
+  ApiFetchFreeBoardResponse,
+  ApiUpdateFreeBoardRequest,
+  ApiUpdateFreeBoardResponse,
+  FreeBoard,
 } from "@/types/api";
 
-// 임의로 피드백 게시글 상세 내용
-const dummyFeedbackBoard: FeedbackBoard = {
-  feedbackBoardId: 1111,
+// 임의로 자유 게시글 상세 내용
+const dummyFreeBoard: FreeBoard = {
+  freeBoardId: 1111,
   title: faker.lorem.paragraph(),
-  link: "https://www.youtube.com/watch?v=Lv8CXRY3ViI&list=RDLv8CXRY3ViI&start_radio=1",
-  content: faker.lorem.paragraphs(),
+  content: Array(10)
+    .fill(null)
+    .map(() => "<p>" + faker.lorem.paragraphs() + "</p>" + "<br />")
+    .join(""),
   commentCount: faker.datatype.number(), // 댓글수
   likeCount: faker.datatype.number(), // 좋아요수
   viewCount: faker.datatype.number(), // 조회수
   tag: Array(8)
     .fill(null)
     .map(() => faker.word.noun({ length: { min: 2, max: 5 } })), // 태그
-  categoryName: faker.word.noun(), // 게시판 카테고리(먹방, 게임 스포츠 등)
-  feedbackCateogoryName: faker.word.noun(), // 피드백 게시판 카테고리(영상, 채널, 썸네일)
+  categoryName: faker.word.noun(), // 카테고리
   createdAt: faker.date.recent(), // 작성 시간
   modifiedAt: faker.date.recent(), // 수정 시간
   memberId: 1,
   email: "1-blue@naver.com", // 작성자 이메일
   nickname: "1-blue", // 작성자 닉네임
+  profileImageUrl: faker.image.avatar(),
 };
 
-const pageInfo = {
-  page: 1,
-  size: 10,
-  totalElements: 2,
-  totalPages: 1,
-};
-
-/** 2023/05/10 - 피드백 게시글 생성/수정/삭제 요청 - by 1-blue */
+/** 2023/05/10 - 자유 게시글 생성/수정/삭제 요청 - by 1-blue */
 const handler: NextApiHandler<
-  ApiFetchFeedbackBoardResponse | ApiUpdateFeedbackBoardResponse | ApiDeleteFeedbackBoardResponse
+  ApiFetchFreeBoardResponse | ApiUpdateFreeBoardResponse | ApiDeleteFreeBoardResponse
 > = async (req, res) => {
   await timer(3000);
 
   try {
-    const feedbackBoardId = +(req.query.feedbackBoardId as string);
+    const freeBoardId = +(req.query.freeBoardId as string);
 
     if (req.method === "GET") {
       return res.status(201).json({
-        data: { ...dummyFeedbackBoard, feedbackBoardId },
-        pageInfo,
+        ...dummyFreeBoard,
+        freeBoardId,
       });
     }
     if (req.method === "PATCH") {
-      const body = req.body as ApiUpdateFeedbackBoardRequest;
+      const body = req.body as ApiUpdateFreeBoardRequest;
 
       console.log("body >> ", body);
 
@@ -66,7 +61,7 @@ const handler: NextApiHandler<
       return res.status(204).end();
     }
   } catch (error) {
-    console.error("/api/feebackboard/[feedbackBoardId] error >> ", error);
+    console.error("/api/freeboard/[freeBoardId] error >> ", error);
 
     return res.status(500).end();
   }
