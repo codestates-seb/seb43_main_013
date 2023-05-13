@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
@@ -70,11 +71,21 @@ public class MemberController {
     @GetMapping(MEMBER_DEFAULT_URL + "/{member-id}")
     public ResponseEntity getMember(@PathVariable("member-id") @Positive Long memberId) {
 
+        Member loginUser = memberService.findVerifiedMember(SecurityContextHolder.getContext().getAuthentication().getName());
         Member findedmember = memberService.findMember(memberId);
-
         MemberResponseDto responseDto = mapper.memberToMemberResponseDto(findedmember);
 
-        return new ResponseEntity<>(responseDto, HttpStatus.OK);
+        if (loginUser.getFollowings().stream().anyMatch(
+                member -> member.equals(findedmember)
+        )){
+            responseDto.setFollowed(true);
+            return new ResponseEntity<>(responseDto, HttpStatus.OK);
+        }
+
+        if (loginUser.getMemberId() == memberId){
+            responseDto.setMyPage(true);
+        } return new ResponseEntity(responseDto, HttpStatus.OK);
+
     }
 
     @Secured("ROLE_ADMIN")
