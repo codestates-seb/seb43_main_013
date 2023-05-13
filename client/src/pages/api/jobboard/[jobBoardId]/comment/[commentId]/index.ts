@@ -18,7 +18,7 @@ const handler: NextApiHandler<ApiUpdateCommentResponse | ApiDeleteCommentRespons
       return res.status(204).json({});
     }
   } catch (error) {
-    console.error("/api/feedbackboard/[feedbackBoardId]/comment error >> ", error);
+    console.error("/api/feedbackboard/[feedbackBoardId]/comment/[commentId]  error >> ", error);
 
     return res.status(500).end();
   }

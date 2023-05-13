@@ -15,3 +15,4 @@ export type BoardType = "free" | "feedback" | "promotion" | "job";
 export * from "./categories";
 export * from "./board";
 export * from "./comment";
+export * from "./recomment";

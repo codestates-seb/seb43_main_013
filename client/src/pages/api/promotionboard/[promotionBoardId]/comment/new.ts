@@ -4,7 +4,7 @@ import { timer } from "@/libs";
 import type { NextApiHandler } from "next";
 import type { ApiCreateCommentResponse } from "@/types/api";
 
-/** 2023/05/11 - 댓글 CUD - by 1-blue */
+/** 2023/05/11 - 댓글 C - by 1-blue */
 const handler: NextApiHandler<ApiCreateCommentResponse> = async (req, res) => {
   timer(1000);
 

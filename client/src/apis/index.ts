@@ -10,3 +10,4 @@ export const serverInstance = axios.create({
 export * from "./categories";
 export * from "./board";
 export * from "./comment";
+export * from "./recomment";
