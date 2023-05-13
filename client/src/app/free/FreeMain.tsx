@@ -3,20 +3,26 @@ import { useFetchFreeBoardList } from "@/hooks/query/useFetchFreeBoardList";
 import SideCategories from "@/components/BoardMain/SideCategories";
 import SortPosts from "@/components/BoardMain/SortPosts";
 import ContentItem from "./ContentItem";
-import PopularPosts from "./PopularPosts";
+// TODO 사이드 인기 게시글 영역 API 생성시 추가하기
+// import PopularPosts from "./PopularPosts";
 import Link from "next/link";
-// import { useFetchCategories } from "@/hooks/query";
+import { useFetchCategories } from "@/hooks/query";
+import Pagination from "@/components/Pagination";
+import { useEffect, useState } from "react";
 
 /** 2023/05/08 - 자유게시판 메인 화면 - by leekoby */
 const FreeMain = () => {
+  const [page, setPage] = useState(1);
+
   // 자유게시판 목록 get 요청
-  const { data, fetchNextPage, hasNextPage, isFetching } = useFetchFreeBoardList({ page: 1, size: 10 });
-  // const { categories } = useFetchCategories({ type: "normal" });
+  const { data, fetchNextPage, hasNextPage, isFetching, refetch } = useFetchFreeBoardList({ page, size: 4 });
+
+  /** 2023/05/13 - 자유게시판 카테고리 초기값 - by leekoby */
+  const { categories } = useFetchCategories({ type: "normal" });
 
   // if (!categories) return;
-  console.log(data?.pages);
-  if (!data) return;
-  if (data.pages.length < 1) return;
+  if (!data) return <></>;
+  if (data.pages.length < 1) return <></>;
   return (
     //  전체 컨테이너
     <div className="mx-auto mt-6 min-w-min">
@@ -29,7 +35,9 @@ const FreeMain = () => {
         <aside className=" flex flex-row md:flex-col items-center justify-center md:justify-start  md:w-0 md:grow-[2]  ">
           {/* category  */}
           <SideCategories categoryData={["전체"]} />
-          <PopularPosts />
+
+          {/* // TODO 인기게시글 생기면 완성하기 */}
+          {/* <PopularPosts /> */}
         </aside>
         {/* rightside freeboard post list */}
         <section className="flex flex-col md:w-0 ml-5  grow-[8]">
@@ -51,7 +59,14 @@ const FreeMain = () => {
               )),
             )}
 
-          <div className="flex flex-col items-center m-auto"></div>
+          {/* postslist bottom */}
+          <div className="">
+            <Pagination
+              page={data?.pages[0].pageInfo.page}
+              totalPages={data?.pages[0].pageInfo.totalPages}
+              onPageChange={setPage}
+            />
+          </div>
         </section>
         {/* 🔺🔻 버튼? */}
       </div>
