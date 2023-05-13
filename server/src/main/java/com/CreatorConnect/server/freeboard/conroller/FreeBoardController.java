@@ -60,7 +60,7 @@ public class FreeBoardController {
     }
 
     // 자유 게시판 카테고리 별 목록 조회
-    @GetMapping("/freboards/category/{categoryId}")
+    @GetMapping("/freeboards/categories/{categoryId}")
     public ResponseEntity getFreeBoardsByCategory(@PathVariable("categoryId") long categoryId,
                                                   @Positive @RequestParam int page,
                                                 @Positive @RequestParam int size) {

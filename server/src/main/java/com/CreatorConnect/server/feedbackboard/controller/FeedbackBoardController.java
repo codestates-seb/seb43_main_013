@@ -40,7 +40,7 @@ public class FeedbackBoardController {
         FeedbackBoardResponseDto.Multi response = feedbackBoardService.responseFeedbacks(page, size);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-    @GetMapping("/feedbackboards/category/{feedbackCategoryId}")
+    @GetMapping("/feedbackboards/feedbackcategories/{feedbackCategoryId}")
     public ResponseEntity getFeedbacksByFeedbackCategory(@PathVariable("feedbackCategoryId") @Positive Long feedbackCategoryId,
                                                  @RequestParam("page") @Positive int page,
                                                  @RequestParam("size") @Positive int size) {

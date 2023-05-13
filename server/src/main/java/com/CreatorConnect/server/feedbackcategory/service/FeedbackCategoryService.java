@@ -62,12 +62,11 @@ public class FeedbackCategoryService {
     }
 
     //목록 조회
-    public FeedbackCategoryResponseDto.Multi<FeedbackCategoryResponseDto.Details> responseFeedbackCategorys(int page, int size){
-        PageRequest pageRequest = PageRequest.of(page - 1, size, Sort.by("feedbackCategoryId").descending());
+    public List<FeedbackCategoryResponseDto.Details> responseFeedbackCategorys(){
+        PageRequest pageRequest = PageRequest.of(0, 100, Sort.by("feedbackCategoryId").descending());
         Page<FeedbackCategory> feedbackCategorysPage = feedbackCategoryRepository.findAll(pageRequest);
         List<FeedbackCategoryResponseDto.Details> responses = mapper.feedbackCategorysToFeedbackCategoryDetailsResponses(feedbackCategorysPage.getContent());
-        FeedbackCategoryResponseDto.PageInfo pageInfo = new FeedbackCategoryResponseDto.PageInfo(feedbackCategorysPage.getNumber() + 1, feedbackCategorysPage.getSize(), feedbackCategorysPage.getTotalElements(), feedbackCategorysPage.getTotalPages());
-        return new FeedbackCategoryResponseDto.Multi<>(responses, pageInfo);
+        return responses;
     }
 
     //삭제
