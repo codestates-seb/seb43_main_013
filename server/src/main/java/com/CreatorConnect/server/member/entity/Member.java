@@ -1,6 +1,7 @@
 package com.CreatorConnect.server.member.entity;
 
 import com.CreatorConnect.server.audit.Auditable;
+import com.CreatorConnect.server.comment.entity.Comment;
 import com.CreatorConnect.server.freeboard.entity.FreeBoard;
 import com.CreatorConnect.server.feedbackboard.entity.FeedbackBoard;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -88,8 +89,8 @@ public class Member extends Auditable {
 //    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 //    private List<JobBoard> jobBoards = new ArrayList<>();
 //
-//    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-//    private List<Comment> comments = new ArrayList<>();
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Comment> comments = new ArrayList<>();
 //
 //    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 //    private List<ReComment> reComments = new ArrayList<>();
