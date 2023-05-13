@@ -12,7 +12,11 @@ const MustInput = ({ mustBind, isSubmit }: { mustBind: mustType; isSubmit: boole
   const { label, value, setValue, valid, setValid } = mustBind;
 
   useEffect(() => {
-    if (value !== "") setValid(true);
+    if (label === "이메일") {
+      const emailRegExp = /^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.com$/;
+      const emailValid = emailRegExp.test(value);
+      setValid(emailValid);
+    } else if (value !== "") setValid(true);
     else setValid(false);
   }, [value]);
 
