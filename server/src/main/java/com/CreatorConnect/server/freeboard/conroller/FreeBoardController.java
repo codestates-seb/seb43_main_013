@@ -50,9 +50,10 @@ public class FreeBoardController {
 
     // 자유 게시판 게시글 목록 조회
     @GetMapping("/freeboards")
-    public ResponseEntity getFreeBoards(@Positive @RequestParam int page,
+    public ResponseEntity getFreeBoards(@RequestParam String sort,
+                                        @Positive @RequestParam int page,
                                         @Positive @RequestParam int size) {
-        Page<FreeBoard> pageFreeBoards = freeBoardService.getFreeBoards(page - 1, size);
+        Page<FreeBoard> pageFreeBoards = freeBoardService.getFreeBoards(sort, page - 1, size);
         List<FreeBoard> freeBoards = pageFreeBoards.getContent();
         return new ResponseEntity<>(
                 new FreeBoardDto.MultiResponseDto<>(mapper.freeBoardToFreeBoardResponseDtos(freeBoards),
@@ -62,9 +63,10 @@ public class FreeBoardController {
     // 자유 게시판 카테고리 별 목록 조회
     @GetMapping("/freeboards/categories/{categoryId}")
     public ResponseEntity getFreeBoardsByCategory(@PathVariable("categoryId") long categoryId,
+                                                  @RequestParam String sort,
                                                   @Positive @RequestParam int page,
-                                                @Positive @RequestParam int size) {
-        Page<FreeBoard> pageFreeBoards = freeBoardService.getFreeBoardsByCategory(categoryId, page-1, size);
+                                                  @Positive @RequestParam int size) {
+        Page<FreeBoard> pageFreeBoards = freeBoardService.getFreeBoardsByCategory(categoryId, sort, page-1, size);
         List<FreeBoard> freeBoards = pageFreeBoards.getContent();
 
         return new ResponseEntity<>(
