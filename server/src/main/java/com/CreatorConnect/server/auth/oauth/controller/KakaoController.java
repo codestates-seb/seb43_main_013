@@ -1,44 +1,69 @@
 package com.CreatorConnect.server.auth.oauth.controller;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import com.CreatorConnect.server.auth.jwt.JwtTokenizer;
+import com.CreatorConnect.server.auth.oauth.dto.KakaoProfile;
+import com.CreatorConnect.server.auth.oauth.dto.OAuthToken;
+import com.CreatorConnect.server.auth.oauth.handler.OAuth2MemberSuccessHandler;
+import com.CreatorConnect.server.auth.oauth.service.KakaoApiService;
+import com.CreatorConnect.server.auth.oauth.service.OAuth2MemberService;
+import com.CreatorConnect.server.auth.utils.CustomAuthorityUtils;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.*;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
+import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.web.bind.annotation.*;
-import javax.servlet.http.HttpSession;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
+@Slf4j
 @RestController
 public class KakaoController {
-    private static final String CLIENT_ID = "e6722e9848c6db656a44edaf1bbe8f09";
-    private static final String CLIENT_SECRET = "KEHIiQRBd5UCjSfqaz7jFJXofxdAdd0Q";
-    private static final String REDIRECT_URI = "http://localhost:8080/login/oauth2/code/kakao";
-    private static final String AUTHORIZATION_ENDPOINT = "https://kauth.kakao.com/oauth/authorize";
 
-    @GetMapping("/login/oauth2/kakao")
-    @ResponseBody
-    public String kakaoLogin(HttpSession session) {
+    private final KakaoApiService kakaoApiService;
+    private final JwtTokenizer jwtTokenizer;
+    private final CustomAuthorityUtils authorityUtils;
+    private final OAuth2MemberService oAuth2MemberService;
 
-        String authorizationRequestUrl = String.format("%s?response_type=code&client_id=%s&redirect_uri=%s",
-                AUTHORIZATION_ENDPOINT, CLIENT_ID, REDIRECT_URI);
-        return String.format("<a href='%s'><img height='50' src='http://static.nid.naver.com/oauth/small_g_in.PNG'/></a>",
-                authorizationRequestUrl);
+    public KakaoController(KakaoApiService kakaoApiService, JwtTokenizer jwtTokenizer, CustomAuthorityUtils authorityUtils, OAuth2MemberService oAuth2MemberService) {
+        this.kakaoApiService = kakaoApiService;
+        this.jwtTokenizer = jwtTokenizer;
+        this.authorityUtils = authorityUtils;
+        this.oAuth2MemberService = oAuth2MemberService;
     }
 
-//    @GetMapping("/login/oauth2/code/kakao")
-//    public ResponseEntity kakaoLogin(@RequestParam("code") String code, RedirectAttributes ra,
-//                                     HttpSession session, HttpServletResponse response, Model model) throws IOException {
-//
-//        System.out.println("kakao code:" + code);
-//        return new ResponseEntity(HttpStatus.OK);
-//    }
+    @GetMapping("/auth/kakao/callback")
+    public ResponseEntity kakaoCallback(@RequestParam("code") String code, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-    @GetMapping("/login")
-    public ResponseEntity login() throws IOException {
+        OAuthToken oAuthToken = kakaoApiService.tokenRequest(code); // 1.토큰 가져오기
 
-        return new ResponseEntity(HttpStatus.OK);
-    }
+        KakaoProfile kakaoProfile = kakaoApiService.userInfoRequest(oAuthToken); // 2.유저정보 가져오기
 
-    @GetMapping("/login/oauth2/code/kakao")
-    public ResponseEntity kakaoCallback() {
+        Map<String, Object> attributes = new HashMap<>();
+        attributes.put("id", kakaoProfile.getId());
+        attributes.put("email",kakaoProfile.getKakao_account().getEmail());
+        attributes.put("name", kakaoProfile.getKakao_account().getProfile().getNickname());
+        attributes.put("profileImage", kakaoProfile.getProperties().getProfile_image());
+
+        OAuth2User oAuth2User = new DefaultOAuth2User(
+                Collections.singleton(new SimpleGrantedAuthority("ROLE_USER")),
+                attributes,
+                "id"
+        );
+
+        Authentication authentication = new OAuth2AuthenticationToken(oAuth2User, Collections.emptyList(), "kakao");
+
+        AuthenticationSuccessHandler successHandler = new OAuth2MemberSuccessHandler(jwtTokenizer, authorityUtils, oAuth2MemberService);
+
+        successHandler.onAuthenticationSuccess(request, response, authentication);
 
         return new ResponseEntity(HttpStatus.OK);
     }

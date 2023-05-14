@@ -32,20 +32,4 @@ public class CategoryResponseDto {
         private Long categoryId;
         private String categoryName;
     }
-
-    @Getter
-    @AllArgsConstructor
-    public static class Multi<T> {
-        private List<T> data;
-        private PageInfo pageInfo;
-    }
-
-    @Getter
-    @AllArgsConstructor
-    public static class PageInfo {
-        private int page;
-        private int size;
-        private long totalElements;
-        private int totalPages;
-    }
 }

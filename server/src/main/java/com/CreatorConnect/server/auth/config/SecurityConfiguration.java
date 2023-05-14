@@ -5,6 +5,7 @@ import com.CreatorConnect.server.auth.filter.JwtVerificationFilter;
 import com.CreatorConnect.server.auth.handler.*;
 import com.CreatorConnect.server.auth.jwt.JwtTokenizer;
 import com.CreatorConnect.server.auth.oauth.handler.OAuth2MemberSuccessHandler;
+import com.CreatorConnect.server.auth.oauth.service.OAuth2MemberService;
 import com.CreatorConnect.server.auth.utils.CustomAuthorityUtils;
 import com.CreatorConnect.server.member.repository.MemberRepository;
 import org.springframework.context.annotation.Bean;
@@ -71,21 +72,18 @@ public class SecurityConfiguration {
                         .antMatchers("/h2/**").permitAll()
                         .antMatchers(HttpMethod.OPTIONS).permitAll()
                         .antMatchers(HttpMethod.POST, "/api/signup", "/api/login").permitAll()
-                        .antMatchers(HttpMethod.GET, "/", "/login/**").permitAll()
-                        .antMatchers(HttpMethod.POST, "/login/**").permitAll()
-                        .antMatchers(HttpMethod.GET, "/api/freeboard/*", "/api/freeboards", "/api/freeboards/category/*").permitAll()
-                        .antMatchers(HttpMethod.GET, "/api/feedbackboard/*","/api/feedbackboards", "/api/feedbackboards/category/*").permitAll()
-                        .antMatchers(HttpMethod.GET, "/api/promotionboard/*","/api/promotionboards").permitAll()
-                        .antMatchers(HttpMethod.GET, "/api/jobboard/*","/api/jobboards").permitAll()
-                        .antMatchers(HttpMethod.GET, "/api/feedbackcategory/*","/api/feedbackcategorys").permitAll()
-                        .antMatchers(HttpMethod.GET, "/api/category/*","/api/categorys").permitAll()
+                        .antMatchers(HttpMethod.GET, "/", "/api/login/oauth2", "/auth/**").permitAll()
+                        .antMatchers(HttpMethod.GET, "/api/freeboard/**", "/api/freeboards/**").permitAll()
+                        .antMatchers(HttpMethod.GET, "/api/feedbackboard/**", "/api/feedbackboards/**").permitAll()
+                        .antMatchers(HttpMethod.GET, "/api/promotionboard/**","/api/promotionboards").permitAll()
+                        .antMatchers(HttpMethod.GET, "/api/jobboard/**","/api/jobboards").permitAll()
+                        .antMatchers(HttpMethod.GET, "/api/feedbackcategory/**","/api/feedbackcategories").permitAll()
+                        .antMatchers(HttpMethod.GET, "/api/category/**","/api/categories").permitAll()
                         .anyRequest().authenticated()
                         )
-
                 .oauth2Login()
                 .successHandler(oAuth2MemberSuccessHandler)
                 ;
-
         return http.build();
     }
 

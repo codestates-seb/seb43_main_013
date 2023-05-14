@@ -65,7 +65,7 @@ public class FreeBoardController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    // 자유 게시판 게시글 목록 조회
+     // 자유 게시판 게시글 목록 조회
     @GetMapping("/freeboards")
     public FreeBoardDto.MultiResponseDto<FreeBoardDto.Response> getFreeBoards(@RequestParam String sort,
                                                                               @Positive @RequestParam int page,
@@ -84,6 +84,7 @@ public class FreeBoardController {
         FreeBoardDto.MultiResponseDto<FreeBoardDto.Response> pageFreeBoard = freeBoardService.getAllFreeBoardsByCategory(categoryId, page, size, sort);
         return pageFreeBoard;
     }
+
 
     // 자유 게시판 게시글 상세 조회
     @GetMapping("/freeboard/{freeboardId}")
