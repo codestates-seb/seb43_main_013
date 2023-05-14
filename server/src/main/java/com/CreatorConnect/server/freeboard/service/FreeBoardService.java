@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -130,10 +131,22 @@ public class FreeBoardService {
 
     /**
      * <자유 게시판 게시글 목록>
+     * 1. 페이지네이션 적용
+     * 2. Response에 각 게시글의 태그 정보 적용
      */
-    public Page<FreeBoard> getFreeBoards(int page, int size) {
-        return freeBoardRepository.findAll(PageRequest.of(page, size, Sort.by("freeBoardId").descending()));
+    public FreeBoardDto.MultiResponseDto<FreeBoardDto.Response> getAllFreeBoards(int page, int size) {
+//        PageRequest pageRequest = PageRequest.of(page - 1, size);
+        // 1. 페이지네이션 적용
+        Page<FreeBoard> freeBoards = freeBoardRepository.findAll(PageRequest.of(page, size, Sort.by("freeBoardId").descending()));
+
+        // 2. Response에 각 게시글의 태그 정보 적용
+        List<FreeBoardDto.Response> responses = getResponseList(freeBoards);
+
+        return new FreeBoardDto.MultiResponseDto<>(responses, freeBoards);
     }
+//    public Page<FreeBoard> getFreeBoards(int page, int size) {
+//        return freeBoardRepository.findAll(PageRequest.of(page, size, Sort.by("freeBoardId").descending()));
+//    }
 
     /**
      * <자유 게시판 카테고리 별 목록>
@@ -144,6 +157,16 @@ public class FreeBoardService {
 //        List<FreeBoardDto.Response> responses = findFreeBoardByCategoryId(categoryId);
 //
 //        return new FreeBoardDto.MultiResponseDto<>(responses, freeBoards);
+    }
+
+    // Response에 각 게시글의 태그 적용 메서드
+    private List<FreeBoardDto.Response> getResponseList(Page<FreeBoard> freeBoards) {
+        return freeBoards.getContent().stream().map(freeBoard -> {
+            List<TagDto.TagResponse> tags = freeBoard.getTagBoards().stream()
+                    .map(tagToFreeBoard -> tagMapper.tagToTagToBoard(tagToFreeBoard.getTag()))
+                    .collect(Collectors.toList());
+            return mapper.freeBoardToResponse(freeBoard, tags);
+        }).collect(Collectors.toList());
     }
 
     /**

@@ -5,6 +5,7 @@ import com.CreatorConnect.server.freeboard.dto.FreeBoardDto;
 import com.CreatorConnect.server.freeboard.entity.FreeBoard;
 import com.CreatorConnect.server.freeboard.mapper.FreeBoardMapper;
 import com.CreatorConnect.server.freeboard.service.FreeBoardService;
+import com.CreatorConnect.server.tag.dto.TagDto;
 import com.CreatorConnect.server.tag.entity.Tag;
 import com.CreatorConnect.server.tag.mapper.TagMapper;
 import com.CreatorConnect.server.tag.service.TagService;
@@ -51,12 +52,11 @@ public class FreeBoardController {
     // 자유 게시판 게시글 수정
     @PatchMapping("/freeboard/{freeboardId}")
     public ResponseEntity patchFreeBoard(@Valid @RequestBody FreeBoardDto.Patch patch,
-                                         @PathVariable("freeboardId") long freeboardId) {
+                                         @PathVariable("freeboardId") long freeBoardId) {
 
         List<Tag> tags = tagMapper.tagPostDtosToTag(patch.getTags());
 
-//        patch.setFreeBoardId(freeboardId);
-        FreeBoard freeBoardPatch = freeBoardService.updateFreeBoard(patch,freeboardId);
+        FreeBoard freeBoardPatch = freeBoardService.updateFreeBoard(patch,freeBoardId);
         List<Tag> updatedTag = tagService.updateFreeBoardTag(tags, freeBoardPatch);
 
         FreeBoardDto.Response response = mapper.freeBoardToFreeBoardResponseDto(freeBoardPatch);
@@ -67,13 +67,17 @@ public class FreeBoardController {
 
     // 자유 게시판 게시글 목록 조회
     @GetMapping("/freeboards")
-    public ResponseEntity getFreeBoards(@Positive @RequestParam int page,
+    public FreeBoardDto.MultiResponseDto<FreeBoardDto.Response> getFreeBoards(@Positive @RequestParam int page,
                                         @Positive @RequestParam int size) {
-        Page<FreeBoard> pageFreeBoards = freeBoardService.getFreeBoards(page - 1, size);
-        List<FreeBoard> freeBoards = pageFreeBoards.getContent();
-        return new ResponseEntity<>(
-                new FreeBoardDto.MultiResponseDto<>(mapper.freeBoardToFreeBoardResponseDtos(freeBoards),
-                        pageFreeBoards), HttpStatus.OK);
+//        Page<FreeBoard> pageFreeBoards = freeBoardService.getAllFreeBoards(page - 1, size);
+        FreeBoardDto.MultiResponseDto<FreeBoardDto.Response> pageFreeBoards = freeBoardService.getAllFreeBoards(page - 1, size);
+//        List<FreeBoard> freeBoards = pageFreeBoards.getContent();
+
+//        return new ResponseEntity<>(
+//                new FreeBoardDto.MultiResponseDto<>(mapper.freeBoardToFreeBoardResponseDtos(pageFreeBoards),
+//                        pageFreeBoards), HttpStatus.OK);
+
+        return pageFreeBoards;
     }
 
     // 자유 게시판 카테고리 별 목록 조회
