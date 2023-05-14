@@ -23,10 +23,13 @@ public interface TagMapper {
 
     List<Tag> tagPostDtosToTag(List<TagDto.TagInfo> tagInfos);
 
+    // tag -> List<Tag>
+//    List<Tag> tagResponse(Tag tag);
+
     // List<Tag> -> TagDto.TagResponse
-    List<TagDto.TagResponse> tagsToTagResponseDto(List<Tag> tags);
+    List<TagDto.TagInfo> tagsToTagResponseDto(List<Tag> tags);
 
     // Tag -> TagDto.TagResponse
     @Mapping(source = "tag.tagId", target = "tagId")
-    TagDto.TagResponse tagToTagToBoard(Tag tag);
+    TagDto.TagInfo tagToTagToBoard(Tag tag);
 }
