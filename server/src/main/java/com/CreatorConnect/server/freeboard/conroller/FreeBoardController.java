@@ -36,8 +36,9 @@ public class FreeBoardController {
     @PostMapping("/freeboard/new")
     public ResponseEntity postFreeBoard(@Valid @RequestBody FreeBoardDto.Post post) {
         FreeBoard freeBoardPost = freeBoardService.createFreeBoard(post);
+        FreeBoardDto.PostResponse postResponse = mapper.freeBoardToFreeBoardPostResponseDto(freeBoardPost);
 
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return new ResponseEntity<>(postResponse, HttpStatus.CREATED);
     }
 
     // 자유 게시판 게시글 수정

@@ -23,6 +23,9 @@ public interface FreeBoardMapper {
     // FreeBoard -> FreeBoardDto.Response
     FreeBoardDto.Response freeBoardToFreeBoardResponseDto(FreeBoard freeBoard);
 
+    // FreeBoard -> FreeBoardDto.PostResponse
+    FreeBoardDto.PostResponse freeBoardToFreeBoardPostResponseDto(FreeBoard freeBoard);
+
     List<FreeBoardDto.Response> freeBoardToFreeBoardResponseDtos(List<FreeBoard> freeBoards);
 
 

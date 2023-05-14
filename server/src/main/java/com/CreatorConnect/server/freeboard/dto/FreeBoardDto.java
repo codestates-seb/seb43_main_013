@@ -1,6 +1,7 @@
 package com.CreatorConnect.server.freeboard.dto;
 
 import com.CreatorConnect.server.tag.dto.TagDto;
+import com.CreatorConnect.server.tag.entity.Tag;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,8 +35,7 @@ public class FreeBoardDto {
 
         @Valid
         @NotNull(message = "카테고리를 선택학세요.")
-        // 현재 카테고리 이름을 받아서 id 추출해서 저장하면 Category 테이블에 카테고리가 중복 저장되는 이슈로 인해 request로 categoryId를 받도록 임시조치
-        //private long categoryId;
+
         private String categoryName;
 
         private List<TagDto.TagInfo> tags; // 태그
@@ -79,7 +79,7 @@ public class FreeBoardDto {
 
         private String categoryName;
 
-        private List<TagDto> tags;
+        private List<TagDto.TagResponse> tags;
 
         private LocalDateTime createdAt;
 
@@ -92,6 +92,14 @@ public class FreeBoardDto {
         private String nickname;
 
         private String profileImageUrl;
+    }
+
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Getter
+    @Setter
+    public static class PostResponse{ // 자유 게시판 등록 시 응답으로 freeBoardId를 주기 위해 생성
+        private long freeBoardId;
     }
 
     // 페이지네이션 관련 dto
