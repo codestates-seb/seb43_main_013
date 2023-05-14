@@ -35,16 +35,18 @@ public class FeedbackBoardController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
     @GetMapping("/feedbackboards")
-    public ResponseEntity getFeedbacks(@RequestParam("page") @Positive int page,
+    public ResponseEntity getFeedbacks(@RequestParam("sort") String sort,
+                                       @RequestParam("page") @Positive int page,
                                        @RequestParam("size") @Positive int size) {
-        FeedbackBoardResponseDto.Multi response = feedbackBoardService.responseFeedbacks(page, size);
+        FeedbackBoardResponseDto.Multi response = feedbackBoardService.responseFeedbacks(sort, page, size);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-    @GetMapping("/feedbackboards/category/{feedbackCategoryId}")
+    @GetMapping("/feedbackboards/feedbackcategories/{feedbackCategoryId}")
     public ResponseEntity getFeedbacksByFeedbackCategory(@PathVariable("feedbackCategoryId") @Positive Long feedbackCategoryId,
-                                                 @RequestParam("page") @Positive int page,
-                                                 @RequestParam("size") @Positive int size) {
-        FeedbackBoardResponseDto.Multi response = feedbackBoardService.responseFeedbacksByCategory(feedbackCategoryId, page, size);
+                                                         @RequestParam("sort") String sort,
+                                                         @RequestParam("page") @Positive int page,
+                                                         @RequestParam("size") @Positive int size) {
+        FeedbackBoardResponseDto.Multi response = feedbackBoardService.responseFeedbacksByCategory(feedbackCategoryId, sort, page, size);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
     @DeleteMapping("/feedbackboard/{feedbackBoardId}")

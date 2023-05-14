@@ -3,6 +3,7 @@ package com.CreatorConnect.server.member.controller;
 import com.CreatorConnect.server.exception.BusinessLogicException;
 import com.CreatorConnect.server.exception.ExceptionCode;
 import com.CreatorConnect.server.member.dto.MemberDto;
+import com.CreatorConnect.server.member.dto.MemberFollowResponseDto;
 import com.CreatorConnect.server.member.dto.MemberResponseDto;
 import com.CreatorConnect.server.member.entity.Member;
 import com.CreatorConnect.server.member.mapper.MemberMapper;
@@ -13,12 +14,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Validated
 @RestController
@@ -68,11 +71,21 @@ public class MemberController {
     @GetMapping(MEMBER_DEFAULT_URL + "/{member-id}")
     public ResponseEntity getMember(@PathVariable("member-id") @Positive Long memberId) {
 
+        Member loginUser = memberService.findVerifiedMember(SecurityContextHolder.getContext().getAuthentication().getName());
         Member findedmember = memberService.findMember(memberId);
-
         MemberResponseDto responseDto = mapper.memberToMemberResponseDto(findedmember);
 
-        return new ResponseEntity<>(responseDto, HttpStatus.OK);
+        if (loginUser.getFollowings().stream().anyMatch(
+                member -> member.equals(findedmember)
+        )){
+            responseDto.setFollowed(true);
+            return new ResponseEntity<>(responseDto, HttpStatus.OK);
+        }
+
+        if (loginUser.getMemberId() == memberId){
+            responseDto.setMyPage(true);
+        } return new ResponseEntity(responseDto, HttpStatus.OK);
+
     }
 
     @Secured("ROLE_ADMIN")
@@ -121,6 +134,13 @@ public class MemberController {
         // 팔로우할 사용자 정보 가져오기
         Member memberToFollow = memberService.findVerifiedMember(memberId);
 
+        if (currentMember.getMemberId() == memberToFollow.getMemberId()){
+            return new ResponseEntity(
+                    new BusinessLogicException(ExceptionCode.INVALID_MEMBER).getExceptionCode().getMessage(),
+                    HttpStatus.CONFLICT
+            );
+        }
+
         // 현재 로그인한 사용자가 이미 해당 사용자를 팔로우하고 있는지 확인
         boolean isAlreadyFollowing = currentMember.getFollowings().contains(memberToFollow);
 
@@ -129,6 +149,7 @@ public class MemberController {
             memberToFollow.follow(currentMember);
             memberRepository.save(memberToFollow);
             memberRepository.save(currentMember);
+
             return new ResponseEntity<>(HttpStatus.OK);
 
         } else return new ResponseEntity(
@@ -163,16 +184,32 @@ public class MemberController {
     public ResponseEntity getFollowings(@PathVariable("member-id") @Positive Long memberId) {
 
         Member member = memberService.findVerifiedMember(memberId);
+        Set<Member> followings = member.getFollowings();
 
-        return new ResponseEntity(member.getFollowings(), HttpStatus.OK);
+        List<MemberFollowResponseDto> response = followings.stream()
+                .map(following -> new MemberFollowResponseDto(
+                        following.getMemberId(),
+                        following.getNickname(),
+                        following.getProfileImageUrl()
+                )).collect(Collectors.toList());
+
+        return new ResponseEntity(response, HttpStatus.OK);
     }
 
     @GetMapping("/api/member/{member-id}/followers")
     public ResponseEntity getFollowers(@PathVariable("member-id") @Positive Long memberId) {
 
         Member member = memberService.findVerifiedMember(memberId);
+        Set<Member> followers = member.getFollowers();
 
-        return new ResponseEntity(member.getFollowers(), HttpStatus.OK);
+        List<MemberFollowResponseDto> response = followers.stream()
+                .map(follower -> new MemberFollowResponseDto(
+                        follower.getMemberId(),
+                        follower.getNickname(),
+                        follower.getProfileImageUrl()
+                )).collect(Collectors.toList());
+
+        return new ResponseEntity(response, HttpStatus.OK);
     }
 
 }
