@@ -7,6 +7,7 @@ import NickModal from "./NickModal";
  * @param nickModal 모달 창 상태
  * @param setNickModal 세터함수
  */
+
 const IsLoginSide = ({ nickState }: { nickState: [boolean, React.Dispatch<boolean>] }) => {
   const [nickModal, setNickModal] = nickState;
 
@@ -33,18 +34,4 @@ const IsLoginSide = ({ nickState }: { nickState: [boolean, React.Dispatch<boolea
   );
 };
 
-/** 2023/05/10 - 비로그인 상태의 검색창 우측 메뉴 - by Kadesti */
-const NoneLoginSide = () => {
-  return (
-    <div className="flex items-center">
-      <Link href="/login" className="text-2xl mr-5 break-keep cursor-pointer text-black hover:text-rose-400">
-        로그인
-      </Link>
-      <Link href="/signup" className="text-2xl break-keep cursor-pointer text-black hover:text-rose-400">
-        회원가입
-      </Link>
-    </div>
-  );
-};
-
-export { IsLoginSide, NoneLoginSide };
+export default IsLoginSide;
