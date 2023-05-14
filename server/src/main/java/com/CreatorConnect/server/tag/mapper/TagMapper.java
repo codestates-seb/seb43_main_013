@@ -20,4 +20,7 @@ public interface TagMapper {
 
     List<Tag> tagPostDtosToTag(List<TagDto.TagInfo> tagInfos);
 
+    // Tag -> TagDto.TagResponse
+    List<TagDto.TagResponse> tagsToTagResponseDto(List<Tag> tags);
+
 }
