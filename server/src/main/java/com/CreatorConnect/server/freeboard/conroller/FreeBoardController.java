@@ -67,9 +67,10 @@ public class FreeBoardController {
 
     // 자유 게시판 게시글 목록 조회
     @GetMapping("/freeboards")
-    public FreeBoardDto.MultiResponseDto<FreeBoardDto.Response> getFreeBoards(@Positive @RequestParam int page,
-                                        @Positive @RequestParam int size) {
-        FreeBoardDto.MultiResponseDto<FreeBoardDto.Response> pageFreeBoards = freeBoardService.getAllFreeBoards(page - 1, size);
+    public FreeBoardDto.MultiResponseDto<FreeBoardDto.Response> getFreeBoards(@RequestParam String sort,
+                                                                              @Positive @RequestParam int page,
+                                                                              @Positive @RequestParam int size) {
+        FreeBoardDto.MultiResponseDto<FreeBoardDto.Response> pageFreeBoards = freeBoardService.getAllFreeBoards(page, size, sort);
 
         return pageFreeBoards;
     }

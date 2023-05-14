@@ -131,13 +131,13 @@ public class FreeBoardService {
 
     /**
      * <자유 게시판 게시글 목록>
-     * 1. 페이지네이션 적용
+     * 1. 페이지네이션 적용 - 최신순 / 등록순 / 인기순
      * 2. Response에 각 게시글의 태그 정보 적용
      */
-    public FreeBoardDto.MultiResponseDto<FreeBoardDto.Response> getAllFreeBoards(int page, int size) {
+    public FreeBoardDto.MultiResponseDto<FreeBoardDto.Response> getAllFreeBoards(int page, int size, String sort) {
 //        PageRequest pageRequest = PageRequest.of(page - 1, size);
-        // 1. 페이지네이션 적용
-        Page<FreeBoard> freeBoards = freeBoardRepository.findAll(PageRequest.of(page, size, Sort.by("freeBoardId").descending()));
+        // 1. 페이지네이션 적용 - 최신순 / 등록순 / 인기순
+        Page<FreeBoard> freeBoards = freeBoardRepository.findAll(sortedBy(page, size, sort));
 
         // 2. Response에 각 게시글의 태그 정보 적용
         List<FreeBoardDto.Response> responses = getResponseList(freeBoards);
@@ -234,6 +234,19 @@ public class FreeBoardService {
     private void addViews(FreeBoard freeBoard) {
         freeBoard.setViewCount(freeBoard.getViewCount() + 1);
         freeBoardRepository.save(freeBoard);
+    }
+
+    // 페이지네이션 정렬 기준 선택 메서드
+    private PageRequest sortedBy(int page, int size, String sort) {
+        if (sort.equals("최신순")) {
+            return PageRequest.of(page - 1, size, Sort.by("freeBoardId").descending());
+        } else if (sort.equals("등록순")) {
+            return PageRequest.of(page - 1, size, Sort.by("freeBoardId").ascending());
+        } else if (sort.equals("인기순")) {
+            return PageRequest.of(page - 1, size, Sort.by("viewCount", "freeBoardId").descending());
+        } else {
+            return PageRequest.of(page - 1, size, Sort.by("freeBoardId").descending());
+        }
     }
 
 
