@@ -1,6 +1,5 @@
 package com.CreatorConnect.server.tag.entity;
 
-import com.CreatorConnect.server.feedbackboard.entity.FeedbackBoard;
 import com.CreatorConnect.server.freeboard.entity.FreeBoard;
 import lombok.*;
 
@@ -15,7 +14,7 @@ import javax.persistence.*;
 public class TagToFreeBoard { // 자유 게시판 - 태그 매핑 테이블
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long tagBoardId;
+    private long tagToFreeBoardId;
 
     @ManyToOne
     @JoinColumn(name = "FREEBOARD_ID")
