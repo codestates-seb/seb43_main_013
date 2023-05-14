@@ -1,10 +1,13 @@
 package com.CreatorConnect.server.tag.mapper;
 
+import com.CreatorConnect.server.freeboard.dto.FreeBoardDto;
 import com.CreatorConnect.server.tag.dto.TagDto;
 import com.CreatorConnect.server.tag.entity.Tag;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring")
 public interface TagMapper {
@@ -20,7 +23,10 @@ public interface TagMapper {
 
     List<Tag> tagPostDtosToTag(List<TagDto.TagInfo> tagInfos);
 
-    // Tag -> TagDto.TagResponse
+    // List<Tag> -> TagDto.TagResponse
     List<TagDto.TagResponse> tagsToTagResponseDto(List<Tag> tags);
 
+    // Tag -> TagDto.TagResponse
+    @Mapping(source = "tag.tagId", target = "tagId")
+    TagDto.TagResponse tagToTagToBoard(Tag tag);
 }
