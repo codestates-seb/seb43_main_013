@@ -12,7 +12,17 @@ public class TagDto {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class TagInfo {
-//        private long tagId;
+        private long tagId;
+
+        private String tagName;
+    }
+
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class TagResponse{
+        private long tagId;
 
         private String tagName;
     }
