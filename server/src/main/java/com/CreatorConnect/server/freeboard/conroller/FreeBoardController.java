@@ -78,9 +78,10 @@ public class FreeBoardController {
     // 자유 게시판 카테고리 별 목록 조회
     @GetMapping("/freboards/category/{categoryId}")
     public FreeBoardDto.MultiResponseDto<FreeBoardDto.Response> getFreeBoardsByCategory(@PathVariable("categoryId") long categoryId,
+                                                  @RequestParam String sort,
                                                   @Positive @RequestParam int page,
                                                 @Positive @RequestParam int size) {
-        FreeBoardDto.MultiResponseDto<FreeBoardDto.Response> pageFreeBoard = freeBoardService.getAllFreeBoardsByCategory(categoryId,page - 1, size);
+        FreeBoardDto.MultiResponseDto<FreeBoardDto.Response> pageFreeBoard = freeBoardService.getAllFreeBoardsByCategory(categoryId, page, size, sort);
         return pageFreeBoard;
     }
 

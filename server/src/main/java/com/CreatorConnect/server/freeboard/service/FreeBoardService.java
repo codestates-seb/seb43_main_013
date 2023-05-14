@@ -150,12 +150,12 @@ public class FreeBoardService {
 
     /**
      * <자유 게시판 카테고리 별 목록>
-     * 1. 페이지네이션 적용
+     * 1. 페이지네이션 적용 - 최신순 / 등록순 / 인기순
      * 2. Response에 각 게시글의 태그 정보 적용
      */
-    public FreeBoardDto.MultiResponseDto<FreeBoardDto.Response> getAllFreeBoardsByCategory(long categoryId, int page, int size) {
+    public FreeBoardDto.MultiResponseDto<FreeBoardDto.Response> getAllFreeBoardsByCategory(long categoryId, int page, int size, String sort) {
         // 1. 페이지네이션 적용
-        Page<FreeBoard> freeBoards = freeBoardRepository.findFreeBoardsByCategoryId(categoryId, PageRequest.of(page, size, Sort.by("freeBoardId").descending()));
+        Page<FreeBoard> freeBoards = freeBoardRepository.findFreeBoardsByCategoryId(categoryId, sortedBy(page, size, sort));
 
         // 2. Response에 각 게시글의 태그 정보 적용
         List<FreeBoardDto.Response> responses = getResponseList(freeBoards);
@@ -245,7 +245,7 @@ public class FreeBoardService {
         } else if (sort.equals("인기순")) {
             return PageRequest.of(page - 1, size, Sort.by("viewCount", "freeBoardId").descending());
         } else {
-            return PageRequest.of(page - 1, size, Sort.by("freeBoardId").descending());
+            return PageRequest.of(page - 1, size, Sort.by("freeBoardId").ascending());
         }
     }
 
