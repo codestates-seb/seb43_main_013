@@ -79,7 +79,7 @@ public class FreeBoardDto {
 
         private String categoryName;
 
-        private List<TagDto.TagResponse> tags;
+        private List<TagDto.TagInfo> tags;
 
         private LocalDateTime createdAt;
 
