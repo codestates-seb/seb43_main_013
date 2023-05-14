@@ -21,9 +21,10 @@ public class Tag {
     private String tagName; // 태그
 
     @OneToMany(mappedBy = "tag")
-    private List<TagBoard> tagBoardList = new ArrayList<>();
+    private List<TagToFreeBoard> tagBoardList = new ArrayList<>();
 
     public Tag(String tagName) {
         this.tagName = tagName;
+        this.tagBoardList = new ArrayList<>();
     }
 }

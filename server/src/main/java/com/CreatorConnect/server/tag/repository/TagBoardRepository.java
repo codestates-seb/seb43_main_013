@@ -10,8 +10,8 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface TagToFreeBoardRepository extends JpaRepository<TagToFreeBoard, Long> {
-    Optional<TagToFreeBoard> findByTagToFreeBoard(FreeBoard freeBoard, Tag tag);
+public interface TagBoardRepository extends JpaRepository<TagToFreeBoard, Long> {
+//    Optional<TagToFreeBoard> findByTagToFreeBoard(FreeBoard freeBoard, Tag tag);
 
     List<TagToFreeBoard> findByFreeBoard(FreeBoard freeBoard);
 }
