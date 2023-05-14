@@ -12,6 +12,7 @@ export const QUERY_KEYS = {
   feedbackBoardList: "feedbackBoardList",
   promotionBoardList: "promotionBoardList",
   jobBoardList: "jobBoardList",
+  feedbackCategories: "feedbackCategories",
 };
 
 export * from "./useFetchCategories";

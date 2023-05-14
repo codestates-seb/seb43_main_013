@@ -122,17 +122,17 @@ const ModalProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
     () => ({
       openModal() {
         // setModalState(true);
-        console.log("open");
+        // console.log("open");
       },
       closeModal() {
         // setModalState(false);
-        console.log("close");
+        // console.log("close");
       },
     }),
     [],
   );
 
-  console.log("modalactions: ", modalActions);
+  // console.log("modalactions: ", modalActions);
 
   return (
     <ModalActionContext.Provider value={modalActions}>

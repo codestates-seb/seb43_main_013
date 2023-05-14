@@ -71,6 +71,7 @@ export interface ApiDeleteFreeBoardHandler {
 // ============================== 자유 게시판 게시글리스트 조회 ==============================
 /** 2023/05/11 - 자유 게시판 게시글리스트 조회 요청 송신 타입 - by leekoby */
 export interface ApiFetchFreeBoardListRequest {
+  sorted: string;
   page: number;
   size: number;
 }

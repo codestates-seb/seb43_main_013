@@ -1,9 +1,15 @@
 "use client";
+import usePageStore from "@/store/pageStore";
 import Link from "next/link";
 import { useState } from "react";
-
 /** 2023/05/04 - 네브 컴포넌트 - by Kadesti */
 const Nav = () => {
+  /** 2023/05/14 - 다른 링크로 이동할때 페이지 정보 초기화 - by leekoby */
+  const resetPageState = usePageStore((state) => state.resetPageState);
+  const handleClick = () => {
+    resetPageState();
+  };
+
   const [rankModal, setRankModal] = useState(false);
   const currentRank = [
     {
@@ -53,15 +59,21 @@ const Nav = () => {
       <div className="max-w-[1080px] w-full flex justify-between items-center">
         <div className="max-w-[300px] w-80 flex justify-between text-xl ">
           <Link href="/free">
-            <div className="text-black cursor-pointer hover:text-rose-400">자유</div>
+            <div onClick={handleClick} className="text-black cursor-pointer hover:text-rose-400">
+              자유
+            </div>
           </Link>
           <Link href="feedback">
-            <div className="text-black cursor-pointer hover:text-rose-400">피드백</div>
+            <div onClick={handleClick} className="text-black cursor-pointer hover:text-rose-400">
+              피드백
+            </div>
           </Link>
           <Link href="/promotion">
-            <div className="text-black cursor-pointer hover:text-rose-400">홍보</div>
+            <div onClick={handleClick} className="text-black cursor-pointer hover:text-rose-400">
+              홍보
+            </div>
           </Link>
-          <Link href="/job">
+          <Link onClick={handleClick} href="/job">
             <div className="text-black cursor-pointer hover:text-rose-400">구인</div>
           </Link>
         </div>

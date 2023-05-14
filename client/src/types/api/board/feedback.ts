@@ -48,6 +48,12 @@ export interface ApiFetchFeedbackBoardHandler {
 /** 2023/05/10 - 피드백 게시판 수정 요청 송신 타입 - by 1-blue */
 export interface ApiUpdateFeedbackBoardRequest {
   feedbackBoardId: number;
+  title: string;
+  link: string;
+  content: string;
+  tag: string[];
+  categoryName: string;
+  feedbackCateogoryName: string;
 }
 /** 2023/05/10 - 피드백 게시판 수정 요청 수신 타입 - by 1-blue */
 export interface ApiUpdateFeedbackBoardResponse {}
@@ -71,6 +77,7 @@ export interface ApiDeleteFeedbackBoardHandler {
 // ============================== 피드백 게시판 게시글리스트 조회 ==============================
 /** 2023/05/12- 피드백 게시판 게시글리스트 조회 요청 송신 타입 - by leekoby */
 export interface ApiFetchFeedbackBoardListRequest {
+  sorted: string;
   page: number;
   size: number;
 }

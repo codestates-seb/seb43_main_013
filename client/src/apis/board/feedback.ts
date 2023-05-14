@@ -43,9 +43,9 @@ export const apiDeleteFeedbackBoard: ApiDeleteFeedbackBoardHandler = async ({ fe
 };
 
 /** 2023/05/12 - 피드백 게시판 게시글 리스트 요청 - by leekoby */
-export const apiFetchFeedbackBoardList: ApiFetchFeedbackBoardListHandler = async ({ page, size }) => {
+export const apiFetchFeedbackBoardList: ApiFetchFeedbackBoardListHandler = async ({ sorted, page, size }) => {
   const { data } = await serverInstance.get<ApiFetchFeedbackBoardListResponse>(
-    `/feedbackboards?page=${page}&size=${size}`,
+    `/feedbackboards?sort=${sorted}&page=${page}&size=${size}`,
   );
 
   return data;
