@@ -12,7 +12,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class TagBoard {
+public class TagToFreeBoard { // 자유 게시판 - 태그 매핑 테이블
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long tagBoardId;
@@ -23,15 +23,15 @@ public class TagBoard {
 
     // 나머지 게시판 매핑 추가 예정
 
-    @ManyToOne
-    @JoinColumn(name = "FEEDBACKBOARD_ID")
-    private FeedbackBoard feedbackBoard;
+//    @ManyToOne
+//    @JoinColumn(name = "FEEDBACKBOARD_ID")
+//    private FeedbackBoard feedbackBoard;
 
     @ManyToOne
     @JoinColumn(name = "TAG_ID")
     private Tag tag;
 
-    public TagBoard(FreeBoard freeBoard, Tag tag) {
+    public TagToFreeBoard(FreeBoard freeBoard, Tag tag) {
         this.freeBoard = freeBoard;
         this.tag = tag;
     }
