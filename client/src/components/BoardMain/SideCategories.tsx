@@ -1,12 +1,15 @@
-"use client";
+import { ResponseCategoriesType } from "@/types/api";
 
 interface SideCategoriesProps {
-  categoryData: string[];
+  categoryData: ResponseCategoriesType[];
+  setSelectedCategory: (categoryName: string) => void;
 }
 
 /** 2023/05/09 - 게시판 공통 카테고리 - by leekoby */
-const SideCategories: React.FC<SideCategoriesProps> = ({ categoryData }) => {
-  const categoryClickHandler: (item: string) => void = (item) => {};
+const SideCategories: React.FC<SideCategoriesProps> = ({ categoryData, setSelectedCategory }) => {
+  const categoryClickHandler = (categoryName: string) => {
+    setSelectedCategory(categoryName);
+  };
 
   return (
     /* category Container */
@@ -20,13 +23,13 @@ const SideCategories: React.FC<SideCategoriesProps> = ({ categoryData }) => {
             <li className="list-none">
               <button
                 type="button"
-                key={item}
-                className="w-full px-5 text-sm leading-10 duration-200 bg-gray-100 rounded hover:bg-main-400 hover:text-white hover:scale-105 transtition hover:shadow-md hover:shadow-gray-500/50"
+                key={item.categoryId}
+                className="w-full px-5 text-sm leading-10 duration-200 bg-sub-100 rounded hover:bg-main-400 active:bg-main-500 hover:text-white hover:scale-105 transtition hover:shadow-md hover:shadow-sub-500/50"
                 onClick={() => {
-                  categoryClickHandler(item);
+                  categoryClickHandler(item.categoryName);
                 }}
               >
-                {item}
+                {item.categoryName}
               </button>
             </li>
           ))}

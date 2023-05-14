@@ -6,6 +6,7 @@ import { CheckIcon } from "@heroicons/react/20/solid";
 const sortOptions = [
   { id: 1, name: "최신순", unavailable: false },
   { id: 2, name: "인기순", unavailable: false },
+  { id: 3, name: "등록순", unavailable: false },
 ];
 
 /** 2023/05/10 - 최신순/인기순 정렬 컴포넌트 - by leekoby */
@@ -34,7 +35,7 @@ const SortPosts = () => {
   //   }, [select]);
   //   return (
   //     <select
-  //       className="block py-2.5 px-0 w-full text-sm text-black bg-transparent border-0 border-b-2 border-gray-200 appearance-none    focus:outline-none focus:ring-0 focus:border-gray-200 peer"
+  //       className="block py-2.5 px-0 w-full text-sm text-black bg-transparent border-0 border-b-2 border-sub-200 appearance-none    focus:outline-none focus:ring-0 focus:border-sub-200 peer"
   //       name="state"
   //       id=""
   //       onChange={handleSelect}

@@ -16,7 +16,7 @@ const ContentItem: React.FC<ContentItemProps> = ({ props }) => {
       {/*  list container */}
       <div className="flex flex-col items-center justify-center mt-2 bg-white rounded-md shadow-md md:flex-row ">
         {/* List Item * */}
-        <div className="flex flex-col items-center w-full h-full p-5 bg-gray-100 rounded-md ">
+        <div className="flex flex-col items-center w-full h-full p-5 bg-sub-100 rounded-md ">
           {/* Thumnail */}
           {/* <Image src={defaultThumnail} className="h-auto mx-1 my-1 border rounded-lg w-80 md:w-40" alt="" /> */}
           {/* right content */}

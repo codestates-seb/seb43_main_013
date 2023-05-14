@@ -144,19 +144,19 @@ const BoardHeader: React.FC<Props> = ({
 
       {/* 작성자 이름 / 작성일 */}
       <section className="flex items-center">
-        <span className="text-gray-400 after:content-['|'] after:mx-2 after:text-gray-400">{nickname}</span>
-        <span className="text-gray-400 text-sm">{moment(createdAt).endOf("day").fromNow()}</span>
+        <span className="text-sub-400 after:content-['|'] after:mx-2 after:text-sub-400">{nickname}</span>
+        <span className="text-sub-400 text-sm">{moment(createdAt).endOf("day").fromNow()}</span>
 
-        <OEyeIcon className="ml-auto w-6 h-6 text-gray-500" />
-        <span className="ml-1 text-sm text-gray-500">{viewCount.toLocaleString()}</span>
+        <OEyeIcon className="ml-auto w-6 h-6 text-sub-500" />
+        <span className="ml-1 text-sm text-sub-500">{viewCount.toLocaleString()}</span>
       </section>
 
       {/* 카테고리 || 채널명/구독자수 */}
       <section className="flex">
         {channelName && subscriberCount && (
           <div className="flex flex-col mr-auto">
-            {<span className="font-semibold text-xs text-gray-500">채널명: {channelName}</span>}
-            {<span className="font-semibold text-xs text-gray-500">구독자: {subscriberCount.toLocaleString()}</span>}
+            {<span className="font-semibold text-xs text-sub-500">채널명: {channelName}</span>}
+            {<span className="font-semibold text-xs text-sub-500">구독자: {subscriberCount.toLocaleString()}</span>}
           </div>
         )}
 

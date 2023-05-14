@@ -192,7 +192,7 @@ const Form: React.FC<Props> = ({ boardId }) => {
         {/* thumbnail( + preview) */}
         <div className="md:w-[400px] flex flex-col">
           <label>
-            <span className="text-base font-bold text-gray-800 mb-1">썸네일</span>
+            <span className="text-base font-bold text-sub-800 mb-1">썸네일</span>
           </label>
           <figure className="group pt-[60%] md:pt-0 flex-1 relative border-2 border-dotted border-black rounded-md p-2">
             <input type="file" hidden ref={ThumbnailRef} onChange={onUploadPreview} />
@@ -203,9 +203,9 @@ const Form: React.FC<Props> = ({ boardId }) => {
               onClick={() => ThumbnailRef.current?.click()}
             >
               {preview ? (
-                <ArrowPathIcon className="w-12 h-12 text-gray-300 z-[1] transition-colors group-hover:text-gray-200" />
+                <ArrowPathIcon className="w-12 h-12 text-sub-300 z-[1] transition-colors group-hover:text-sub-200" />
               ) : (
-                <PhotoIcon className="w-12 h-12 text-gray-400 z-[1] transition-colors group-hover:text-gray-200" />
+                <PhotoIcon className="w-12 h-12 text-sub-400 z-[1] transition-colors group-hover:text-sub-200" />
               )}
             </button>
 
@@ -234,7 +234,7 @@ const Form: React.FC<Props> = ({ boardId }) => {
       {/* wysiwyg */}
       <section className="flex flex-col space-y-1">
         <label>
-          <span className="text-base font-bold text-gray-800">내용</span>
+          <span className="text-base font-bold text-sub-800">내용</span>
         </label>
         <Editor content={content} setContent={setContent} />
       </section>

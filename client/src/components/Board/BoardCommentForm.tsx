@@ -110,7 +110,7 @@ const BoardCommentForm: React.FC<Props> = ({ type, boardId }) => {
           setContent(e.target.value);
           handleResizeHeight();
         }}
-        className="resize-none bg-gray-200 w-full min-h-[120px] focus:outline-main-300 rounded-md p-2 focus:bg-gray-100"
+        className="resize-none bg-sub-200 w-full min-h-[120px] focus:outline-main-300 rounded-md p-2 focus:bg-sub-100"
       />
       <button
         type="submit"
