@@ -1,6 +1,7 @@
 package com.CreatorConnect.server.tag.service;
 
 import com.CreatorConnect.server.freeboard.entity.FreeBoard;
+import com.CreatorConnect.server.freeboard.service.FreeBoardService;
 import com.CreatorConnect.server.tag.entity.Tag;
 import com.CreatorConnect.server.tag.entity.TagToFreeBoard;
 import com.CreatorConnect.server.tag.repository.TagBoardRepository;
@@ -10,7 +11,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class TagService {
@@ -52,7 +52,8 @@ public class TagService {
      *  2-1. 기존 게시글에 태그가 존재하는 경우 게시글에 연결된 태그 삭제
      *
      * 3. 수정된 태그를 입력받은 경우
-     *  3-1. 태그가 수정되면서 기존 태그가 사라진 경우 게시글과 태그 연결 해제 (ex 기존 태그 : a,b,c / 수정된 태그 : a,c -> b는 TagToFreeBoard에서 삭제되어야 한다.)
+     *  3-1. 기존 TagBoard에 있는 데이터를 지우고 입력받은 데이터를 TagBoard에 저장
+     * // (사용X). 태그가 수정되면서 기존 태그가 사라진 경우 게시글과 태그 연결 해제 (ex 기존 태그 : a,b,c / 수정된 태그 : a,c -> b는 TagToFreeBoard에서 삭제되어야 한다.)
      *  3-2. 수정된 태그가 이미 db에 존재하면 db에 있는 tagId, tagName 사용
      *  3-3. 수정된 태그가 db에 없으면 db에 수정된 태그 저장
      */
@@ -72,7 +73,7 @@ public class TagService {
         }
 
         // 3. 수정된 태그를 입력받은 경우
-        // 임시 기능 : 수정 발생시 기존 TagFreeBoard의 데이터 지우고 새롭게 저장
+        // 3-1. 기존 TagBoard에 있는 데이터를 지우고 입력받은 데이터를 TagBoard에 저장
         for (int i = 0; i < findTagToFreeBoards.size(); i++) {
             removeTagToFreeBoard(findTagToFreeBoards.get(i));
         }
@@ -93,7 +94,6 @@ public class TagService {
 //            }
 //        }
 
-
         for (int i = 0; i < tags.size(); i++) {
             // 3-2. 수정된 태그가 이미 db에 존재하면 db에 있는 tagId, tagName 사용
             Tag updatedTag = findTag(tags.get(i));
@@ -105,6 +105,7 @@ public class TagService {
         }
         return updatedFreeBoardTags;
     }
+
 
 
     // 태그 존재 여부 검증 메서드
