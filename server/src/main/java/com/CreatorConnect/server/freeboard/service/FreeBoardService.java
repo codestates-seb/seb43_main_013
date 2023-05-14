@@ -150,13 +150,17 @@ public class FreeBoardService {
 
     /**
      * <자유 게시판 카테고리 별 목록>
+     * 1. 페이지네이션 적용
+     * 2. Response에 각 게시글의 태그 정보 적용
      */
-    public Page<FreeBoard> getFreeBoardsByCategory(long categoryId, int page, int size) {
-        return freeBoardRepository.findFreeBoardsByCategoryId(categoryId, PageRequest.of(page, size, Sort.by("freeBoardId").descending()));
-//        Page<FreeBoard> freeBoards = freeBoardRepository.findAll(pageRequest);
-//        List<FreeBoardDto.Response> responses = findFreeBoardByCategoryId(categoryId);
-//
-//        return new FreeBoardDto.MultiResponseDto<>(responses, freeBoards);
+    public FreeBoardDto.MultiResponseDto<FreeBoardDto.Response> getAllFreeBoardsByCategory(long categoryId, int page, int size) {
+        // 1. 페이지네이션 적용
+        Page<FreeBoard> freeBoards = freeBoardRepository.findFreeBoardsByCategoryId(categoryId, PageRequest.of(page, size, Sort.by("freeBoardId").descending()));
+
+        // 2. Response에 각 게시글의 태그 정보 적용
+        List<FreeBoardDto.Response> responses = getResponseList(freeBoards);
+
+        return new FreeBoardDto.MultiResponseDto<>(responses, freeBoards);
     }
 
     // Response에 각 게시글의 태그 적용 메서드
