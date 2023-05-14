@@ -3,7 +3,7 @@ package com.CreatorConnect.server.freeboard.entity;
 import com.CreatorConnect.server.audit.Auditable;
 import com.CreatorConnect.server.category.entity.Category;
 import com.CreatorConnect.server.member.entity.Member;
-import com.CreatorConnect.server.tag.entity.TagBoard;
+import com.CreatorConnect.server.tag.entity.TagToFreeBoard;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -32,7 +32,7 @@ public class FreeBoard extends Auditable {
     private String content; // 게시글 내용
 
     @OneToMany(mappedBy = "freeBoard")
-    private final List<TagBoard> tagBoardList = new ArrayList<>();
+    private final List<TagToFreeBoard> tagBoardList = new ArrayList<>();
 
     @Column
     private long commentCount; // 댓글수
@@ -97,6 +97,6 @@ public class FreeBoard extends Auditable {
 
     @OneToMany(mappedBy = "freeBoard", cascade = CascadeType.REMOVE)
     @JsonBackReference
-    private List<TagBoard> tagBoards = new ArrayList<>();
+    private List<TagToFreeBoard> tagBoards = new ArrayList<>();
 
 }

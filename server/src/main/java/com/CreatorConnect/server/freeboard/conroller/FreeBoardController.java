@@ -7,6 +7,7 @@ import com.CreatorConnect.server.freeboard.mapper.FreeBoardMapper;
 import com.CreatorConnect.server.freeboard.service.FreeBoardService;
 import com.CreatorConnect.server.tag.entity.Tag;
 import com.CreatorConnect.server.tag.mapper.TagMapper;
+import com.CreatorConnect.server.tag.service.TagService;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,12 +25,18 @@ public class FreeBoardController {
     private final FreeBoardService freeBoardService;
     private final FreeBoardMapper mapper;
     private final CategoryService categoryService;
+    private final TagMapper tagMapper;
+    private final TagService tagService;
+
 
     public FreeBoardController(FreeBoardService freeBoardService, FreeBoardMapper mapper,
-                               CategoryService categoryService) {
+                               CategoryService categoryService, TagMapper tagMapper,
+                               TagService tagService) {
         this.freeBoardService = freeBoardService;
         this.mapper = mapper;
         this.categoryService = categoryService;
+        this.tagMapper = tagMapper;
+        this.tagService = tagService;
     }
 
     // 자유 게시판 게시글 등록
@@ -45,10 +52,17 @@ public class FreeBoardController {
     @PatchMapping("/freeboard/{freeboardId}")
     public ResponseEntity patchFreeBoard(@Valid @RequestBody FreeBoardDto.Patch patch,
                                          @PathVariable("freeboardId") long freeboardId) {
+
+        List<Tag> tags = tagMapper.tagPostDtosToTag(patch.getTags());
+
 //        patch.setFreeBoardId(freeboardId);
         FreeBoard freeBoardPatch = freeBoardService.updateFreeBoard(patch,freeboardId);
+        List<Tag> updatedTag = tagService.updateFreeBoardTag(tags, freeBoardPatch);
 
-        return new ResponseEntity<>(mapper.freeBoardToFreeBoardResponseDto(freeBoardPatch), HttpStatus.OK);
+        FreeBoardDto.Response response = mapper.freeBoardToFreeBoardResponseDto(freeBoardPatch);
+        response.setTags(tagMapper.tagsToTagResponseDto(updatedTag));
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     // 자유 게시판 게시글 목록 조회

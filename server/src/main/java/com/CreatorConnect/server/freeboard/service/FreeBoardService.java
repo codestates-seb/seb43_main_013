@@ -12,6 +12,7 @@ import com.CreatorConnect.server.freeboard.repository.FreeBoardRepository;
 import com.CreatorConnect.server.member.entity.Member;
 import com.CreatorConnect.server.member.repository.MemberRepository;
 import com.CreatorConnect.server.member.service.MemberService;
+import com.CreatorConnect.server.tag.dto.TagDto;
 import com.CreatorConnect.server.tag.entity.Tag;
 import com.CreatorConnect.server.tag.mapper.TagMapper;
 import com.CreatorConnect.server.tag.service.TagService;
@@ -117,11 +118,10 @@ public class FreeBoardService {
         Optional.ofNullable(freeBoard.getContent())
                 .ifPresent(content -> checkedFreeBoard.setContent(content)); // 게시글 내용 수정
 
-        List<Tag> tags = tagMapper.tagPostDtosToTag(patch.getTags());
+//        List<Tag> tags = tagMapper.tagPostDtosToTag(patch.getTags());
+//        tagService.updateFreeBoardTag(tags, checkedFreeBoard);
 
         log.info("categoryName : {}",checkedFreeBoard.getCategoryName());
-
-        // 태그 수정 추가 예정
 
         // 4. 수정된 데이터 저장
         return freeBoardRepository.save(checkedFreeBoard);
