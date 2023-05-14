@@ -33,7 +33,7 @@ public interface FreeBoardMapper {
 //    List<Tag> freeBoardPostDtoToTags(List<TagDto.TagInfo> tagInfoDtos);
 
     // 게시글 목록 조회 시 Response를 위한 매핑
-    FreeBoardDto.Response freeBoardToResponse(FreeBoard freeBoard, List<TagDto.TagResponse> tags);
+    FreeBoardDto.Response freeBoardToResponse(FreeBoard freeBoard, List<TagDto.TagInfo> tags);
 
 
 

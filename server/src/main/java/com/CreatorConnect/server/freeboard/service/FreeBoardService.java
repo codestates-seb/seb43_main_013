@@ -166,7 +166,7 @@ public class FreeBoardService {
     // Response에 각 게시글의 태그 적용 메서드
     private List<FreeBoardDto.Response> getResponseList(Page<FreeBoard> freeBoards) {
         return freeBoards.getContent().stream().map(freeBoard -> {
-            List<TagDto.TagResponse> tags = freeBoard.getTagBoards().stream()
+            List<TagDto.TagInfo> tags = freeBoard.getTagBoards().stream()
                     .map(tagToFreeBoard -> tagMapper.tagToTagToBoard(tagToFreeBoard.getTag()))
                     .collect(Collectors.toList());
             return mapper.freeBoardToResponse(freeBoard, tags);
@@ -176,17 +176,34 @@ public class FreeBoardService {
     /**
      * <자유 게시판 게시글 상세 조회>
      * 1. 게시글 존재 여부 확인
-     * 2. 조회수 증가
+     * 2. 해당 게시글 태그 추출
+     * 3. 조회수 증가
+     * 4. 리턴
      */
-    public FreeBoard getFreeBoardDetail(long freeboardId) {
+    public FreeBoardDto.Response getFreeBoardDetail(long freeboardId) {
         // 1. 게시글 존재 여부 확인
         FreeBoard freeBoard = verifyFreeBoard(freeboardId);
 
-        // 2. 조회수 증가
+        // 2. 해당 게시글 태그 추출
+        List<TagDto.TagInfo> tags = freeBoard.getTagBoards().stream().map(tagToFreeBoard ->{
+            TagDto.TagInfo tagInfo = tagMapper.tagToTagToBoard(tagToFreeBoard.getTag());
+            return tagInfo;
+        }).collect(Collectors.toList());
+
+        // 3. 조회수 증가
         addViews(freeBoard);
 
-        return freeBoard;
+        // 4. 리턴
+        FreeBoardDto.Response response = mapper.freeBoardToResponse(freeBoard, tags);
+
+        return response;
     }
+
+//    public FreeBoardDto.Response getFreeBoardTag(FreeBoard freeBoard) {
+//        FreeBoardDto.Response response = mapper.freeBoardToFreeBoardResponseDto(freeBoard);
+//        List<Tag> tags = tagMapper.tagsToTagResponseDto(response.getTags());
+//        return tags;
+//    }
 
     /**
      * <자유 게시판 게시글 삭제>
@@ -202,7 +219,7 @@ public class FreeBoardService {
     }
 
     // 게시글이 존재 여부 검증 메서드
-    private FreeBoard verifyFreeBoard(long freeboardId) {
+    public FreeBoard verifyFreeBoard(long freeboardId) {
         Optional<FreeBoard> optionalFreeBoard = freeBoardRepository.findById(freeboardId);
         return optionalFreeBoard.orElseThrow(() ->
                 new BusinessLogicException(ExceptionCode.FREEBOARD_NOT_FOUND));
