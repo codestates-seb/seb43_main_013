@@ -47,17 +47,17 @@ public class Comment extends Auditable {
     @OneToMany(mappedBy = "comment", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<CommentBoard> commentBoardList = new ArrayList<>();
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "parent_id")
-    private Comment parent;
-
-    @Builder.Default
-    @OneToMany(mappedBy = "parent", orphanRemoval = true)
-    private List<Comment> children = new ArrayList<>();
-
-    // 부모 댓글 수정
-    public void updateParent(Comment parent){
-        this.parent = parent;
-    }
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "parent_id")
+//    private Comment parent;
+//
+//    @Builder.Default
+//    @OneToMany(mappedBy = "parent", orphanRemoval = true)
+//    private List<Comment> children = new ArrayList<>();
+//
+//    // 부모 댓글 수정
+//    public void updateParent(Comment parent){
+//        this.parent = parent;
+//    }
 
 }

@@ -11,12 +11,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
 
 @RestController
 @RequestMapping("/api")
@@ -24,9 +22,10 @@ import javax.validation.Valid;
 @Validated
 public class CommentController {
     private final CommentService commentService;
-    @PostMapping("/feedbackboard/{feedbackboard-id}/comment/new}")
-    public ResponseEntity<CommentResponseDto.Post> postFeedbackComment(@Valid @RequestBody CommentDto.Post postDto) {
-        CommentResponseDto.Post response = commentService.createComment(postDto);
+    @PostMapping("/feedbackboard/{feedbackBoardId}/comment/new}")
+    public ResponseEntity<CommentResponseDto.Post> postFeedbackComment(@RequestParam("feedbackBoardId") @Positive long feedbackBoardId,
+                                                                       @Valid @RequestBody CommentDto.Post postDto) {
+        CommentResponseDto.Post response = commentService.createComment(feedbackBoardId, postDto);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 }
