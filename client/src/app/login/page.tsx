@@ -1,32 +1,15 @@
-"use client";
-import { useState } from "react";
-import { Input, OAuthCon, SmallBtn } from "../../components/login";
+import type { Metadata } from "next";
+import Login from "./Login";
 
-/** 2023/05/05 - 로그인 페이지 컴포넌트 - by Kadesti */
-const login = () => {
-  const { idValid, pwValid } = useInputValid();
-
-  return (
-    <div className="w-screen flex justify-center my-16 px-auto">
-      <div className="bg-white w-2/5 flex flex-col items-center p-6  rounded-xl drop-shadow-xl">
-        <h1 className="text-5xl mb-6">로그인</h1>
-        <form className="w-full">
-          <Input label="아이디" valid={idValid} />
-          <Input label="비밀번호" valid={pwValid} />
-        </form>
-        <SmallBtn />
-        <OAuthCon />
-      </div>
-    </div>
-  );
+/** 2023/05/11 - 메타데이터 - by Kadesti */
+export const metadata: Metadata = {
+  title: "CC",
+  description: "CC의 로그인 페이지입니다.",
 };
 
-export default login;
-
-/** 2023/05/05 - 로그인 유효성 체크 상태값 - by Kadesti */
-const useInputValid = () => {
-  const [idValid, setIdValid] = useState(false);
-  const [pwValid, setPWValid] = useState(false);
-
-  return { idValid, pwValid };
+/** 2023/05/11 - 메인 페이지 컴포넌트 - by Kadesti */
+const Page = () => {
+  return <Login />;
 };
+
+export default Page;
