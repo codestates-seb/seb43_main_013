@@ -58,12 +58,11 @@ public class CategoryService {
     }
 
     //목록 조회
-    public CategoryResponseDto.Multi<CategoryResponseDto.Details> responseCategorys(int page, int size){
-        PageRequest pageRequest = PageRequest.of(page - 1, size, Sort.by("categoryId").descending());
+    public  List<CategoryResponseDto.Details> responseCategorys(){
+        PageRequest pageRequest = PageRequest.of(0, 100, Sort.by("categoryId").descending());
         Page<Category> categorysPage = categoryRepository.findAll(pageRequest);
         List<CategoryResponseDto.Details> responses = mapper.categorysToCategoryDetailsResponses(categorysPage.getContent());
-        CategoryResponseDto.PageInfo pageInfo = new CategoryResponseDto.PageInfo(categorysPage.getNumber() + 1, categorysPage.getSize(), categorysPage.getTotalElements(), categorysPage.getTotalPages());
-        return new CategoryResponseDto.Multi<>(responses, pageInfo);
+        return responses;
     }
 
     //삭제
@@ -103,7 +102,7 @@ public class CategoryService {
             throw new BusinessLogicException(ExceptionCode.CATEGORY_NOT_FOUND);
         }
     }
-    // 피드백 카테고리 조회 메서드
+    // 카테고리 조회 메서드
     public Category findVerifiedCategory(Long categoryId){
         Optional<Category> optionalCategory = categoryRepository.findById(categoryId);
         Category category = optionalCategory.orElseThrow(() -> new BusinessLogicException(ExceptionCode.CATEGORY_NOT_FOUND));

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api")
@@ -49,10 +50,9 @@ public class FeedbackCategoryController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping("/feedbackcategorys")
-    public ResponseEntity getFeedbackCategorys(@RequestParam("page") @Positive int page,
-                                       @RequestParam("size") @Positive int size) {
-        FeedbackCategoryResponseDto.Multi response = feedbackCategoryService.responseFeedbackCategorys(page, size);
+    @GetMapping("/feedbackcategories")
+    public ResponseEntity getFeedbackCategorys() {
+        List<FeedbackCategoryResponseDto.Details> response = feedbackCategoryService.responseFeedbackCategorys();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

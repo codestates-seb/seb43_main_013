@@ -91,16 +91,19 @@ public class FeedbackBoardService {
     }
 
     // 개별 조회
-    public FeedbackBoardResponseDto.Details responseFeedback(Long FeedbackBoardId){
-        // 클라이언트에서 보낸 ID값으로 데이터베이스에 있는 Entity 찾아서 리턴
-        FeedbackBoard foundFeedbackBoard = findVerifiedFeedbackBoard(FeedbackBoardId);
+    public FeedbackBoardResponseDto.Details responseFeedback(Long feedbackBoardId){
+        // 클라이언트에서 보낸 ID값으로 Entity 조회
+        FeedbackBoard foundFeedbackBoard = findVerifiedFeedbackBoard(feedbackBoardId);
+        //조회수 증가
+        addViews(foundFeedbackBoard);
         return mapper.feedbackBoardToFeedbackBoardDetailsResponse(foundFeedbackBoard);
     }
 
     //목록 조회
-    public FeedbackBoardResponseDto.Multi<FeedbackBoardResponseDto.Details> responseFeedbacks(int page, int size){
-        //Page 생성 - 피드백 보드Id 기준 내림차순 정렬 적용
-        Page<FeedbackBoard> feedbackBoardsPage = feedbackBoardRepository.findAll(PageRequest.of(page - 1, size, Sort.by("feedbackBoardId").descending()));
+    public FeedbackBoardResponseDto.Multi<FeedbackBoardResponseDto.Details> responseFeedbacks(String sort, int page, int size){
+        // Page 생성 - 최신순, 등록순, 인기순
+        // 기본값 = 최신순
+        Page<FeedbackBoard> feedbackBoardsPage = feedbackBoardRepository.findAll(sortedPageRequest(sort, page, size));
 
         // 피드백 리스트 가져오기
         List<FeedbackBoardResponseDto.Details> responses = mapper.feedbackBoardsToFeedbackBoardDetailsResponses(feedbackBoardsPage.getContent());
@@ -113,9 +116,9 @@ public class FeedbackBoardService {
     }
 
     //피드백 카테고리로 목록 조회
-    public FeedbackBoardResponseDto.Multi<FeedbackBoardResponseDto.Details> responseFeedbacksByCategory(Long feedbackCategoryId, int page, int size){
-        //page생성 - 피드백 카테고리 ID로 검색 후 피드백 보드Id 기준 내림차순 정렬 적용
-        Page<FeedbackBoard> feedbackBoardsPage = feedbackBoardRepository.findFeedbackBoardsByFeedbackCategoryId(feedbackCategoryId, PageRequest.of(page - 1, size, Sort.by("feedbackBoardId").descending()));
+    public FeedbackBoardResponseDto.Multi<FeedbackBoardResponseDto.Details> responseFeedbacksByCategory(Long feedbackCategoryId, String sort, int page, int size){
+        // page생성 - 피드백 카테고리 ID로 검색 후 정렬 적용
+        Page<FeedbackBoard> feedbackBoardsPage = feedbackBoardRepository.findFeedbackBoardsByFeedbackCategoryId(feedbackCategoryId, sortedPageRequest(sort, page, size));
 
         // 피드백 리스트 가져오기
         List<FeedbackBoardResponseDto.Details> responses = mapper.feedbackBoardsToFeedbackBoardDetailsResponses(feedbackBoardsPage.getContent());
@@ -144,9 +147,27 @@ public class FeedbackBoardService {
 
 
     //피드백 아이디로 피드백 찾는 메서드
-    public FeedbackBoard findVerifiedFeedbackBoard(Long feedbackBoardId) {
-        Optional<FeedbackBoard> FeedbackBoard = feedbackBoardRepository.findById(feedbackBoardId);
-        return FeedbackBoard.orElseThrow(() -> new BusinessLogicException(ExceptionCode.FEEDBACK_NOT_FOUND));
+    private FeedbackBoard findVerifiedFeedbackBoard(Long feedbackBoardId) {
+        Optional<FeedbackBoard> feedbackBoard = feedbackBoardRepository.findById(feedbackBoardId);
+        return feedbackBoard.orElseThrow(() -> new BusinessLogicException(ExceptionCode.FEEDBACK_NOT_FOUND));
     }
 
+    //조회수 증가 메서드
+    private void addViews(FeedbackBoard feedbackBoard) {
+        feedbackBoard.setViewCount(feedbackBoard.getViewCount() + 1);
+        feedbackBoardRepository.save(feedbackBoard);
+    }
+
+    //페이지 정렬 메서드
+    private PageRequest sortedPageRequest(String sort, int page, int size) {
+        if(Objects.equals(sort,"최신순")){
+            return PageRequest.of(page - 1, size, Sort.by("feedbackBoardId").descending());
+        } else if(Objects.equals(sort,"등록순")){
+            return PageRequest.of(page - 1, size, Sort.by("feedbackBoardId").ascending());
+        } else if(Objects.equals(sort,"인기순")){
+            return PageRequest.of(page - 1, size, Sort.by("viewCount","feedbackBoardId").descending());
+        } else {
+            return PageRequest.of(page - 1, size, Sort.by("feedbackBoardId").descending());
+        }
+    }
 }
