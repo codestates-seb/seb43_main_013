@@ -1,4 +1,4 @@
-import create from "zustand";
+import { create } from "zustand";
 
 type PageState = {
   currentPage: number;
@@ -8,17 +8,18 @@ type PageState = {
 
 /** 2023/05/14 - 새로고침시 로컬 스토리지에서 페이지 상태 읽어오기 - by leekoby */
 const getPageStateFromStorage = (): number => {
-  const pageState = localStorage.getItem("currentPage");
-  return pageState ? parseInt(pageState, 10) : 1;
+  if (typeof window !== "undefined") {
+    const pageState = localStorage.getItem("currentPage");
+    return pageState ? parseInt(pageState, 10) : 1;
+  } else return 1;
 };
-
 /** 2023/05/14 - 페이지 상태 로컬 스토리지에 저장하기 - by leekoby */
 const setPageStateToStorage = (page: number) => {
   localStorage.setItem("currentPage", page.toString());
 };
 
 /** 2023/05/14 - page 전역 상태 관리 - by leekoby */
-const usePageStore = create<PageState>((set) => ({
+export const usePageStore = create<PageState>((set) => ({
   currentPage: getPageStateFromStorage(),
   setCurrentPage: (page: number) => {
     setPageStateToStorage(page);
@@ -29,4 +30,3 @@ const usePageStore = create<PageState>((set) => ({
     set(() => ({ currentPage: 1 }));
   },
 }));
-export default usePageStore;
