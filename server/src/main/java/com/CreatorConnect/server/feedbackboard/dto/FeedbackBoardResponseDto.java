@@ -41,7 +41,7 @@ public class FeedbackBoardResponseDto {
         private String title;
         private String link;
         private String content;
-//        private String tag;
+        private List<TagDto.TagInfo> tags; // 태그
         private Long commentCount;
         private Long likeCount;
         private Long viewCount;
@@ -53,7 +53,7 @@ public class FeedbackBoardResponseDto {
         private String nickname;
         private String email;
         private String profileImageUrl;
-        private List<TagDto.TagInfo> tags; // 태그
+
     }
 
     @Getter

@@ -13,6 +13,9 @@ import com.CreatorConnect.server.feedbackboard.repository.FeedbackBoardRepositor
 import com.CreatorConnect.server.feedbackcategory.entity.FeedbackCategory;
 import com.CreatorConnect.server.feedbackcategory.repository.FeedbackCategoryRepository;
 import com.CreatorConnect.server.feedbackcategory.service.FeedbackCategoryService;
+import com.CreatorConnect.server.freeboard.dto.FreeBoardDto;
+import com.CreatorConnect.server.freeboard.entity.FreeBoard;
+import com.CreatorConnect.server.tag.dto.TagDto;
 import com.CreatorConnect.server.tag.entity.Tag;
 import com.CreatorConnect.server.tag.mapper.TagMapper;
 import com.CreatorConnect.server.tag.service.FeedbackBoardTagService;
@@ -29,6 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -138,10 +142,13 @@ public class FeedbackBoardService {
         Page<FeedbackBoard> feedbackBoardsPage = feedbackBoardRepository.findAll(sortedPageRequest(sort, page, size));
 
         // 피드백 리스트 가져오기
-        List<FeedbackBoardResponseDto.Details> responses = mapper.feedbackBoardsToFeedbackBoardDetailsResponses(feedbackBoardsPage.getContent());
+//        List<FeedbackBoardResponseDto.Details> responses = mapper.feedbackBoardsToFeedbackBoardDetailsResponses(feedbackBoardsPage.getContent());
 
         // pageInfo 가져오기
         FeedbackBoardResponseDto.PageInfo pageInfo = new FeedbackBoardResponseDto.PageInfo(feedbackBoardsPage.getNumber() + 1, feedbackBoardsPage.getSize(), feedbackBoardsPage.getTotalElements(), feedbackBoardsPage.getTotalPages());
+
+        // 태그 정보 적용
+        List<FeedbackBoardResponseDto.Details> responses = getResponseList(feedbackBoardsPage);
 
         // 리턴
         return new FeedbackBoardResponseDto.Multi<>(responses, pageInfo);
@@ -201,5 +208,15 @@ public class FeedbackBoardService {
         } else {
             return PageRequest.of(page - 1, size, Sort.by("feedbackBoardId").descending());
         }
+    }
+
+    // Response에 각 게시글의 태그 적용 메서드
+    private List<FeedbackBoardResponseDto.Details> getResponseList(Page<FeedbackBoard> feedbackBoards) {
+        return feedbackBoards.getContent().stream().map(feedbackBoard -> {
+            List<TagDto.TagInfo> tags = feedbackBoard.getTagBoards().stream()
+                    .map(tagToFreeBoard -> tagMapper.tagToTagToBoard(tagToFreeBoard.getTag()))
+                    .collect(Collectors.toList());
+            return mapper.feedbackBoardToResponse(feedbackBoard, tags);
+        }).collect(Collectors.toList());
     }
 }
