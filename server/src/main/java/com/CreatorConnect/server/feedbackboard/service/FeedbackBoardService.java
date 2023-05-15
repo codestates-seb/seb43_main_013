@@ -130,9 +130,16 @@ public class FeedbackBoardService {
     public FeedbackBoardResponseDto.Details responseFeedback(Long feedbackBoardId){
         // 클라이언트에서 보낸 ID값으로 Entity 조회
         FeedbackBoard foundFeedbackBoard = findVerifiedFeedbackBoard(feedbackBoardId);
+
+        // 게시글에 있는 태그 추가
+        List<TagDto.TagInfo> tags = foundFeedbackBoard.getTagBoards().stream().map(tagToFeedbackBoard -> {
+            TagDto.TagInfo tagInfo = tagMapper.tagToTagToBoard(tagToFeedbackBoard.getTag());
+            return tagInfo;
+        }).collect(Collectors.toList());
+
         //조회수 증가
         addViews(foundFeedbackBoard);
-        return mapper.feedbackBoardToFeedbackBoardDetailsResponse(foundFeedbackBoard);
+        return mapper.feedbackBoardToResponse(foundFeedbackBoard, tags);
     }
 
     //목록 조회
