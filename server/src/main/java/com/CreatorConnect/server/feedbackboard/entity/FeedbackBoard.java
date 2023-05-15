@@ -4,6 +4,7 @@ import com.CreatorConnect.server.audit.Auditable;
 import com.CreatorConnect.server.category.entity.Category;
 import com.CreatorConnect.server.feedbackcategory.entity.FeedbackCategory;
 import com.CreatorConnect.server.member.entity.Member;
+import com.CreatorConnect.server.tag.entity.TagToFeedbackBoard;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,6 +12,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -96,8 +99,8 @@ public class FeedbackBoard extends Auditable {
         }
     }
 //    Todo FeedbackBoard-tag연결
-//    @OneToMany(mappedBy = "feedbackBoard", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-//    private List<TagBoard> tagBoards = new ArrayList<>();
+    @OneToMany(mappedBy = "feedbackBoard", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<TagToFeedbackBoard> tagBoards = new ArrayList<>();
 
 
 }
