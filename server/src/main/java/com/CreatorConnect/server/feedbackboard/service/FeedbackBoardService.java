@@ -11,7 +11,6 @@ import com.CreatorConnect.server.feedbackboard.mapper.FeedbackBoardMapper;
 import com.CreatorConnect.server.feedbackboard.repository.FeedbackBoardRepository;
 import com.CreatorConnect.server.feedbackcategory.entity.FeedbackCategory;
 import com.CreatorConnect.server.feedbackcategory.repository.FeedbackCategoryRepository;
-import com.CreatorConnect.server.feedbackcategory.service.FeedbackCategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -33,7 +32,6 @@ public class FeedbackBoardService {
     private final FeedbackBoardMapper mapper;
     private final CategoryRepository categoryRepository;
     private final FeedbackCategoryRepository feedbackCategoryRepository;
-    private final FeedbackCategoryService feedbackCategoryService;
 
     //등록
     public FeedbackBoardResponseDto.Post createFeedback(FeedbackBoardDto.Post postDto){

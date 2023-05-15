@@ -2,7 +2,7 @@ package com.CreatorConnect.server.feedbackboard.entity;
 
 import com.CreatorConnect.server.audit.Auditable;
 import com.CreatorConnect.server.category.entity.Category;
-import com.CreatorConnect.server.comment.entity.CommentBoard;
+import com.CreatorConnect.server.comment.entity.FeedbackComment;
 import com.CreatorConnect.server.feedbackcategory.entity.FeedbackCategory;
 import com.CreatorConnect.server.member.entity.Member;
 import lombok.AllArgsConstructor;
@@ -22,6 +22,7 @@ import java.util.List;
 public class FeedbackBoard extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "feedbackboard_id")
     private Long feedbackBoardId;
     @Column(nullable = false)
     private String title;
@@ -96,7 +97,7 @@ public class FeedbackBoard extends Auditable {
     }
 
     @OneToMany(mappedBy = "feedbackBoard", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<CommentBoard> comments = new ArrayList<>();
+    private List<FeedbackComment> feedbackComments = new ArrayList<>();
 
 //    Todo FeedbackBoard-tag연결
 //    @OneToMany(mappedBy = "feedbackBoard", fetch = FetchType.LAZY, cascade = CascadeType.ALL)

@@ -2,29 +2,32 @@ package com.CreatorConnect.server.comment.entity;
 
 
 import com.CreatorConnect.server.audit.Auditable;
+import com.CreatorConnect.server.freeboard.entity.FreeBoard;
 import com.CreatorConnect.server.member.entity.Member;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 @Entity
-public class Comment extends Auditable {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long commentId;
+public class FreeComment extends Auditable {
+    @EmbeddedId
+    private CommentPK commentPK;
     @Column
     private String content;
     @Column
     private Long reCommentCount;
 
+    @PrePersist
+    public void prePersist() {
+        this.reCommentCount = this.reCommentCount == null ? 0 : this.reCommentCount;
+    }
     @ManyToOne
     @JoinColumn(name = "member_id")
     private Member member;
@@ -39,13 +42,25 @@ public class Comment extends Auditable {
     public String getProfileImageUrl() {return member.getProfileImageUrl();}
     public void setMember(Member member) {
         this.member = member;
-        if (!this.member.getComments().contains(this)) {
-            this.member.getComments().add(this);
+        if (!this.member.getFreeComments().contains(this)) {
+            this.member.getFreeComments().add(this);
         }
     }
+    @MapsId("boardId")
+    @ManyToOne
+    @JoinColumn(name = "freeBoard_id")
+    private FreeBoard freeBoard;
+    public long getFreeBoardId() {return freeBoard.getFreeBoardId();}
 
-    @OneToMany(mappedBy = "comment", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<CommentBoard> commentBoardList = new ArrayList<>();
+    public void setFreeBoard(FreeBoard freeBoard) {
+        this.freeBoard = freeBoard;
+        if (!this.freeBoard.getFreeComments().contains(this)) {
+            this.freeBoard.getFreeComments().add(this);
+        }
+    }
+//
+//    @OneToMany(mappedBy = "comment", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+//    private List<CommentBoard> commentBoardList = new ArrayList<>();
 
 //    @ManyToOne(fetch = FetchType.LAZY)
 //    @JoinColumn(name = "parent_id")
