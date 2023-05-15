@@ -5,11 +5,9 @@ import com.CreatorConnect.server.freeboard.dto.FreeBoardDto;
 import com.CreatorConnect.server.freeboard.entity.FreeBoard;
 import com.CreatorConnect.server.freeboard.mapper.FreeBoardMapper;
 import com.CreatorConnect.server.freeboard.service.FreeBoardService;
-import com.CreatorConnect.server.tag.dto.TagDto;
 import com.CreatorConnect.server.tag.entity.Tag;
 import com.CreatorConnect.server.tag.mapper.TagMapper;
-import com.CreatorConnect.server.tag.service.TagService;
-import org.springframework.data.domain.Page;
+import com.CreatorConnect.server.tag.service.FreeBoardTagService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -27,12 +25,12 @@ public class FreeBoardController {
     private final FreeBoardMapper mapper;
     private final CategoryService categoryService;
     private final TagMapper tagMapper;
-    private final TagService tagService;
+    private final FreeBoardTagService tagService;
 
 
     public FreeBoardController(FreeBoardService freeBoardService, FreeBoardMapper mapper,
                                CategoryService categoryService, TagMapper tagMapper,
-                               TagService tagService) {
+                               FreeBoardTagService tagService) {
         this.freeBoardService = freeBoardService;
         this.mapper = mapper;
         this.categoryService = categoryService;

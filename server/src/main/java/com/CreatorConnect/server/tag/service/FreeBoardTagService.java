@@ -1,7 +1,6 @@
 package com.CreatorConnect.server.tag.service;
 
 import com.CreatorConnect.server.freeboard.entity.FreeBoard;
-import com.CreatorConnect.server.freeboard.service.FreeBoardService;
 import com.CreatorConnect.server.tag.entity.Tag;
 import com.CreatorConnect.server.tag.entity.TagToFreeBoard;
 import com.CreatorConnect.server.tag.repository.TagBoardRepository;
@@ -13,11 +12,11 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class TagService {
+public class FreeBoardTagService {
     private final TagRepository tagRepository;
     private final TagBoardRepository tagBoardRepository;
 
-    public TagService(TagRepository tagRepository, TagBoardRepository tagBoardRepository) {
+    public FreeBoardTagService(TagRepository tagRepository, TagBoardRepository tagBoardRepository) {
         this.tagRepository = tagRepository;
         this.tagBoardRepository = tagBoardRepository;
     }

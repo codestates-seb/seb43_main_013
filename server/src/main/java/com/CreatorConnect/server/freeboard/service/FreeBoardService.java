@@ -15,7 +15,7 @@ import com.CreatorConnect.server.member.service.MemberService;
 import com.CreatorConnect.server.tag.dto.TagDto;
 import com.CreatorConnect.server.tag.entity.Tag;
 import com.CreatorConnect.server.tag.mapper.TagMapper;
-import com.CreatorConnect.server.tag.service.TagService;
+import com.CreatorConnect.server.tag.service.FreeBoardTagService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -37,7 +37,7 @@ public class FreeBoardService {
     private final FreeBoardMapper mapper;
     private final MemberRepository memberRepository;
     private final CategoryService categoryService;
-    private final TagService tagService;
+    private final FreeBoardTagService tagService;
     private final TagMapper tagMapper;
 
     public FreeBoardService(FreeBoardRepository freeBoardRepository,
@@ -46,7 +46,7 @@ public class FreeBoardService {
                             FreeBoardMapper mapper,
                             MemberRepository memberRepository,
                             CategoryService categoryService,
-                            TagService tagService,
+                            FreeBoardTagService freeBoardTagService,
                             TagMapper tagMapper) {
         this.freeBoardRepository = freeBoardRepository;
         this.memberService = memberService;
@@ -54,7 +54,7 @@ public class FreeBoardService {
         this.mapper = mapper;
         this.memberRepository = memberRepository;
         this.categoryService = categoryService;
-        this.tagService = tagService;
+        this.tagService = freeBoardTagService;
         this.tagMapper = tagMapper;
     }
 
