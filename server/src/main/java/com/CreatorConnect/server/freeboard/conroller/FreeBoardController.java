@@ -25,7 +25,7 @@ public class FreeBoardController {
     private final FreeBoardMapper mapper;
     private final CategoryService categoryService;
     private final TagMapper tagMapper;
-    private final FreeBoardTagService tagService;
+    private final FreeBoardTagService freeBoardTagService;
 
 
     public FreeBoardController(FreeBoardService freeBoardService, FreeBoardMapper mapper,
@@ -35,7 +35,7 @@ public class FreeBoardController {
         this.mapper = mapper;
         this.categoryService = categoryService;
         this.tagMapper = tagMapper;
-        this.tagService = tagService;
+        this.freeBoardTagService = tagService;
     }
 
     // 자유 게시판 게시글 등록
@@ -55,7 +55,7 @@ public class FreeBoardController {
         List<Tag> tags = tagMapper.tagPostDtosToTag(patch.getTags());
 
         FreeBoard freeBoardPatch = freeBoardService.updateFreeBoard(patch,freeBoardId);
-        List<Tag> updatedTag = tagService.updateFreeBoardTag(tags, freeBoardPatch);
+        List<Tag> updatedTag = freeBoardTagService.updateFreeBoardTag(tags, freeBoardPatch);
 
         FreeBoardDto.Response response = mapper.freeBoardToFreeBoardResponseDto(freeBoardPatch);
         response.setTags(tagMapper.tagsToTagResponseDto(updatedTag));
@@ -65,31 +65,31 @@ public class FreeBoardController {
 
      // 자유 게시판 게시글 목록 조회
     @GetMapping("/freeboards")
-    public FreeBoardDto.MultiResponseDto<FreeBoardDto.Response> getFreeBoards(@RequestParam String sort,
-                                                                              @Positive @RequestParam int page,
-                                                                              @Positive @RequestParam int size) {
+    public ResponseEntity getFreeBoards(@RequestParam String sort,
+                                        @Positive @RequestParam int page,
+                                        @Positive @RequestParam int size) {
         FreeBoardDto.MultiResponseDto<FreeBoardDto.Response> pageFreeBoards = freeBoardService.getAllFreeBoards(page, size, sort);
 
-        return pageFreeBoards;
+        return new ResponseEntity<>(pageFreeBoards, HttpStatus.OK);
     }
 
     // 자유 게시판 카테고리 별 목록 조회
     @GetMapping("/freboards/category/{categoryId}")
-    public FreeBoardDto.MultiResponseDto<FreeBoardDto.Response> getFreeBoardsByCategory(@PathVariable("categoryId") long categoryId,
+    public ResponseEntity getFreeBoardsByCategory(@PathVariable("categoryId") long categoryId,
                                                   @RequestParam String sort,
                                                   @Positive @RequestParam int page,
                                                 @Positive @RequestParam int size) {
         FreeBoardDto.MultiResponseDto<FreeBoardDto.Response> pageFreeBoard = freeBoardService.getAllFreeBoardsByCategory(categoryId, page, size, sort);
-        return pageFreeBoard;
+        return new ResponseEntity<>(pageFreeBoard, HttpStatus.OK);
     }
 
 
     // 자유 게시판 게시글 상세 조회
     @GetMapping("/freeboard/{freeboardId}")
-    public FreeBoardDto.Response getFreeBoardDetail(@Positive @PathVariable("freeboardId") long freeBoardId) {
+    public ResponseEntity getFreeBoardDetail(@Positive @PathVariable("freeboardId") long freeBoardId) {
 
 
-        return freeBoardService.getFreeBoardDetail(freeBoardId);
+        return new ResponseEntity<>(freeBoardService.getFreeBoardDetail(freeBoardId), HttpStatus.OK);
     }
 
     // 자유 게시판 게시글 삭제
