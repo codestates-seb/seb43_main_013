@@ -1,13 +1,21 @@
 "use client";
-import usePageStore from "@/store/pageStore";
+
+import { useCategoriesStore, usePageStore, useSortStore } from "@/store";
 import Link from "next/link";
 import { useState } from "react";
 /** 2023/05/04 - 네브 컴포넌트 - by Kadesti */
 const Nav = () => {
   /** 2023/05/14 - 다른 링크로 이동할때 페이지 정보 초기화 - by leekoby */
   const resetPageState = usePageStore((state) => state.resetPageState);
+  /** 2023/05/14 - 다른 링크로 이동할때 사이드 카테고리 정보 초기화 - by leekoby */
+  const resetCategoryState = useCategoriesStore((state) => state.resetCategoryState);
+  /** 2023/05/15 - 다른 링크로 이동할때 정렬 정보 초기화 - by leekoby */
+  const resetSelectedOption = useSortStore((state) => state.resetSelectedOption);
+
   const handleClick = () => {
     resetPageState();
+    resetCategoryState();
+    resetSelectedOption();
   };
 
   const [rankModal, setRankModal] = useState(false);

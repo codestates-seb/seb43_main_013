@@ -15,13 +15,12 @@ const SideCategories: React.FC<SideCategoriesProps> = ({ categories, selectedCat
   /** 2023/05/14 -  공통 카테고리 선택 전역 상태 - by leekoby */
   const setSelectedCategory = useCategoriesStore((state) => state.setSelectedCategory);
 
-  // 작은 사이즈용
-  const [isShown, setIsShown] = useState(true);
-
   const categoryClickHandler = (category: ResponseCategoriesType) => {
     setSelectedCategory(category.categoryName, category.categoryId);
   };
 
+  // 작은 사이즈용
+  const [isShown, setIsShown] = useState(true);
   // 작은 사이즈용
   const toggleSideCategories = () => {
     setIsShown(!isShown);

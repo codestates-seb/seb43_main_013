@@ -1,50 +1,46 @@
-"use client";
-import { Listbox } from "@headlessui/react";
-import React, { useState, Fragment } from "react";
+import { useSortStore } from "@/store";
 import { CheckIcon } from "@heroicons/react/20/solid";
 
 const sortOptions = [
-  { id: 1, name: "최신순", unavailable: false },
-  { id: 2, name: "인기순", unavailable: false },
-  { id: 3, name: "등록순", unavailable: false },
+  { optionId: 1, optionName: "최신순" },
+  { optionId: 2, optionName: "인기순" },
+  { optionId: 3, optionName: "등록순" },
 ];
 
 /** 2023/05/10 - 최신순/인기순 정렬 컴포넌트 - by leekoby */
+const SortPosts: React.FC = () => {
+  const selectedOption = useSortStore((state) => state.selectedOption);
+  const setSelectedOption = useSortStore((state) => state.setSelectedOption);
 
-const SortPosts = () => {
-  const [selected, setSelected] = useState(sortOptions[0]);
+  const sortClickHandler = (option: { optionId: number; optionName: string }) => {
+    setSelectedOption(option.optionName, option.optionId);
+  };
 
   return (
-    <Listbox value={selected} onChange={setSelected}>
-      <Listbox.Button>{selected.name}</Listbox.Button>
-      <Listbox.Options>
-        {sortOptions.map((item) => (
-          <Listbox.Option key={item.id} value={item} disabled={item.unavailable}>
-            {item.name}
-          </Listbox.Option>
-        ))}
-      </Listbox.Options>
-    </Listbox>
+    <div className="flex gap-x-3">
+      {sortOptions.map((option) => (
+        <li className="list-none" key={option.optionId}>
+          <button
+            type="button"
+            className={`w-full px-5 text-sm leading-10 duration-200 rounded hover:bg-main-400 active:bg-main-500 hover:text-white hover:scale-105 transtition hover:shadow-md hover:shadow-sub-500/50
+            ${
+              selectedOption?.optionId === option.optionId
+                ? "bg-main-500 text-white shadow-lg shadow-sub-500/50"
+                : "bg-sub-100 "
+            }`}
+            onClick={() => {
+              sortClickHandler(option);
+            }}
+          >
+            {selectedOption?.optionId === option.optionId && (
+              <CheckIcon className="inline-block w-4 h-4 ml-1 bg-sub-100 rounded-full text-main-400 mr-2" />
+            )}
+            {option.optionName}
+          </button>
+        </li>
+      ))}
+    </div>
   );
-  //   const [select, setSelect] = useState("");
-  //   const handleSelect: ChangeEventHandler<HTMLSelectElement> = (e) => {
-  //     setSelect(e.target.value);
-  //   };
-  //   useEffect(() => {
-  //     console.log(select);
-  //   }, [select]);
-  //   return (
-  //     <select
-  //       className="block py-2.5 px-0 w-full text-sm text-black bg-transparent border-0 border-b-2 border-sub-200 appearance-none    focus:outline-none focus:ring-0 focus:border-sub-200 peer"
-  //       name="state"
-  //       id=""
-  //       onChange={handleSelect}
-  //     >
-  //       <option value="new" className="">
-  //         최신순
-  //       </option>
-  //       <option value="popular">인기순</option>
-  //     </select>
-  //   );
 };
+
 export default SortPosts;

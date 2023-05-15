@@ -9,7 +9,7 @@ import Pagination from "@/components/Pagination";
 import ContentItem from "./ContentItem";
 import FullSpinner from "@/components/Spinner/FullSpinner";
 import RightSideButton from "@/components/RightSideButton";
-import { useCategoriesStore, usePageStore } from "@/store";
+import { useCategoriesStore, usePageStore, useSortStore } from "@/store";
 
 /** 2023/05/08 - 자유게시판 메인 화면 - by leekoby */
 const FreeMain = () => {
@@ -20,24 +20,28 @@ const FreeMain = () => {
 
   /** 2023/05/14 - 게시판 사이드 카테고리 상태관리 - by leekoby */
   const selectedCategory = useCategoriesStore((state) => state.selectedCategory);
-  const selected = selectedCategory === null ? "" : `/categories/${selectedCategory?.categoryId}`;
+  const selected =
+    !selectedCategory || selectedCategory?.categoryName === "전체" ? "" : `/categories/${selectedCategory?.categoryId}`;
 
-  const [sorted, setSorted] = useState("최신순");
+  const sortSelectedOption = useSortStore((state) => state.selectedOption);
 
   /** 2023/05/11 자유게시판 목록 get 요청 - by leekoby */
   const { data, fetchNextPage, hasNextPage, isFetching, refetch } = useFetchFreeBoardList({
     selected,
-    sorted,
+    sorted: sortSelectedOption.optionName,
     page: currentPage,
     size: 10,
   });
 
   useEffect(() => {
     refetch();
-  }, [selectedCategory]);
+  }, [selectedCategory, sortSelectedOption]);
 
   /** 2023/05/13 - 자유게시판 카테고리 초기값 - by leekoby */
   const { categories, isLoading } = useFetchCategories({ type: "normal" });
+
+  // TODO 정렬기능 추가하기
+  categories?.sort((a, b) => a.categoryId - b.categoryId);
 
   if (!data) return <FullSpinner />;
   if (data.pages.length < 1) return <FullSpinner />;
@@ -58,9 +62,9 @@ const FreeMain = () => {
         {/* rightside freeboard post list */}
         <section className="flex flex-col md:w-0 ml-5  grow-[8]">
           {/* freeboard list header */}
-          <div className="flex justify-between">
+          <div className="flex justify-end">
             {/* 선택된 카테고리 보여주기 */}
-            <h1 className="py-1 text-3xl font-bold text-left">{selectedCategory?.categoryName}</h1>
+            {/* <h1 className="py-1 text-3xl font-bold text-left">{selectedCategory?.categoryName}</h1> */}
 
             <>
               <SortPosts />
@@ -77,7 +81,7 @@ const FreeMain = () => {
           )}
 
           {/* postslist bottom */}
-          <div className="flex justify-between items-center">
+          <div className="flex justify-center items-center">
             {/* TODO React Query를 이용한 PreFetch 방식으로 변경하기 */}
             <Pagination
               page={data?.pages[0].pageInfo.page}

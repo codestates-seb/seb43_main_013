@@ -10,7 +10,7 @@ interface CategoryState {
 }
 
 /** 2023/05/14 - 새로고침시 로컬 스토리지에서 사이드 카테고리 상태 읽어오기 - by leekoby */
-export const getCategoryStateFromStorage = () => {
+const getCategoryStateFromStorage = () => {
   if (typeof window !== "undefined") {
     const categoryState = localStorage.getItem("currentCategory");
     return categoryState ? JSON.parse(categoryState) : null;
