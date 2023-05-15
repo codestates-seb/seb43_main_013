@@ -1,10 +1,16 @@
 package com.CreatorConnect.server.freeboard.conroller;
 
 import com.CreatorConnect.server.category.service.CategoryService;
+import com.CreatorConnect.server.feedbackboard.entity.FeedbackBoard;
 import com.CreatorConnect.server.freeboard.dto.FreeBoardDto;
 import com.CreatorConnect.server.freeboard.entity.FreeBoard;
 import com.CreatorConnect.server.freeboard.mapper.FreeBoardMapper;
 import com.CreatorConnect.server.freeboard.service.FreeBoardService;
+import com.CreatorConnect.server.member.entity.Member;
+import com.CreatorConnect.server.member.like.entity.Like;
+import com.CreatorConnect.server.member.like.repository.LikeRepository;
+import com.CreatorConnect.server.member.repository.MemberRepository;
+import com.CreatorConnect.server.member.service.MemberService;
 import com.CreatorConnect.server.tag.dto.TagDto;
 import com.CreatorConnect.server.tag.entity.Tag;
 import com.CreatorConnect.server.tag.mapper.TagMapper;
@@ -12,12 +18,15 @@ import com.CreatorConnect.server.tag.service.TagService;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/api")
@@ -28,16 +37,19 @@ public class FreeBoardController {
     private final CategoryService categoryService;
     private final TagMapper tagMapper;
     private final TagService tagService;
+    private final MemberService memberService;
+    private final MemberRepository memberRepository;
+    private final LikeRepository likeRepository;
 
-
-    public FreeBoardController(FreeBoardService freeBoardService, FreeBoardMapper mapper,
-                               CategoryService categoryService, TagMapper tagMapper,
-                               TagService tagService) {
+    public FreeBoardController(FreeBoardService freeBoardService, FreeBoardMapper mapper, CategoryService categoryService, TagMapper tagMapper, TagService tagService, MemberService memberService, MemberRepository memberRepository, LikeRepository likeRepository) {
         this.freeBoardService = freeBoardService;
         this.mapper = mapper;
         this.categoryService = categoryService;
         this.tagMapper = tagMapper;
         this.tagService = tagService;
+        this.memberService = memberService;
+        this.memberRepository = memberRepository;
+        this.likeRepository = likeRepository;
     }
 
     // 자유 게시판 게시글 등록
@@ -100,6 +112,67 @@ public class FreeBoardController {
         freeBoardService.removeFreeBoard(freeboardId);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @PostMapping("/freeboard/{freeBoardId}/like")
+    public ResponseEntity likeFreeBoard (@PathVariable("freeBoardId") @Positive Long freeBoardId) {
+
+        // 현재 로그인한 사용자 정보 가져오기
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Member currentMember = memberService.findVerifiedMember(authentication.getName());
+
+        FreeBoard foundfreeBoard = freeBoardService.verifyFreeBoard(freeBoardId);
+
+        // 현재 로그인한 사용자가 해당 게시물을 좋아요 했는지 확인
+        boolean isAlreadyLiked = currentMember.getLikes().stream()
+                .filter(Objects::nonNull) // null인 요소 필터링
+                .map(Like::getFreeBoard)
+                .filter(Objects::nonNull) // null인 FreeBoard 필터링
+                .anyMatch(freeBoard -> freeBoard.getFreeBoardId().equals(freeBoardId));
+
+        if (isAlreadyLiked) {
+            return ResponseEntity.badRequest().body("Already liked.");
+        }
+
+        Like like = new Like();
+        like.setBoardType(Like.BoardType.FREEBOARD);
+        like.setMember(currentMember);
+        like.setFreeBoard(foundfreeBoard);
+        likeRepository.save(like);
+
+        // 현재 사용자의 likes 컬렉션에 좋아요 추가
+        currentMember.getLikes().add(like);
+        memberRepository.save(currentMember);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+
+    }
+
+    @DeleteMapping("/freeboard/{freeBoardId}/like")
+    public ResponseEntity unlikeFreeBoard (@PathVariable("freeBoardId") @Positive Long freeBoardId) {
+
+        // 현재 로그인한 사용자 정보 가져오기
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Member currentMember = memberService.findVerifiedMember(authentication.getName());
+
+        FreeBoard foundfreeBoard = freeBoardService.verifyFreeBoard(freeBoardId);
+
+        // 현재 로그인한 사용자가 해당 게시물을 좋아요 했는지 확인
+        Like like = currentMember.getLikes().stream()
+                .filter(l -> l.getFreeBoard().getFreeBoardId().equals(foundfreeBoard.getFreeBoardId()))
+                .findFirst()
+                .orElse(null);
+
+        if (like == null) {
+            return ResponseEntity.badRequest().body("Not liked.");
+        }
+
+        // 현재 사용자의 likes 컬렉션에 좋아요 삭제
+        currentMember.getLikes().remove(like);
+        memberRepository.save(currentMember);
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+
     }
 
 }

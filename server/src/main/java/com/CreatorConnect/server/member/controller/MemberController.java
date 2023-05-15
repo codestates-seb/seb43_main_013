@@ -2,13 +2,16 @@ package com.CreatorConnect.server.member.controller;
 
 import com.CreatorConnect.server.exception.BusinessLogicException;
 import com.CreatorConnect.server.exception.ExceptionCode;
+import com.CreatorConnect.server.member.dto.MemberBoardResponseDto;
 import com.CreatorConnect.server.member.dto.MemberDto;
 import com.CreatorConnect.server.member.dto.MemberFollowResponseDto;
 import com.CreatorConnect.server.member.dto.MemberResponseDto;
 import com.CreatorConnect.server.member.entity.Member;
+import com.CreatorConnect.server.member.like.entity.Like;
 import com.CreatorConnect.server.member.mapper.MemberMapper;
 import com.CreatorConnect.server.member.repository.MemberRepository;
 import com.CreatorConnect.server.member.service.MemberService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,9 +23,11 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Validated
 @RestController
 public class MemberController {
@@ -208,6 +213,36 @@ public class MemberController {
                         follower.getNickname(),
                         follower.getProfileImageUrl()
                 )).collect(Collectors.toList());
+
+        return new ResponseEntity(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/api/member/{member-id}/liked")
+    public ResponseEntity getliked(@PathVariable("member-id") @Positive Long memberId) {
+
+        Set<Like> liked = memberService.findVerifiedMember(memberId).getLikes();
+
+        List<MemberBoardResponseDto> response = liked.stream()
+                .map(like -> {
+                    if (like.getBoardType() == Like.BoardType.FEEDBACKBOARD) {
+                        return new MemberBoardResponseDto(
+                                like.getBoardType().toString(),
+                                like.getFeedbackBoard().getFeedbackBoardId(),
+                                like.getFeedbackBoard().getTitle(),
+                                like.getFeedbackBoard().getContent()
+                        );
+                    } else if (like.getBoardType() == Like.BoardType.FREEBOARD) {
+                        return new MemberBoardResponseDto(
+                                like.getBoardType().toString(),
+                                like.getFreeBoard().getFreeBoardId(),
+                                like.getFreeBoard().getTitle(),
+                                like.getFreeBoard().getContent()
+                        );
+                    }
+                    return null;
+                })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
 
         return new ResponseEntity(response, HttpStatus.OK);
     }
