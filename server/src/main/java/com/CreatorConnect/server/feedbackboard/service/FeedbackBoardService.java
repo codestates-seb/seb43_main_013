@@ -12,6 +12,9 @@ import com.CreatorConnect.server.feedbackboard.repository.FeedbackBoardRepositor
 import com.CreatorConnect.server.feedbackcategory.entity.FeedbackCategory;
 import com.CreatorConnect.server.feedbackcategory.repository.FeedbackCategoryRepository;
 import com.CreatorConnect.server.feedbackcategory.service.FeedbackCategoryService;
+import com.CreatorConnect.server.tag.entity.Tag;
+import com.CreatorConnect.server.tag.mapper.TagMapper;
+import com.CreatorConnect.server.tag.service.FeedbackBoardTagService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -34,6 +37,8 @@ public class FeedbackBoardService {
     private final CategoryRepository categoryRepository;
     private final FeedbackCategoryRepository feedbackCategoryRepository;
     private final FeedbackCategoryService feedbackCategoryService;
+    private final TagMapper tagMapper;
+    private final FeedbackBoardTagService feedbackBoardTagService;
 
     //등록
     public FeedbackBoardResponseDto.Post createFeedback(FeedbackBoardDto.Post postDto){
@@ -46,6 +51,11 @@ public class FeedbackBoardService {
 
         //저장
         FeedbackBoard savedfeedbackBoard = feedbackBoardRepository.save(feedbackBoard);
+
+        // 태그 저장
+        List<Tag> tags = tagMapper.tagPostDtosToTag(postDto.getTags());
+        List<Tag> createTAgs = feedbackBoardTagService.createFeedbackBoardTag(tags, savedfeedbackBoard);
+
 
         // Entity-Dto 변환 후 리턴
         FeedbackBoardResponseDto.Post responseDto = mapper.feedbackBoardToFeedbackBoardPostResponse(savedfeedbackBoard);
