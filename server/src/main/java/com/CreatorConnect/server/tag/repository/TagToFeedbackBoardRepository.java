@@ -10,7 +10,9 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface TagToFeedbackBoardRepository extends JpaRepository<FeedbackBoard, Long> {
+public interface TagToFeedbackBoardRepository extends JpaRepository<TagToFeedbackBoard, Long> {
     List<TagToFeedbackBoard> findByFeedbackBoard(FeedbackBoard feedbackBoard);
+
+
 }
 
