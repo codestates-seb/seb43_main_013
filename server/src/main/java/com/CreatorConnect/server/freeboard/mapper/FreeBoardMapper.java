@@ -4,6 +4,8 @@ import com.CreatorConnect.server.category.entity.Category;
 import com.CreatorConnect.server.freeboard.dto.FreeBoardDto;
 import com.CreatorConnect.server.freeboard.entity.FreeBoard;
 import com.CreatorConnect.server.member.entity.Member;
+import com.CreatorConnect.server.tag.dto.TagDto;
+import com.CreatorConnect.server.tag.entity.Tag;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
@@ -23,7 +25,16 @@ public interface FreeBoardMapper {
     // FreeBoard -> FreeBoardDto.Response
     FreeBoardDto.Response freeBoardToFreeBoardResponseDto(FreeBoard freeBoard);
 
+    // FreeBoard -> FreeBoardDto.PostResponse
+    FreeBoardDto.PostResponse freeBoardToFreeBoardPostResponseDto(FreeBoard freeBoard);
+
     List<FreeBoardDto.Response> freeBoardToFreeBoardResponseDtos(List<FreeBoard> freeBoards);
+
+//    List<Tag> freeBoardPostDtoToTags(List<TagDto.TagInfo> tagInfoDtos);
+
+    // 게시글 목록 조회 시 Response를 위한 매핑
+    FreeBoardDto.Response freeBoardToResponse(FreeBoard freeBoard, List<TagDto.TagInfo> tags);
+
 
 
 

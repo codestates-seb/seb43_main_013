@@ -12,6 +12,10 @@ import com.CreatorConnect.server.freeboard.repository.FreeBoardRepository;
 import com.CreatorConnect.server.member.entity.Member;
 import com.CreatorConnect.server.member.repository.MemberRepository;
 import com.CreatorConnect.server.member.service.MemberService;
+import com.CreatorConnect.server.tag.dto.TagDto;
+import com.CreatorConnect.server.tag.entity.Tag;
+import com.CreatorConnect.server.tag.mapper.TagMapper;
+import com.CreatorConnect.server.tag.service.TagService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,8 +23,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.Objects;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -32,19 +37,25 @@ public class FreeBoardService {
     private final FreeBoardMapper mapper;
     private final MemberRepository memberRepository;
     private final CategoryService categoryService;
+    private final TagService tagService;
+    private final TagMapper tagMapper;
 
     public FreeBoardService(FreeBoardRepository freeBoardRepository,
                             MemberService memberService,
                             CategoryRepository categoryRepository,
                             FreeBoardMapper mapper,
                             MemberRepository memberRepository,
-                            CategoryService categoryService) {
+                            CategoryService categoryService,
+                            TagService tagService,
+                            TagMapper tagMapper) {
         this.freeBoardRepository = freeBoardRepository;
         this.memberService = memberService;
         this.categoryRepository = categoryRepository;
         this.mapper = mapper;
         this.memberRepository = memberRepository;
         this.categoryService = categoryService;
+        this.tagService = tagService;
+        this.tagMapper = tagMapper;
     }
 
     /**
@@ -52,6 +63,7 @@ public class FreeBoardService {
      * 1. 회원 매핑
      * 2. 카테고리 매핑
      * 3. 게시글 등록
+     * 4. 태그 저장
      */
     public FreeBoard createFreeBoard(FreeBoardDto.Post post) {
         FreeBoard freeBoard = mapper.freeBoardPostDtoToFreeBoard(post);
@@ -67,7 +79,13 @@ public class FreeBoardService {
                 new BusinessLogicException(ExceptionCode.CATEGORY_EXISTS)));
 
         // 3. 게시글 등록
-        return freeBoardRepository.save(freeBoard);
+        FreeBoard createdFreeBoard =  freeBoardRepository.save(freeBoard);
+
+        // 4. 태그 저장
+        List<Tag> tags = tagMapper.tagPostDtosToTag(post.getTags());
+        List<Tag> createTags = tagService.createFreeBoardTag(tags, createdFreeBoard);
+
+        return createdFreeBoard;
     }
 
     /**
@@ -101,10 +119,10 @@ public class FreeBoardService {
         Optional.ofNullable(freeBoard.getContent())
                 .ifPresent(content -> checkedFreeBoard.setContent(content)); // 게시글 내용 수정
 
+//        List<Tag> tags = tagMapper.tagPostDtosToTag(patch.getTags());
+//        tagService.updateFreeBoardTag(tags, checkedFreeBoard);
 
         log.info("categoryName : {}",checkedFreeBoard.getCategoryName());
-
-        // 태그 수정 추가 예정
 
         // 4. 수정된 데이터 저장
         return freeBoardRepository.save(checkedFreeBoard);
@@ -113,36 +131,79 @@ public class FreeBoardService {
 
     /**
      * <자유 게시판 게시글 목록>
+     * 1. 페이지네이션 적용 - 최신순 / 등록순 / 인기순
+     * 2. Response에 각 게시글의 태그 정보 적용
      */
-    public Page<FreeBoard> getFreeBoards(String sort, int page, int size) {
-        return  freeBoardRepository.findAll(sortedPage(sort, page, size));
+    public FreeBoardDto.MultiResponseDto<FreeBoardDto.Response> getAllFreeBoards(int page, int size, String sort) {
+//        PageRequest pageRequest = PageRequest.of(page - 1, size);
+        // 1. 페이지네이션 적용 - 최신순 / 등록순 / 인기순
+        Page<FreeBoard> freeBoards = freeBoardRepository.findAll(sortedBy(page, size, sort));
+
+        // 2. Response에 각 게시글의 태그 정보 적용
+        List<FreeBoardDto.Response> responses = getResponseList(freeBoards);
+
+        return new FreeBoardDto.MultiResponseDto<>(responses, freeBoards);
     }
+//    public Page<FreeBoard> getFreeBoards(int page, int size) {
+//        return freeBoardRepository.findAll(PageRequest.of(page, size, Sort.by("freeBoardId").descending()));
+//    }
 
     /**
      * <자유 게시판 카테고리 별 목록>
+     * 1. 페이지네이션 적용 - 최신순 / 등록순 / 인기순
+     * 2. Response에 각 게시글의 태그 정보 적용
      */
-    public Page<FreeBoard> getFreeBoardsByCategory(long categoryId, String sort, int page, int size) {
-        return freeBoardRepository.findFreeBoardsByCategoryId(categoryId, sortedPage(sort, page, size));
-//        Page<FreeBoard> freeBoards = freeBoardRepository.findAll(pageRequest);
-//        List<FreeBoardDto.Response> responses = findFreeBoardByCategoryId(categoryId);
-//
-//        return new FreeBoardDto.MultiResponseDto<>(responses, freeBoards);
+    public FreeBoardDto.MultiResponseDto<FreeBoardDto.Response> getAllFreeBoardsByCategory(long categoryId, int page, int size, String sort) {
+        // 1. 페이지네이션 적용
+        Page<FreeBoard> freeBoards = freeBoardRepository.findFreeBoardsByCategoryId(categoryId, sortedBy(page, size, sort));
+
+        // 2. Response에 각 게시글의 태그 정보 적용
+        List<FreeBoardDto.Response> responses = getResponseList(freeBoards);
+
+        return new FreeBoardDto.MultiResponseDto<>(responses, freeBoards);
+    }
+
+    // Response에 각 게시글의 태그 적용 메서드
+    private List<FreeBoardDto.Response> getResponseList(Page<FreeBoard> freeBoards) {
+        return freeBoards.getContent().stream().map(freeBoard -> {
+            List<TagDto.TagInfo> tags = freeBoard.getTagBoards().stream()
+                    .map(tagToFreeBoard -> tagMapper.tagToTagToBoard(tagToFreeBoard.getTag()))
+                    .collect(Collectors.toList());
+            return mapper.freeBoardToResponse(freeBoard, tags);
+        }).collect(Collectors.toList());
     }
 
     /**
      * <자유 게시판 게시글 상세 조회>
      * 1. 게시글 존재 여부 확인
-     * 2. 조회수 증가
+     * 2. 해당 게시글 태그 추출
+     * 3. 조회수 증가
+     * 4. 리턴
      */
-    public FreeBoard getFreeBoardDetail(long freeboardId) {
+    public FreeBoardDto.Response getFreeBoardDetail(long freeboardId) {
         // 1. 게시글 존재 여부 확인
         FreeBoard freeBoard = verifyFreeBoard(freeboardId);
 
-        // 2. 조회수 증가
+        // 2. 해당 게시글 태그 추출
+        List<TagDto.TagInfo> tags = freeBoard.getTagBoards().stream().map(tagToFreeBoard ->{
+            TagDto.TagInfo tagInfo = tagMapper.tagToTagToBoard(tagToFreeBoard.getTag());
+            return tagInfo;
+        }).collect(Collectors.toList());
+
+        // 3. 조회수 증가
         addViews(freeBoard);
 
-        return freeBoard;
+        // 4. 리턴
+        FreeBoardDto.Response response = mapper.freeBoardToResponse(freeBoard, tags);
+
+        return response;
     }
+
+//    public FreeBoardDto.Response getFreeBoardTag(FreeBoard freeBoard) {
+//        FreeBoardDto.Response response = mapper.freeBoardToFreeBoardResponseDto(freeBoard);
+//        List<Tag> tags = tagMapper.tagsToTagResponseDto(response.getTags());
+//        return tags;
+//    }
 
     /**
      * <자유 게시판 게시글 삭제>
@@ -158,7 +219,7 @@ public class FreeBoardService {
     }
 
     // 게시글이 존재 여부 검증 메서드
-    private FreeBoard verifyFreeBoard(long freeboardId) {
+    public FreeBoard verifyFreeBoard(long freeboardId) {
         Optional<FreeBoard> optionalFreeBoard = freeBoardRepository.findById(freeboardId);
         return optionalFreeBoard.orElseThrow(() ->
                 new BusinessLogicException(ExceptionCode.FREEBOARD_NOT_FOUND));
@@ -175,17 +236,18 @@ public class FreeBoardService {
         freeBoardRepository.save(freeBoard);
     }
 
-    //페이지 정렬 메서드
-    private PageRequest sortedPage(String sort, int page, int size) {
-        if(Objects.equals(sort,"최신순")){
-            return PageRequest.of(page, size, Sort.by("freeBoardId").descending());
-        } else if(Objects.equals(sort,"등록순")){
-            return PageRequest.of(page, size, Sort.by("freeBoardId").ascending());
-        } else if(Objects.equals(sort,"인기순")){
-            return PageRequest.of(page, size, Sort.by("viewCount","freeBoardId").descending());
+    // 페이지네이션 정렬 기준 선택 메서드
+    private PageRequest sortedBy(int page, int size, String sort) {
+        if (sort.equals("최신순")) {
+            return PageRequest.of(page - 1, size, Sort.by("freeBoardId").descending());
+        } else if (sort.equals("등록순")) {
+            return PageRequest.of(page - 1, size, Sort.by("freeBoardId").ascending());
+        } else if (sort.equals("인기순")) {
+            return PageRequest.of(page - 1, size, Sort.by("viewCount", "freeBoardId").descending());
         } else {
-            return PageRequest.of(page, size, Sort.by("freeBoardId").descending());
+            return PageRequest.of(page - 1, size, Sort.by("freeBoardId").ascending());
         }
     }
+
 
 }
