@@ -6,6 +6,7 @@ import com.CreatorConnect.server.freeboard.dto.FreeBoardDto;
 import com.CreatorConnect.server.freeboard.entity.FreeBoard;
 import com.CreatorConnect.server.freeboard.mapper.FreeBoardMapper;
 import com.CreatorConnect.server.freeboard.service.FreeBoardService;
+import com.CreatorConnect.server.tag.service.FeedbackBoardTagService;
 import com.CreatorConnect.server.tag.service.FreeBoardTagService;
 import com.CreatorConnect.server.member.bookmark.entity.Bookmark;
 import com.CreatorConnect.server.member.bookmark.repository.BookmarkRepository;
@@ -16,7 +17,7 @@ import com.CreatorConnect.server.member.repository.MemberRepository;
 import com.CreatorConnect.server.member.service.MemberService;
 import com.CreatorConnect.server.tag.entity.Tag;
 import com.CreatorConnect.server.tag.mapper.TagMapper;
-import com.CreatorConnect.server.tag.service.TagService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -32,31 +33,18 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api")
 @Validated
+@RequiredArgsConstructor
 public class FreeBoardController {
     private final FreeBoardService freeBoardService;
     private final FreeBoardMapper mapper;
     private final CategoryService categoryService;
     private final TagMapper tagMapper;
     private final FreeBoardTagService freeBoardTagService;
-    private final TagService tagService;
+    private final FeedbackBoardTagService tagService;
     private final MemberService memberService;
     private final MemberRepository memberRepository;
     private final LikeRepository likeRepository;
     private final BookmarkRepository bookmarkRepository;
-
-    public FreeBoardController(FreeBoardService freeBoardService, FreeBoardMapper mapper, CategoryService categoryService, TagMapper tagMapper, TagService tagService, MemberService memberService, MemberRepository memberRepository, LikeRepository likeRepository, BookmarkRepository bookmarkRepository, FreeBoardTagService tagService) {
-        this.freeBoardService = freeBoardService;
-        this.mapper = mapper;
-        this.categoryService = categoryService;
-        this.tagMapper = tagMapper;
-        this.freeBoardTagService = tagService;
-        this.tagService = tagService;
-        this.memberService = memberService;
-        this.memberRepository = memberRepository;
-        this.likeRepository = likeRepository;
-        this.bookmarkRepository = bookmarkRepository;
-
-    }
 
     // 자유 게시판 게시글 등록
     @PostMapping("/freeboard/new")
