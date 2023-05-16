@@ -25,7 +25,7 @@ public class SearchController {
         this.searchService = searchService;
     }
 
-    // GET /search?keyword=example&page=0&size=20&sort=createdAt,desc
+    // GET /search?keyword=example&page=0&size=10
     @GetMapping
     public ResponseEntity search (
             @RequestParam(required = false) String keyword,
