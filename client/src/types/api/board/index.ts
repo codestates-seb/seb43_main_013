@@ -17,3 +17,13 @@ export interface Board {
   nickname: string; // 작성자 닉네임
   profileImageUrl: string; // 작성자 프로필 이미지
 }
+
+/** 2023/05/16 - 태그 공통 타입 - by 1-blue */
+export interface Tag {
+  tagName: string;
+}
+/** 2023/05/16 - 상세 게시글에서 사용하는 태그 공통 타입 - by 1-blue */
+export interface DetailTag {
+  tagId: number;
+  tagName: string;
+}

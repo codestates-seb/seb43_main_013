@@ -15,8 +15,8 @@ const LoginWindow = () => {
         <form className="w-full">
           {/* <LoginInput label="아이디" valid={idValid} />
           <LoginInput label="비밀번호" valid={pwValid} /> */}
-          <LoginInput label="아이디" />
-          <LoginInput label="비밀번호" />
+          {/* <LoginInput label="아이디" />
+          <LoginInput label="비밀번호" /> */}
           <SmallBtn />
           <LoginBtn text="로그인" />
           <OAuthCon />

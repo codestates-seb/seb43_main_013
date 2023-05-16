@@ -13,6 +13,7 @@ import { useLoadingStore } from "@/store";
 
 // hook
 import useResizeTextarea from "@/hooks/useResizeTextarea";
+import { useMemberStore } from "@/store/useMemberStore";
 
 // component
 import Avatar from "@/components/Avatar";
@@ -30,7 +31,8 @@ interface Props {
 /** 2023/05/11 - 게시판의 댓글들 컴포넌트 - by 1-blue */
 const BoardComment: React.FC<Props> = ({ type, boardId, comment }) => {
   const toast = useToast();
-  const { start, end } = useLoadingStore((state) => state);
+  const { loading } = useLoadingStore((state) => state);
+  const { member } = useMemberStore();
 
   /** 2023/05/11 - 답글 더 보기 - by 1-blue */
   const [isShow, setIsShow] = useState(false);
@@ -52,6 +54,14 @@ const BoardComment: React.FC<Props> = ({ type, boardId, comment }) => {
 
   /** 2023/05/11 - 댓글 수정 완료 - by 1-blue */
   const onClickUpdate = async () => {
+    if (!member)
+      return toast({
+        description: "댓글을 수정했습니다.",
+        status: "success",
+        duration: 2500,
+        isClosable: true,
+      });
+
     if (content.trim().length === 0) {
       textareaRef.current?.focus();
 
@@ -64,12 +74,9 @@ const BoardComment: React.FC<Props> = ({ type, boardId, comment }) => {
     }
 
     try {
-      start();
+      loading.start();
 
-      // TODO: memberId 넣기
-      await apiUpdateComment(type, { boardId, commentId: comment.commentId, content, memberId: 1 });
-
-      end();
+      await apiUpdateComment(type, { boardId, commentId: comment.commentId, content, memberId: member.memberId });
 
       queryClient.setQueryData<InfiniteData<ApiFetchCommentsResponse> | undefined>(
         [QUERY_KEYS.comment, type],
@@ -100,6 +107,7 @@ const BoardComment: React.FC<Props> = ({ type, boardId, comment }) => {
       });
     } finally {
       setDisabled(true);
+      loading.end();
     }
   };
 
@@ -112,11 +120,9 @@ const BoardComment: React.FC<Props> = ({ type, boardId, comment }) => {
       const recommentId = +e.target.dataset.recommentId;
 
       try {
-        start();
+        loading.start();
 
         await apiDeleteRecomment(type, { boardId, commentId: comment.commentId, recommentId });
-
-        end();
 
         queryClient.setQueryData<InfiniteData<ApiFetchCommentsResponse> | undefined>(
           [QUERY_KEYS.comment, type],
@@ -152,6 +158,8 @@ const BoardComment: React.FC<Props> = ({ type, boardId, comment }) => {
           duration: 2500,
           isClosable: true,
         });
+      } finally {
+        loading.end();
       }
     },
     [queryClient, comment],

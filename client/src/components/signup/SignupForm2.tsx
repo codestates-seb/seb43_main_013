@@ -12,6 +12,7 @@ const SignupForm = () => {
       className="w-full flex flex-col items-center"
       onSubmit={(e) => {
         e.preventDefault();
+
         onsubmit();
       }}
     >

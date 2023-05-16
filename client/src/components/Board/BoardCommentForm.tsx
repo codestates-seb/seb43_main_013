@@ -9,6 +9,7 @@ import { apiCreateComment } from "@/apis";
 
 // hook
 import useResizeTextarea from "@/hooks/useResizeTextarea";
+import { useMemberStore } from "@/store/useMemberStore";
 
 // store
 import { useLoadingStore } from "@/store";
@@ -23,7 +24,8 @@ interface Props {
 /** 2023/05/11 - 댓글 폼 컴포넌트 - by 1-blue */
 const BoardCommentForm: React.FC<Props> = ({ type, boardId }) => {
   const toast = useToast();
-  const { start, end } = useLoadingStore((state) => state);
+  const { loading } = useLoadingStore((state) => state);
+  const { member } = useMemberStore();
 
   const [content, setContent] = useState("");
 
@@ -40,6 +42,15 @@ const BoardCommentForm: React.FC<Props> = ({ type, boardId }) => {
   const onSubmitComment: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
 
+    if (!member) {
+      return toast({
+        description: "로그인후에 접근해주세요!",
+        status: "error",
+        duration: 2500,
+        isClosable: true,
+      });
+    }
+
     if (!content.trim().length)
       return toast({
         description: "댓글을 입력해주세요!",
@@ -49,14 +60,10 @@ const BoardCommentForm: React.FC<Props> = ({ type, boardId }) => {
       });
 
     try {
-      start();
+      loading.start();
 
-      // TODO: memberId 넣기
-      const { commentId } = await apiCreateComment(type, { boardId, content, memberId: 1 });
+      const { commentId } = await apiCreateComment(type, { boardId, content, memberId: member.memberId });
 
-      end();
-
-      // TODO: 멤버 데이터 넣기
       queryClient.setQueryData<InfiniteData<ApiFetchCommentsResponse> | undefined>(
         [QUERY_KEYS.comment, type],
         (prev) =>
@@ -72,10 +79,9 @@ const BoardCommentForm: React.FC<Props> = ({ type, boardId }) => {
                   createdAt: new Date(),
                   modifiedAt: new Date(),
                   email: "",
-                  memberId: 1,
-                  nickname: "대충 살자",
-                  profileImageUrl:
-                    "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/7.jpg",
+                  memberId: member.memberId,
+                  nickname: member.nickname,
+                  profileImageUrl: member.profileImageUrl,
                   recommntCount: 0,
                   recomments: [],
                 },
@@ -101,6 +107,8 @@ const BoardCommentForm: React.FC<Props> = ({ type, boardId }) => {
         duration: 2500,
         isClosable: true,
       });
+    } finally {
+      loading.end();
     }
   };
 

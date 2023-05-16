@@ -7,12 +7,15 @@ import { apiCreateRecomment } from "@/apis";
 
 import { QUERY_KEYS } from "@/hooks/query";
 
+// hook
+import useResizeTextarea from "@/hooks/useResizeTextarea";
+import { useMemberStore } from "@/store/useMemberStore";
+
 // store
 import { useLoadingStore } from "@/store";
 
 // type
 import type { ApiFetchCommentsResponse, BoardType } from "@/types/api";
-import useResizeTextarea from "@/hooks/useResizeTextarea";
 interface Props {
   type: BoardType;
   boardId: number;
@@ -22,7 +25,8 @@ interface Props {
 /** 2023/05/13 - 답글 폼 컴포넌트 - by 1-blue */
 const BoardRecommentForm: React.FC<Props> = ({ type, boardId, commentId }) => {
   const toast = useToast();
-  const { start, end } = useLoadingStore((state) => state);
+  const { loading } = useLoadingStore((state) => state);
+  const { member } = useMemberStore();
 
   const [content, setContent] = useState("");
 
@@ -39,6 +43,15 @@ const BoardRecommentForm: React.FC<Props> = ({ type, boardId, commentId }) => {
   const onSubmitComment: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
 
+    if (!member) {
+      return toast({
+        description: "로그인후에 접근해주세요!",
+        status: "error",
+        duration: 2500,
+        isClosable: true,
+      });
+    }
+
     if (!content.trim().length)
       return toast({
         description: "답글을 입력해주세요!",
@@ -48,14 +61,15 @@ const BoardRecommentForm: React.FC<Props> = ({ type, boardId, commentId }) => {
       });
 
     try {
-      start();
+      loading.start();
 
-      // TODO: memberId 넣기 commentId
-      const { recommentId } = await apiCreateRecomment(type, { boardId, commentId, content, memberId: 1 });
+      const { recommentId } = await apiCreateRecomment(type, {
+        boardId,
+        commentId,
+        content,
+        memberId: member.memberId,
+      });
 
-      end();
-
-      // TODO: 멤버 데이터 넣기
       queryClient.setQueryData<InfiniteData<ApiFetchCommentsResponse> | undefined>(
         [QUERY_KEYS.comment, type],
         (prev) =>
@@ -76,10 +90,9 @@ const BoardRecommentForm: React.FC<Props> = ({ type, boardId, commentId }) => {
                       createdAt: new Date(),
                       modifiedAt: new Date(),
                       email: "",
-                      memberId: 1,
-                      nickname: "대충 살자",
-                      profileImageUrl:
-                        "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/7.jpg",
+                      memberId: member.memberId,
+                      nickname: member.nickname,
+                      profileImageUrl: member.profileImageUrl,
                       recommntCount: 0,
                     },
                   ],
@@ -106,6 +119,8 @@ const BoardRecommentForm: React.FC<Props> = ({ type, boardId, commentId }) => {
         duration: 2500,
         isClosable: true,
       });
+    } finally {
+      loading.end();
     }
   };
 

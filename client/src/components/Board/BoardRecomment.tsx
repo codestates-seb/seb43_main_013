@@ -13,6 +13,7 @@ import { apiUpdateRecomment } from "@/apis";
 
 // hook
 import useResizeTextarea from "@/hooks/useResizeTextarea";
+import { useMemberStore } from "@/store/useMemberStore";
 
 // component
 import Avatar from "@/components/Avatar";
@@ -29,7 +30,8 @@ interface Props {
 /** 2023/05/13 - 답글 컴포넌트 - by 1-blue */
 const BoardRecomment: React.FC<Props> = ({ type, boardId, commentId, recomment }) => {
   const toast = useToast();
-  const { start, end } = useLoadingStore((state) => state);
+  const { loading } = useLoadingStore((state) => state);
+  const { member } = useMemberStore();
 
   /** 2023/05/11 - 답글 수정 textarea resizing - by 1-blue */
   const [textareaRef, handleResizeHeight] = useResizeTextarea();
@@ -48,6 +50,15 @@ const BoardRecomment: React.FC<Props> = ({ type, boardId, commentId, recomment }
 
   /** 2023/05/11 - 답글 수정 완료 - by 1-blue */
   const onClickUpdate = async () => {
+    if (!member) {
+      return toast({
+        description: "로그인후에 접근해주세요!",
+        status: "error",
+        duration: 2500,
+        isClosable: true,
+      });
+    }
+
     if (content.trim().length === 0) {
       textareaRef.current?.focus();
 
@@ -60,12 +71,15 @@ const BoardRecomment: React.FC<Props> = ({ type, boardId, commentId, recomment }
     }
 
     try {
-      start();
+      loading.start();
 
-      // TODO: memberId 넣기
-      await apiUpdateRecomment(type, { boardId, commentId, recommentId: recomment.recommentId, content, memberId: 1 });
-
-      end();
+      await apiUpdateRecomment(type, {
+        boardId,
+        commentId,
+        recommentId: recomment.recommentId,
+        content,
+        memberId: member.memberId,
+      });
 
       queryClient.setQueryData<InfiniteData<ApiFetchCommentsResponse> | undefined>(
         [QUERY_KEYS.comment, type],
@@ -105,6 +119,7 @@ const BoardRecomment: React.FC<Props> = ({ type, boardId, commentId, recomment }
       });
     } finally {
       setDisabled(true);
+      loading.end();
     }
   };
 

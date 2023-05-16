@@ -9,7 +9,7 @@ interface Member {
   oauth: boolean;
   introduction?: string;
   link?: string;
-  profileImageUrl?: string;
+  profileImageUrl: string;
   createdAt: string;
   modifiedAt: string;
   rename: string;
