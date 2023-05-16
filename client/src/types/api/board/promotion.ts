@@ -1,7 +1,7 @@
 // https://main-project.gitbook.io/main-project/undefined-1/undefined-2
 
 import { PageInfo } from "..";
-import type { Board } from "./";
+import type { Board, DetailTag, Tag } from "./";
 
 /** 2023/05/10 - 홍보 게시판 타입 - by 1-blue */
 export interface PromotionBoard extends Board {
@@ -9,7 +9,7 @@ export interface PromotionBoard extends Board {
   link: string; // 유튜브 링크
   channelName: string; // 유튜브 채널명
   subscriberCount: number; // 구독자수
-  tag: string[]; // 태그
+  tags: DetailTag[];
   categoryName: string; // 카테고리
 }
 
@@ -22,7 +22,7 @@ export interface ApiCreatePromotionBoardRequest {
   channelName: string;
   subscriberCount: number;
   content: string;
-  tag: string[];
+  tags: Tag[];
   categoryName: string;
 }
 /** 2023/05/10 - 홍보 게시판 생성 요청 수신 타입 - by 1-blue */
@@ -55,7 +55,7 @@ export interface ApiUpdatePromotionBoardRequest {
   channelName: string;
   subscriberCount: number;
   content: string;
-  tag: string[];
+  tags: Tag[];
   categoryName: string;
 }
 /** 2023/05/10 - 홍보 게시판 수정 요청 수신 타입 - by 1-blue */

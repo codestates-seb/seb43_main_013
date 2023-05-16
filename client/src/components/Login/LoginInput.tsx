@@ -1,5 +1,5 @@
 interface login {
-  label: "이메일" | "비밀번호";
+  label: "아이디" | "이메일" | "비밀번호";
   value: string;
   setValue: React.Dispatch<string>;
 }

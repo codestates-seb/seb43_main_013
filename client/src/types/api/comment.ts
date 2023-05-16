@@ -11,7 +11,7 @@ export interface Comment {
   recommntCount: number;
   createdAt: Date;
   modifiedAt: Date;
-  recomments?: Recomment[];
+  recomments: Recomment[];
 }
 
 /** 2023/05/11 - 답글 타입 - by 1-blue */

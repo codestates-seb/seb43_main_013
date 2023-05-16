@@ -28,12 +28,12 @@ const ContentItem = forwardRef<HTMLDivElement, ContentItemProps>(({ props }, ref
             <div className="flex items-center justify-between">
               {/* rightside title */}
               <h1 className="text-xl font-bold text-left ">{props.title}</h1>
-              <BookmarkIconUnchecked className="w-5 h-5 text-black cursor-pointer " />
+              <BookmarkIconUnchecked className="w-5 h-5 text-black cursor-pointer" />
             </div>
             {/* content body */}
             <p className="flex-1 w-full text-left break-all line-clamp-3">{props.content}</p>
             {/* rightside tag */}
-            <div className="flex gap-x-2">{props.tag && props.tag.map((item) => <TagItem tag={item} />)}</div>
+            <div className="flex gap-x-2">{props.tags && props.tags.map((item) => <TagItem tag={item.tagName} />)}</div>
           </div>
           <ContentFooter
             position="main"

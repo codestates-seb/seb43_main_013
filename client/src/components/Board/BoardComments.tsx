@@ -27,7 +27,7 @@ interface Props {
 /** 2023/05/11 - 게시판의 댓글들 컴포넌트 - by 1-blue */
 const BoardComments: React.FC<Props> = ({ type, boardId }) => {
   const toast = useToast();
-  const { start, end } = useLoadingStore((state) => state);
+  const { loading } = useLoadingStore((state) => state);
 
   const { data, fetchNextPage, hasNextPage, isFetching } = useFetchComments({
     type,
@@ -48,11 +48,9 @@ const BoardComments: React.FC<Props> = ({ type, boardId }) => {
       const commentId = +e.target.dataset.commentId;
 
       try {
-        start();
+        loading.start();
 
         await apiDeleteComment(type, { boardId, commentId });
-
-        end();
 
         queryClient.setQueryData<InfiniteData<ApiFetchCommentsResponse> | undefined>(
           [QUERY_KEYS.comment, type],
@@ -81,6 +79,8 @@ const BoardComments: React.FC<Props> = ({ type, boardId }) => {
           duration: 2500,
           isClosable: true,
         });
+      } finally {
+        loading.end();
       }
     },
     [queryClient],

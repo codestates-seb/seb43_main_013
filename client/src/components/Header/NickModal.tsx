@@ -1,4 +1,4 @@
-import useOutsideClick from "./useOutsideClick";
+// import useOutsideClick from "./useOutsideClick";
 
 /** 2023/05/10 - 닉네임 클릭 후 등장 모달창 - by Kadesti */
 const NickModal = ({ setNickModal }: { setNickModal: React.Dispatch<boolean> }) => {

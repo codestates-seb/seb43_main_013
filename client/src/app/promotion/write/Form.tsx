@@ -15,18 +15,20 @@ import { useLoadingStore } from "@/store";
 
 // hook
 import useTags from "@/hooks/useTags";
+import { useMemberStore } from "@/store/useMemberStore";
 
 // component
 import Input from "@/components/Board/Form/Input";
 import Editor from "@/components/Editor";
-import Category from "@/components/Board/Form/Category";
+import NormalCategory from "@/components/Board/Form/NormalCategory";
 import Tag from "@/components/Board/Form/Tag";
 
 /** 2023/05/09 - 홍보 게시글 작성 form 컴포넌트 - by 1-blue */
 const Form = () => {
   const toast = useToast();
   const router = useRouter();
-  const { start, end } = useLoadingStore((state) => state);
+  const { loading } = useLoadingStore((state) => state);
+  const { member } = useMemberStore();
 
   /** 2023/05/09 - 작성한 태그들 - by 1-blue */
   const [selectedTags, onSelectedTag, onDeleteTag] = useTags();
@@ -40,6 +42,15 @@ const Form = () => {
   /** 2023/05/09 - 홍보 게시글 생성 - by 1-blue */
   const onSubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
+
+    if (!member) {
+      return toast({
+        description: "로그인후에 접근해주세요!",
+        status: "error",
+        duration: 2500,
+        isClosable: true,
+      });
+    }
 
     const values: string[] = [];
     const formData = new FormData(e.currentTarget);
@@ -92,21 +103,18 @@ const Form = () => {
       });
 
     try {
-      start();
+      loading.start();
 
-      // TODO: 유저 식별자 넣어서 보내주기 ( memberId )
       const { promotionBoardId } = await apiCreatePromotionBoard({
-        memberId: 1,
+        memberId: member.memberId,
         title,
         link,
         channelName,
         subscriberCount: +subscriberCount,
-        tag: selectedTags,
+        tags: selectedTags.map((tag) => ({ tagName: tag })),
         categoryName: selectedNormalCategory,
         content,
       });
-
-      end();
 
       toast({
         description: "게시글 생성했습니다.\n생성된 게시글 페이지로 이동됩니다.",
@@ -125,6 +133,8 @@ const Form = () => {
         duration: 2500,
         isClosable: true,
       });
+    } finally {
+      loading.end();
     }
   };
 
@@ -142,11 +152,7 @@ const Form = () => {
           </div>
           <div className="flex flex-col md:flex-row space-y-4 md:space-x-4 md:space-y-0">
             <Input name="태그" type="text" placeholder="태그를 입력해주세요!" noMessage onKeyDown={onSelectedTag} />
-            <Category
-              type="normal"
-              selectedCategory={selectedNormalCategory}
-              setSelectedCategory={setSelectedNormalCategory}
-            />
+            <NormalCategory selectedCategory={selectedNormalCategory} setSelectedCategory={setSelectedNormalCategory} />
           </div>
         </div>
       </section>
