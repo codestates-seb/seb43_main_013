@@ -30,7 +30,7 @@ public class FreeBoard extends Auditable implements Board {
     @Column(nullable = false)
     private String title; // 게시글 제목
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String content; // 게시글 내용
 
     @OneToMany(mappedBy = "freeBoard")
