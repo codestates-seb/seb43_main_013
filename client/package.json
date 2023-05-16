@@ -14,7 +14,7 @@
     "@emotion/react": "^11.10.8",
     "@emotion/styled": "^11.10.8",
     "@headlessui/react": "^1.7.14",
-    "@heroicons/react": "^2.0.17",
+    "@heroicons/react": "^2.0.18",
     "@tanstack/react-query": "^4.29.5",
     "@tanstack/react-query-devtools": "^4.29.6",
     "autoprefixer": "10.4.14",
@@ -22,20 +22,26 @@
     "eslint": "8.39.0",
     "eslint-config-next": "13.3.4",
     "framer-motion": "^10.12.7",
+    "moment": "^2.29.4",
     "next": "13.3.4",
     "postcss": "8.4.23",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-quill": "^2.0.0",
+    "react-router-dom": "^6.11.1",
     "react-slick": "^0.29.0",
-    "tailwindcss": "3.3.2"
+    "tailwind-merge": "^1.12.0",
+    "tailwindcss": "3.3.2",
+    "zustand": "^4.3.8"
   },
   "devDependencies": {
-    "eslint-config-prettier": "^8.8.0",
-    "eslint-plugin-prettier": "^4.2.1",
-    "prettier": "^2.8.8",
+    "@faker-js/faker": "^7.6.0",
     "@types/node": "18.16.3",
     "@types/react": "18.2.2",
     "@types/react-dom": "18.2.3",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "prettier": "^2.8.8",
     "typescript": "5.0.4"
   }
 }
