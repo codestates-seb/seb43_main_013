@@ -1,4 +1,4 @@
-package com.CreatorConnect.server.feedbackboard.dto;
+package com.CreatorConnect.server.comment.dto;
 
 import com.CreatorConnect.server.member.entity.Member;
 import lombok.AllArgsConstructor;
@@ -6,20 +6,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-public class FeedbackBoardDto {
+public class CommentDto {
 
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
     public static class Post {
         private long memberId;
-        private String title;
-        private String link;
         private String content;
-        private String tag;
-        private String categoryName;
-        private String feedbackCategoryName;
-
         public Member getMember() {
             Member member = new Member();
             member.setMemberId(memberId);
@@ -31,12 +25,7 @@ public class FeedbackBoardDto {
     @Setter
     @NoArgsConstructor
     public static class Patch {
-        private String title;
-        private String link;
+        private long memberId;
         private String content;
-        private String tag;
-        private String categoryName;
-        private String feedbackCategoryName;
     }
-
 }
