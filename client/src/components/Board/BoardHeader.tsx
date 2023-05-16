@@ -2,7 +2,6 @@ import { useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
-import { useToast } from "@chakra-ui/react";
 import moment from "moment";
 import {
   BookmarkIcon as OBookmarkIcon,
@@ -27,6 +26,9 @@ import {
 // store
 import { useLoadingStore } from "@/store";
 import { useMemberStore } from "@/store/useMemberStore";
+
+// hook
+import useCustomToast from "@/hooks/useCustomToast";
 
 // component
 import Avatar from "@/components/Avatar";
@@ -61,7 +63,7 @@ const BoardHeader: React.FC<Props> = ({
   channelName,
   subscriberCount,
 }) => {
-  const toast = useToast();
+  const toast = useCustomToast();
   const router = useRouter();
   const pathname = usePathname();
   const { loading } = useLoadingStore((state) => state);
@@ -69,14 +71,9 @@ const BoardHeader: React.FC<Props> = ({
 
   /** 2023/05/12 - copy clipboard - by 1-blue */
   const copyLink = useCallback(() => {
-    navigator.clipboard.writeText(window.location.origin + pathname).then(() =>
-      toast({
-        description: "링크를 복사했습니다.",
-        status: "success",
-        duration: 2500,
-        isClosable: true,
-      }),
-    );
+    navigator.clipboard
+      .writeText(window.location.origin + pathname)
+      .then(() => toast({ title: "링크를 복사했습니다.", status: "success" }));
   }, []);
 
   /** 2023/05/12 - 게시판 삭제 핸들러 - by 1-blue */
@@ -97,24 +94,13 @@ const BoardHeader: React.FC<Props> = ({
           await apiDeletePromotionBoard({ promotionBoardId: boardId });
       }
 
-      toast({
-        description: "게시판을 삭제했습니다.\n메인 페이지로 이동됩니다!",
-        status: "success",
-        duration: 2500,
-        isClosable: true,
-      });
+      toast({ title: "게시판을 삭제했습니다.\n메인 페이지로 이동됩니다!", status: "success" });
 
       router.replace("/");
     } catch (error) {
       console.error(error);
 
-      toast({
-        description: "게시판 삭제에 실패했습니다.\n잠시후에 다시 시도해주세요!",
-        status: "error",
-        duration: 2500,
-        isClosable: true,
-        position: "top",
-      });
+      toast({ title: "게시판 삭제에 실패했습니다.\n잠시후에 다시 시도해주세요!", status: "error" });
     } finally {
       loading.end();
     }
@@ -122,6 +108,10 @@ const BoardHeader: React.FC<Props> = ({
 
   /** 2023/05/17 - 게시글 북마크 - by 1-blue */
   const onClickBookmark = async () => {
+    if (!member) {
+      return toast({ title: "로그인후에 접근해주세요!", status: "error" });
+    }
+
     try {
       // TODO: 북마크 여부에 따른 조건부 처리
       if (true) {
@@ -133,29 +123,14 @@ const BoardHeader: React.FC<Props> = ({
       // TODO: 북마크 상태 변경
       // queryClient()
 
-      toast({
-        description: "북마크를 눌렀습니다.",
-        status: "success",
-        duration: 2500,
-        isClosable: true,
-      });
+      toast({ title: "북마크를 눌렀습니다.", status: "success" });
     } catch (error) {
       console.error(error);
 
       if (isAxiosError(error)) {
-        toast({
-          description: error.response?.data,
-          status: "error",
-          duration: 2500,
-          isClosable: true,
-        });
+        toast({ title: error.response?.data, status: "error" });
       } else {
-        toast({
-          description: "북마크 처리를 실패했습니다.",
-          status: "error",
-          duration: 2500,
-          isClosable: true,
-        });
+        toast({ title: "북마크 처리를 실패했습니다.", status: "error" });
       }
     }
   };

@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useState } from "react";
-import { useToast } from "@chakra-ui/react";
 import moment from "moment";
 import { type InfiniteData, useQueryClient } from "@tanstack/react-query";
 
@@ -14,6 +13,7 @@ import { useLoadingStore } from "@/store";
 // hook
 import useResizeTextarea from "@/hooks/useResizeTextarea";
 import { useMemberStore } from "@/store/useMemberStore";
+import useCustomToast from "@/hooks/useCustomToast";
 
 // component
 import Avatar from "@/components/Avatar";
@@ -30,7 +30,7 @@ interface Props {
 
 /** 2023/05/11 - 게시판의 댓글들 컴포넌트 - by 1-blue */
 const BoardComment: React.FC<Props> = ({ type, boardId, comment }) => {
-  const toast = useToast();
+  const toast = useCustomToast();
   const { loading } = useLoadingStore((state) => state);
   const { member } = useMemberStore();
 
@@ -54,23 +54,12 @@ const BoardComment: React.FC<Props> = ({ type, boardId, comment }) => {
 
   /** 2023/05/11 - 댓글 수정 완료 - by 1-blue */
   const onClickUpdate = async () => {
-    if (!member)
-      return toast({
-        description: "댓글을 수정했습니다.",
-        status: "success",
-        duration: 2500,
-        isClosable: true,
-      });
+    if (!member) return toast({ title: "댓글을 수정했습니다.", status: "success" });
 
     if (content.trim().length === 0) {
       textareaRef.current?.focus();
 
-      return toast({
-        description: "댓글을 입력해주세요!",
-        status: "warning",
-        duration: 2500,
-        isClosable: true,
-      });
+      return toast({ title: "댓글을 입력해주세요!", status: "warning" });
     }
 
     try {
@@ -90,21 +79,11 @@ const BoardComment: React.FC<Props> = ({ type, boardId, comment }) => {
           },
       );
 
-      return toast({
-        description: "댓글을 수정했습니다.",
-        status: "success",
-        duration: 2500,
-        isClosable: true,
-      });
+      return toast({ title: "댓글을 수정했습니다.", status: "success" });
     } catch (error) {
       console.error(error);
 
-      return toast({
-        description: "댓글 수정에 실패했습니다. 잠시후에 다시 시도해주세요!",
-        status: "error",
-        duration: 2500,
-        isClosable: true,
-      });
+      return toast({ title: "댓글 수정에 실패했습니다. 잠시후에 다시 시도해주세요!", status: "error" });
     } finally {
       setDisabled(true);
       loading.end();
@@ -143,21 +122,11 @@ const BoardComment: React.FC<Props> = ({ type, boardId, comment }) => {
             },
         );
 
-        return toast({
-          description: "답글을 삭제했습니다.",
-          status: "success",
-          duration: 2500,
-          isClosable: true,
-        });
+        return toast({ title: "답글을 삭제했습니다.", status: "success" });
       } catch (error) {
         console.error(error);
 
-        return toast({
-          description: "답글 삭제에 실패했습니다. 잠시후에 다시 시도해주세요!",
-          status: "error",
-          duration: 2500,
-          isClosable: true,
-        });
+        return toast({ title: "답글 삭제에 실패했습니다. 잠시후에 다시 시도해주세요!", status: "error" });
       } finally {
         loading.end();
       }

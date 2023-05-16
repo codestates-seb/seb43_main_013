@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { type InfiniteData, useQueryClient } from "@tanstack/react-query";
-import { useToast } from "@chakra-ui/react";
 import moment from "moment";
 
 import { QUERY_KEYS } from "@/hooks/query";
@@ -14,6 +13,7 @@ import { apiUpdateRecomment } from "@/apis";
 // hook
 import useResizeTextarea from "@/hooks/useResizeTextarea";
 import { useMemberStore } from "@/store/useMemberStore";
+import useCustomToast from "@/hooks/useCustomToast";
 
 // component
 import Avatar from "@/components/Avatar";
@@ -29,7 +29,7 @@ interface Props {
 
 /** 2023/05/13 - 답글 컴포넌트 - by 1-blue */
 const BoardRecomment: React.FC<Props> = ({ type, boardId, commentId, recomment }) => {
-  const toast = useToast();
+  const toast = useCustomToast();
   const { loading } = useLoadingStore((state) => state);
   const { member } = useMemberStore();
 
@@ -50,24 +50,12 @@ const BoardRecomment: React.FC<Props> = ({ type, boardId, commentId, recomment }
 
   /** 2023/05/11 - 답글 수정 완료 - by 1-blue */
   const onClickUpdate = async () => {
-    if (!member) {
-      return toast({
-        description: "로그인후에 접근해주세요!",
-        status: "error",
-        duration: 2500,
-        isClosable: true,
-      });
-    }
+    if (!member) return toast({ title: "로그인후에 접근해주세요!", status: "error" });
 
     if (content.trim().length === 0) {
       textareaRef.current?.focus();
 
-      return toast({
-        description: "답글을 입력해주세요!",
-        status: "warning",
-        duration: 2500,
-        isClosable: true,
-      });
+      return toast({ title: "답글을 입력해주세요!", status: "warning" });
     }
 
     try {
@@ -102,21 +90,11 @@ const BoardRecomment: React.FC<Props> = ({ type, boardId, commentId, recomment }
           },
       );
 
-      return toast({
-        description: "답글을 수정했습니다.",
-        status: "success",
-        duration: 2500,
-        isClosable: true,
-      });
+      return toast({ title: "답글을 수정했습니다.", status: "success" });
     } catch (error) {
       console.error(error);
 
-      return toast({
-        description: "답글 수정에 실패했습니다. 잠시후에 다시 시도해주세요!",
-        status: "error",
-        duration: 2500,
-        isClosable: true,
-      });
+      return toast({ title: "답글 수정에 실패했습니다. 잠시후에 다시 시도해주세요!", status: "error" });
     } finally {
       setDisabled(true);
       loading.end();

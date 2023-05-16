@@ -1,5 +1,4 @@
 import { useQueryClient } from "@tanstack/react-query";
-import { useToast } from "@chakra-ui/react";
 import {
   HandThumbUpIcon as OLikeIcon,
   ChatBubbleOvalLeftEllipsisIcon as OCommentIcon,
@@ -8,6 +7,9 @@ import { HandThumbUpIcon as SLikeIcon } from "@heroicons/react/24/solid";
 
 // api
 import { apiCreateLikeOfPost, apiDeleteLikeOfPost } from "@/apis";
+
+// hook
+import useCustomToast from "@/hooks/useCustomToast";
 
 // type
 import type { BoardType, FreeBoard } from "@/types/api";
@@ -18,7 +20,7 @@ interface Props extends Pick<FreeBoard, "commentCount" | "likeCount"> {
 
 /** 2023/05/11 - 게시판 하단 컴포넌트 - by 1-blue */
 const BoardFooter: React.FC<Props> = ({ type, boardId, commentCount, likeCount }) => {
-  const toast = useToast();
+  const toast = useCustomToast();
 
   const queryClient = useQueryClient();
 
@@ -35,21 +37,11 @@ const BoardFooter: React.FC<Props> = ({ type, boardId, commentCount, likeCount }
       // TODO: 좋아요 개수 및 상태 변경
       // queryClient()
 
-      toast({
-        description: "좋아요를 눌렀습니다.",
-        status: "success",
-        duration: 2500,
-        isClosable: true,
-      });
+      toast({ title: "좋아요를 눌렀습니다.", status: "success" });
     } catch (error) {
       console.error(error);
 
-      toast({
-        description: "이미 좋아요를 누른 게시글입니다.",
-        status: "error",
-        duration: 2500,
-        isClosable: true,
-      });
+      toast({ title: "이미 좋아요를 누른 게시글입니다.", status: "error" });
     }
   };
 

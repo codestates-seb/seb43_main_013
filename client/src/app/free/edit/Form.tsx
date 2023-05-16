@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useToast } from "@chakra-ui/react";
 
 // api
 import { apiUpdateFreeBoard } from "@/apis";
@@ -14,6 +13,7 @@ import { useLoadingStore } from "@/store";
 import { useFetchFreeBoard } from "@/hooks/query";
 import useTags from "@/hooks/useTags";
 import { useMemberStore } from "@/store/useMemberStore";
+import useCustomToast from "@/hooks/useCustomToast";
 
 // component
 import Input from "@/components/Board/Form/Input";
@@ -29,7 +29,7 @@ interface Props {
 
 /** 2023/05/10 - 자유 게시글 수정 form 컴포넌트 - by 1-blue */
 const Form: React.FC<Props> = ({ boardId }) => {
-  const toast = useToast();
+  const toast = useCustomToast();
   const router = useRouter();
   const { loading } = useLoadingStore((state) => state);
   const { member } = useMemberStore();
@@ -60,12 +60,7 @@ const Form: React.FC<Props> = ({ boardId }) => {
     e.preventDefault();
 
     if (!member) {
-      return toast({
-        description: "로그인후에 접근해주세요!",
-        status: "error",
-        duration: 2500,
-        isClosable: true,
-      });
+      return toast({ title: "로그인후에 접근해주세요!", status: "error" });
     }
 
     const values: string[] = [];
@@ -80,20 +75,8 @@ const Form: React.FC<Props> = ({ boardId }) => {
     const [title] = values;
 
     // 제목 유효성 검사
-    if (title.trim().length <= 1)
-      return toast({
-        description: "제목을 두 글자 이상 입력해주세요!",
-        status: "error",
-        duration: 2500,
-        isClosable: true,
-      });
-    if (content.trim().length <= 100)
-      return toast({
-        description: "내용이 너무 적습니다!",
-        status: "error",
-        duration: 2500,
-        isClosable: true,
-      });
+    if (title.trim().length <= 1) return toast({ title: "제목을 두 글자 이상 입력해주세요!", status: "error" });
+    if (content.trim().length <= 100) return toast({ title: "내용이 너무 적습니다!", status: "error" });
 
     try {
       loading.start();
@@ -106,23 +89,13 @@ const Form: React.FC<Props> = ({ boardId }) => {
         content,
       });
 
-      toast({
-        description: "게시글 수정했습니다.\n수정된 게시글 페이지로 이동됩니다.",
-        status: "success",
-        duration: 2500,
-        isClosable: true,
-      });
+      toast({ title: "게시글 수정했습니다.\n수정된 게시글 페이지로 이동됩니다.", status: "success" });
 
       router.push(`/free/${boardId}`);
     } catch (error) {
       console.error(error);
 
-      return toast({
-        description: "에러가 발생했습니다.\n잠시후에 다시 시도해주세요!",
-        status: "error",
-        duration: 2500,
-        isClosable: true,
-      });
+      return toast({ title: "에러가 발생했습니다.\n잠시후에 다시 시도해주세요!", status: "error" });
     } finally {
       loading.end();
     }
