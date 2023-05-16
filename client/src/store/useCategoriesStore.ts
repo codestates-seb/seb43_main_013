@@ -13,8 +13,8 @@ interface CategoryState {
 const getCategoryStateFromStorage = () => {
   if (typeof window !== "undefined") {
     const categoryState = localStorage.getItem("currentCategory");
-    return categoryState ? JSON.parse(categoryState) : null;
-  } else return null;
+    return categoryState ? JSON.parse(categoryState) : { categoryName: "전체", categoryId: 1 };
+  }
 };
 
 /** 2023/05/14 - 사이드 카테고리 상태 로컬 스토리지에 저장하기 - by leekoby */
@@ -34,6 +34,6 @@ export const useCategoriesStore = create<CategoryState>((set) => ({
   },
   resetCategoryState: () => {
     localStorage.removeItem("currentCategory");
-    set({ selectedCategory: undefined });
+    set({ selectedCategory: { categoryName: "전체", categoryId: 1 } });
   },
 }));

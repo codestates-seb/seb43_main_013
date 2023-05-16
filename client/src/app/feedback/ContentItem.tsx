@@ -6,6 +6,7 @@ import ContentFooter from "../../components/BoardMain/ContentFooter";
 import TagItem from "../../components/BoardMain/TagItem";
 import { FeedbackBoard } from "@/types/api";
 import { forwardRef } from "react";
+import { getYoutubeThumbnail } from "@/libs";
 
 interface ContentItemProps {
   props: FeedbackBoard;

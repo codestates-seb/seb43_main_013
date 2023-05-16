@@ -1,6 +1,7 @@
 "use client";
 
 import { useCategoriesStore, usePageStore, useSortStore } from "@/store";
+import { useFeedbackCategoriesStore } from "@/store/useFeedbackCategoriesStore";
 import Link from "next/link";
 import { useState } from "react";
 /** 2023/05/04 - 네브 컴포넌트 - by Kadesti */
@@ -12,10 +13,14 @@ const Nav = () => {
   /** 2023/05/15 - 다른 링크로 이동할때 정렬 정보 초기화 - by leekoby */
   const resetSelectedOption = useSortStore((state) => state.resetSelectedOption);
 
+  /** 2023/05/15 - 다른 링크로 이동할때 피드백 카테고리 정보 초기화 - by leekoby */
+  const resetFeedbackCategories = useFeedbackCategoriesStore((state) => state.resetFeedbackCategoryState);
+
   const handleClick = () => {
     resetPageState();
     resetCategoryState();
     resetSelectedOption();
+    resetFeedbackCategories();
   };
 
   const [rankModal, setRankModal] = useState(false);

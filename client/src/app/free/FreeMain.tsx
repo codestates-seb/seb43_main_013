@@ -12,8 +12,8 @@ import RightSideButton from "@/components/RightSideButton";
 import { useCategoriesStore, usePageStore, useSortStore } from "@/store";
 
 /** 2023/05/08 - 자유게시판 메인 화면 - by leekoby */
+// TODO: 렌더링 3번씩 되는 문제 있음
 const FreeMain = () => {
-  // TODO page 정보 전역상태 추가하기
   /** 2023/05/14 - 게시판 page 상태관리 - by leekoby */
   const currentPage = usePageStore((state) => state.currentPage);
   const setCurrentPage = usePageStore((state) => state.setCurrentPage);
@@ -23,12 +23,13 @@ const FreeMain = () => {
   const selected =
     !selectedCategory || selectedCategory?.categoryName === "전체" ? "" : `/categories/${selectedCategory?.categoryId}`;
 
+  /** 2023/05/15 - 정렬 전역 상태 - by leekoby */
   const sortSelectedOption = useSortStore((state) => state.selectedOption);
 
   /** 2023/05/11 자유게시판 목록 get 요청 - by leekoby */
-  const { data, fetchNextPage, hasNextPage, isFetching, refetch } = useFetchFreeBoardList({
+  const { data, refetch } = useFetchFreeBoardList({
     selected,
-    sorted: sortSelectedOption.optionName,
+    sorted: sortSelectedOption?.optionName,
     page: currentPage,
     size: 10,
   });
@@ -37,11 +38,8 @@ const FreeMain = () => {
     refetch();
   }, [selectedCategory, sortSelectedOption]);
 
-  /** 2023/05/13 - 자유게시판 카테고리 초기값 - by leekoby */
+  /** 2023/05/13 - 공통 카테고리 초기값 - by leekoby */
   const { categories, isLoading } = useFetchCategories({ type: "normal" });
-
-  // TODO 정렬기능 추가하기
-  categories?.sort((a, b) => a.categoryId - b.categoryId);
 
   if (!data) return <FullSpinner />;
   if (data.pages.length < 1) return <FullSpinner />;
@@ -56,22 +54,18 @@ const FreeMain = () => {
           {/* category  */}
           {categories && <SideCategories selectedCategory={selectedCategory} categories={categories} />}
 
-          {/* // TODO 인기게시글 생기면 완성하기 */}
+          {/* TODO: //* 인기게시글 생기면 완성하기 */}
           {/* <PopularPosts /> */}
         </aside>
         {/* rightside freeboard post list */}
         <section className="flex flex-col md:w-0 ml-5  grow-[8]">
           {/* freeboard list header */}
           <div className="flex justify-end">
-            {/* 선택된 카테고리 보여주기 */}
-            {/* <h1 className="py-1 text-3xl font-bold text-left">{selectedCategory?.categoryName}</h1> */}
-
-            <>
-              <SortPosts />
-            </>
+            <SortPosts />
           </div>
 
           {/* post item */}
+          {/* TODO: //*게시글 북마크 좋아요 클릭되게 하는 방법 생각해보기  */}
           {data.pages.map((item) =>
             item.data.map((innerData) => (
               <Link key={innerData.freeBoardId} href={`/free/${innerData.freeBoardId}`}>
