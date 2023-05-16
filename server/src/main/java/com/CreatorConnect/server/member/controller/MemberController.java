@@ -4,6 +4,7 @@ import com.CreatorConnect.server.exception.BusinessLogicException;
 import com.CreatorConnect.server.exception.ExceptionCode;
 import com.CreatorConnect.server.feedbackboard.entity.FeedbackBoard;
 import com.CreatorConnect.server.freeboard.entity.FreeBoard;
+import com.CreatorConnect.server.member.bookmark.entity.Bookmark;
 import com.CreatorConnect.server.member.dto.MemberBoardResponseDto;
 import com.CreatorConnect.server.member.dto.MemberDto;
 import com.CreatorConnect.server.member.dto.MemberFollowResponseDto;
@@ -224,7 +225,6 @@ public class MemberController {
 
         Member member = memberService.findVerifiedMember(memberId);
 
-        // 삭제 작업 수행 후, 최신 상태의 좋아요 목록을 다시 조회
         Set<Like> liked = member.getLikes();
 
         List<MemberBoardResponseDto> response = liked.stream()
@@ -242,6 +242,39 @@ public class MemberController {
                                 like.getFreeBoard().getFreeBoardId(),
                                 like.getFreeBoard().getTitle(),
                                 like.getFreeBoard().getContent()
+                        );
+                    }
+                    return null;
+                })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+
+        return new ResponseEntity(response, HttpStatus.OK);
+
+    }
+
+    @GetMapping("/api/member/{member-id}/bookmarked")
+    public ResponseEntity getbookmarked(@PathVariable("member-id") @Positive Long memberId) {
+
+        Member member = memberService.findVerifiedMember(memberId);
+
+        Set<Bookmark> bookmarked = member.getBookmarks();
+
+        List<MemberBoardResponseDto> response = bookmarked.stream()
+                .map(bookmark -> {
+                    if (bookmark.getBoardType() == Like.BoardType.FEEDBACKBOARD) {
+                        return new MemberBoardResponseDto(
+                                bookmark.getBoardType().toString(),
+                                bookmark.getFeedbackBoard().getFeedbackBoardId(),
+                                bookmark.getFeedbackBoard().getTitle(),
+                                bookmark.getFeedbackBoard().getContent()
+                        );
+                    } else if (bookmark.getBoardType() == Like.BoardType.FREEBOARD) {
+                        return new MemberBoardResponseDto(
+                                bookmark.getBoardType().toString(),
+                                bookmark.getFreeBoard().getFreeBoardId(),
+                                bookmark.getFreeBoard().getTitle(),
+                                bookmark.getFreeBoard().getContent()
                         );
                     }
                     return null;

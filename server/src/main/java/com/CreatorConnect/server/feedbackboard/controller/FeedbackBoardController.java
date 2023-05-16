@@ -5,6 +5,8 @@ import com.CreatorConnect.server.feedbackboard.dto.FeedbackBoardResponseDto;
 import com.CreatorConnect.server.feedbackboard.entity.FeedbackBoard;
 import com.CreatorConnect.server.feedbackboard.service.FeedbackBoardService;
 import com.CreatorConnect.server.freeboard.entity.FreeBoard;
+import com.CreatorConnect.server.member.bookmark.entity.Bookmark;
+import com.CreatorConnect.server.member.bookmark.repository.BookmarkRepository;
 import com.CreatorConnect.server.member.entity.Member;
 import com.CreatorConnect.server.member.like.entity.Like;
 import com.CreatorConnect.server.member.like.repository.LikeRepository;
@@ -32,6 +34,7 @@ public class FeedbackBoardController {
     private final MemberService memberService;
     private final MemberRepository memberRepository;
     private final LikeRepository likeRepository;
+    private final BookmarkRepository bookmarkRepository;
 
     @PostMapping("/feedbackboard/new")
     public ResponseEntity<FeedbackBoardResponseDto.Post> postFeedback(@Valid @RequestBody FeedbackBoardDto.Post postDto) {
@@ -131,6 +134,74 @@ public class FeedbackBoardController {
             currentMember.getLikes().remove(foundLike);
             likeRepository.delete(foundLike);
         }
+
+        memberRepository.save(currentMember);
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+
+    }
+
+    @PostMapping("/feedbackboard/{feedbackBoardId}/bookmark")
+    public ResponseEntity bookmarkFeedbackBoard (@PathVariable("feedbackBoardId") @Positive Long feedbackBoardId) {
+
+        // 현재 로그인한 사용자 정보 가져오기
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Member currentMember = memberService.findVerifiedMember(authentication.getName());
+
+        FeedbackBoard foundfeedbackBoard = feedbackBoardService.findVerifiedFeedbackBoard(feedbackBoardId);
+
+        // 현재 로그인한 사용자가 해당 게시물을 북마크 했는지 확인
+        boolean isAlreadyBookMarked = currentMember.getBookmarks().stream()
+                .filter(Objects::nonNull) // null인 요소 필터링
+                .map(Bookmark::getFeedbackBoard)
+                .filter(Objects::nonNull) // null인 FeedbackBoard 필터링
+                .anyMatch(feedbackBoard -> feedbackBoard.getFeedbackBoardId().equals(feedbackBoardId));
+
+        if (isAlreadyBookMarked) {
+            return ResponseEntity.badRequest().body("Already bookmarked.");
+        }
+
+        Bookmark bookmark = new Bookmark();
+        bookmark.setBoardType(Like.BoardType.FEEDBACKBOARD);
+        bookmark.setMember(currentMember);
+        bookmark.setFeedbackBoard(foundfeedbackBoard);
+        bookmarkRepository.save(bookmark);
+
+        // 현재 사용자의 bookmark 컬렉션에 bookmark 추가
+        currentMember.getBookmarks().add(bookmark);
+        memberRepository.save(currentMember);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+
+    }
+
+    @DeleteMapping("/feedbackboard/{feedbackBoardId}/bookmark")
+    public ResponseEntity unbookmarkFeedbackBoard (@PathVariable("feedbackBoardId") @Positive Long feedbackBoardId) {
+
+        // 현재 로그인한 사용자 정보 가져오기
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Member currentMember = memberService.findVerifiedMember(authentication.getName());
+
+        FeedbackBoard feedbackBoard = feedbackBoardService.findVerifiedFeedbackBoard(feedbackBoardId);
+
+        // 현재 로그인한 사용자가 해당 게시물을 북마크 했는지 확인
+
+        Optional<Set<Bookmark>> bookmarks = Optional.ofNullable(currentMember.getBookmarks());
+
+        Set<Bookmark> foundBookmarks = bookmarks.orElse(Collections.emptySet())
+                .stream()
+                .filter(l -> l != null && l.getFeedbackBoard() != null && l.getFeedbackBoard().getFeedbackBoardId().equals(feedbackBoard.getFeedbackBoardId()))
+                .collect(Collectors.toSet());
+
+        if (foundBookmarks.isEmpty()) {
+            return ResponseEntity.badRequest().body("Not bookmarked.");
+        }
+
+        // 현재 사용자의 bookmarks 컬렉션에서 북마크 삭제
+        currentMember.getBookmarks().removeAll(foundBookmarks);
+
+        // 삭제된 북마크 엔티티들을 데이터베이스에서 삭제
+        bookmarkRepository.deleteAll(foundBookmarks);
 
         memberRepository.save(currentMember);
 

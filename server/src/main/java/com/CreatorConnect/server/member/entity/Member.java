@@ -3,6 +3,7 @@ package com.CreatorConnect.server.member.entity;
 import com.CreatorConnect.server.audit.Auditable;
 import com.CreatorConnect.server.freeboard.entity.FreeBoard;
 import com.CreatorConnect.server.feedbackboard.entity.FeedbackBoard;
+import com.CreatorConnect.server.member.bookmark.entity.Bookmark;
 import com.CreatorConnect.server.member.like.entity.Like;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
@@ -99,6 +100,11 @@ public class Member extends Auditable {
 //
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<Like> likes = new HashSet<>();
+
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Set<Bookmark> bookmarks = new HashSet<>();
+
+
 
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> roles = new ArrayList<>();
