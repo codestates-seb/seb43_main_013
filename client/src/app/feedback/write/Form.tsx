@@ -117,7 +117,7 @@ const Form = () => {
         title,
         link,
         content,
-        tag: selectedTags,
+        tags: selectedTags,
         categoryName: selectedNormalCategory,
         feedbackCateogoryName: selectedFeedbackCategory,
       });

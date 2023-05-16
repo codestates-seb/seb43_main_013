@@ -15,7 +15,8 @@ import OAuthCon from "@/components/Login/Container/OAuthCon";
 import LoginInput from "@/components/Login/LoginInput";
 import { useState } from "react";
 import axios from "axios";
-import { TokenStore, UserInfoStore } from "@/Layout/Store";
+import { useTokenStore } from "@/store/useTokenStore";
+import { useMemberStore } from "@/store/useMemberStore";
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
@@ -23,20 +24,8 @@ const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 const LoginWindow = () => {
   const [emailData, setEmailData] = useState("");
   const [password, setPassword] = useState("");
-  const { setAccessToken, setRefreshToken } = TokenStore();
-  const {
-    setMemberId,
-    saveEmail,
-    setName,
-    setNickname,
-    setPhone,
-    setOauth,
-    setIntroduction,
-    setLink,
-    setProfileImageUrl,
-    setCreatedAt,
-    setModifiedAt,
-  } = UserInfoStore();
+  const { setAccessToken, setRefreshToken } = useTokenStore();
+  const { setMember } = useMemberStore();
 
   const onsubmit = async () => {
     try {
@@ -45,34 +34,13 @@ const LoginWindow = () => {
 
       /** 2023/05/13 - 응답의 토큰과 데이터를 전역상태로 저장 - by Kadesti */
       const { authorization, refreshtoken } = response.headers;
-      const {
-        memberId,
-        email,
-        name,
-        nickname,
-        phone,
-        oauth,
-        introduction,
-        link,
-        profileImageUrl,
-        createdAt,
-        modifiedAt,
-      } = response.data;
+      setMember(response.data);
 
       setAccessToken(authorization);
       setRefreshToken(refreshtoken);
 
-      setMemberId(memberId);
-      saveEmail(email);
-      setName(name);
-      setNickname(nickname);
-      setPhone(phone);
-      setOauth(oauth);
-      setIntroduction(introduction);
-      setLink(link);
-      setProfileImageUrl(profileImageUrl);
-      setCreatedAt(createdAt);
-      setModifiedAt(modifiedAt);
+      localStorage.setItem("accessToken", authorization);
+      localStorage.setItem("refreshToken", refreshtoken);
     } catch (error) {
       alert(error);
     }

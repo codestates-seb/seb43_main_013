@@ -7,6 +7,21 @@ export const serverInstance = axios.create({
   timeout: 5000,
 });
 
+// FIXME: 임시 추가
+serverInstance.interceptors.request.use(function (config) {
+  const accessToken = localStorage.getItem("accessToken");
+  const refreshToken = localStorage.getItem("refreshToken");
+
+  if (accessToken) {
+    config.headers.Authorization = `Bearer ${accessToken}`;
+  }
+  if (refreshToken) {
+    // config.headers.refresh = refreshToken;
+  }
+
+  return config;
+});
+
 export * from "./categories";
 export * from "./board";
 export * from "./comment";

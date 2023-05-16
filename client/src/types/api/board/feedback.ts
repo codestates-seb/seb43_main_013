@@ -19,7 +19,7 @@ export interface ApiCreateFeedbackBoardRequest {
   title: string;
   link: string;
   content: string;
-  tag: string[];
+  tags: string[];
   categoryName: string;
   feedbackCateogoryName: string;
 }
