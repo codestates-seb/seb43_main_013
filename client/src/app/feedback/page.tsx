@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   title: "CC | 피드백 게시판",
 };
 
-/** 2023/05/09 - 피드백 게시판 메인 화면 - by leekoby */
+/** 2023/05/09 - 피드백 게시판 메인 화면 페이지 - by leekoby */
 const Page = () => {
   return <FeedbackMain />;
 };

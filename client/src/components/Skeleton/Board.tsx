@@ -39,7 +39,7 @@ const Board = () => (
 
     {/* 라인 */}
     <div>
-      <hr className="h-0.5 bg-gray-200 my-6" />
+      <hr className="h-0.5 bg-sub-200 my-6" />
     </div>
 
     {/* 내용 */}

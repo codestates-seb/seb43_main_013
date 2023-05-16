@@ -128,7 +128,7 @@ const Form: React.FC<Props> = ({ boardId }) => {
       {/* wysiwyg */}
       <section className="flex flex-col space-y-1">
         <label>
-          <span className="text-base font-bold text-gray-800">내용</span>
+          <span className="text-base font-bold text-sub-800">내용</span>
         </label>
         <Editor content={content} setContent={setContent} />
       </section>

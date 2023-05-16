@@ -39,7 +39,7 @@ const NormalCategory: React.FC<Props> = ({ type, selectedCategory, setSelectedCa
 
   return (
     <section className={twMerge("relative flex-1 flex flex-col min-w-0", type === "normal" && "z-[1]")}>
-      <span className="text-base font-bold text-gray-800 mb-1">{title} 카테고리</span>
+      <span className="text-base font-bold text-sub-800 mb-1">{title} 카테고리</span>
       <Combobox value={selectedCategory} onChange={setSelectedCategory}>
         {({ open }) => (
           <>

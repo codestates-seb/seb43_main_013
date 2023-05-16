@@ -1,5 +1,6 @@
 // https://main-project.gitbook.io/main-project/undefined-1/undefined
 
+import type { PageInfo } from "..";
 import type { Board } from "./";
 
 /** 2023/05/10 - 자유 게시판 타입 - by 1-blue */
@@ -65,4 +66,22 @@ export interface ApiDeleteFreeBoardResponse {}
 /** 2023/05/10 - 자유 게시판 삭제 요청 핸들러 - by 1-blue */
 export interface ApiDeleteFreeBoardHandler {
   (body: ApiDeleteFreeBoardRequest): Promise<ApiDeleteFreeBoardResponse>;
+}
+
+// ============================== 자유 게시판 게시글리스트 조회 ==============================
+/** 2023/05/11 - 자유 게시판 게시글리스트 조회 요청 송신 타입 - by leekoby */
+export interface ApiFetchFreeBoardListRequest {
+  selected: string;
+  sorted: string;
+  page: number;
+  size: number;
+}
+/** 2023/05/11 - 자유 게시판 게시글리스트 조회 요청 수신 타입 - by leekoby */
+export interface ApiFetchFreeBoardListResponse {
+  data: FreeBoard[];
+  pageInfo: PageInfo;
+}
+/** 2023/05/11 - 자유 게시판 게시글리스트 조회 요청 핸들러 - by leekoby */
+export interface ApiFetchFreeBoardListHandler {
+  (body: ApiFetchFreeBoardListRequest): Promise<ApiFetchFreeBoardListResponse>;
 }
