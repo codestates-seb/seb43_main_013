@@ -62,18 +62,14 @@ public class MemberController {
 
     @PatchMapping(MEMBER_DEFAULT_URL + "/{member-id}")
     public ResponseEntity patchMember(@PathVariable("member-id") @Positive Long memberId,
-                                      @Valid @RequestBody MemberDto.Patch memberDtoPatch) {
+                                      @Valid @RequestBody MemberDto.Patch memberDtoPatch,
+                                      @RequestHeader(value = "Authorization") String authorizationToken) {
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Member loginedMember = memberService.findVerifiedMember(authentication.getName());
-
-        if (loginedMember.getMemberId() != memberId){
-            return new ResponseEntity(HttpStatus.FORBIDDEN);
-        }
+        String token = authorizationToken.substring(7);
 
         memberDtoPatch.setMemberId(memberId);
         Member member = mapper.memberPatchDtoToMember(memberDtoPatch);
-        Member updateMember = memberService.updateMember(memberId,member,authentication.getName());
+        Member updateMember = memberService.updateMember(token, memberId, member);
 
         MemberResponseDto responseDto = mapper.memberToMemberResponseDto(updateMember);
 
@@ -84,11 +80,11 @@ public class MemberController {
     public ResponseEntity getMember(@PathVariable("member-id") @Positive Long memberId) {
 
         Member loginUser = memberService.findVerifiedMember(SecurityContextHolder.getContext().getAuthentication().getName());
-        Member findedmember = memberService.findMember(memberId);
-        MemberResponseDto responseDto = mapper.memberToMemberResponseDto(findedmember);
+        Member findmember = memberService.findMember(memberId);
+        MemberResponseDto responseDto = mapper.memberToMemberResponseDto(findmember);
 
         if (loginUser.getFollowings().stream().anyMatch(
-                member -> member.equals(findedmember)
+                member -> member.equals(findmember)
         )){
             responseDto.setFollowed(true);
             return new ResponseEntity<>(responseDto, HttpStatus.OK);
@@ -115,9 +111,11 @@ public class MemberController {
 
     @DeleteMapping(MEMBER_DEFAULT_URL + "/{member-id}")
     public ResponseEntity deleteMember(@PathVariable("member-id") @Positive Long memberId,
-                                     Authentication authentication) {
+                                       @RequestHeader(value = "Authorization") String authorizationToken) {
 
-        memberService.deleteMember(memberId, authentication.getName());
+        String token = authorizationToken.substring(7);
+
+        memberService.deleteMember(token, memberId);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -125,15 +123,17 @@ public class MemberController {
     @PostMapping("/api/member/{member-id}/password")
     public ResponseEntity checkPassword(@PathVariable("member-id") @Positive Long memberId,
                                         @Valid @RequestBody MemberDto.CheckPassword checkPasswordDto,
-                                        Authentication authentication) {
+                                        @RequestHeader(value = "Authorization") String authorizationToken) {
+
+        String token = authorizationToken.substring(7);
 
         boolean checkPassword =
-                memberService.checkPassword(memberId, checkPasswordDto.getPassword(), authentication.getName());
+                memberService.checkPassword(token, memberId, checkPasswordDto.getPassword());
 
         if (checkPassword) {
             return new ResponseEntity<>(HttpStatus.OK);
         } else {
-            return new ResponseEntity<>("비밀번호가 일치하지 않습니다.",HttpStatus.CONFLICT);
+            return new ResponseEntity<>("비밀번호가 일치하지 않습니다.", HttpStatus.CONFLICT);
         }
     }
 
