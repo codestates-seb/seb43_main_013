@@ -188,6 +188,17 @@ public class MemberService {
         }
     }
 
+    public String verifiedEmailByToken (String jwtToken) {
+
+        String encodeKey = encode(secretKey);
+
+        Jws<Claims> claims = jwtTokenizer.getClaims(jwtToken, encodeKey);
+        Claims tokenClaims = claims.getBody();
+        String userEmail = tokenClaims.getSubject();
+
+        return userEmail;
+    }
+
     public void verifyActivatedMember (Member member){
 
         if (member.getMemberStatus() == Member.MemberStatus.MEMBER_QUIT) {
@@ -199,6 +210,7 @@ public class MemberService {
     }
 
     public static String encode(String secretKey) {
+
         // 시크릿 키를 UTF-8 문자열로 인코딩
         byte[] keyBytes = secretKey.getBytes(StandardCharsets.UTF_8);
 
