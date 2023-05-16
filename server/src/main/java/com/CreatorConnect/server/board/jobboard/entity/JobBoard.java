@@ -2,6 +2,7 @@ package com.CreatorConnect.server.board.jobboard.entity;
 
 import com.CreatorConnect.server.audit.Auditable;
 import com.CreatorConnect.server.board.Board;
+import com.CreatorConnect.server.board.categories.jobcategory.entity.JobCategory;
 import com.CreatorConnect.server.member.entity.Member;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -38,4 +39,8 @@ public class JobBoard extends Auditable implements Board {
     @ManyToOne // JobBoard - Member 다대일 매핑
     @JoinColumn(name = "MEMBER_ID")
     private Member member;
+
+    @ManyToOne // JobBoard - JobCategory 다대일 매핑
+    @JoinColumn(name = "JOBCATEGORY_ID")
+    private JobCategory jobCategory;
 }
