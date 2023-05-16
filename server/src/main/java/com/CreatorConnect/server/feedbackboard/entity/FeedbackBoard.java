@@ -2,15 +2,17 @@ package com.CreatorConnect.server.feedbackboard.entity;
 
 import com.CreatorConnect.server.audit.Auditable;
 import com.CreatorConnect.server.category.entity.Category;
+import com.CreatorConnect.server.comment.entity.FeedbackComment;
 import com.CreatorConnect.server.feedbackcategory.entity.FeedbackCategory;
 import com.CreatorConnect.server.member.entity.Member;
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -20,6 +22,7 @@ import javax.persistence.*;
 public class FeedbackBoard extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "feedback_Board_id")
     private Long feedbackBoardId;
     @Column(nullable = false)
     private String title;
@@ -45,7 +48,6 @@ public class FeedbackBoard extends Auditable {
 
     @ManyToOne
     @JoinColumn(name = "category_id")
-    @JsonBackReference
     private Category category;
     //매핑용
     public String getCategoryName() {
@@ -61,7 +63,6 @@ public class FeedbackBoard extends Auditable {
 
     @ManyToOne
     @JoinColumn(name = "feedback_category_id")
-    @JsonBackReference
     private FeedbackCategory feedbackCategory;
     //매핑용
     public String getFeedbackCategoryName() {
@@ -77,7 +78,6 @@ public class FeedbackBoard extends Auditable {
 
     @ManyToOne
     @JoinColumn(name = "member_id")
-    @JsonBackReference
     private Member member;
     //매핑용
     public long getMemberId() {
@@ -95,6 +95,10 @@ public class FeedbackBoard extends Auditable {
             this.member.getFeedbackBoards().add(this);
         }
     }
+
+    @OneToMany(mappedBy = "feedbackBoard", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<FeedbackComment> feedbackComments = new ArrayList<>();
+
 //    Todo FeedbackBoard-tag연결
 //    @OneToMany(mappedBy = "feedbackBoard", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 //    private List<TagBoard> tagBoards = new ArrayList<>();
