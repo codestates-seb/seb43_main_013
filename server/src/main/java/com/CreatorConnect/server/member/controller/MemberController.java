@@ -62,8 +62,14 @@ public class MemberController {
 
     @PatchMapping(MEMBER_DEFAULT_URL + "/{member-id}")
     public ResponseEntity patchMember(@PathVariable("member-id") @Positive Long memberId,
-                                      @Valid @RequestBody MemberDto.Patch memberDtoPatch,
-                                      Authentication authentication) {
+                                      @Valid @RequestBody MemberDto.Patch memberDtoPatch) {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Member loginedMember = memberService.findVerifiedMember(authentication.getName());
+
+        if (loginedMember.getMemberId() != memberId){
+            return new ResponseEntity(HttpStatus.FORBIDDEN);
+        }
 
         memberDtoPatch.setMemberId(memberId);
         Member member = mapper.memberPatchDtoToMember(memberDtoPatch);
