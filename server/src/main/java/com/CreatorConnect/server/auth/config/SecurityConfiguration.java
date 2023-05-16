@@ -72,7 +72,7 @@ public class SecurityConfiguration {
                         .antMatchers("/h2/**").permitAll()
                         .antMatchers(HttpMethod.OPTIONS).permitAll()
                         .antMatchers(HttpMethod.POST, "/api/signup", "/api/login").permitAll()
-                        .antMatchers(HttpMethod.GET, "/", "/api/login/oauth2", "/auth/**").permitAll()
+                        .antMatchers(HttpMethod.GET, "/", "/api/search","/api/login/oauth2", "/auth/**").permitAll()
                         .antMatchers(HttpMethod.GET, "/api/freeboard/**", "/api/freeboards/**").permitAll()
                         .antMatchers(HttpMethod.GET, "/api/feedbackboard/**", "/api/feedbackboards/**").permitAll()
                         .antMatchers(HttpMethod.GET, "/api/promotionboard/**","/api/promotionboards").permitAll()

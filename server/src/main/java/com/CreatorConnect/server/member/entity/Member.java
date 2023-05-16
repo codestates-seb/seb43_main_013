@@ -1,10 +1,10 @@
 package com.CreatorConnect.server.member.entity;
 
 import com.CreatorConnect.server.audit.Auditable;
-import com.CreatorConnect.server.comment.entity.FeedbackComment;
-import com.CreatorConnect.server.comment.entity.FreeComment;
-import com.CreatorConnect.server.freeboard.entity.FreeBoard;
-import com.CreatorConnect.server.feedbackboard.entity.FeedbackBoard;
+import com.CreatorConnect.server.board.comments.comment.entity.FeedbackComment;
+import com.CreatorConnect.server.board.comments.comment.entity.FreeComment;
+import com.CreatorConnect.server.board.freeboard.entity.FreeBoard;
+import com.CreatorConnect.server.board.feedbackboard.entity.FeedbackBoard;
 import com.CreatorConnect.server.member.bookmark.entity.Bookmark;
 import com.CreatorConnect.server.member.like.entity.Like;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;

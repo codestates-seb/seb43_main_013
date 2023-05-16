@@ -1,8 +1,8 @@
 package com.CreatorConnect.server.member.like.entity;
 
 import com.CreatorConnect.server.audit.Auditable;
-import com.CreatorConnect.server.feedbackboard.entity.FeedbackBoard;
-import com.CreatorConnect.server.freeboard.entity.FreeBoard;
+import com.CreatorConnect.server.board.feedbackboard.entity.FeedbackBoard;
+import com.CreatorConnect.server.board.freeboard.entity.FreeBoard;
 import com.CreatorConnect.server.member.entity.Member;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

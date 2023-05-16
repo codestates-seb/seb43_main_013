@@ -2,8 +2,6 @@ package com.CreatorConnect.server.member.controller;
 
 import com.CreatorConnect.server.exception.BusinessLogicException;
 import com.CreatorConnect.server.exception.ExceptionCode;
-import com.CreatorConnect.server.feedbackboard.entity.FeedbackBoard;
-import com.CreatorConnect.server.freeboard.entity.FreeBoard;
 import com.CreatorConnect.server.member.bookmark.entity.Bookmark;
 import com.CreatorConnect.server.member.dto.MemberBoardResponseDto;
 import com.CreatorConnect.server.member.dto.MemberDto;
