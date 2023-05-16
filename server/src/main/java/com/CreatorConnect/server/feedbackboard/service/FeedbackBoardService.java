@@ -147,7 +147,7 @@ public class FeedbackBoardService {
 
 
     //피드백 아이디로 피드백 찾는 메서드
-    private FeedbackBoard findVerifiedFeedbackBoard(Long feedbackBoardId) {
+    public FeedbackBoard findVerifiedFeedbackBoard(Long feedbackBoardId) {
         Optional<FeedbackBoard> feedbackBoard = feedbackBoardRepository.findById(feedbackBoardId);
         return feedbackBoard.orElseThrow(() -> new BusinessLogicException(ExceptionCode.FEEDBACK_NOT_FOUND));
     }
