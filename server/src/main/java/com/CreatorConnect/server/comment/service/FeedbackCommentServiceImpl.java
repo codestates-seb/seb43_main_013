@@ -39,7 +39,6 @@ public class FeedbackCommentServiceImpl implements CommentService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         memberService.verifiedAuthenticatedMember(postDto.getMemberId(), authentication.getName());
 
-
         //feedbackBoard찾기
         Optional<FeedbackBoard> feedbackBoard = feedbackBoardRepository.findById(id);
         FeedbackBoard foundFeedback = feedbackBoard.orElseThrow(() -> new BusinessLogicException(ExceptionCode.FEEDBACK_NOT_FOUND));
@@ -115,7 +114,6 @@ public class FeedbackCommentServiceImpl implements CommentService {
         // 삭제
         feedbackCommentRepository.delete(foundComment);
     }
-
 
     // 피드백 댓글 찾는 메서드
     private FeedbackComment findVerifiedFeedbackComment(Long feedbackBoardId, Long commentId) {

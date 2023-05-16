@@ -3,11 +3,13 @@ package com.CreatorConnect.server.comment.dto;
 import com.CreatorConnect.server.member.entity.Member;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 public class CommentDto {
 
     @Getter
+    @NoArgsConstructor
     @AllArgsConstructor
     public static class Post {
         private long memberId;
@@ -21,6 +23,7 @@ public class CommentDto {
 
     @Getter
     @Setter
+    @NoArgsConstructor
     public static class Patch {
         private long memberId;
         private String content;

@@ -32,6 +32,7 @@ public class FreeCommentServiceImpl implements CommentService {
     private final CommentMapper mapper;
     private final MemberService memberService;
 
+    // 댓글 등록
     @Override
     public CommentResponseDto.CommentContent createComment(Long id, CommentDto.Post postDto) {
         // 멤버 검증
@@ -52,6 +53,7 @@ public class FreeCommentServiceImpl implements CommentService {
         return post;
     }
 
+    //댓글 수정
     @Override
     public CommentResponseDto.CommentContent updateComment(Long freeBoardId, Long commentId, CommentDto.Patch patchDto) {
         // Dto의 Id값으로 Entity찾기
@@ -72,6 +74,7 @@ public class FreeCommentServiceImpl implements CommentService {
         return new CommentResponseDto.CommentContent(updatedFreeComment.getCommentPK().getCommentId(), updatedFreeComment.getContent());
     }
 
+    //댓글 조회
     @Override
     public CommentResponseDto.Details responseComment(Long freeBoardId, Long commentId) {
         // 클라이언트에서 보낸 ID값으로 Entity 조회
@@ -80,12 +83,12 @@ public class FreeCommentServiceImpl implements CommentService {
         return mapper.freeCommentToCommentDetailsResponse(foundComment);
     }
 
+    // 댓글 목록 조회
     @Override
     public CommentResponseDto.Multi<CommentResponseDto.Details> responseComments(Long freeBoardId, int page, int size) {
         PageRequest pageRequest = PageRequest.of(page - 1, size, Sort.by("commentPK").descending());
         // Page 생성 - 최신순
         Page<FreeComment> freeCommentsPage = freeCommentRepository.findByFreeBoardId(freeBoardId, pageRequest);
-//        Page<FreeComment> freeCommentsPage = freeCommentRepository.findByFreeBoardId(freeBoardId, pageRequest);
 
         // 코맨트 리스트 가져오기
         List<CommentResponseDto.Details> responses = mapper.freeCommentsToCommentDetailsResponses(freeCommentsPage.getContent());
@@ -97,6 +100,7 @@ public class FreeCommentServiceImpl implements CommentService {
         return new CommentResponseDto.Multi<>(responses, pageInfo);
     }
 
+    // 댓글 삭제
     @Override
     public void deleteComment(Long freeBoardId, Long commentId) {
         // 댓글 찾기
@@ -110,7 +114,7 @@ public class FreeCommentServiceImpl implements CommentService {
         freeCommentRepository.delete(foundComment);
     }
 
-    // 코맨트 찾는 메서드
+    // 자유게시판 댓글 찾는 메서드
     private FreeComment findVerifiedFreeComment(Long freeBoardId, Long commentId) {
         Optional<FreeComment> freeComment = freeCommentRepository.findById(new CommentPK(freeBoardId, commentId));
         return freeComment.orElseThrow(() -> new BusinessLogicException(ExceptionCode.COMMENT_NOT_FOUND));
