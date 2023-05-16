@@ -6,16 +6,16 @@ import com.CreatorConnect.server.freeboard.dto.FreeBoardDto;
 import com.CreatorConnect.server.freeboard.entity.FreeBoard;
 import com.CreatorConnect.server.freeboard.mapper.FreeBoardMapper;
 import com.CreatorConnect.server.freeboard.service.FreeBoardService;
+import com.CreatorConnect.server.member.bookmark.entity.Bookmark;
+import com.CreatorConnect.server.member.bookmark.repository.BookmarkRepository;
 import com.CreatorConnect.server.member.entity.Member;
 import com.CreatorConnect.server.member.like.entity.Like;
 import com.CreatorConnect.server.member.like.repository.LikeRepository;
 import com.CreatorConnect.server.member.repository.MemberRepository;
 import com.CreatorConnect.server.member.service.MemberService;
-import com.CreatorConnect.server.tag.dto.TagDto;
 import com.CreatorConnect.server.tag.entity.Tag;
 import com.CreatorConnect.server.tag.mapper.TagMapper;
 import com.CreatorConnect.server.tag.service.TagService;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -40,8 +40,9 @@ public class FreeBoardController {
     private final MemberService memberService;
     private final MemberRepository memberRepository;
     private final LikeRepository likeRepository;
+    private final BookmarkRepository bookmarkRepository;
 
-    public FreeBoardController(FreeBoardService freeBoardService, FreeBoardMapper mapper, CategoryService categoryService, TagMapper tagMapper, TagService tagService, MemberService memberService, MemberRepository memberRepository, LikeRepository likeRepository) {
+    public FreeBoardController(FreeBoardService freeBoardService, FreeBoardMapper mapper, CategoryService categoryService, TagMapper tagMapper, TagService tagService, MemberService memberService, MemberRepository memberRepository, LikeRepository likeRepository, BookmarkRepository bookmarkRepository) {
         this.freeBoardService = freeBoardService;
         this.mapper = mapper;
         this.categoryService = categoryService;
@@ -50,6 +51,7 @@ public class FreeBoardController {
         this.memberService = memberService;
         this.memberRepository = memberRepository;
         this.likeRepository = likeRepository;
+        this.bookmarkRepository = bookmarkRepository;
     }
 
     // 자유 게시판 게시글 등록
@@ -173,6 +175,73 @@ public class FreeBoardController {
             currentMember.getLikes().remove(foundLike);
             likeRepository.delete(foundLike);
         }
+
+        memberRepository.save(currentMember);
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+
+    }
+
+    @PostMapping("/freeboard/{freeBoardId}/bookmark")
+    public ResponseEntity bookmarkFeedbackBoard (@PathVariable("freeBoardId") @Positive Long freeBoardId) {
+
+        // 현재 로그인한 사용자 정보 가져오기
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Member currentMember = memberService.findVerifiedMember(authentication.getName());
+
+        FreeBoard foundfreeBoard = freeBoardService.verifyFreeBoard(freeBoardId);
+
+        // 현재 로그인한 사용자가 해당 게시물을 북마크 했는지 확인
+        boolean isAlreadyBookMarked = currentMember.getBookmarks().stream()
+                .filter(Objects::nonNull) // null인 요소 필터링
+                .map(Bookmark::getFreeBoard)
+                .filter(Objects::nonNull) // null인 FeedbackBoard 필터링
+                .anyMatch(freeBoard -> freeBoard.getFreeBoardId().equals(foundfreeBoard.getFreeBoardId()));
+
+        if (isAlreadyBookMarked) {
+            return ResponseEntity.badRequest().body("Already bookmarked.");
+        }
+
+        Bookmark bookmark = new Bookmark();
+        bookmark.setBoardType(Like.BoardType.FREEBOARD);
+        bookmark.setMember(currentMember);
+        bookmark.setFreeBoard(foundfreeBoard);
+        bookmarkRepository.save(bookmark);
+
+        // 현재 사용자의 bookmark 컬렉션에 bookmark 추가
+        currentMember.getBookmarks().add(bookmark);
+        memberRepository.save(currentMember);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+
+    }
+
+    @DeleteMapping("/freeboard/{freeBoardId}/bookmark")
+    public ResponseEntity unbookmarkFeedbackBoard (@PathVariable("freeBoardId") @Positive Long freeBoardId) {
+
+        // 현재 로그인한 사용자 정보 가져오기
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Member currentMember = memberService.findVerifiedMember(authentication.getName());
+
+        FreeBoard foundfreeBoard = freeBoardService.verifyFreeBoard(freeBoardId);
+        // 현재 로그인한 사용자가 해당 게시물을 북마크 했는지 확인
+
+        Optional<Set<Bookmark>> bookmarks = Optional.ofNullable(currentMember.getBookmarks());
+
+        Set<Bookmark> foundBookmarks = bookmarks.orElse(Collections.emptySet())
+                .stream()
+                .filter(l -> l != null && l.getFreeBoard() != null && l.getFreeBoard().getFreeBoardId().equals(foundfreeBoard.getFreeBoardId()))
+                .collect(Collectors.toSet());
+
+        if (foundBookmarks.isEmpty()) {
+            return ResponseEntity.badRequest().body("Not bookmarked.");
+        }
+
+        // 현재 사용자의 bookmarks 컬렉션에서 북마크 삭제
+        currentMember.getBookmarks().removeAll(foundBookmarks);
+
+        // 삭제된 북마크 엔티티들을 데이터베이스에서 삭제
+        bookmarkRepository.deleteAll(foundBookmarks);
 
         memberRepository.save(currentMember);
 
