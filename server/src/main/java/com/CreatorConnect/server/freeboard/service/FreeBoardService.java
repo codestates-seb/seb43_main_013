@@ -15,7 +15,7 @@ import com.CreatorConnect.server.member.service.MemberService;
 import com.CreatorConnect.server.tag.dto.TagDto;
 import com.CreatorConnect.server.tag.entity.Tag;
 import com.CreatorConnect.server.tag.mapper.TagMapper;
-import com.CreatorConnect.server.tag.service.TagService;
+import com.CreatorConnect.server.tag.service.FreeBoardTagService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -37,7 +37,7 @@ public class FreeBoardService {
     private final FreeBoardMapper mapper;
     private final MemberRepository memberRepository;
     private final CategoryService categoryService;
-    private final TagService tagService;
+    private final FreeBoardTagService freeBoardTagService;
     private final TagMapper tagMapper;
 
     public FreeBoardService(FreeBoardRepository freeBoardRepository,
@@ -46,7 +46,7 @@ public class FreeBoardService {
                             FreeBoardMapper mapper,
                             MemberRepository memberRepository,
                             CategoryService categoryService,
-                            TagService tagService,
+                            FreeBoardTagService freeBoardTagService,
                             TagMapper tagMapper) {
         this.freeBoardRepository = freeBoardRepository;
         this.memberService = memberService;
@@ -54,7 +54,7 @@ public class FreeBoardService {
         this.mapper = mapper;
         this.memberRepository = memberRepository;
         this.categoryService = categoryService;
-        this.tagService = tagService;
+        this.freeBoardTagService = freeBoardTagService;
         this.tagMapper = tagMapper;
     }
 
@@ -83,7 +83,7 @@ public class FreeBoardService {
 
         // 4. 태그 저장
         List<Tag> tags = tagMapper.tagPostDtosToTag(post.getTags());
-        List<Tag> createTags = tagService.createFreeBoardTag(tags, createdFreeBoard);
+        List<Tag> createTags = freeBoardTagService.createFreeBoardTag(tags, createdFreeBoard);
 
         return createdFreeBoard;
     }
@@ -119,9 +119,6 @@ public class FreeBoardService {
         Optional.ofNullable(freeBoard.getContent())
                 .ifPresent(content -> checkedFreeBoard.setContent(content)); // 게시글 내용 수정
 
-//        List<Tag> tags = tagMapper.tagPostDtosToTag(patch.getTags());
-//        tagService.updateFreeBoardTag(tags, checkedFreeBoard);
-
         log.info("categoryName : {}",checkedFreeBoard.getCategoryName());
 
         // 4. 수정된 데이터 저장
@@ -135,7 +132,6 @@ public class FreeBoardService {
      * 2. Response에 각 게시글의 태그 정보 적용
      */
     public FreeBoardDto.MultiResponseDto<FreeBoardDto.Response> getAllFreeBoards(int page, int size, String sort) {
-//        PageRequest pageRequest = PageRequest.of(page - 1, size);
         // 1. 페이지네이션 적용 - 최신순 / 등록순 / 인기순
         Page<FreeBoard> freeBoards = freeBoardRepository.findAll(sortedBy(page, size, sort));
 
@@ -199,11 +195,6 @@ public class FreeBoardService {
         return response;
     }
 
-//    public FreeBoardDto.Response getFreeBoardTag(FreeBoard freeBoard) {
-//        FreeBoardDto.Response response = mapper.freeBoardToFreeBoardResponseDto(freeBoard);
-//        List<Tag> tags = tagMapper.tagsToTagResponseDto(response.getTags());
-//        return tags;
-//    }
 
     /**
      * <자유 게시판 게시글 삭제>
@@ -225,10 +216,6 @@ public class FreeBoardService {
                 new BusinessLogicException(ExceptionCode.FREEBOARD_NOT_FOUND));
     }
 
-//    public List<FreeBoardDto.Response> findFreeBoardByCategoryId(long categoryId) {
-//       Category category = categoryService.verifyCategory(categoryId);
-//        return mapper.freeBoardToFreeBoardResponseDtos(freeBoardRepository.findByCategory(category));
-//    }
 
     // 조회수 증가 메서드
     private void addViews(FreeBoard freeBoard) {

@@ -1,5 +1,6 @@
 package com.CreatorConnect.server.feedbackboard.dto;
 
+import com.CreatorConnect.server.tag.dto.TagDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,9 +26,10 @@ public class FeedbackBoardResponseDto {
         private long feedbackBoardId;
         private String title;
         private String content;
-        private String tag;
+//        private String tag;
         private String categoryName;
         private String feedbackCategoryName;
+        private List<TagDto.TagInfo> tags; // 태그
     }
 
     @Getter
@@ -39,7 +41,7 @@ public class FeedbackBoardResponseDto {
         private String title;
         private String link;
         private String content;
-        private String tag;
+        private List<TagDto.TagInfo> tags; // 태그
         private Long commentCount;
         private Long likeCount;
         private Long viewCount;
@@ -51,6 +53,7 @@ public class FeedbackBoardResponseDto {
         private String nickname;
         private String email;
         private String profileImageUrl;
+
     }
 
     @Getter

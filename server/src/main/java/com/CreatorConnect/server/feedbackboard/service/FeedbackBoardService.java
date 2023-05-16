@@ -2,6 +2,7 @@ package com.CreatorConnect.server.feedbackboard.service;
 
 import com.CreatorConnect.server.category.entity.Category;
 import com.CreatorConnect.server.category.repository.CategoryRepository;
+import com.CreatorConnect.server.category.service.CategoryService;
 import com.CreatorConnect.server.exception.BusinessLogicException;
 import com.CreatorConnect.server.exception.ExceptionCode;
 import com.CreatorConnect.server.feedbackboard.dto.FeedbackBoardDto;
@@ -11,8 +12,16 @@ import com.CreatorConnect.server.feedbackboard.mapper.FeedbackBoardMapper;
 import com.CreatorConnect.server.feedbackboard.repository.FeedbackBoardRepository;
 import com.CreatorConnect.server.feedbackcategory.entity.FeedbackCategory;
 import com.CreatorConnect.server.feedbackcategory.repository.FeedbackCategoryRepository;
+import com.CreatorConnect.server.feedbackcategory.service.FeedbackCategoryService;
+import com.CreatorConnect.server.freeboard.dto.FreeBoardDto;
+import com.CreatorConnect.server.freeboard.entity.FreeBoard;
+import com.CreatorConnect.server.tag.dto.TagDto;
+import com.CreatorConnect.server.tag.entity.Tag;
+import com.CreatorConnect.server.tag.mapper.TagMapper;
+import com.CreatorConnect.server.tag.service.FeedbackBoardTagService;
 import com.CreatorConnect.server.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.sql.Update;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -24,6 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -33,6 +43,10 @@ public class FeedbackBoardService {
     private final FeedbackBoardMapper mapper;
     private final CategoryRepository categoryRepository;
     private final FeedbackCategoryRepository feedbackCategoryRepository;
+    private final FeedbackCategoryService feedbackCategoryService;
+    private final TagMapper tagMapper;
+    private final FeedbackBoardTagService feedbackBoardTagService;
+    private final CategoryService categoryService;
     private final MemberService memberService;
 
     //등록
@@ -50,6 +64,11 @@ public class FeedbackBoardService {
 
         //저장
         FeedbackBoard savedfeedbackBoard = feedbackBoardRepository.save(feedbackBoard);
+
+        // 태그 저장
+        List<Tag> tags = tagMapper.tagPostDtosToTag(postDto.getTags());
+        List<Tag> createTAgs = feedbackBoardTagService.createFeedbackBoardTag(tags, savedfeedbackBoard);
+
 
         // Entity-Dto 변환 후 리턴
         FeedbackBoardResponseDto.Post responseDto = mapper.feedbackBoardToFeedbackBoardPostResponse(savedfeedbackBoard);
@@ -77,18 +96,37 @@ public class FeedbackBoardService {
                 .ifPresent(foundFeedbackBoard::setLink);
         Optional.ofNullable(feedbackBoard.getContent())
                 .ifPresent(foundFeedbackBoard::setContent);
-        Optional<Category> category = categoryRepository.findByCategoryName(patchDto.getCategoryName());
-        foundFeedbackBoard.setCategory(category.orElseThrow(() -> new BusinessLogicException(ExceptionCode.CATEGORY_NOT_FOUND)));
-        Optional<FeedbackCategory> feedbackCategory = feedbackCategoryRepository.findByFeedbackCategoryName(patchDto.getFeedbackCategoryName());
-        foundFeedbackBoard.setFeedbackCategory(feedbackCategory.orElseThrow(() -> new BusinessLogicException(ExceptionCode.FEEDBACK_CATEGORY_NOT_FOUND)));
-        Optional.ofNullable(feedbackBoard.getTag())
-                .ifPresent(foundFeedbackBoard::setTag);
+
+        // 카테고리를 수정할 경우 카테고리 유효성 검증 (변경한 카테고리가 존재하는 카테고리?)
+        if (patchDto.getCategoryName() != null) { // 카테고리 변경이 된 경우
+            categoryService.verifyCategory(patchDto.getCategoryName()); // 수정된 카테고리 존재 여부 확인
+            // 카테고리 수정
+            Optional<Category> category = categoryRepository.findByCategoryName(patchDto.getCategoryName());
+            foundFeedbackBoard.setCategory(category.orElseThrow(() ->
+                    new BusinessLogicException(ExceptionCode.CATEGORY_NOT_FOUND)));
+        }
+//        Optional<Category> category = categoryRepository.findByCategoryName(patchDto.getCategoryName());
+//        foundFeedbackBoard.setCategory(category.orElseThrow(() -> new BusinessLogicException(ExceptionCode.CATEGORY_NOT_FOUND)));
+
+        // 피드백 카테고리를 수정할 경우 카테고리 유효성 검증
+        if (patchDto.getFeedbackCategoryName() != null) { // 피드백 카테고리가 변경이 된경우
+            Optional<FeedbackCategory> feedbackCategory = feedbackCategoryRepository.findByFeedbackCategoryName(patchDto.getFeedbackCategoryName());
+            foundFeedbackBoard.setFeedbackCategory(feedbackCategory.orElseThrow(() -> new BusinessLogicException(ExceptionCode.FEEDBACK_CATEGORY_NOT_FOUND)));
+        }
+
+//        Optional.ofNullable(feedbackBoard.getTag())
+//                .ifPresent(foundFeedbackBoard::setTag);
 
         // 저장
         FeedbackBoard updatedFeedbackBoard = feedbackBoardRepository.save(foundFeedbackBoard);
 
+        // 태그 저장
+        List<Tag> tags = tagMapper.tagPostDtosToTag(patchDto.getTags());
+        List<Tag> updatedTags = feedbackBoardTagService.updateFeedbackBoardTag(tags, updatedFeedbackBoard);
+
         // Entity-Dto 변환 후 리턴
         FeedbackBoardResponseDto.Patch responseDto = mapper.feedbackBoardToFeedbackBoardPatchResponse(updatedFeedbackBoard);
+        responseDto.setTags(tagMapper.tagsToTagResponseDto(updatedTags));
         return responseDto;
     }
 
@@ -96,9 +134,16 @@ public class FeedbackBoardService {
     public FeedbackBoardResponseDto.Details responseFeedback(Long feedbackBoardId){
         // 클라이언트에서 보낸 ID값으로 Entity 조회
         FeedbackBoard foundFeedbackBoard = findVerifiedFeedbackBoard(feedbackBoardId);
+
+        // 게시글에 있는 태그 추가
+        List<TagDto.TagInfo> tags = foundFeedbackBoard.getTagBoards().stream().map(tagToFeedbackBoard -> {
+            TagDto.TagInfo tagInfo = tagMapper.tagToTagToBoard(tagToFeedbackBoard.getTag());
+            return tagInfo;
+        }).collect(Collectors.toList());
+
         //조회수 증가
         addViews(foundFeedbackBoard);
-        return mapper.feedbackBoardToFeedbackBoardDetailsResponse(foundFeedbackBoard);
+        return mapper.feedbackBoardToResponse(foundFeedbackBoard, tags);
     }
 
     //목록 조회
@@ -108,10 +153,13 @@ public class FeedbackBoardService {
         Page<FeedbackBoard> feedbackBoardsPage = feedbackBoardRepository.findAll(sortedPageRequest(sort, page, size));
 
         // 피드백 리스트 가져오기
-        List<FeedbackBoardResponseDto.Details> responses = mapper.feedbackBoardsToFeedbackBoardDetailsResponses(feedbackBoardsPage.getContent());
+//        List<FeedbackBoardResponseDto.Details> responses = mapper.feedbackBoardsToFeedbackBoardDetailsResponses(feedbackBoardsPage.getContent());
 
         // pageInfo 가져오기
         FeedbackBoardResponseDto.PageInfo pageInfo = new FeedbackBoardResponseDto.PageInfo(feedbackBoardsPage.getNumber() + 1, feedbackBoardsPage.getSize(), feedbackBoardsPage.getTotalElements(), feedbackBoardsPage.getTotalPages());
+
+        // 태그 정보 적용
+        List<FeedbackBoardResponseDto.Details> responses = getResponseList(feedbackBoardsPage);
 
         // 리턴
         return new FeedbackBoardResponseDto.Multi<>(responses, pageInfo);
@@ -123,10 +171,13 @@ public class FeedbackBoardService {
         Page<FeedbackBoard> feedbackBoardsPage = feedbackBoardRepository.findFeedbackBoardsByFeedbackCategoryId(feedbackCategoryId, sortedPageRequest(sort, page, size));
 
         // 피드백 리스트 가져오기
-        List<FeedbackBoardResponseDto.Details> responses = mapper.feedbackBoardsToFeedbackBoardDetailsResponses(feedbackBoardsPage.getContent());
+//        List<FeedbackBoardResponseDto.Details> responses = mapper.feedbackBoardsToFeedbackBoardDetailsResponses(feedbackBoardsPage.getContent());
 
         // pageInfo 가져오기
         FeedbackBoardResponseDto.PageInfo pageInfo = new FeedbackBoardResponseDto.PageInfo(feedbackBoardsPage.getNumber() + 1, feedbackBoardsPage.getSize(), feedbackBoardsPage.getTotalElements(), feedbackBoardsPage.getTotalPages());
+
+        // 태그 정보 적용
+        List<FeedbackBoardResponseDto.Details> responses = getResponseList(feedbackBoardsPage);
 
         //리턴
         return new FeedbackBoardResponseDto.Multi<>(responses, pageInfo);
@@ -169,5 +220,15 @@ public class FeedbackBoardService {
         } else {
             return PageRequest.of(page - 1, size, Sort.by("feedbackBoardId").descending());
         }
+    }
+
+    // Response에 각 게시글의 태그 적용 메서드
+    private List<FeedbackBoardResponseDto.Details> getResponseList(Page<FeedbackBoard> feedbackBoards) {
+        return feedbackBoards.getContent().stream().map(feedbackBoard -> {
+            List<TagDto.TagInfo> tags = feedbackBoard.getTagBoards().stream()
+                    .map(tagToFreeBoard -> tagMapper.tagToTagToBoard(tagToFreeBoard.getTag()))
+                    .collect(Collectors.toList());
+            return mapper.feedbackBoardToResponse(feedbackBoard, tags);
+        }).collect(Collectors.toList());
     }
 }

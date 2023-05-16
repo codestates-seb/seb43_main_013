@@ -4,6 +4,8 @@ package com.CreatorConnect.server.feedbackboard.mapper;
 import com.CreatorConnect.server.feedbackboard.dto.FeedbackBoardDto;
 import com.CreatorConnect.server.feedbackboard.dto.FeedbackBoardResponseDto;
 import com.CreatorConnect.server.feedbackboard.entity.FeedbackBoard;
+import com.CreatorConnect.server.tag.dto.TagDto;
+import com.CreatorConnect.server.tag.entity.Tag;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 
@@ -17,5 +19,8 @@ public interface FeedbackBoardMapper {
     FeedbackBoardResponseDto.Patch feedbackBoardToFeedbackBoardPatchResponse(FeedbackBoard feedbackBoard);
     FeedbackBoardResponseDto.Details feedbackBoardToFeedbackBoardDetailsResponse(FeedbackBoard feedbackBoard);
     List<FeedbackBoardResponseDto.Details>  feedbackBoardsToFeedbackBoardDetailsResponses (List<FeedbackBoard> feedbackBoards);
+
+    // 게시글 목록 조회 시 Response를 위한 매핑
+    FeedbackBoardResponseDto.Details feedbackBoardToResponse(FeedbackBoard feedbackBoard, List<TagDto.TagInfo> tags);
 
 }

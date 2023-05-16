@@ -3,6 +3,9 @@ package com.CreatorConnect.server.feedbackboard.controller;
 import com.CreatorConnect.server.feedbackboard.dto.FeedbackBoardDto;
 import com.CreatorConnect.server.feedbackboard.dto.FeedbackBoardResponseDto;
 import com.CreatorConnect.server.feedbackboard.entity.FeedbackBoard;
+import com.CreatorConnect.server.feedbackboard.mapper.FeedbackBoardMapper;
+import com.CreatorConnect.server.tag.entity.Tag;
+import com.CreatorConnect.server.tag.mapper.TagMapper;
 import com.CreatorConnect.server.feedbackboard.service.FeedbackBoardService;
 import com.CreatorConnect.server.freeboard.entity.FreeBoard;
 import com.CreatorConnect.server.member.bookmark.entity.Bookmark;
@@ -19,11 +22,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import java.util.*;
 import java.util.stream.Collectors;
+
 
 @RestController
 @RequestMapping("/api")
@@ -31,6 +34,9 @@ import java.util.stream.Collectors;
 @Validated
 public class FeedbackBoardController {
     private final FeedbackBoardService feedbackBoardService;
+
+    private final FeedbackBoardMapper mapper;
+    private final TagMapper tagMapper;
     private final MemberService memberService;
     private final MemberRepository memberRepository;
     private final LikeRepository likeRepository;
@@ -44,6 +50,9 @@ public class FeedbackBoardController {
     @PatchMapping("/feedbackboard/{feedbackBoardId}")
     public ResponseEntity<FeedbackBoardResponseDto.Patch> patchFeedback(@PathVariable("feedbackBoardId") Long feedbackBoardId,
                                                                         @Valid @RequestBody FeedbackBoardDto.Patch patchDto){
+        List<Tag> tags = tagMapper.tagPostDtosToTag(patchDto.getTags());
+
+//        FeedbackBoard feedbackBoard = feedbackBoardService.updateFeedback(feedbackBoardId, patchDto);
         FeedbackBoardResponseDto.Patch response = feedbackBoardService.updateFeedback(feedbackBoardId, patchDto);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
