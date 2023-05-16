@@ -24,7 +24,7 @@ import java.util.List;
 public class FreeBoard extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long freeBoardId;
+    private Long freeBoardId;
 
     @Column(nullable = false)
     private String title; // 게시글 제목
