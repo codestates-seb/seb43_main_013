@@ -14,16 +14,7 @@ public class CommentResponseDto {
     @Setter
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class Post {
-        private long commentId;
-        private String content;
-    }
-
-    @Getter
-    @Setter
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class Patch {
+    public static class CommentContent {
         private long commentId;
         private String content;
     }
@@ -42,11 +33,21 @@ public class CommentResponseDto {
         private long reCommentCount;
         private LocalDateTime createdAt;
         private LocalDateTime modifiedAt;
-        private List<CommentResponseDto.Multi> reComments;
+//        private List<CommentResponseDto.Multi> reComments;
     }
     @Getter
     @AllArgsConstructor
     public static class Multi<T> {
-        private List<T> reComments;
+        private List<T> data;
+        private PageInfo pageInfo;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public static class PageInfo {
+        private int page;
+        private int size;
+        private long totalElements;
+        private int totalPages;
     }
 }

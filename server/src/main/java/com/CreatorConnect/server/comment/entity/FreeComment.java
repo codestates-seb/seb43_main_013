@@ -46,9 +46,10 @@ public class FreeComment extends Auditable {
             this.member.getFreeComments().add(this);
         }
     }
+
     @MapsId("boardId")
     @ManyToOne
-    @JoinColumn(name = "freeBoard_id")
+    @JoinColumn(name = "free_board_id")
     private FreeBoard freeBoard;
     public long getFreeBoardId() {return freeBoard.getFreeBoardId();}
 

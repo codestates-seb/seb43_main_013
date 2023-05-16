@@ -11,6 +11,7 @@ import com.CreatorConnect.server.feedbackboard.mapper.FeedbackBoardMapper;
 import com.CreatorConnect.server.feedbackboard.repository.FeedbackBoardRepository;
 import com.CreatorConnect.server.feedbackcategory.entity.FeedbackCategory;
 import com.CreatorConnect.server.feedbackcategory.repository.FeedbackCategoryRepository;
+import com.CreatorConnect.server.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -32,9 +33,14 @@ public class FeedbackBoardService {
     private final FeedbackBoardMapper mapper;
     private final CategoryRepository categoryRepository;
     private final FeedbackCategoryRepository feedbackCategoryRepository;
+    private final MemberService memberService;
 
     //등록
     public FeedbackBoardResponseDto.Post createFeedback(FeedbackBoardDto.Post postDto){
+        // 멤버 검증
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        memberService.verifiedAuthenticatedMember(postDto.getMemberId(), authentication.getName());
+
         // Dto-Entity 변환
         FeedbackBoard feedbackBoard = mapper.feedbackBoardPostDtoToFeedbackBoard(postDto);
         Optional<Category> category = categoryRepository.findByCategoryName(postDto.getCategoryName());
@@ -62,9 +68,7 @@ public class FeedbackBoardService {
 
         // 글 작성한 멤버가 현재 로그인한 멤버와 같은지 확인
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if(!Objects.equals(foundFeedbackBoard.getMember().getEmail(), authentication.getName())){
-            throw new BusinessLogicException(ExceptionCode.INVALID_MEMBER);
-        }
+        memberService.verifiedAuthenticatedMember(foundFeedbackBoard.getMemberId(), authentication.getName());
 
         // 찾은 Entity의 값 변경
         Optional.ofNullable(feedbackBoard.getTitle())
@@ -135,9 +139,7 @@ public class FeedbackBoardService {
 
         // 글 작성한 멤버가 현재 로그인한 멤버와 같은지 확인
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if(!Objects.equals(feedbackBoard.getMember().getEmail(), authentication.getName())){
-            throw new BusinessLogicException(ExceptionCode.INVALID_MEMBER);
-        }
+        memberService.verifiedAuthenticatedMember(feedbackBoard.getMemberId(), authentication.getName());
 
         // 삭제
         feedbackBoardRepository.delete(feedbackBoard);

@@ -22,7 +22,7 @@ import java.util.List;
 public class FeedbackBoard extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "feedbackboard_id")
+    @Column(name = "feedback_Board_id")
     private Long feedbackBoardId;
     @Column(nullable = false)
     private String title;

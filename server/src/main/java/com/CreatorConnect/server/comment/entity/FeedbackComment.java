@@ -45,7 +45,7 @@ public class FeedbackComment extends Auditable {
     }
     @MapsId("boardId")
     @ManyToOne
-    @JoinColumn(name = "feedbackBoard_id")
+    @JoinColumn(name = "feedback_board_id")
     private FeedbackBoard feedbackBoard;
     public long getFeedBoardId() {return feedbackBoard.getFeedbackBoardId();}
 
