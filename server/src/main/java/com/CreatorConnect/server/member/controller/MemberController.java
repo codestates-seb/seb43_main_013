@@ -2,6 +2,8 @@ package com.CreatorConnect.server.member.controller;
 
 import com.CreatorConnect.server.exception.BusinessLogicException;
 import com.CreatorConnect.server.exception.ExceptionCode;
+import com.CreatorConnect.server.feedbackboard.entity.FeedbackBoard;
+import com.CreatorConnect.server.freeboard.entity.FreeBoard;
 import com.CreatorConnect.server.member.dto.MemberBoardResponseDto;
 import com.CreatorConnect.server.member.dto.MemberDto;
 import com.CreatorConnect.server.member.dto.MemberFollowResponseDto;
@@ -220,7 +222,10 @@ public class MemberController {
     @GetMapping("/api/member/{member-id}/liked")
     public ResponseEntity getliked(@PathVariable("member-id") @Positive Long memberId) {
 
-        Set<Like> liked = memberService.findVerifiedMember(memberId).getLikes();
+        Member member = memberService.findVerifiedMember(memberId);
+
+        // 삭제 작업 수행 후, 최신 상태의 좋아요 목록을 다시 조회
+        Set<Like> liked = member.getLikes();
 
         List<MemberBoardResponseDto> response = liked.stream()
                 .map(like -> {
@@ -245,6 +250,7 @@ public class MemberController {
                 .collect(Collectors.toList());
 
         return new ResponseEntity(response, HttpStatus.OK);
+
     }
 
 }

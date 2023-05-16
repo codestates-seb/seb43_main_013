@@ -25,8 +25,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")
@@ -155,20 +155,25 @@ public class FreeBoardController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Member currentMember = memberService.findVerifiedMember(authentication.getName());
 
-        FreeBoard foundfreeBoard = freeBoardService.verifyFreeBoard(freeBoardId);
+        FreeBoard freeBoard = freeBoardService.verifyFreeBoard(freeBoardId);
 
-        // 현재 로그인한 사용자가 해당 게시물을 좋아요 했는지 확인
-        Like like = currentMember.getLikes().stream()
-                .filter(l -> l.getFreeBoard().getFreeBoardId().equals(foundfreeBoard.getFreeBoardId()))
-                .findFirst()
-                .orElse(null);
+        Optional<Set<Like>> likes = Optional.ofNullable(currentMember.getLikes());
 
-        if (like == null) {
+        Set<Like> foundLikes = likes.orElse(Collections.emptySet())
+                .stream()
+                .filter(l -> l != null && l.getFreeBoard() != null && l.getFreeBoard().getFreeBoardId().equals(freeBoard.getFreeBoardId()))
+                .collect(Collectors.toSet());
+
+        if (foundLikes.isEmpty()) {
             return ResponseEntity.badRequest().body("Not liked.");
         }
 
-        // 현재 사용자의 likes 컬렉션에 좋아요 삭제
-        currentMember.getLikes().remove(like);
+        // 현재 사용자의 likes 컬렉션에서 좋아요 삭제
+        for (Like foundLike : foundLikes) {
+            currentMember.getLikes().remove(foundLike);
+            likeRepository.delete(foundLike);
+        }
+
         memberRepository.save(currentMember);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
