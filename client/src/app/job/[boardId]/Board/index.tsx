@@ -38,7 +38,7 @@ const Board: React.FC<Props> = ({ boardId }) => {
 
       {/* 라인 */}
       <div>
-        <hr className="h-0.5 bg-gray-200 my-6" />
+        <hr className="h-0.5 bg-sub-200 my-6" />
       </div>
 
       {/* 썸네일/영상 */}
@@ -50,7 +50,7 @@ const Board: React.FC<Props> = ({ boardId }) => {
 
       {/* 라인 */}
       <div>
-        <hr className="h-0.5 bg-gray-200 my-4" />
+        <hr className="h-0.5 bg-sub-200 my-4" />
       </div>
 
       {/* 댓글과 답글 */}

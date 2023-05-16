@@ -102,12 +102,12 @@ const BoardComment: React.FC<Props> = ({ type, boardId, comment }) => {
       <div className="flex-1 flex flex-col space-y-2">
         <div className="space-x-2">
           <span className="font-bold">{comment.nickname}</span>
-          <time className="text-sm text-gray-400">{moment(comment.createdAt).endOf("day").fromNow()}</time>
+          <time className="text-sm text-sub-400">{moment(comment.createdAt).endOf("day").fromNow()}</time>
           {disabled ? (
             <>
               <button
                 type="button"
-                className="text-xs text-gray-500 hover:font-bold hover:text-gray-600"
+                className="text-xs text-sub-500 hover:font-bold hover:text-sub-600"
                 onClick={() => {
                   setDisabled(false);
                   setTimeout(() => textareaRef.current?.focus(), 0);
@@ -118,7 +118,7 @@ const BoardComment: React.FC<Props> = ({ type, boardId, comment }) => {
               <button
                 type="button"
                 data-comment-id={comment.commentId}
-                className="text-xs text-gray-500 hover:font-bold hover:text-gray-600"
+                className="text-xs text-sub-500 hover:font-bold hover:text-sub-600"
               >
                 삭제
               </button>
@@ -127,7 +127,7 @@ const BoardComment: React.FC<Props> = ({ type, boardId, comment }) => {
             <>
               <button
                 type="button"
-                className="text-xs text-gray-500 hover:font-bold hover:text-gray-600"
+                className="text-xs text-sub-500 hover:font-bold hover:text-sub-600"
                 onClick={() => {
                   onClickUpdate();
                   setDisabled(true);
@@ -137,7 +137,7 @@ const BoardComment: React.FC<Props> = ({ type, boardId, comment }) => {
               </button>
               <button
                 type="button"
-                className="text-xs text-gray-500 hover:font-bold hover:text-gray-600"
+                className="text-xs text-sub-500 hover:font-bold hover:text-sub-600"
                 onClick={() => {
                   setContent(comment.content);
                   setDisabled(true);
@@ -162,7 +162,7 @@ const BoardComment: React.FC<Props> = ({ type, boardId, comment }) => {
         </textarea>
 
         {!!comment.recomments?.length && (
-          <button type="button" className="self-start text-gray-500 text-sm" onClick={() => setIsShow((prev) => !prev)}>
+          <button type="button" className="self-start text-sub-500 text-sm" onClick={() => setIsShow((prev) => !prev)}>
             답글 {comment.recomments?.length}개 {isShow ? "닫기" : "더 보기"}
           </button>
         )}
@@ -175,7 +175,7 @@ const BoardComment: React.FC<Props> = ({ type, boardId, comment }) => {
               <div className="flex flex-col space-y-1">
                 <div className="space-x-2">
                   <span className="text-xs font-bold">{recomment.nickname}</span>
-                  <time className="text-xs text-gray-400">{moment(recomment.createdAt).endOf("day").fromNow()}</time>
+                  <time className="text-xs text-sub-400">{moment(recomment.createdAt).endOf("day").fromNow()}</time>
                 </div>
                 <p className="text-xs leading-4">{recomment.content}</p>
               </div>

@@ -1,30 +1,21 @@
 import Image from "next/image";
 import { BookmarkIcon as BookmarkIconUnchecked } from "@heroicons/react/24/outline";
 import defaultThumnail from "@/public/images/default-thumnail.jpg";
-import ContentFooter from "./ContentFooter";
-import TagItem from "./TagItem";
-
+import ContentFooter from "../../components/BoardMain/ContentFooter";
+import TagItem from "../../components/BoardMain/TagItem";
+import { FreeBoard } from "@/types/api";
+// /** 2023/05/08 - 자유게시판 메인 화면 게시글 - by leekoby */
 interface ContentItemProps {
-  freeboardID?: number;
-  title: string;
-  content: string;
-  commentCount: number;
-  viewCount: number;
-  likeCount: number;
-  tag: string[];
-  category: string;
-  createdAt: Date;
-  nickname: string;
+  props: FreeBoard;
 }
 
-/** 2023/05/08 - 자유게시판 메인 화면 게시글 - by leekoby */
-const ContentItem: React.FC<ContentItemProps> = (props) => {
+const ContentItem: React.FC<ContentItemProps> = ({ props }) => {
   return (
     <>
       {/*  list container */}
       <div className="flex flex-col items-center justify-center mt-2 bg-white rounded-md shadow-md md:flex-row ">
         {/* List Item * */}
-        <div className="flex flex-col items-center w-full h-full p-5 bg-gray-100 rounded-md ">
+        <div className="flex flex-col items-center w-full h-full p-5 bg-sub-100 rounded-md ">
           {/* Thumnail */}
           {/* <Image src={defaultThumnail} className="h-auto mx-1 my-1 border rounded-lg w-80 md:w-40" alt="" /> */}
           {/* right content */}
