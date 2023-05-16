@@ -55,6 +55,7 @@ public class FreeBoardController {
         List<Tag> tags = tagMapper.tagPostDtosToTag(patch.getTags());
 
         FreeBoard freeBoardPatch = freeBoardService.updateFreeBoard(patch,freeBoardId);
+        // 태그 업데이트
         List<Tag> updatedTag = freeBoardTagService.updateFreeBoardTag(tags, freeBoardPatch);
 
         FreeBoardDto.Response response = mapper.freeBoardToFreeBoardResponseDto(freeBoardPatch);

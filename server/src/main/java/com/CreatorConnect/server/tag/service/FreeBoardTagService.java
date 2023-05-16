@@ -3,7 +3,7 @@ package com.CreatorConnect.server.tag.service;
 import com.CreatorConnect.server.freeboard.entity.FreeBoard;
 import com.CreatorConnect.server.tag.entity.Tag;
 import com.CreatorConnect.server.tag.entity.TagToFreeBoard;
-import com.CreatorConnect.server.tag.repository.TagBoardRepository;
+import com.CreatorConnect.server.tag.repository.TagToFreeBoardRepository;
 import com.CreatorConnect.server.tag.repository.TagRepository;
 import org.springframework.stereotype.Service;
 
@@ -14,11 +14,11 @@ import java.util.Optional;
 @Service
 public class FreeBoardTagService {
     private final TagRepository tagRepository;
-    private final TagBoardRepository tagBoardRepository;
+    private final TagToFreeBoardRepository tagToFreeBoardRepository;
 
-    public FreeBoardTagService(TagRepository tagRepository, TagBoardRepository tagBoardRepository) {
+    public FreeBoardTagService(TagRepository tagRepository, TagToFreeBoardRepository tagBoardRepository) {
         this.tagRepository = tagRepository;
-        this.tagBoardRepository = tagBoardRepository;
+        this.tagToFreeBoardRepository = tagBoardRepository;
     }
 
     /**
@@ -39,7 +39,7 @@ public class FreeBoardTagService {
 
             TagToFreeBoard tagBoard = new TagToFreeBoard(freeBoard, savedTag);
             // 3. 태그 저장
-            tagBoardRepository.save(tagBoard);
+            tagToFreeBoardRepository.save(tagBoard);
         }
         return tags;
     }
@@ -58,7 +58,7 @@ public class FreeBoardTagService {
      */
     public List<Tag> updateFreeBoardTag(List<Tag> tags, FreeBoard freeBoard) {
         // 1. 태그 수정 시 수정된 태그 존재 여부 확인
-        List<TagToFreeBoard> findTagToFreeBoards = tagBoardRepository.findByFreeBoard(freeBoard);
+        List<TagToFreeBoard> findTagToFreeBoards = tagToFreeBoardRepository.findByFreeBoard(freeBoard);
         List<Tag> updatedFreeBoardTags = new ArrayList<>();
 
         // 2. 수정으로 태그를 입력받지 않은 경우(태그가 없는 상태) 수정 전 게시글에 태그 존재 여부 확인
@@ -100,11 +100,10 @@ public class FreeBoardTagService {
             updatedFreeBoardTags.add(updatedTag);
 
             // 3-3. 수정된 태그가 db에 없으면 db에 수정된 태그 저장
-            tagBoardRepository.save(tagToFreeBoard);
+            tagToFreeBoardRepository.save(tagToFreeBoard);
         }
         return updatedFreeBoardTags;
     }
-
 
 
     // 태그 존재 여부 검증 메서드
@@ -138,7 +137,7 @@ public class FreeBoardTagService {
 
     // 게시글과 연결된 태그 삭제 메서드(TagToFreeBoard에 있는 데이터 삭제)
     private void removeTagToFreeBoard(TagToFreeBoard tagToFreeBoard) {
-        tagBoardRepository.delete(tagToFreeBoard);
+        tagToFreeBoardRepository.delete(tagToFreeBoard);
     }
 
     /**
