@@ -137,9 +137,9 @@ const BoardRecommentForm: React.FC<Props> = ({ type, boardId, commentId }) => {
       />
       <button
         type="submit"
-        className="ml-auto mt-3 px-3 py-2 bg-main-400 text-white font-bold rounded-sm transition-colors hover:bg-main-500 active:bg-main-600"
+        className="ml-auto mt-3 px-3 py-2 text-sm bg-main-400 text-white font-bold rounded-sm transition-colors hover:bg-main-500 active:bg-main-600"
       >
-        답글작성
+        답글 작성
       </button>
     </form>
   );

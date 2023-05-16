@@ -11,10 +11,18 @@ import {
   TrashIcon as OTrashIcon,
   PencilSquareIcon as OPencilSquareIcon,
 } from "@heroicons/react/24/outline";
-// import { LinkIcon as SLinkIcon } from "@heroicons/react/24/solid";
+import { BookmarkIcon as SBookmarkIcon } from "@heroicons/react/24/solid";
+import { isAxiosError } from "axios";
 
 // api
-import { apiDeleteFeedbackBoard, apiDeleteFreeBoard, apiDeleteJobBoard, apiDeletePromotionBoard } from "@/apis";
+import {
+  apiCreateBookmark,
+  apiDeleteBookmark,
+  apiDeleteFeedbackBoard,
+  apiDeleteFreeBoard,
+  apiDeleteJobBoard,
+  apiDeletePromotionBoard,
+} from "@/apis";
 
 // store
 import { useLoadingStore } from "@/store";
@@ -105,11 +113,52 @@ const BoardHeader: React.FC<Props> = ({
         status: "error",
         duration: 2500,
         isClosable: true,
+        position: "top",
       });
     } finally {
       loading.end();
     }
   }, [boardId, loading]);
+
+  /** 2023/05/17 - 게시글 북마크 - by 1-blue */
+  const onClickBookmark = async () => {
+    try {
+      // TODO: 북마크 여부에 따른 조건부 처리
+      if (true) {
+        await apiCreateBookmark(type, { boardId });
+      } else {
+        await apiDeleteBookmark(type, { boardId });
+      }
+
+      // TODO: 북마크 상태 변경
+      // queryClient()
+
+      toast({
+        description: "북마크를 눌렀습니다.",
+        status: "success",
+        duration: 2500,
+        isClosable: true,
+      });
+    } catch (error) {
+      console.error(error);
+
+      if (isAxiosError(error)) {
+        toast({
+          description: error.response?.data,
+          status: "error",
+          duration: 2500,
+          isClosable: true,
+        });
+      } else {
+        toast({
+          description: "북마크 처리를 실패했습니다.",
+          status: "error",
+          duration: 2500,
+          isClosable: true,
+        });
+      }
+    }
+  };
 
   return (
     <>
@@ -120,18 +169,27 @@ const BoardHeader: React.FC<Props> = ({
         <button type="button" className="ml-auto" onClick={copyLink}>
           <OLinkIcon className="w-6 h-6 hover:text-main-400 hover:stroke-2 active:text-main-500" />
         </button>
-        <button type="button" className="ml-2">
+        <button type="button" className="ml-4">
           {/* TODO: 조건부 */}
-          <OBookmarkIcon className="w-6 h-6 hover:text-main-400 hover:stroke-2 active:text-main-500" />
-          {/* <SBookmarkIcon className="w-6 h-6" /> */}
+          {true ? (
+            <OBookmarkIcon
+              className="w-6 h-6 hover:text-main-400 hover:stroke-2 active:text-main-500"
+              onClick={onClickBookmark}
+            />
+          ) : (
+            <SBookmarkIcon
+              className="w-6 h-6 hover:text-main-400 hover:stroke-2 active:text-main-500"
+              onClick={onClickBookmark}
+            />
+          )}
         </button>
 
         {member?.memberId === memberId && (
           <>
-            <Link href={`/${type}/edit?boardId=${boardId}`} className="ml-2">
+            <Link href={`/${type}/edit?boardId=${boardId}`} className="ml-4">
               <OPencilSquareIcon className="w-6 h-6 hover:text-main-400 hover:stroke-2 active:text-main-500" />
             </Link>
-            <button type="button" className="ml-2" onClick={onDeleteBoard}>
+            <button type="button" className="ml-4" onClick={onDeleteBoard}>
               <OTrashIcon className="w-6 h-6 hover:text-main-400 hover:stroke-2 active:text-main-500" />
             </button>
           </>

@@ -171,7 +171,7 @@ const BoardComment: React.FC<Props> = ({ type, boardId, comment }) => {
   return (
     <li className="flex space-x-3">
       <Avatar src={comment.profileImageUrl} className="w-12 h-12 flex-shrink-0" />
-      <div className="flex-1 flex flex-col space-y-2">
+      <div className="flex-1 flex flex-col">
         <div className="space-x-2">
           <span className="font-bold">{comment.nickname}</span>
           <time className="text-sm text-sub-400">{moment(comment.createdAt).endOf("day").fromNow()}</time>
@@ -218,7 +218,7 @@ const BoardComment: React.FC<Props> = ({ type, boardId, comment }) => {
           )}
         </div>
         <textarea
-          className="p-2 leading-4 resize-none overflow-hidden bg-transparent focus:outline-main-400 focus:font-semibold"
+          className="py-2 leading-[22px] resize-none overflow-hidden bg-transparent focus:outline-main-400 focus:font-semibold focus:px-2"
           ref={textareaRef}
           disabled={disabled}
           value={content}
