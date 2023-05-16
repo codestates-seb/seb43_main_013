@@ -1,8 +1,12 @@
 package com.CreatorConnect.server.member.entity;
 
 import com.CreatorConnect.server.audit.Auditable;
+import com.CreatorConnect.server.comment.entity.FeedbackComment;
+import com.CreatorConnect.server.comment.entity.FreeComment;
 import com.CreatorConnect.server.freeboard.entity.FreeBoard;
 import com.CreatorConnect.server.feedbackboard.entity.FeedbackBoard;
+import com.CreatorConnect.server.member.bookmark.entity.Bookmark;
+import com.CreatorConnect.server.member.like.entity.Like;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,7 +14,6 @@ import lombok.Setter;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Pattern;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -88,8 +91,11 @@ public class Member extends Auditable {
 //    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 //    private List<JobBoard> jobBoards = new ArrayList<>();
 //
-//    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-//    private List<Comment> comments = new ArrayList<>();
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<FeedbackComment> feedbackComments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<FreeComment> freeComments = new ArrayList<>();
 //
 //    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 //    private List<ReComment> reComments = new ArrayList<>();
@@ -97,8 +103,13 @@ public class Member extends Auditable {
 //    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 //    private List<Bookmark> bookmarks = new ArrayList<>();
 //
-//    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-//    private List<Like> likes = new ArrayList<>();
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Set<Like> likes = new HashSet<>();
+
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Set<Bookmark> bookmarks = new HashSet<>();
+
+
 
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> roles = new ArrayList<>();

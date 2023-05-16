@@ -2,6 +2,7 @@ package com.CreatorConnect.server.freeboard.entity;
 
 import com.CreatorConnect.server.audit.Auditable;
 import com.CreatorConnect.server.category.entity.Category;
+import com.CreatorConnect.server.comment.entity.FreeComment;
 import com.CreatorConnect.server.member.entity.Member;
 import com.CreatorConnect.server.tag.entity.TagToFreeBoard;
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -23,7 +24,7 @@ import java.util.List;
 public class FreeBoard extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long freeBoardId;
+    private Long freeBoardId;
 
     @Column(nullable = false)
     private String title; // 게시글 제목
@@ -99,4 +100,7 @@ public class FreeBoard extends Auditable {
     @JsonBackReference
     private List<TagToFreeBoard> tagBoards = new ArrayList<>();
 
+    // FreeBoard - FreeComment 일대다 매핑
+    @OneToMany(mappedBy = "freeBoard", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<FreeComment> freeComments = new ArrayList<>();
 }

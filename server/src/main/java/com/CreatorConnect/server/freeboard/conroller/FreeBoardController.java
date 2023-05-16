@@ -1,21 +1,33 @@
 package com.CreatorConnect.server.freeboard.conroller;
 
 import com.CreatorConnect.server.category.service.CategoryService;
+import com.CreatorConnect.server.feedbackboard.entity.FeedbackBoard;
 import com.CreatorConnect.server.freeboard.dto.FreeBoardDto;
 import com.CreatorConnect.server.freeboard.entity.FreeBoard;
 import com.CreatorConnect.server.freeboard.mapper.FreeBoardMapper;
 import com.CreatorConnect.server.freeboard.service.FreeBoardService;
+import com.CreatorConnect.server.tag.service.FreeBoardTagService;
+import com.CreatorConnect.server.member.bookmark.entity.Bookmark;
+import com.CreatorConnect.server.member.bookmark.repository.BookmarkRepository;
+import com.CreatorConnect.server.member.entity.Member;
+import com.CreatorConnect.server.member.like.entity.Like;
+import com.CreatorConnect.server.member.like.repository.LikeRepository;
+import com.CreatorConnect.server.member.repository.MemberRepository;
+import com.CreatorConnect.server.member.service.MemberService;
 import com.CreatorConnect.server.tag.entity.Tag;
 import com.CreatorConnect.server.tag.mapper.TagMapper;
-import com.CreatorConnect.server.tag.service.FreeBoardTagService;
+import com.CreatorConnect.server.tag.service.TagService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")
@@ -26,16 +38,24 @@ public class FreeBoardController {
     private final CategoryService categoryService;
     private final TagMapper tagMapper;
     private final FreeBoardTagService freeBoardTagService;
+    private final TagService tagService;
+    private final MemberService memberService;
+    private final MemberRepository memberRepository;
+    private final LikeRepository likeRepository;
+    private final BookmarkRepository bookmarkRepository;
 
-
-    public FreeBoardController(FreeBoardService freeBoardService, FreeBoardMapper mapper,
-                               CategoryService categoryService, TagMapper tagMapper,
-                               FreeBoardTagService tagService) {
+    public FreeBoardController(FreeBoardService freeBoardService, FreeBoardMapper mapper, CategoryService categoryService, TagMapper tagMapper, TagService tagService, MemberService memberService, MemberRepository memberRepository, LikeRepository likeRepository, BookmarkRepository bookmarkRepository, FreeBoardTagService tagService) {
         this.freeBoardService = freeBoardService;
         this.mapper = mapper;
         this.categoryService = categoryService;
         this.tagMapper = tagMapper;
         this.freeBoardTagService = tagService;
+        this.tagService = tagService;
+        this.memberService = memberService;
+        this.memberRepository = memberRepository;
+        this.likeRepository = likeRepository;
+        this.bookmarkRepository = bookmarkRepository;
+
     }
 
     // 자유 게시판 게시글 등록
@@ -99,6 +119,139 @@ public class FreeBoardController {
         freeBoardService.removeFreeBoard(freeboardId);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @PostMapping("/freeboard/{freeBoardId}/like")
+    public ResponseEntity likeFreeBoard (@PathVariable("freeBoardId") @Positive Long freeBoardId) {
+
+        // 현재 로그인한 사용자 정보 가져오기
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Member currentMember = memberService.findVerifiedMember(authentication.getName());
+
+        FreeBoard foundfreeBoard = freeBoardService.verifyFreeBoard(freeBoardId);
+
+        // 현재 로그인한 사용자가 해당 게시물을 좋아요 했는지 확인
+        boolean isAlreadyLiked = currentMember.getLikes().stream()
+                .filter(Objects::nonNull) // null인 요소 필터링
+                .map(Like::getFreeBoard)
+                .filter(Objects::nonNull) // null인 FreeBoard 필터링
+                .anyMatch(freeBoard -> freeBoard.getFreeBoardId().equals(freeBoardId));
+
+        if (isAlreadyLiked) {
+            return ResponseEntity.badRequest().body("Already liked.");
+        }
+
+        Like like = new Like();
+        like.setBoardType(Like.BoardType.FREEBOARD);
+        like.setMember(currentMember);
+        like.setFreeBoard(foundfreeBoard);
+        likeRepository.save(like);
+
+        // 현재 사용자의 likes 컬렉션에 좋아요 추가
+        currentMember.getLikes().add(like);
+        memberRepository.save(currentMember);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+
+    }
+
+    @DeleteMapping("/freeboard/{freeBoardId}/like")
+    public ResponseEntity unlikeFreeBoard (@PathVariable("freeBoardId") @Positive Long freeBoardId) {
+
+        // 현재 로그인한 사용자 정보 가져오기
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Member currentMember = memberService.findVerifiedMember(authentication.getName());
+
+        FreeBoard freeBoard = freeBoardService.verifyFreeBoard(freeBoardId);
+
+        Optional<Set<Like>> likes = Optional.ofNullable(currentMember.getLikes());
+
+        Set<Like> foundLikes = likes.orElse(Collections.emptySet())
+                .stream()
+                .filter(l -> l != null && l.getFreeBoard() != null && l.getFreeBoard().getFreeBoardId().equals(freeBoard.getFreeBoardId()))
+                .collect(Collectors.toSet());
+
+        if (foundLikes.isEmpty()) {
+            return ResponseEntity.badRequest().body("Not liked.");
+        }
+
+        // 현재 사용자의 likes 컬렉션에서 좋아요 삭제
+        for (Like foundLike : foundLikes) {
+            currentMember.getLikes().remove(foundLike);
+            likeRepository.delete(foundLike);
+        }
+
+        memberRepository.save(currentMember);
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+
+    }
+
+    @PostMapping("/freeboard/{freeBoardId}/bookmark")
+    public ResponseEntity bookmarkFeedbackBoard (@PathVariable("freeBoardId") @Positive Long freeBoardId) {
+
+        // 현재 로그인한 사용자 정보 가져오기
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Member currentMember = memberService.findVerifiedMember(authentication.getName());
+
+        FreeBoard foundfreeBoard = freeBoardService.verifyFreeBoard(freeBoardId);
+
+        // 현재 로그인한 사용자가 해당 게시물을 북마크 했는지 확인
+        boolean isAlreadyBookMarked = currentMember.getBookmarks().stream()
+                .filter(Objects::nonNull) // null인 요소 필터링
+                .map(Bookmark::getFreeBoard)
+                .filter(Objects::nonNull) // null인 FeedbackBoard 필터링
+                .anyMatch(freeBoard -> freeBoard.getFreeBoardId().equals(foundfreeBoard.getFreeBoardId()));
+
+        if (isAlreadyBookMarked) {
+            return ResponseEntity.badRequest().body("Already bookmarked.");
+        }
+
+        Bookmark bookmark = new Bookmark();
+        bookmark.setBoardType(Like.BoardType.FREEBOARD);
+        bookmark.setMember(currentMember);
+        bookmark.setFreeBoard(foundfreeBoard);
+        bookmarkRepository.save(bookmark);
+
+        // 현재 사용자의 bookmark 컬렉션에 bookmark 추가
+        currentMember.getBookmarks().add(bookmark);
+        memberRepository.save(currentMember);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+
+    }
+
+    @DeleteMapping("/freeboard/{freeBoardId}/bookmark")
+    public ResponseEntity unbookmarkFeedbackBoard (@PathVariable("freeBoardId") @Positive Long freeBoardId) {
+
+        // 현재 로그인한 사용자 정보 가져오기
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Member currentMember = memberService.findVerifiedMember(authentication.getName());
+
+        FreeBoard foundfreeBoard = freeBoardService.verifyFreeBoard(freeBoardId);
+        // 현재 로그인한 사용자가 해당 게시물을 북마크 했는지 확인
+
+        Optional<Set<Bookmark>> bookmarks = Optional.ofNullable(currentMember.getBookmarks());
+
+        Set<Bookmark> foundBookmarks = bookmarks.orElse(Collections.emptySet())
+                .stream()
+                .filter(l -> l != null && l.getFreeBoard() != null && l.getFreeBoard().getFreeBoardId().equals(foundfreeBoard.getFreeBoardId()))
+                .collect(Collectors.toSet());
+
+        if (foundBookmarks.isEmpty()) {
+            return ResponseEntity.badRequest().body("Not bookmarked.");
+        }
+
+        // 현재 사용자의 bookmarks 컬렉션에서 북마크 삭제
+        currentMember.getBookmarks().removeAll(foundBookmarks);
+
+        // 삭제된 북마크 엔티티들을 데이터베이스에서 삭제
+        bookmarkRepository.deleteAll(foundBookmarks);
+
+        memberRepository.save(currentMember);
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+
     }
 
 }

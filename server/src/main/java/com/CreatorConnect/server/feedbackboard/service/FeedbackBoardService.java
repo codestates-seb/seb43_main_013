@@ -19,6 +19,7 @@ import com.CreatorConnect.server.tag.dto.TagDto;
 import com.CreatorConnect.server.tag.entity.Tag;
 import com.CreatorConnect.server.tag.mapper.TagMapper;
 import com.CreatorConnect.server.tag.service.FeedbackBoardTagService;
+import com.CreatorConnect.server.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.sql.Update;
 import org.springframework.data.domain.Page;
@@ -46,9 +47,14 @@ public class FeedbackBoardService {
     private final TagMapper tagMapper;
     private final FeedbackBoardTagService feedbackBoardTagService;
     private final CategoryService categoryService;
+    private final MemberService memberService;
 
     //등록
     public FeedbackBoardResponseDto.Post createFeedback(FeedbackBoardDto.Post postDto){
+        // 멤버 검증
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        memberService.verifiedAuthenticatedMember(postDto.getMemberId(), authentication.getName());
+
         // Dto-Entity 변환
         FeedbackBoard feedbackBoard = mapper.feedbackBoardPostDtoToFeedbackBoard(postDto);
         Optional<Category> category = categoryRepository.findByCategoryName(postDto.getCategoryName());
@@ -81,9 +87,7 @@ public class FeedbackBoardService {
 
         // 글 작성한 멤버가 현재 로그인한 멤버와 같은지 확인
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if(!Objects.equals(foundFeedbackBoard.getMember().getEmail(), authentication.getName())){
-            throw new BusinessLogicException(ExceptionCode.INVALID_MEMBER);
-        }
+        memberService.verifiedAuthenticatedMember(foundFeedbackBoard.getMemberId(), authentication.getName());
 
         // 찾은 Entity의 값 변경
         Optional.ofNullable(feedbackBoard.getTitle())
@@ -186,9 +190,7 @@ public class FeedbackBoardService {
 
         // 글 작성한 멤버가 현재 로그인한 멤버와 같은지 확인
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if(!Objects.equals(feedbackBoard.getMember().getEmail(), authentication.getName())){
-            throw new BusinessLogicException(ExceptionCode.INVALID_MEMBER);
-        }
+        memberService.verifiedAuthenticatedMember(feedbackBoard.getMemberId(), authentication.getName());
 
         // 삭제
         feedbackBoardRepository.delete(feedbackBoard);
@@ -196,7 +198,7 @@ public class FeedbackBoardService {
 
 
     //피드백 아이디로 피드백 찾는 메서드
-    private FeedbackBoard findVerifiedFeedbackBoard(Long feedbackBoardId) {
+    public FeedbackBoard findVerifiedFeedbackBoard(Long feedbackBoardId) {
         Optional<FeedbackBoard> feedbackBoard = feedbackBoardRepository.findById(feedbackBoardId);
         return feedbackBoard.orElseThrow(() -> new BusinessLogicException(ExceptionCode.FEEDBACK_NOT_FOUND));
     }
