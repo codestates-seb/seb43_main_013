@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useToast } from "@chakra-ui/react";
 import moment from "moment";
 import { type InfiniteData, useQueryClient } from "@tanstack/react-query";
@@ -6,19 +6,22 @@ import { type InfiniteData, useQueryClient } from "@tanstack/react-query";
 import { QUERY_KEYS } from "@/hooks/query";
 
 // api
-import { apiUpdateComment } from "@/apis";
+import { apiDeleteRecomment, apiUpdateComment } from "@/apis";
 
 // store
 import { useLoadingStore } from "@/store";
 
 // hook
 import useResizeTextarea from "@/hooks/useResizeTextarea";
+import { useMemberStore } from "@/store/useMemberStore";
 
 // component
 import Avatar from "@/components/Avatar";
+import BoardRecommentForm from "./BoardRecommentForm";
 
 // type
 import type { ApiFetchCommentsResponse, BoardType, Comment } from "@/types/api";
+import BoardRecomment from "./BoardRecomment";
 interface Props {
   type: BoardType;
   boardId: number;
@@ -28,12 +31,13 @@ interface Props {
 /** 2023/05/11 - 게시판의 댓글들 컴포넌트 - by 1-blue */
 const BoardComment: React.FC<Props> = ({ type, boardId, comment }) => {
   const toast = useToast();
-  const { start, end } = useLoadingStore((state) => state);
+  const { loading } = useLoadingStore((state) => state);
+  const { member } = useMemberStore();
 
-  /** 2023/05/11 - 답글 더 보기  */
+  /** 2023/05/11 - 답글 더 보기 - by 1-blue */
   const [isShow, setIsShow] = useState(false);
 
-  /** 2023/05/11 - 로그인한 유저 정보 - by 1-blue */
+  /** 2023/05/11 - 댓글 수정 textarea resizing - by 1-blue */
   const [textareaRef, handleResizeHeight] = useResizeTextarea();
 
   /** 2023/05/11 - comment의 content인 textarea 높이 초기화 - by 1-blue */
@@ -50,21 +54,29 @@ const BoardComment: React.FC<Props> = ({ type, boardId, comment }) => {
 
   /** 2023/05/11 - 댓글 수정 완료 - by 1-blue */
   const onClickUpdate = async () => {
-    if (content.trim().length === 0)
+    if (!member)
+      return toast({
+        description: "댓글을 수정했습니다.",
+        status: "success",
+        duration: 2500,
+        isClosable: true,
+      });
+
+    if (content.trim().length === 0) {
+      textareaRef.current?.focus();
+
       return toast({
         description: "댓글을 입력해주세요!",
         status: "warning",
         duration: 2500,
         isClosable: true,
       });
+    }
 
     try {
-      start();
+      loading.start();
 
-      // TODO: memberId 넣기
-      await apiUpdateComment(type, { boardId, commentId: comment.commentId, content, memberId: 1 });
-
-      end();
+      await apiUpdateComment(type, { boardId, commentId: comment.commentId, content, memberId: member.memberId });
 
       queryClient.setQueryData<InfiniteData<ApiFetchCommentsResponse> | undefined>(
         [QUERY_KEYS.comment, type],
@@ -88,13 +100,73 @@ const BoardComment: React.FC<Props> = ({ type, boardId, comment }) => {
       console.error(error);
 
       return toast({
-        description: "댓글 삭제에 실패했습니다. 잠시후에 다시 시도해주세요!",
+        description: "댓글 수정에 실패했습니다. 잠시후에 다시 시도해주세요!",
         status: "error",
         duration: 2500,
         isClosable: true,
       });
+    } finally {
+      setDisabled(true);
+      loading.end();
     }
   };
+
+  /** 2023/05/11 - 답글 삭제 ( 버블링 ) - by 1-blue */
+  const onDeleteRecomment: React.MouseEventHandler<HTMLUListElement> = useCallback(
+    async (e) => {
+      if (!(e.target instanceof HTMLButtonElement)) return;
+      if (!e.target.dataset.recommentId) return;
+
+      const recommentId = +e.target.dataset.recommentId;
+
+      try {
+        loading.start();
+
+        await apiDeleteRecomment(type, { boardId, commentId: comment.commentId, recommentId });
+
+        queryClient.setQueryData<InfiniteData<ApiFetchCommentsResponse> | undefined>(
+          [QUERY_KEYS.comment, type],
+          (prev) =>
+            prev && {
+              ...prev,
+              pages: prev.pages.map((page) => ({
+                ...page,
+                data: page.data.map((v) => {
+                  if (v.commentId !== comment.commentId) return v;
+
+                  return {
+                    ...v,
+                    recomments: v.recomments.filter((v) => v.recommentId !== recommentId),
+                  };
+                }),
+              })),
+            },
+        );
+
+        return toast({
+          description: "답글을 삭제했습니다.",
+          status: "success",
+          duration: 2500,
+          isClosable: true,
+        });
+      } catch (error) {
+        console.error(error);
+
+        return toast({
+          description: "답글 삭제에 실패했습니다. 잠시후에 다시 시도해주세요!",
+          status: "error",
+          duration: 2500,
+          isClosable: true,
+        });
+      } finally {
+        loading.end();
+      }
+    },
+    [queryClient, comment],
+  );
+
+  /** 2023/05/13 - 답글 폼 보기 - by 1-blue */
+  const [isShowForm, setIsShowForm] = useState(false);
 
   return (
     <li className="flex space-x-3">
@@ -127,11 +199,8 @@ const BoardComment: React.FC<Props> = ({ type, boardId, comment }) => {
             <>
               <button
                 type="button"
-                className="text-xs text-sub-500 hover:font-bold hover:text-sub-600"
-                onClick={() => {
-                  onClickUpdate();
-                  setDisabled(true);
-                }}
+                className="text-xs text-gray-500 hover:font-bold hover:text-gray-600"
+                onClick={() => onClickUpdate()}
               >
                 수정 완료
               </button>
@@ -149,7 +218,7 @@ const BoardComment: React.FC<Props> = ({ type, boardId, comment }) => {
           )}
         </div>
         <textarea
-          className="leading-4 resize-none overflow-hidden bg-transparent"
+          className="p-2 leading-4 resize-none overflow-hidden bg-transparent focus:outline-main-400 focus:font-semibold"
           ref={textareaRef}
           disabled={disabled}
           value={content}
@@ -157,30 +226,42 @@ const BoardComment: React.FC<Props> = ({ type, boardId, comment }) => {
             setContent(e.target.value);
             handleResizeHeight();
           }}
-        >
-          {comment.content}
-        </textarea>
+        />
 
-        {!!comment.recomments?.length && (
-          <button type="button" className="self-start text-sub-500 text-sm" onClick={() => setIsShow((prev) => !prev)}>
-            답글 {comment.recomments?.length}개 {isShow ? "닫기" : "더 보기"}
+        <div className="space-x-2">
+          {!!comment.recomments?.length && (
+            <button
+              type="button"
+              className="text-sub-500 text-xs hover:text-sub-600 hover:font-bold"
+              onClick={() => setIsShow((prev) => !prev)}
+            >
+              답글 {comment.recomments?.length}개 {isShow ? "닫기" : "더 보기"}
+            </button>
+          )}
+          <button
+            type="button"
+            onClick={() => setIsShowForm((prev) => !prev)}
+            className="text-sub-500 text-xs hover:text-sub-600 hover:font-bold"
+          >
+            답글 달기
           </button>
+        </div>
+
+        {isShow && !!comment.recomments?.length && (
+          <ul onClick={onDeleteRecomment} className="space-y-2">
+            {comment.recomments.map((recomment) => (
+              <BoardRecomment
+                key={recomment.recommentId}
+                type={type}
+                boardId={boardId}
+                commentId={comment.commentId}
+                recomment={recomment}
+              />
+            ))}
+          </ul>
         )}
 
-        {isShow &&
-          !!comment.recomments?.length &&
-          comment.recomments.map((recomment) => (
-            <li key={recomment.recommentId} className="flex space-x-3">
-              <Avatar src={recomment.profileImageUrl} className="w-10 h-10 flex-shrink-0" />
-              <div className="flex flex-col space-y-1">
-                <div className="space-x-2">
-                  <span className="text-xs font-bold">{recomment.nickname}</span>
-                  <time className="text-xs text-sub-400">{moment(recomment.createdAt).endOf("day").fromNow()}</time>
-                </div>
-                <p className="text-xs leading-4">{recomment.content}</p>
-              </div>
-            </li>
-          ))}
+        {isShowForm && <BoardRecommentForm type={type} boardId={boardId} commentId={comment.commentId} />}
       </div>
     </li>
   );

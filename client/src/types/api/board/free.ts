@@ -1,12 +1,12 @@
 // https://main-project.gitbook.io/main-project/undefined-1/undefined
 
 import type { PageInfo } from "..";
-import type { Board } from "./";
+import type { Board, DetailTag, Tag } from "./";
 
 /** 2023/05/10 - 자유 게시판 타입 - by 1-blue */
 export interface FreeBoard extends Board {
   freeBoardId: number;
-  tag: string[]; // 태그
+  tags: DetailTag[];
   categoryName: string; // 카테고리
 }
 
@@ -16,7 +16,7 @@ export interface ApiCreateFreeBoardRequest {
   memberId: number;
   title: string;
   content: string;
-  tag: string[];
+  tags: Tag[];
   categoryName: string;
 }
 /** 2023/05/10 - 자유 게시판 생성 요청 수신 타입 - by 1-blue */
@@ -46,7 +46,7 @@ export interface ApiUpdateFreeBoardRequest {
   freeBoardId: number;
   title: string;
   content: string;
-  tag: string[];
+  tags: Tag[];
   categoryName: string;
 }
 /** 2023/05/10 - 자유 게시판 수정 요청 수신 타입 - by 1-blue */

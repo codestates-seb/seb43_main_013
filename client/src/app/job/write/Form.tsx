@@ -9,17 +9,19 @@ import { apiCreateJobBoard } from "@/apis";
 
 // store
 import { useLoadingStore } from "@/store";
+import { useMemberStore } from "@/store/useMemberStore";
 
 // component
 import Input from "@/components/Board/Form/Input";
 import Editor from "@/components/Editor";
-import Category from "@/components/Board/Form/Category";
+import NormalCategory from "@/components/Board/Form/NormalCategory";
 
 /** 2023/05/09 - 구인구직 게시글 작성 form 컴포넌트 - by 1-blue */
 const Form = () => {
   const toast = useToast();
   const router = useRouter();
-  const { start, end } = useLoadingStore((state) => state);
+  const { loading } = useLoadingStore((state) => state);
+  const { member } = useMemberStore();
 
   /** 2023/05/09 - wysiwyg 으로 받는 content - by 1-blue */
   const [content, setContent] = useState("");
@@ -30,6 +32,15 @@ const Form = () => {
   /** 2023/05/09 - 구인구직 게시글 생성 - by 1-blue */
   const onSubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
+
+    if (!member) {
+      return toast({
+        description: "로그인후에 접근해주세요!",
+        status: "error",
+        duration: 2500,
+        isClosable: true,
+      });
+    }
 
     const values: string[] = [];
     const formData = new FormData(e.currentTarget);
@@ -59,7 +70,7 @@ const Form = () => {
       });
 
     try {
-      start();
+      loading.start();
 
       const { jobBoardId } = await apiCreateJobBoard({
         memberId: 1,
@@ -67,8 +78,6 @@ const Form = () => {
         content,
         jobCategoryName: selectedJobCategory,
       });
-
-      end();
 
       toast({
         description: "게시글 생성했습니다.\n생성된 게시글 페이지로 이동됩니다.",
@@ -87,6 +96,8 @@ const Form = () => {
         duration: 2500,
         isClosable: true,
       });
+    } finally {
+      loading.end();
     }
   };
 
@@ -98,7 +109,7 @@ const Form = () => {
         <div className="w-full md:w-0 md:flex-1 space-y-2 z-[1]">
           <Input name="제목" type="text" placeholder="제목을 입력해주세요!" />
           <div className="flex flex-col md:flex-row space-y-4 md:space-x-4 md:space-y-0">
-            <Category type="job" selectedCategory={selectedJobCategory} setSelectedCategory={setSelectedJobCategory} />
+            <NormalCategory selectedCategory={selectedJobCategory} setSelectedCategory={setSelectedJobCategory} />
           </div>
         </div>
       </section>

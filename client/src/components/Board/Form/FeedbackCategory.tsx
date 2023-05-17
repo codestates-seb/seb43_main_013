@@ -4,42 +4,39 @@ import { CheckIcon } from "@heroicons/react/24/solid";
 import { twMerge } from "tailwind-merge";
 
 // hook
-import { useFetchCategories } from "@/hooks/query";
+import { useFetchFeedbackCategories } from "@/hooks/query";
 
 // type
-import type { CategoryType } from "@/types/api";
 interface Props {
-  type: CategoryType;
   selectedCategory: string;
   setSelectedCategory: React.Dispatch<React.SetStateAction<string>>;
 }
 
-/** 2023/05/08 - category 컴포넌트 - by 1-blue */
-const NormalCategory: React.FC<Props> = ({ type, selectedCategory, setSelectedCategory }) => {
+/** 2023/05/16 - 피드백 category 컴포넌트 - by 1-blue */
+const FeedbackCategory: React.FC<Props> = ({ selectedCategory, setSelectedCategory }) => {
   /** 2023/05/09 - 카테고리들 얻기 - by 1-blue */
-  const { categories } = useFetchCategories({ type });
+  const { feedbackCategories } = useFetchFeedbackCategories({ type: "feedback" });
 
   /** 2023/05/09 - 카테고리 초깃값 - by 1-blue */
   useEffect(() => {
     if (selectedCategory) return;
-    if (!categories) return;
+    if (!feedbackCategories?.length) return;
 
-    setSelectedCategory(categories[0]);
-  }, [selectedCategory, categories, setSelectedCategory]);
+    setSelectedCategory(feedbackCategories[0].feedbackCategoryName);
+  }, [selectedCategory, feedbackCategories, setSelectedCategory]);
 
   const [query, setQuery] = useState("");
 
   const filteredCategories =
-    query === "" ? categories : categories?.filter((category) => category.toLowerCase().includes(query.toLowerCase()));
-
-  let title = "";
-  if (type === "normal") title = "전체";
-  if (type === "feedback") title = "피드백";
-  if (type === "job") title = "구인구직";
+    query === ""
+      ? feedbackCategories
+      : feedbackCategories?.filter(({ feedbackCategoryName }) =>
+          feedbackCategoryName.toLowerCase().includes(query.toLowerCase()),
+        );
 
   return (
-    <section className={twMerge("relative flex-1 flex flex-col min-w-0", type === "normal" && "z-[1]")}>
-      <span className="text-base font-bold text-sub-800 mb-1">{title} 카테고리</span>
+    <section className={"relative flex-1 flex flex-col min-w-0 z-[1]"}>
+      <span className="text-base font-bold text-sub-800 mb-1">피드백 카테고리</span>
       <Combobox value={selectedCategory} onChange={setSelectedCategory}>
         {({ open }) => (
           <>
@@ -58,7 +55,7 @@ const NormalCategory: React.FC<Props> = ({ type, selectedCategory, setSelectedCa
             >
               <Combobox.Options className="absolute bottom-0 w-full translate-y-full shadow-md rounded-b-md overflow-hidden">
                 {filteredCategories?.map((category) => (
-                  <Combobox.Option key={category} value={category}>
+                  <Combobox.Option key={category.feedbackCategoryId} value={category.feedbackCategoryName}>
                     {({ active, selected }) => (
                       <li
                         className={twMerge(
@@ -76,7 +73,7 @@ const NormalCategory: React.FC<Props> = ({ type, selectedCategory, setSelectedCa
                         ) : (
                           <div className="w-5 h-5" />
                         )}
-                        <span>{category}</span>
+                        <span>{category.feedbackCategoryName}</span>
                       </li>
                     )}
                   </Combobox.Option>
@@ -90,4 +87,4 @@ const NormalCategory: React.FC<Props> = ({ type, selectedCategory, setSelectedCa
   );
 };
 
-export default NormalCategory;
+export default FeedbackCategory;

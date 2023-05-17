@@ -16,11 +16,12 @@ import { useLoadingStore } from "@/store";
 // hook
 import useTags from "@/hooks/useTags";
 import { useFetchPromotionBoard } from "@/hooks/query";
+import { useMemberStore } from "@/store/useMemberStore";
 
 // component
 import Input from "@/components/Board/Form/Input";
 import Editor from "@/components/Editor";
-import Category from "@/components/Board/Form/Category";
+import NormalCategory from "@/components/Board/Form/NormalCategory";
 import Tag from "@/components/Board/Form/Tag";
 import Skeleton from "@/components/Skeleton";
 
@@ -33,7 +34,8 @@ interface Props {
 const Form: React.FC<Props> = ({ boardId }) => {
   const toast = useToast();
   const router = useRouter();
-  const { start, end } = useLoadingStore((state) => state);
+  const { loading } = useLoadingStore((state) => state);
+  const { member } = useMemberStore();
 
   /** 2023/05/09 - 작성한 태그들 - by 1-blue */
   const [selectedTags, onSelectedTag, onDeleteTag, setSelectedTags] = useTags();
@@ -51,7 +53,7 @@ const Form: React.FC<Props> = ({ boardId }) => {
   useEffect(() => {
     if (!data) return;
 
-    setSelectedTags(data.tag);
+    setSelectedTags(data.tags.map((tag) => tag.tagName));
     setContent(data.content);
     setSelectedNormalCategory(data.categoryName);
   }, [data]);
@@ -59,6 +61,15 @@ const Form: React.FC<Props> = ({ boardId }) => {
   /** 2023/05/09 - 홍보 게시글 수정 - by 1-blue */
   const onSubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
+
+    if (!member) {
+      return toast({
+        description: "로그인후에 접근해주세요!",
+        status: "error",
+        duration: 2500,
+        isClosable: true,
+      });
+    }
 
     const values: string[] = [];
     const formData = new FormData(e.currentTarget);
@@ -111,7 +122,7 @@ const Form: React.FC<Props> = ({ boardId }) => {
       });
 
     try {
-      start();
+      loading.start();
 
       await apiUpdatePromotionBoard({
         promotionBoardId: boardId,
@@ -119,12 +130,10 @@ const Form: React.FC<Props> = ({ boardId }) => {
         link,
         channelName,
         subscriberCount: +subscriberCount,
-        tag: selectedTags,
+        tags: selectedTags.map((tag) => ({ tagName: tag })),
         categoryName: selectedNormalCategory,
         content,
       });
-
-      end();
 
       toast({
         description: "게시글 수정했습니다.\n수정된 게시글 페이지로 이동됩니다.",
@@ -143,6 +152,8 @@ const Form: React.FC<Props> = ({ boardId }) => {
         duration: 2500,
         isClosable: true,
       });
+    } finally {
+      loading.end();
     }
   };
 
@@ -167,11 +178,7 @@ const Form: React.FC<Props> = ({ boardId }) => {
           </div>
           <div className="flex flex-col md:flex-row space-y-4 md:space-x-4 md:space-y-0">
             <Input name="태그" type="text" placeholder="태그를 입력해주세요!" noMessage onKeyDown={onSelectedTag} />
-            <Category
-              type="job"
-              selectedCategory={selectedNormalCategory}
-              setSelectedCategory={setSelectedNormalCategory}
-            />
+            <NormalCategory selectedCategory={selectedNormalCategory} setSelectedCategory={setSelectedNormalCategory} />
           </div>
         </div>
       </section>

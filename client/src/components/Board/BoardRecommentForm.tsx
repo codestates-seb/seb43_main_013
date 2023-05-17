@@ -1,0 +1,148 @@
+import { FormEventHandler, useEffect, useState } from "react";
+import { useToast } from "@chakra-ui/react";
+import { type InfiniteData, useQueryClient } from "@tanstack/react-query";
+
+// api
+import { apiCreateRecomment } from "@/apis";
+
+import { QUERY_KEYS } from "@/hooks/query";
+
+// hook
+import useResizeTextarea from "@/hooks/useResizeTextarea";
+import { useMemberStore } from "@/store/useMemberStore";
+
+// store
+import { useLoadingStore } from "@/store";
+
+// type
+import type { ApiFetchCommentsResponse, BoardType } from "@/types/api";
+interface Props {
+  type: BoardType;
+  boardId: number;
+  commentId: number;
+}
+
+/** 2023/05/13 - 답글 폼 컴포넌트 - by 1-blue */
+const BoardRecommentForm: React.FC<Props> = ({ type, boardId, commentId }) => {
+  const toast = useToast();
+  const { loading } = useLoadingStore((state) => state);
+  const { member } = useMemberStore();
+
+  const [content, setContent] = useState("");
+
+  /** 2023/05/13 - textarea 리사이징 - by 1-blue */
+  const [textareaRef, handleResizeHeight] = useResizeTextarea();
+
+  /** 2023/05/13 - comment의 content인 textarea 높이 초기화 - by 1-blue */
+  useEffect(handleResizeHeight, [handleResizeHeight]);
+
+  /** 2023/05/13 - 답글 추가를 위해 사용 - by 1-blue */
+  const queryClient = useQueryClient();
+
+  /** 2023/05/13 - 답글 등록 핸들러 - by 1-blue */
+  const onSubmitComment: FormEventHandler<HTMLFormElement> = async (e) => {
+    e.preventDefault();
+
+    if (!member) {
+      return toast({
+        description: "로그인후에 접근해주세요!",
+        status: "error",
+        duration: 2500,
+        isClosable: true,
+      });
+    }
+
+    if (!content.trim().length)
+      return toast({
+        description: "답글을 입력해주세요!",
+        status: "warning",
+        duration: 2500,
+        isClosable: true,
+      });
+
+    try {
+      loading.start();
+
+      const { recommentId } = await apiCreateRecomment(type, {
+        boardId,
+        commentId,
+        content,
+        memberId: member.memberId,
+      });
+
+      queryClient.setQueryData<InfiniteData<ApiFetchCommentsResponse> | undefined>(
+        [QUERY_KEYS.comment, type],
+        (prev) =>
+          prev && {
+            ...prev,
+            pages: prev.pages.map((page) => ({
+              ...page,
+              data: page.data.map((comment) => {
+                if (comment.commentId !== commentId) return comment;
+
+                return {
+                  ...comment,
+                  recomments: [
+                    ...comment.recomments,
+                    {
+                      recommentId,
+                      content,
+                      createdAt: new Date(),
+                      modifiedAt: new Date(),
+                      email: "",
+                      memberId: member.memberId,
+                      nickname: member.nickname,
+                      profileImageUrl: member.profileImageUrl,
+                      recommntCount: 0,
+                    },
+                  ],
+                };
+              }),
+            })),
+          },
+      );
+
+      setContent("");
+
+      return toast({
+        description: "답글을 등록했습니다.",
+        status: "success",
+        duration: 2500,
+        isClosable: true,
+      });
+    } catch (error) {
+      console.error(error);
+
+      return toast({
+        description: "답글 등록에 실패했습니다. 잠시후에 다시 시도해주세요!",
+        status: "error",
+        duration: 2500,
+        isClosable: true,
+      });
+    } finally {
+      loading.end();
+    }
+  };
+
+  return (
+    <form className="flex flex-col pt-4" onSubmit={onSubmitComment}>
+      <textarea
+        ref={textareaRef}
+        value={content}
+        onChange={(e) => {
+          setContent(e.target.value);
+          handleResizeHeight();
+        }}
+        className="resize-none bg-gray-200 w-full min-h-[60px] focus:outline-main-300 rounded-md p-2 focus:bg-gray-100"
+      />
+      <button
+        type="submit"
+        className="ml-auto mt-3 px-3 py-2 bg-main-400 text-white font-bold rounded-sm transition-colors hover:bg-main-500 active:bg-main-600"
+      >
+        답글작성
+      </button>
+    </form>
+  );
+};
+
+export default BoardRecommentForm;

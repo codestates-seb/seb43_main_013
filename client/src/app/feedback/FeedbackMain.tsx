@@ -8,7 +8,6 @@ import { useFetchCategories, useFetchFeedbackCategories } from "@/hooks/query";
 import { useFetchFeedbackBoardList } from "@/hooks/query/useFetchFeedbackBoardList";
 import { useCategoriesStore, useSortStore } from "@/store";
 import { useFeedbackCategoriesStore } from "@/store/useFeedbackCategoriesStore";
-import { useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { useState, useRef, useEffect, useCallback } from "react";
 import FeedbackContentItem from "./FeedbackContentItem";

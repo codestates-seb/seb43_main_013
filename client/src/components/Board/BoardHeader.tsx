@@ -18,18 +18,19 @@ import { apiDeleteFeedbackBoard, apiDeleteFreeBoard, apiDeleteJobBoard, apiDelet
 
 // store
 import { useLoadingStore } from "@/store";
+import { useMemberStore } from "@/store/useMemberStore";
 
 // component
 import Avatar from "@/components/Avatar";
 
 // type
-import type { Board, BoardType } from "@/types/api";
+import type { Board, BoardType, DetailTag } from "@/types/api";
 interface Props extends Board {
   type: BoardType;
   boardId: number;
-  tag?: string[];
+  tags?: DetailTag[];
   categoryName?: string;
-  feedbackCateogoryName?: string;
+  feedbackCategoryName?: string;
   jobCategoryName?: string;
   channelName?: string;
   subscriberCount?: number;
@@ -40,14 +41,14 @@ const BoardHeader: React.FC<Props> = ({
   type,
   boardId,
   title,
-  tag,
+  tags,
   memberId,
   nickname,
   createdAt,
   profileImageUrl,
   viewCount,
   categoryName,
-  feedbackCateogoryName,
+  feedbackCategoryName,
   jobCategoryName,
   channelName,
   subscriberCount,
@@ -55,7 +56,8 @@ const BoardHeader: React.FC<Props> = ({
   const toast = useToast();
   const router = useRouter();
   const pathname = usePathname();
-  const { start, end } = useLoadingStore((state) => state);
+  const { loading } = useLoadingStore((state) => state);
+  const { member } = useMemberStore();
 
   /** 2023/05/12 - copy clipboard - by 1-blue */
   const copyLink = useCallback(() => {
@@ -74,7 +76,7 @@ const BoardHeader: React.FC<Props> = ({
     if (!confirm("정말 게시판을 삭제하시겠습니까?")) return;
 
     try {
-      start();
+      loading.start();
 
       switch (type) {
         case "feedback":
@@ -86,8 +88,6 @@ const BoardHeader: React.FC<Props> = ({
         case "promotion":
           await apiDeletePromotionBoard({ promotionBoardId: boardId });
       }
-
-      end();
 
       toast({
         description: "게시판을 삭제했습니다.\n메인 페이지로 이동됩니다!",
@@ -106,8 +106,10 @@ const BoardHeader: React.FC<Props> = ({
         duration: 2500,
         isClosable: true,
       });
+    } finally {
+      loading.end();
     }
-  }, [boardId, start, end]);
+  }, [boardId, loading]);
 
   return (
     <>
@@ -124,8 +126,7 @@ const BoardHeader: React.FC<Props> = ({
           {/* <SBookmarkIcon className="w-6 h-6" /> */}
         </button>
 
-        {/* TODO: 본인 게시글인 경우 */}
-        {true && (
+        {member?.memberId === memberId && (
           <>
             <Link href={`/${type}/edit?boardId=${boardId}`} className="ml-2">
               <OPencilSquareIcon className="w-6 h-6 hover:text-main-400 hover:stroke-2 active:text-main-500" />
@@ -162,9 +163,9 @@ const BoardHeader: React.FC<Props> = ({
 
         <div>
           {categoryName && <span className="text-base font-semibold text-main-500">{categoryName}</span>}
-          {feedbackCateogoryName && (
+          {feedbackCategoryName && (
             <span className="text-base font-semibold text-main-500 before:content-['|'] before:mx-2 before:text-main-400">
-              {feedbackCateogoryName}
+              {feedbackCategoryName}
             </span>
           )}
           {jobCategoryName && <span className="text-base font-semibold text-main-500">{jobCategoryName}</span>}
@@ -172,13 +173,18 @@ const BoardHeader: React.FC<Props> = ({
       </section>
 
       {/* 태그 */}
-      <ul className="flex space-x-2 flex-wrap">
-        {tag?.map((tag) => (
-          <li key={tag} className="px-2 py-1 mt-1 text-xs font-bold text-main-400 border-2 border-main-400 rounded-lg">
-            {tag}
-          </li>
-        ))}
-      </ul>
+      {tags && (
+        <ul className="flex space-x-2 flex-wrap">
+          {tags.map((tag) => (
+            <li
+              key={tag.tagName}
+              className="px-2 py-1 mt-1 text-xs font-bold text-main-400 border-2 border-main-400 rounded-lg"
+            >
+              {tag.tagName}
+            </li>
+          ))}
+        </ul>
+      )}
     </>
   );
 };
