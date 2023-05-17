@@ -19,4 +19,12 @@ public class JobBoardDto {
 
         private String jobCategoryName; // 구인구직 카테고리
     }
+
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Getter
+    @Setter
+    public static class PostResponse{
+        private Long jobBoardId;
+    }
 }
