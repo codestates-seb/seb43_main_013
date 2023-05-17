@@ -32,7 +32,6 @@ import java.util.stream.Collectors;
 @Validated
 public class FeedbackBoardController {
     private final FeedbackBoardService feedbackBoardService;
-
     private final FeedbackBoardMapper mapper;
     private final TagMapper tagMapper;
     private final MemberService memberService;

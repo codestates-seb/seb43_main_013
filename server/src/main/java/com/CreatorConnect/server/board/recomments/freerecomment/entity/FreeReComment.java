@@ -11,7 +11,6 @@ import lombok.Setter;
 
 import javax.persistence.*;
 
-
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter

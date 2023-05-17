@@ -7,7 +7,6 @@ import com.CreatorConnect.server.board.recomments.common.entity.ReCommentPK;
 import com.CreatorConnect.server.board.recomments.freerecomment.entity.FreeReComment;
 import org.springframework.stereotype.Component;
 
-
 @Component
 public class FreeReCommentMapper {
     public FreeReComment dtoToFreeReComment(ReCommentDto.Post postDto, FreeComment foundFreeComment) {
