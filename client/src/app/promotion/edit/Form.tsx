@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 
 // api
 import { apiUpdatePromotionBoard } from "@/apis";
@@ -36,6 +37,7 @@ const Form: React.FC<Props> = ({ boardId }) => {
   const router = useRouter();
   const { loading } = useLoadingStore((state) => state);
   const { member } = useMemberStore();
+  const queryClient = useQueryClient();
 
   /** 2023/05/09 - 작성한 태그들 - by 1-blue */
   const [selectedTags, onSelectedTag, onDeleteTag, setSelectedTags] = useTags();
@@ -98,6 +100,8 @@ const Form: React.FC<Props> = ({ boardId }) => {
         categoryName: selectedNormalCategory,
         content,
       });
+
+      queryClient.invalidateQueries(["promotionBoard", boardId + ""]);
 
       toast({ title: "게시글 수정했습니다.\n수정된 게시글 페이지로 이동됩니다.", status: "success" });
 

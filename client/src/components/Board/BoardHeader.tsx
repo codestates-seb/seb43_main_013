@@ -12,6 +12,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { BookmarkIcon as SBookmarkIcon } from "@heroicons/react/24/solid";
 import { isAxiosError } from "axios";
+import { useQueryClient } from "@tanstack/react-query";
 
 // api
 import {
@@ -62,12 +63,15 @@ const BoardHeader: React.FC<Props> = ({
   jobCategoryName,
   channelName,
   subscriberCount,
+  bookmarked,
 }) => {
   const toast = useCustomToast();
   const router = useRouter();
   const pathname = usePathname();
   const { loading } = useLoadingStore((state) => state);
   const { member } = useMemberStore();
+
+  const queryClient = useQueryClient();
 
   /** 2023/05/12 - copy clipboard - by 1-blue */
   const copyLink = useCallback(() => {
@@ -86,12 +90,16 @@ const BoardHeader: React.FC<Props> = ({
       switch (type) {
         case "feedback":
           await apiDeleteFeedbackBoard({ feedbackBoardId: boardId });
+          break;
         case "free":
           await apiDeleteFreeBoard({ freeBoardId: boardId });
+          break;
         case "job":
           await apiDeleteJobBoard({ jobBoardId: boardId });
+          break;
         case "promotion":
           await apiDeletePromotionBoard({ promotionBoardId: boardId });
+          break;
       }
 
       toast({ title: "게시판을 삭제했습니다.\n메인 페이지로 이동됩니다!", status: "success" });
@@ -114,16 +122,16 @@ const BoardHeader: React.FC<Props> = ({
 
     try {
       // TODO: 북마크 여부에 따른 조건부 처리
-      if (true) {
-        await apiCreateBookmark(type, { boardId });
-      } else {
+      if (bookmarked) {
         await apiDeleteBookmark(type, { boardId });
+        toast({ title: "북마크를 제거했습니다.", status: "success" });
+      } else {
+        await apiCreateBookmark(type, { boardId });
+        toast({ title: "북마크를 눌렀습니다.", status: "success" });
       }
 
-      // TODO: 북마크 상태 변경
-      // queryClient()
-
-      toast({ title: "북마크를 눌렀습니다.", status: "success" });
+      // FIXME: 시간 남으면 캐싱 무효화에서 수정하기
+      queryClient.invalidateQueries([`${type}Board`, boardId]);
     } catch (error) {
       console.error(error);
 
@@ -142,18 +150,17 @@ const BoardHeader: React.FC<Props> = ({
         <Avatar src={profileImageUrl} alt={`${nickname}님의 프로필 이미지`} className="w-16 h-16 object-fill" />
 
         <button type="button" className="ml-auto" onClick={copyLink}>
-          <OLinkIcon className="w-6 h-6 hover:text-main-400 hover:stroke-2 active:text-main-500" />
+          <OLinkIcon className="text-sub-700 w-6 h-6 hover:text-main-400 hover:stroke-2 active:text-main-500" />
         </button>
         <button type="button" className="ml-4">
-          {/* TODO: 조건부 */}
-          {true ? (
-            <OBookmarkIcon
-              className="w-6 h-6 hover:text-main-400 hover:stroke-2 active:text-main-500"
+          {bookmarked ? (
+            <SBookmarkIcon
+              className="text-sub-700 w-6 h-6 hover:text-main-400 hover:stroke-2 active:text-main-500"
               onClick={onClickBookmark}
             />
           ) : (
-            <SBookmarkIcon
-              className="w-6 h-6 hover:text-main-400 hover:stroke-2 active:text-main-500"
+            <OBookmarkIcon
+              className="text-sub-700 w-6 h-6 hover:text-main-400 hover:stroke-2 active:text-main-500"
               onClick={onClickBookmark}
             />
           )}
@@ -162,10 +169,10 @@ const BoardHeader: React.FC<Props> = ({
         {member?.memberId === memberId && (
           <>
             <Link href={`/${type}/edit?boardId=${boardId}`} className="ml-4">
-              <OPencilSquareIcon className="w-6 h-6 hover:text-main-400 hover:stroke-2 active:text-main-500" />
+              <OPencilSquareIcon className="text-sub-700 w-6 h-6 hover:text-main-400 hover:stroke-2 active:text-main-500" />
             </Link>
             <button type="button" className="ml-4" onClick={onDeleteBoard}>
-              <OTrashIcon className="w-6 h-6 hover:text-main-400 hover:stroke-2 active:text-main-500" />
+              <OTrashIcon className="text-sub-700 w-6 h-6 hover:text-main-400 hover:stroke-2 active:text-main-500" />
             </button>
           </>
         )}
@@ -181,16 +188,16 @@ const BoardHeader: React.FC<Props> = ({
         <span className="text-sub-400 after:content-['|'] after:mx-2 after:text-sub-400">{nickname}</span>
         <span className="text-sub-400 text-sm">{moment(createdAt).endOf("day").fromNow()}</span>
 
-        <OEyeIcon className="ml-auto w-6 h-6 text-sub-500" />
-        <span className="ml-1 text-sm text-sub-500">{viewCount.toLocaleString()}</span>
+        <OEyeIcon className="text-sub-700 ml-auto w-6 h-6" />
+        <span className="ml-1 text-sm text-sub-700">{viewCount.toLocaleString()}</span>
       </section>
 
       {/* 카테고리 || 채널명/구독자수 */}
       <section className="flex">
         {channelName && subscriberCount && (
           <div className="flex flex-col mr-auto">
-            {<span className="font-semibold text-xs text-sub-500">채널명: {channelName}</span>}
-            {<span className="font-semibold text-xs text-sub-500">구독자: {subscriberCount.toLocaleString()}</span>}
+            {<span className="font-semibold text-xs text-sub-700">채널명: {channelName}</span>}
+            {<span className="font-semibold text-xs text-sub-700">구독자: {subscriberCount.toLocaleString()}</span>}
           </div>
         )}
 

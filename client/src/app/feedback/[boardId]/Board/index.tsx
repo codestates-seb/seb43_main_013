@@ -60,7 +60,13 @@ const Board: React.FC<Props> = ({ boardId }) => {
       <BoardContent content={data.content} />
 
       {/* 댓글 정보 / 좋아요 정보 */}
-      <BoardFooter type="feedback" boardId={boardId} commentCount={data.commentCount} likeCount={data.likeCount} />
+      <BoardFooter
+        type="feedback"
+        boardId={boardId}
+        commentCount={data.commentCount}
+        likeCount={data.likeCount}
+        liked={data.liked}
+      />
 
       {/* 라인 */}
       <div>

@@ -151,7 +151,7 @@ const BoardRecomment: React.FC<Props> = ({ type, boardId, commentId, recomment }
           )}
         </div>
         <textarea
-          className="p-2 leading-4 resize-none overflow-hidden bg-transparent focus:outline-main-500 focus:font-semibold"
+          className="py-1 leading-5 resize-none overflow-hidden bg-transparent focus:outline-main-500 focus:font-semibold"
           ref={textareaRef}
           disabled={disabled}
           value={content}
