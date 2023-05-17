@@ -38,6 +38,16 @@ public class JobBoardController {
                                         @Valid @RequestBody JobBoardDto.Patch patch) {
         JobBoard updatedJobBoard = jobBoardService.updateJobBoard(patch, jobBoardId);
 
-        return new ResponseEntity<>(mapper.jobBoardToJobBoardPostResposneDto(updatedJobBoard), HttpStatus.OK);
+        return new ResponseEntity<>(mapper.jobBoardToJobBoardResponseDto(updatedJobBoard), HttpStatus.OK);
+    }
+
+    // 구인구직 게시판 게시글 목록
+    @GetMapping("/jobboards")
+    public ResponseEntity getJobBoards(@RequestParam String sort,
+                                       @RequestParam @Positive int page,
+                                       @RequestParam @Positive int size) {
+        JobBoardDto.MultiResponseDto<JobBoardDto.Response> pageJobBoards = jobBoardService.getAllJobBoards(page, size, sort);
+
+        return new ResponseEntity<>(pageJobBoards, HttpStatus.OK);
     }
 }

@@ -13,10 +13,14 @@ import com.CreatorConnect.server.member.entity.Member;
 import com.CreatorConnect.server.member.repository.MemberRepository;
 import com.CreatorConnect.server.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -94,12 +98,47 @@ public class JobBoardService {
         return jobBoardRepository.save(checkedJobBoard);
     }
 
+    /**
+     * <구인구직 게시판 게시글 목록>
+     * 1. 페이지네이션 적용 - 최신순 / 등록순 / 인기순
+     * 2. 게시글 목록 가져오기
+     */
+    public JobBoardDto.MultiResponseDto<JobBoardDto.Response> getAllJobBoards(int page, int size, String sort) {
+        // 1. 페이지네이션 적용 - 최신순 / 등록순 / 인기순
+        Page<JobBoard> jobBoards = jobBoardRepository.findAll(sortedBy(page, size, sort));
+
+        // 2. 게시글 목록 가져오기
+        List<JobBoardDto.Response> response = mapper.jobBoardsToJobBoardResponseDtos(jobBoards.getContent());
+
+        // new FreeBoardDto.MultiResponseDto<>(responses, freeBoards);
+        return new JobBoardDto.MultiResponseDto<>(response, jobBoards);
+
+    }
+
+    //    public Page<FreeBoard> getFreeBoards(int page, int size) {
+//        return freeBoardRepository.findAll(PageRequest.of(page, size, Sort.by("freeBoardId").descending()));
+//    }
+
     // 게시글 존재 여부 검증 메서드
     private JobBoard verifyJobBoard(Long jobBoardId) {
         Optional<JobBoard> optionalJobBoard = jobBoardRepository.findById(jobBoardId);
         return optionalJobBoard.orElseThrow(() ->
                 new BusinessLogicException(ExceptionCode.JOBBOARD_NOT_FOUND));
     }
+
+    // 페이지네이션 정렬 기준 선택 메서드
+    private PageRequest sortedBy(int page, int size, String sort) {
+        if (sort.equals("최신순")) {
+            return PageRequest.of(page - 1, size, Sort.by("jobBoardId").descending());
+        } else if (sort.equals("등록순")) {
+            return PageRequest.of(page - 1, size, Sort.by("jobBoardId").ascending());
+        } else if (sort.equals("인기순")) {
+            return PageRequest.of(page - 1, size, Sort.by("viewCount", "jobBoardId").descending());
+        } else {
+            return PageRequest.of(page - 1, size, Sort.by("jobBoardId").ascending());
+        }
+    }
+
 
 
 }

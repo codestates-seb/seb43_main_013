@@ -4,6 +4,8 @@ import com.CreatorConnect.server.board.jobboard.dto.JobBoardDto;
 import com.CreatorConnect.server.board.jobboard.entity.JobBoard;
 import org.mapstruct.Mapper;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring")
 public interface JobBoardMapper {
     // JobBoardDto.Post -> JobBoard
@@ -17,5 +19,7 @@ public interface JobBoardMapper {
 
     // JobBoardDto.Patch -> JobBoard
     JobBoard jobBoardPatchDtoToJobBoard(JobBoardDto.Patch patch);
+
+    List<JobBoardDto.Response> jobBoardsToJobBoardResponseDtos(List<JobBoard> jobBoards);
 
 }
