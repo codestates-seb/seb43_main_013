@@ -1,5 +1,7 @@
 package com.CreatorConnect.server.member.controller;
 
+import com.CreatorConnect.server.board.feedbackboard.entity.FeedbackBoard;
+import com.CreatorConnect.server.board.freeboard.entity.FreeBoard;
 import com.CreatorConnect.server.exception.BusinessLogicException;
 import com.CreatorConnect.server.exception.ExceptionCode;
 import com.CreatorConnect.server.member.bookmark.entity.Bookmark;
@@ -26,10 +28,12 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Slf4j
 @Validated
@@ -256,19 +260,39 @@ public class MemberController {
 
         List<MemberBoardResponseDto> response = liked.stream()
                 .map(like -> {
-                    if (like.getBoardType() == Like.BoardType.FEEDBACKBOARD) {
-                        return new MemberBoardResponseDto(
-                                like.getBoardType().toString(),
-                                like.getFeedbackBoard().getFeedbackBoardId(),
-                                like.getFeedbackBoard().getTitle(),
-                                like.getFeedbackBoard().getContent()
-                        );
-                    } else if (like.getBoardType() == Like.BoardType.FREEBOARD) {
+                    if (like.getBoardType() == Like.BoardType.FREEBOARD) {
                         return new MemberBoardResponseDto(
                                 like.getBoardType().toString(),
                                 like.getFreeBoard().getFreeBoardId(),
                                 like.getFreeBoard().getTitle(),
-                                like.getFreeBoard().getContent()
+                                like.getFreeBoard().getContent(),
+                                like.getFreeBoard().getCommentCount(),
+                                like.getFreeBoard().getLikeCount(),
+                                like.getFreeBoard().getViewCount(),
+                                like.getFreeBoard().getCategoryName(),
+                                like.getFreeBoard().getMember().getMemberId(),
+                                like.getFreeBoard().getMember().getEmail(),
+                                like.getFreeBoard().getMember().getNickname(),
+                                like.getFreeBoard().getMember().getProfileImageUrl(),
+                                like.getFreeBoard().getCreatedAt(),
+                                like.getFreeBoard().getModifiedAt()
+                        );
+                    } else if (like.getBoardType() == Like.BoardType.FEEDBACKBOARD) {
+                        return new MemberBoardResponseDto(
+                                like.getBoardType().toString(),
+                                like.getFeedbackBoard().getFeedbackBoardId(),
+                                like.getFeedbackBoard().getTitle(),
+                                like.getFeedbackBoard().getContent(),
+                                like.getFeedbackBoard().getCommentCount(),
+                                like.getFeedbackBoard().getLikeCount(),
+                                like.getFeedbackBoard().getViewCount(),
+                                like.getFeedbackBoard().getCategoryName(),
+                                like.getFeedbackBoard().getMember().getMemberId(),
+                                like.getFeedbackBoard().getMember().getEmail(),
+                                like.getFeedbackBoard().getMember().getNickname(),
+                                like.getFeedbackBoard().getMember().getProfileImageUrl(),
+                                like.getFeedbackBoard().getCreatedAt(),
+                                like.getFeedbackBoard().getModifiedAt()
                         );
                     }
                     return null;
@@ -296,19 +320,40 @@ public class MemberController {
 
         List<MemberBoardResponseDto> response = bookmarked.stream()
                 .map(bookmark -> {
-                    if (bookmark.getBoardType() == Like.BoardType.FEEDBACKBOARD) {
-                        return new MemberBoardResponseDto(
-                                bookmark.getBoardType().toString(),
-                                bookmark.getFeedbackBoard().getFeedbackBoardId(),
-                                bookmark.getFeedbackBoard().getTitle(),
-                                bookmark.getFeedbackBoard().getContent()
-                        );
-                    } else if (bookmark.getBoardType() == Like.BoardType.FREEBOARD) {
+                    if (bookmark.getBoardType() == Like.BoardType.FREEBOARD) {
                         return new MemberBoardResponseDto(
                                 bookmark.getBoardType().toString(),
                                 bookmark.getFreeBoard().getFreeBoardId(),
                                 bookmark.getFreeBoard().getTitle(),
-                                bookmark.getFreeBoard().getContent()
+                                bookmark.getFreeBoard().getContent(),
+                                bookmark.getFreeBoard().getCommentCount(),
+                                bookmark.getFreeBoard().getLikeCount(),
+                                bookmark.getFreeBoard().getViewCount(),
+                                bookmark.getFreeBoard().getCategoryName(),
+                                bookmark.getFreeBoard().getMember().getMemberId(),
+                                bookmark.getFreeBoard().getMember().getEmail(),
+                                bookmark.getFreeBoard().getMember().getNickname(),
+                                bookmark.getFreeBoard().getMember().getProfileImageUrl(),
+                                bookmark.getFreeBoard().getCreatedAt(),
+                                bookmark.getFreeBoard().getModifiedAt()
+                        );
+                    } else if (bookmark.getBoardType() == Like.BoardType.FEEDBACKBOARD) {
+                        return new MemberBoardResponseDto(
+                                bookmark.getBoardType().toString(),
+                                bookmark.getFeedbackBoard().getFeedbackBoardId(),
+                                bookmark.getFeedbackBoard().getTitle(),
+                                bookmark.getFeedbackBoard().getContent(),
+                                bookmark.getFeedbackBoard().getCommentCount(),
+                                bookmark.getFeedbackBoard().getLikeCount(),
+                                bookmark.getFeedbackBoard().getViewCount(),
+                                bookmark.getFeedbackBoard().getCategoryName(),
+                                bookmark.getFeedbackBoard().getMember().getMemberId(),
+                                bookmark.getFeedbackBoard().getMember().getEmail(),
+                                bookmark.getFeedbackBoard().getMember().getNickname(),
+                                bookmark.getFeedbackBoard().getMember().getProfileImageUrl(),
+                                bookmark.getFeedbackBoard().getCreatedAt(),
+                                bookmark.getFeedbackBoard().getModifiedAt()
+
                         );
                     }
                     return null;
@@ -322,6 +367,60 @@ public class MemberController {
                 new PageImpl<>(response, PageRequest.of(page - 1, size), bookmarked.size());
 
         return new ResponseEntity( new MultiResponseDto<>(pageResponse.getContent(), pageResponse), HttpStatus.OK);
+    }
+
+    @GetMapping("/api/member/{member-id}/written")
+    public ResponseEntity getwritten(@PathVariable("member-id") @Positive Long memberId,
+                                        @RequestParam(defaultValue = "1") int page,
+                                        @RequestParam(defaultValue = "10") int size) {
+
+        Member member = memberService.findVerifiedMember(memberId);
+
+        List<FreeBoard> freeBoards = member.getFreeBoards();
+        List<FeedbackBoard> feedbackBoards = member.getFeedbackBoards();
+
+        List<MemberBoardResponseDto> response = Stream.concat(
+                        freeBoards.stream().map(freeBoard -> new MemberBoardResponseDto(
+                                "FREEBOARD",
+                                freeBoard.getFreeBoardId(),
+                                freeBoard.getTitle(),
+                                freeBoard.getContent(),
+                                freeBoard.getCommentCount(),
+                                freeBoard.getLikeCount(),
+                                freeBoard.getViewCount(),
+                                freeBoard.getCategoryName(),
+                                freeBoard.getMember().getMemberId(),
+                                freeBoard.getMember().getEmail(),
+                                freeBoard.getMember().getNickname(),
+                                freeBoard.getMember().getProfileImageUrl(),
+                                freeBoard.getCreatedAt(),
+                                freeBoard.getModifiedAt()
+                        )),
+                        feedbackBoards.stream().map(feedbackBoard -> new MemberBoardResponseDto(
+                                "FEEDBACKBOARD",
+                                feedbackBoard.getFeedbackBoardId(),
+                                feedbackBoard.getTitle(),
+                                feedbackBoard.getContent(),
+                                feedbackBoard.getCommentCount(),
+                                feedbackBoard.getLikeCount(),
+                                feedbackBoard.getViewCount(),
+                                feedbackBoard.getCategoryName(),
+                                feedbackBoard.getMember().getMemberId(),
+                                feedbackBoard.getMember().getEmail(),
+                                feedbackBoard.getMember().getNickname(),
+                                feedbackBoard.getMember().getProfileImageUrl(),
+                                feedbackBoard.getCreatedAt(),
+                                feedbackBoard.getModifiedAt()
+                        )))
+                .sorted(Comparator.comparing(MemberBoardResponseDto::getCreatedAt).reversed())
+                .skip((page - 1) * size)
+                .limit(size)
+                .collect(Collectors.toList());
+
+        Page<MemberBoardResponseDto> pageResponse = new PageImpl<>(response,
+                PageRequest.of(page - 1, size), response.size());
+
+        return new ResponseEntity<>(new MultiResponseDto<>(pageResponse.getContent(), pageResponse), HttpStatus.OK);
     }
 
 }
