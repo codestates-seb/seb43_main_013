@@ -12,6 +12,10 @@ public interface JobBoardMapper {
     // JobBoard -> JobBoardDto.PostResponse
     JobBoardDto.PostResponse jobBoardToJobBoardPostResposneDto(JobBoard jobBoard);
 
+    // JobBoard -> JobBoardDto.Response
+    JobBoardDto.Response jobBoardToJobBoardResponseDto(JobBoard jobBoard);
+
     // JobBoardDto.Patch -> JobBoard
     JobBoard jobBoardPatchDtoToJobBoard(JobBoardDto.Patch patch);
+
 }
