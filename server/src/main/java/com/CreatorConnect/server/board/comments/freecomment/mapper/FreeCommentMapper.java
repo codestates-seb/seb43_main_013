@@ -5,6 +5,9 @@ import com.CreatorConnect.server.board.comments.common.dto.CommentResponseDto;
 import com.CreatorConnect.server.board.comments.common.entity.CommentPK;
 import com.CreatorConnect.server.board.comments.freecomment.entity.FreeComment;
 import com.CreatorConnect.server.board.freeboard.entity.FreeBoard;
+import com.CreatorConnect.server.board.recomments.common.dto.ReCommentResponseDto;
+import com.CreatorConnect.server.board.recomments.freerecomment.entity.FreeReComment;
+import com.CreatorConnect.server.board.recomments.freerecomment.mapper.FreeReCommentMapper;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -12,6 +15,12 @@ import java.util.List;
 
 @Component
 public class FreeCommentMapper {
+
+    private final FreeReCommentMapper mapper;
+
+    public FreeCommentMapper(FreeReCommentMapper mapper) {
+        this.mapper = mapper;
+    }
 
     public CommentResponseDto.Details freeCommentToCommentDetailsResponse(FreeComment comment){
         CommentResponseDto.Details details = new CommentResponseDto.Details();
@@ -24,7 +33,7 @@ public class FreeCommentMapper {
         details.setReCommentCount(comment.getReCommentCount());
         details.setCreatedAt(comment.getCreatedAt());
         details.setModifiedAt(comment.getModifiedAt());
-        details.setReComments(new ArrayList<>());
+        details.setReComments(freeReCommentListToFreeReCommentResponseDTOList(comment.getFreeReComments()));
         return details;
     }
 
@@ -57,4 +66,16 @@ public class FreeCommentMapper {
         return freeComment;
     }
 
+    protected List<ReCommentResponseDto.Details> freeReCommentListToFreeReCommentResponseDTOList(List<FreeReComment> list) {
+        if ( list == null ) {
+            return null;
+        }
+
+        List<ReCommentResponseDto.Details> list1 = new ArrayList<>( list.size() );
+        for ( FreeReComment freeReComment : list ) {
+            list1.add( mapper.freeReCommentToReCommentDetailsResponse( freeReComment ) );
+        }
+
+        return list1;
+    }
 }

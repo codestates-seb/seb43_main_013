@@ -27,10 +27,13 @@ public class FreeComment extends Auditable {
     private String content;
     @Column
     private Long reCommentCount;
+    @Column
+    private Long maxReCommentCount;
 
     @PrePersist
     public void prePersist() {
         this.reCommentCount = this.reCommentCount == null ? 0 : this.reCommentCount;
+        this.maxReCommentCount = this.maxReCommentCount == null ? 0 : this.maxReCommentCount;
     }
     @ManyToOne
     @JoinColumn(name = "member_id")
