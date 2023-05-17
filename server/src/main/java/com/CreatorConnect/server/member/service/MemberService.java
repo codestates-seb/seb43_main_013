@@ -188,18 +188,17 @@ public class MemberService {
                 throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_ALLOWED);
             }
 
-            // todo JWT 토큰 인증 실패 시 OAuth 2.0 액세스 토큰을 사용하여 인증
-
         } catch (JwtException e) {
             throw new BusinessLogicException(ExceptionCode.INVALID_TOKEN);
         }
     }
 
-    public void verifiedAuthenticatedMember (Member member) {
+    public void verifiedAuthenticatedMember(Long memberId) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Member findMember = findVerifiedMember(memberId);
 
-        if (!authentication.getName().equals(member.getEmail())) {
+        if (!authentication.getName().equals(findMember.getEmail())) {
             throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_ALLOWED);
         }
 
