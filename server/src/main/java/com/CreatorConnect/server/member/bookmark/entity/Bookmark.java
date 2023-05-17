@@ -27,11 +27,11 @@ public class Bookmark extends Auditable {
     @JoinColumn(name = "bookmarkedmember_id")
     private Member member;
 
-    @ManyToOne(fetch = LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "bookmarkedfeedbackboard_id")
     private FeedbackBoard feedbackBoard;
 
-    @ManyToOne(fetch = LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "bookmarkedfreeboard_id")
     private FreeBoard freeBoard;
 
