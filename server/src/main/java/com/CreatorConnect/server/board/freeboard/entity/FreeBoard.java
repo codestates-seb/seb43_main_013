@@ -33,8 +33,8 @@ public class FreeBoard extends Auditable implements Board {
     @Column(nullable = false)
     private String content; // 게시글 내용
 
-    @OneToMany(mappedBy = "freeBoard")
-    private final List<TagToFreeBoard> tagBoardList = new ArrayList<>();
+//    @OneToMany(mappedBy = "freeBoard")
+//    private final List<TagToFreeBoard> tagBoardList = new ArrayList<>();
 
     @Column
     private long commentCount; // 댓글수
