@@ -12,8 +12,11 @@ import com.CreatorConnect.server.member.like.entity.Like;
 import com.CreatorConnect.server.member.mapper.MemberMapper;
 import com.CreatorConnect.server.member.repository.MemberRepository;
 import com.CreatorConnect.server.member.service.MemberService;
+import com.CreatorConnect.server.response.MultiResponseDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -193,7 +196,9 @@ public class MemberController {
     }
 
     @GetMapping("/api/member/{member-id}/followings")
-    public ResponseEntity getFollowings(@PathVariable("member-id") @Positive Long memberId) {
+    public ResponseEntity getFollowings(@PathVariable("member-id") @Positive Long memberId,
+                                        @RequestParam(defaultValue = "1") int page,
+                                        @RequestParam(defaultValue = "10") int size) {
 
         Member member = memberService.findVerifiedMember(memberId);
         Set<Member> followings = member.getFollowings();
@@ -202,14 +207,23 @@ public class MemberController {
                 .map(following -> new MemberFollowResponseDto(
                         following.getMemberId(),
                         following.getNickname(),
-                        following.getProfileImageUrl()
-                )).collect(Collectors.toList());
+                        following.getProfileImageUrl(),
+                        false // todo 로그인 한 유저의 팔로우 여부
+                ))
+                .skip((page - 1) * size) // 페이지네이션 처리
+                .limit(size)
+                .collect(Collectors.toList());
 
-        return new ResponseEntity(response, HttpStatus.OK);
+        Page<MemberFollowResponseDto> pageResponse =
+                new PageImpl<>(response, PageRequest.of(page - 1, size), response.size());
+
+        return new ResponseEntity(new MultiResponseDto<>(pageResponse.getContent(), pageResponse), HttpStatus.OK);
     }
 
     @GetMapping("/api/member/{member-id}/followers")
-    public ResponseEntity getFollowers(@PathVariable("member-id") @Positive Long memberId) {
+    public ResponseEntity getFollowers(@PathVariable("member-id") @Positive Long memberId,
+                                       @RequestParam(defaultValue = "1") int page,
+                                       @RequestParam(defaultValue = "10") int size) {
 
         Member member = memberService.findVerifiedMember(memberId);
         Set<Member> followers = member.getFollowers();
@@ -218,14 +232,23 @@ public class MemberController {
                 .map(follower -> new MemberFollowResponseDto(
                         follower.getMemberId(),
                         follower.getNickname(),
-                        follower.getProfileImageUrl()
-                )).collect(Collectors.toList());
+                        follower.getProfileImageUrl(),
+                        false // todo 로그인 한 유저의 팔로우 여부
+                ))
+                .skip((page - 1) * size) // 페이지네이션 처리
+                .limit(size)
+                .collect(Collectors.toList());
 
-        return new ResponseEntity(response, HttpStatus.OK);
+        Page<MemberFollowResponseDto> pageResponse =
+                new PageImpl<>(response, PageRequest.of(page - 1, size), response.size());
+
+        return new ResponseEntity(new MultiResponseDto<>(pageResponse.getContent(), pageResponse), HttpStatus.OK);
     }
 
     @GetMapping("/api/member/{member-id}/liked")
-    public ResponseEntity getliked(@PathVariable("member-id") @Positive Long memberId) {
+    public ResponseEntity getliked(@PathVariable("member-id") @Positive Long memberId,
+                                   @RequestParam(defaultValue = "1") int page,
+                                   @RequestParam(defaultValue = "10") int size) {
 
         Member member = memberService.findVerifiedMember(memberId);
 
@@ -251,14 +274,21 @@ public class MemberController {
                     return null;
                 })
                 .filter(Objects::nonNull)
+                .skip((page - 1) * size) // 페이지네이션 처리
+                .limit(size)
                 .collect(Collectors.toList());
 
-        return new ResponseEntity(response, HttpStatus.OK);
+        Page<MemberBoardResponseDto> pageResponse =
+                new PageImpl<>(response, PageRequest.of(page - 1, size), liked.size());
+
+        return new ResponseEntity( new MultiResponseDto<>(pageResponse.getContent(), pageResponse), HttpStatus.OK);
 
     }
 
     @GetMapping("/api/member/{member-id}/bookmarked")
-    public ResponseEntity getbookmarked(@PathVariable("member-id") @Positive Long memberId) {
+    public ResponseEntity getbookmarked(@PathVariable("member-id") @Positive Long memberId,
+                                        @RequestParam(defaultValue = "1") int page,
+                                        @RequestParam(defaultValue = "10") int size) {
 
         Member member = memberService.findVerifiedMember(memberId);
 
@@ -284,10 +314,14 @@ public class MemberController {
                     return null;
                 })
                 .filter(Objects::nonNull)
+                .skip((page - 1) * size) // 페이지네이션 처리
+                .limit(size)
                 .collect(Collectors.toList());
 
-        return new ResponseEntity(response, HttpStatus.OK);
+        Page<MemberBoardResponseDto> pageResponse =
+                new PageImpl<>(response, PageRequest.of(page - 1, size), bookmarked.size());
 
+        return new ResponseEntity( new MultiResponseDto<>(pageResponse.getContent(), pageResponse), HttpStatus.OK);
     }
 
 }
