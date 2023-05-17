@@ -10,13 +10,12 @@ import com.CreatorConnect.server.exception.BusinessLogicException;
 import com.CreatorConnect.server.exception.ExceptionCode;
 import com.CreatorConnect.server.board.freeboard.entity.FreeBoard;
 import com.CreatorConnect.server.board.freeboard.repository.FreeBoardRepository;
+import com.CreatorConnect.server.member.entity.Member;
 import com.CreatorConnect.server.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,9 +34,6 @@ public class FreeCommentServiceImpl implements CommentService {
     // 댓글 등록
     @Override
     public CommentResponseDto.Post createComment(Long id, CommentDto.Post postDto) {
-        // 멤버 검증
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        memberService.verifiedAuthenticatedMember(postDto.getMemberId(), authentication.getName());
 
         //freeBoard찾기
         Optional<FreeBoard> freeBoard = freeBoardRepository.findById(id);
@@ -54,13 +50,13 @@ public class FreeCommentServiceImpl implements CommentService {
 
     //댓글 수정
     @Override
-    public void updateComment(Long freeBoardId, Long commentId, CommentDto.Patch patchDto) {
+    public void updateComment(String token, Long freeBoardId, Long commentId, CommentDto.Patch patchDto) {
         // Dto의 Id값으로 Entity찾기
         FreeComment foundfreeComment = findVerifiedFreeComment(freeBoardId, commentId);
 
         // 멤버 검증
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        memberService.verifiedAuthenticatedMember(foundfreeComment.getMemberId(), authentication.getName());
+        Member findMember = memberService.findVerifiedMember(foundfreeComment.getMemberId());
+        memberService.verifiedAuthenticatedMember(token, findMember);
 
         //찾은 Entity의 값 변경
         Optional.ofNullable(patchDto.getContent())
@@ -98,13 +94,13 @@ public class FreeCommentServiceImpl implements CommentService {
 
     // 댓글 삭제
     @Override
-    public void deleteComment(Long freeBoardId, Long commentId) {
+    public void deleteComment(String token, Long freeBoardId, Long commentId) {
         // 댓글 찾기
         FreeComment foundComment = findVerifiedFreeComment(freeBoardId, commentId);
 
         // 멤버 검증
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        memberService.verifiedAuthenticatedMember(foundComment.getMemberId(), authentication.getName());
+        Member findMember = memberService.findVerifiedMember(foundComment.getMemberId());
+        memberService.verifiedAuthenticatedMember(token, findMember);
 
         // 댓글 수 -1
         long commentCount = foundComment.getFreeBoard().getCommentCount();

@@ -17,13 +17,12 @@ import com.CreatorConnect.server.board.tag.dto.TagDto;
 import com.CreatorConnect.server.board.tag.entity.Tag;
 import com.CreatorConnect.server.board.tag.mapper.TagMapper;
 import com.CreatorConnect.server.board.tag.service.FeedbackBoardTagService;
+import com.CreatorConnect.server.member.entity.Member;
 import com.CreatorConnect.server.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,10 +46,7 @@ public class FeedbackBoardService {
     private final MemberService memberService;
 
     //등록
-    public FeedbackBoardResponseDto.Post createFeedback(FeedbackBoardDto.Post postDto){
-        // 멤버 검증
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        memberService.verifiedAuthenticatedMember(postDto.getMemberId(), authentication.getName());
+    public FeedbackBoardResponseDto.Post createFeedback(FeedbackBoardDto.Post postDto) {
 
         // Dto-Entity 변환
         FeedbackBoard feedbackBoard = mapper.feedbackBoardPostDtoToFeedbackBoard(postDto);
@@ -66,14 +62,13 @@ public class FeedbackBoardService {
         List<Tag> tags = tagMapper.tagPostDtosToTag(postDto.getTags());
         List<Tag> createTAgs = feedbackBoardTagService.createFeedbackBoardTag(tags, savedfeedbackBoard);
 
-
         // Entity-Dto 변환 후 리턴
         FeedbackBoardResponseDto.Post responseDto = mapper.feedbackBoardToFeedbackBoardPostResponse(savedfeedbackBoard);
         return responseDto;
     }
 
     //수정
-    public FeedbackBoardResponseDto.Patch updateFeedback(Long feedbackBoardId, FeedbackBoardDto.Patch patchDto){
+    public FeedbackBoardResponseDto.Patch updateFeedback(String token, Long feedbackBoardId, FeedbackBoardDto.Patch patchDto){
 
         // Dto-Entity 변환
         FeedbackBoard feedbackBoard = mapper.feedbackBoardPatchDtoToFeedbackBoard(patchDto);
@@ -83,8 +78,8 @@ public class FeedbackBoardService {
         FeedbackBoard foundFeedbackBoard = findVerifiedFeedbackBoard(feedbackBoard.getFeedbackBoardId());
 
         // 글 작성한 멤버가 현재 로그인한 멤버와 같은지 확인
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        memberService.verifiedAuthenticatedMember(foundFeedbackBoard.getMemberId(), authentication.getName());
+        Member findMember = memberService.findVerifiedMember(feedbackBoard.getMemberId());
+        memberService.verifiedAuthenticatedMember(token,findMember);
 
         // 찾은 Entity의 값 변경
         Optional.ofNullable(feedbackBoard.getTitle())
@@ -181,13 +176,13 @@ public class FeedbackBoardService {
     }
 
     //삭제
-    public void deleteFeedback(Long feedbackBoardId) {
+    public void deleteFeedback(String token, Long feedbackBoardId) {
         // 피드백 ID로 피드백 찾기
         FeedbackBoard feedbackBoard = findVerifiedFeedbackBoard(feedbackBoardId);
 
         // 글 작성한 멤버가 현재 로그인한 멤버와 같은지 확인
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        memberService.verifiedAuthenticatedMember(feedbackBoard.getMemberId(), authentication.getName());
+        Member findMember = memberService.findVerifiedMember(feedbackBoard.getMemberId());
+        memberService.verifiedAuthenticatedMember(token, findMember);
 
         // 삭제
         feedbackBoardRepository.delete(feedbackBoard);

@@ -1,7 +1,10 @@
 package com.CreatorConnect.server.auth.jwt;
 
+import com.CreatorConnect.server.exception.BusinessLogicException;
+import com.CreatorConnect.server.exception.ExceptionCode;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.io.Encoders;
@@ -60,6 +63,7 @@ public class JwtTokenizer {
     }
 
     public Jws<Claims> getClaims(String jws, String base64EncodedSecretKey) {
+
         Key key = getKeyFromBase64EncodedKey(base64EncodedSecretKey);
 
         // 검증 후, Claims 을 반환하는 용도
@@ -67,6 +71,7 @@ public class JwtTokenizer {
                 .setSigningKey(key)
                 .build()
                 .parseClaimsJws(jws);
+
         return claims;
     }
 

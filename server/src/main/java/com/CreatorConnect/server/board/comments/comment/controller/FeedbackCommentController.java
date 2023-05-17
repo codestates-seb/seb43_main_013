@@ -29,8 +29,11 @@ public class FeedbackCommentController {
     @PatchMapping("/feedbackboard/{feedbackBoardId}/comment/{commentId}")
     public ResponseEntity<HttpStatus> patchComment(@PathVariable("feedbackBoardId") @Positive Long feedbackBoardId,
                                                                                @PathVariable("commentId") @Positive Long commentId,
-                                                                               @Valid @RequestBody CommentDto.Patch patchDto){
-        feedbackCommentService.updateComment(feedbackBoardId, commentId, patchDto);
+                                                                               @Valid @RequestBody CommentDto.Patch patchDto,
+                                                   @RequestHeader(value = "Authorization") String authorizationToken){
+
+        String token = authorizationToken.substring(7);
+        feedbackCommentService.updateComment(token, feedbackBoardId, commentId, patchDto);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -51,8 +54,11 @@ public class FeedbackCommentController {
 
     @DeleteMapping("/feedbackboard/{feedbackBoardId}/comment/{commentId}")
     public ResponseEntity<HttpStatus> deleteComment(@PathVariable("feedbackBoardId") @Positive Long feedbackBoardId,
-                                                     @PathVariable("commentId") @Positive Long commentId) {
-        feedbackCommentService.deleteComment(feedbackBoardId, commentId);
+                                                    @PathVariable("commentId") @Positive Long commentId,
+                                                    @RequestHeader(value = "Authorization") String authorizationToken) {
+
+        String token = authorizationToken.substring(7);
+        feedbackCommentService.deleteComment(token, feedbackBoardId, commentId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 

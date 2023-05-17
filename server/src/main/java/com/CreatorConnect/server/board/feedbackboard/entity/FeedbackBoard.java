@@ -30,7 +30,7 @@ public class FeedbackBoard extends Auditable implements Board {
     private String title;
     @Column
     private String link;
-    @Column
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
     @Column
     private Long commentCount;
@@ -104,7 +104,6 @@ public class FeedbackBoard extends Auditable implements Board {
     @OneToMany(mappedBy = "feedbackBoard", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<FeedbackComment> feedbackComments = new ArrayList<>();
 
-//    Todo FeedbackBoard-tag연결
     @OneToMany(mappedBy = "feedbackBoard", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<TagToFeedbackBoard> tagBoards = new ArrayList<>();
 
