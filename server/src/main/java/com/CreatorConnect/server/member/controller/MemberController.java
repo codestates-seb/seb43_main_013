@@ -59,10 +59,7 @@ public class MemberController {
     }
 
     @PostMapping("/api/signup")
-    public ResponseEntity postMember(@Valid @RequestBody MemberDto.Post memberDtoPost,
-                                     @RequestHeader(value = "Authorization") String authorizationToken) {
-
-        String token = authorizationToken.substring(7);
+    public ResponseEntity postMember(@Valid @RequestBody MemberDto.Post memberDtoPost) {
 
         Member member = mapper.memberPostDtoToMember(memberDtoPost);
         Member createdMember = memberService.createMember(member);
