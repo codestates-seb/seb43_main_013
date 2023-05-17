@@ -140,13 +140,11 @@ public class FeedbackBoardService {
 
         // 로그인한 멤버
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Member loggedinMember = null;
         boolean bookmarked = false;
         boolean liked = false;
 
-        // 로그인한 경우에만 멤버 정보와 북마크, 좋아요 여부 확인
         if (authentication != null && authentication.isAuthenticated() && !"anonymousUser".equals(authentication.getName())) {
-            loggedinMember = memberService.findVerifiedMember(authentication.getName());
+            Member loggedinMember = memberService.findVerifiedMember(authentication.getName());
 
             // 게시물을 북마크한 경우
             bookmarked = loggedinMember.getBookmarks().stream()
