@@ -91,6 +91,8 @@ public class FreeBoardDto {
         private String nickname;
 
         private String profileImageUrl;
+        private Boolean bookmarked;
+        private Boolean liked;
     }
 
     @AllArgsConstructor
