@@ -123,10 +123,12 @@ public class MemberService {
                 Sort.by("memberId").descending()));
     }
 
-    public void deleteMember(String token, Long memberId) {
+    public void deleteMember(Long memberId) {
 
         Member findMember = findVerifiedMember(memberId);
-        verifiedAuthenticatedMember(token, findMember);
+
+        // 로그인 유저, 작성한 유저 검증 로직
+        verifiedAuthenticatedMember(findMember.getMemberId());
 
         String delEmail = "del_" + findMember.getEmail();
 
@@ -177,6 +179,7 @@ public class MemberService {
 
     public void verifiedAuthenticatedMember(String jwtToken, Member findMember) {
 
+        // jwt token 인증 검증 방식
         try {
             String encodeKey = encode(secretKey);
 

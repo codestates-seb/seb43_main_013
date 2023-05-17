@@ -133,7 +133,7 @@ public class MemberController {
 
         String token = authorizationToken.substring(7);
 
-        memberService.deleteMember(token, memberId);
+        memberService.deleteMember(memberId);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -473,5 +473,4 @@ public class MemberController {
 
         return new ResponseEntity<>(new MultiResponseDto<>(pageResponse.getContent(), pageResponse), HttpStatus.OK);
     }
-
 }
