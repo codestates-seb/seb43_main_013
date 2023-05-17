@@ -11,14 +11,14 @@ public enum ExceptionCode {
     FREEBOARD_NOT_FOUND(404, "FreeBoard not found, Please check the FreeBoard ID and try again."),
     FEEDBACK_CATEGORY_NOT_FOUND(404, "FeedbackCategory not found. Please check the FeedbackCategory and try again."),
     COMMENT_NOT_FOUND(404, "Comment not found. Please check the CommentId and try again."),
+    RE_COMMENT_NOT_FOUND(404, "ReComment not found. Please check the ReCommentId and try again."),
     MEMBER_EXISTS(409, "Member already exists. Please provide a different member ID."),
     FOLLOWING_ALREADY_EXISTS(409, "The member is already being followed."),
     FOLLOWING_ALREADY_DELETED(409,  "The member has already been unfollowed."),
     CATEGORY_EXISTS(409, "Category already exists. Please provide a different category"),
     MEMBER_FIELD_NOT_FOUND(500, "Member field not found. Please check the object and try again."),
+    JOBBOARD_NOT_FOUND(404, "JobBoard not found, Please check the JobBoard ID and try again."),
     INVALID_TOKEN(403, "Invalid token. Please provide a valid token.");
-
-    ;
 
     @Getter
     private int status;
