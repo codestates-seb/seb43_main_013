@@ -41,7 +41,7 @@ public class FreeReCommentServiceImpl implements ReCommentService{
 
         // Entity to dto
         ReCommentResponseDto.Post post = new ReCommentResponseDto.Post();
-        post.setReCommentId(freeReComment.getReCommentPK().getReCommentId());
+        post.setRecommentId(freeReComment.getReCommentPK().getReCommentId());
         // response
         return  post;
     }

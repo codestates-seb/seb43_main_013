@@ -41,7 +41,7 @@ public class FeedbackReCommentServiceImpl implements ReCommentService {
 
         // Entity to dto
         ReCommentResponseDto.Post post = new ReCommentResponseDto.Post();
-        post.setReCommentId(feedbackReComment.getReCommentPK().getReCommentId());
+        post.setRecommentId(feedbackReComment.getReCommentPK().getReCommentId());
         // response
         return  post;
     }

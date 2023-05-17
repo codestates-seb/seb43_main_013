@@ -30,10 +30,10 @@ public class CommentResponseDto {
         private String nickname;
         private String email;
         private String profileImageUrl;
-        private long reCommentCount;
+        private long recommentCount;
         private LocalDateTime createdAt;
         private LocalDateTime modifiedAt;
-        private List<ReCommentResponseDto.Details> reComments;
+        private List<ReCommentResponseDto.Details> recomments;
     }
     @Getter
     @AllArgsConstructor

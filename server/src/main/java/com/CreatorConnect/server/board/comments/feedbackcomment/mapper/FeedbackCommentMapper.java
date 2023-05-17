@@ -30,10 +30,10 @@ public class FeedbackCommentMapper {
         details.setNickname(comment.getNickname());
         details.setEmail(comment.getEmail());
         details.setProfileImageUrl(comment.getProfileImageUrl());
-        details.setReCommentCount(comment.getReCommentCount());
+        details.setRecommentCount(comment.getReCommentCount());
         details.setCreatedAt(comment.getCreatedAt());
         details.setModifiedAt(comment.getModifiedAt());
-        details.setReComments(feedbackReCommentListToFeedbackReCommentResponseDTOList(comment.getFeedbackReComments()));
+        details.setRecomments(feedbackReCommentListToFeedbackReCommentResponseDTOList(comment.getFeedbackReComments()));
         return details;
     }
 
