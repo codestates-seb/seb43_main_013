@@ -35,7 +35,7 @@ public class JobCategoryController {
     // 구인구직 카테고리 수정
     @Secured("ROLE_ADMIN")
     @PatchMapping("/{jobCategoryId}")
-    public ResponseEntity patchJobCategory(@PathVariable("jobCategoryId") Long jobCategoryId,
+    public ResponseEntity patchJobCategory(@PathVariable("jobCategoryId") @Positive Long jobCategoryId,
                                            @Valid @RequestBody JobCategoryDto.Patch patch) {
         JobCategory jobCategory = mapper.jobCategoryPatchDtoToJobCategory(patch);
         jobCategory.setJobCategoryId(jobCategoryId);
@@ -44,5 +44,12 @@ public class JobCategoryController {
         return new ResponseEntity<>(mapper.jobCategoryToJobCategoryResponseDto(updatedJobCategory), HttpStatus.OK);
     }
 
+    // 구인구직 카테고리 조회
+    @Secured({"ROLE_ADMIN","ROLE_USER"})
+    @GetMapping("/{jobCategoryId}")
+    public ResponseEntity getJobCategory(@PathVariable("jobCategoryId") @Positive Long jobCategoryId) {
+        JobCategoryDto.Response response = jobCategoryService.getJobCategory(jobCategoryId);
 
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 }

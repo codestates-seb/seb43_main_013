@@ -2,6 +2,7 @@ package com.CreatorConnect.server.board.categories.jobcategory.service;
 
 import com.CreatorConnect.server.board.categories.jobcategory.dto.JobCategoryDto;
 import com.CreatorConnect.server.board.categories.jobcategory.entity.JobCategory;
+import com.CreatorConnect.server.board.categories.jobcategory.mapper.JobCategoryMapper;
 import com.CreatorConnect.server.board.categories.jobcategory.repository.JobCategoryRepository;
 import com.CreatorConnect.server.exception.BusinessLogicException;
 import com.CreatorConnect.server.exception.ExceptionCode;
@@ -15,6 +16,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class JobCategoryService {
     private final JobCategoryRepository jobCategoryRepository;
+    private final JobCategoryMapper mapper;
     /**
      * <구인 구직 카티고리 등록>
      * 1. 카테고리 중복 검증
@@ -46,6 +48,20 @@ public class JobCategoryService {
 
     }
 
+    /**
+     * <구인구직 카테고리 조회>
+     * 1.카테고리 존재 여부 검증
+     * 2. 조회
+     */
+    public JobCategoryDto.Response getJobCategory(Long jobCategoryId) {
+        // 1. 카테고리 존재 여부 검증
+        JobCategory jobCategory = findverifiedJobCategory(jobCategoryId);
+
+        // 2. 조회
+        return mapper.jobCategoryToJobCategoryResponseDto(jobCategory);
+
+    }
+
     // 중복 카테고리 존재 여부 검증 메서드
     private void verifyExistsJobCategory(String jobCategoryName) {
         Optional<JobCategory> optionalJobCategory = jobCategoryRepository.findByJobCategoryName(jobCategoryName);
@@ -60,6 +76,7 @@ public class JobCategoryService {
         return optionalJobCategory.orElseThrow(() ->
                 new BusinessLogicException(ExceptionCode.CATEGORY_NOT_FOUND));
     }
+
 
 
 }
