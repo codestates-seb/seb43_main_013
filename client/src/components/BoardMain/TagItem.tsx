@@ -6,10 +6,10 @@ interface TagItemProps {
 }
 const TagItem: React.FC<TagItemProps> = ({ tag }) => {
   return (
-    <li>
+    <li className="list-none">
       <button
         type="button"
-        className="px-3 py-1 bg-main-400 text-sm text-white rounded-sm transition-colors hover:font-bold hover:bg-main-500"
+        className="px-3 py-1 bg-main-400 text-sm text-white rounded-lg transition-colors hover:font-bold hover:bg-main-500"
       >
         {tag}
       </button>
