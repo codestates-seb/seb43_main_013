@@ -4,6 +4,7 @@ import com.CreatorConnect.server.board.categories.category.service.CategoryServi
 import com.CreatorConnect.server.board.freeboard.dto.FreeBoardDto;
 import com.CreatorConnect.server.board.freeboard.entity.FreeBoard;
 import com.CreatorConnect.server.board.freeboard.mapper.FreeBoardMapper;
+import com.CreatorConnect.server.board.freeboard.repository.FreeBoardRepository;
 import com.CreatorConnect.server.board.freeboard.service.FreeBoardService;
 import com.CreatorConnect.server.board.tag.service.FeedbackBoardTagService;
 import com.CreatorConnect.server.board.tag.service.FreeBoardTagService;
@@ -35,6 +36,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class FreeBoardController {
     private final FreeBoardService freeBoardService;
+    private final FreeBoardRepository freeBoardRepository;
     private final FreeBoardMapper mapper;
     private final CategoryService categoryService;
     private final TagMapper tagMapper;
@@ -47,7 +49,11 @@ public class FreeBoardController {
 
     // 자유 게시판 게시글 등록
     @PostMapping("/freeboard/new")
-    public ResponseEntity postFreeBoard(@Valid @RequestBody FreeBoardDto.Post post) {
+    public ResponseEntity postFreeBoard(@Valid @RequestBody FreeBoardDto.Post post,
+                                        @RequestHeader(value = "Authorization") String authorizationToken) {
+
+        String token = authorizationToken.substring(7);
+
         FreeBoard freeBoardPost = freeBoardService.createFreeBoard(post);
         FreeBoardDto.PostResponse postResponse = mapper.freeBoardToFreeBoardPostResponseDto(freeBoardPost);
 
@@ -57,7 +63,10 @@ public class FreeBoardController {
     // 자유 게시판 게시글 수정
     @PatchMapping("/freeboard/{freeboardId}")
     public ResponseEntity patchFreeBoard(@Valid @RequestBody FreeBoardDto.Patch patch,
-                                         @PathVariable("freeboardId") long freeBoardId) {
+                                         @PathVariable("freeboardId") long freeBoardId,
+                                         @RequestHeader(value = "Authorization") String authorizationToken) {
+
+        String token = authorizationToken.substring(7);
 
         List<Tag> tags = tagMapper.tagPostDtosToTag(patch.getTags());
 
@@ -102,20 +111,27 @@ public class FreeBoardController {
 
     // 자유 게시판 게시글 삭제
     @DeleteMapping("/freeboard/{freeboardId}")
-    public ResponseEntity deleteFreeBoard(@Positive @PathVariable("freeboardId") long freeboardId) {
+    public ResponseEntity deleteFreeBoard(@Positive @PathVariable("freeboardId") long freeboardId,
+                                          @RequestHeader(value = "Authorization") String authorizationToken) {
+
+        String token = authorizationToken.substring(7);
+
         freeBoardService.removeFreeBoard(freeboardId);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @PostMapping("/freeboard/{freeBoardId}/like")
-    public ResponseEntity likeFreeBoard (@PathVariable("freeBoardId") @Positive Long freeBoardId) {
+    public ResponseEntity likeFreeBoard (@PathVariable("freeBoardId") @Positive Long freeBoardId,
+                                         @RequestHeader(value = "Authorization") String authorizationToken) {
+
+        String token = authorizationToken.substring(7);
 
         // 현재 로그인한 사용자 정보 가져오기
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Member currentMember = memberService.findVerifiedMember(authentication.getName());
 
-        FreeBoard foundfreeBoard = freeBoardService.verifyFreeBoard(freeBoardId);
+        FreeBoard findfreeBoard = freeBoardService.verifyFreeBoard(freeBoardId);
 
         // 현재 로그인한 사용자가 해당 게시물을 좋아요 했는지 확인
         boolean isAlreadyLiked = currentMember.getLikes().stream()
@@ -128,10 +144,14 @@ public class FreeBoardController {
             return ResponseEntity.badRequest().body("Already liked.");
         }
 
+        // 게시물의 likeCount 증가
+        findfreeBoard.setLikeCount(findfreeBoard.getLikeCount() + 1);
+        freeBoardRepository.save(findfreeBoard);
+
         Like like = new Like();
         like.setBoardType(Like.BoardType.FREEBOARD);
         like.setMember(currentMember);
-        like.setFreeBoard(foundfreeBoard);
+        like.setFreeBoard(findfreeBoard);
         likeRepository.save(like);
 
         // 현재 사용자의 likes 컬렉션에 좋아요 추가
@@ -143,31 +163,37 @@ public class FreeBoardController {
     }
 
     @DeleteMapping("/freeboard/{freeBoardId}/like")
-    public ResponseEntity unlikeFreeBoard (@PathVariable("freeBoardId") @Positive Long freeBoardId) {
+    public ResponseEntity unlikeFreeBoard (@PathVariable("freeBoardId") @Positive Long freeBoardId,
+                                           @RequestHeader(value = "Authorization") String authorizationToken) {
+
+        String token = authorizationToken.substring(7);
 
         // 현재 로그인한 사용자 정보 가져오기
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Member currentMember = memberService.findVerifiedMember(authentication.getName());
 
-        FreeBoard freeBoard = freeBoardService.verifyFreeBoard(freeBoardId);
+        FreeBoard findfreeBoard = freeBoardService.verifyFreeBoard(freeBoardId);
 
         Optional<Set<Like>> likes = Optional.ofNullable(currentMember.getLikes());
 
         Set<Like> foundLikes = likes.orElse(Collections.emptySet())
                 .stream()
-                .filter(l -> l != null && l.getFreeBoard() != null && l.getFreeBoard().getFreeBoardId().equals(freeBoard.getFreeBoardId()))
+                .filter(l -> l != null && l.getFreeBoard() != null && l.getFreeBoard().getFreeBoardId().equals(findfreeBoard.getFreeBoardId()))
                 .collect(Collectors.toSet());
 
         if (foundLikes.isEmpty()) {
             return ResponseEntity.badRequest().body("Not liked.");
         }
 
+        // 게시물의 likeCount 감소
+        findfreeBoard.setLikeCount(findfreeBoard.getLikeCount() - 1);
+        freeBoardRepository.save(findfreeBoard);
+
         // 현재 사용자의 likes 컬렉션에서 좋아요 삭제
         for (Like foundLike : foundLikes) {
             currentMember.getLikes().remove(foundLike);
             likeRepository.delete(foundLike);
         }
-
         memberRepository.save(currentMember);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -175,20 +201,23 @@ public class FreeBoardController {
     }
 
     @PostMapping("/freeboard/{freeBoardId}/bookmark")
-    public ResponseEntity bookmarkFeedbackBoard (@PathVariable("freeBoardId") @Positive Long freeBoardId) {
+    public ResponseEntity bookmarkFeedbackBoard (@PathVariable("freeBoardId") @Positive Long freeBoardId,
+                                                 @RequestHeader(value = "Authorization") String authorizationToken) {
+
+        String token = authorizationToken.substring(7);
 
         // 현재 로그인한 사용자 정보 가져오기
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Member currentMember = memberService.findVerifiedMember(authentication.getName());
 
-        FreeBoard foundfreeBoard = freeBoardService.verifyFreeBoard(freeBoardId);
+        FreeBoard findfreeBoard = freeBoardService.verifyFreeBoard(freeBoardId);
 
         // 현재 로그인한 사용자가 해당 게시물을 북마크 했는지 확인
         boolean isAlreadyBookMarked = currentMember.getBookmarks().stream()
                 .filter(Objects::nonNull) // null인 요소 필터링
                 .map(Bookmark::getFreeBoard)
                 .filter(Objects::nonNull) // null인 FeedbackBoard 필터링
-                .anyMatch(freeBoard -> freeBoard.getFreeBoardId().equals(foundfreeBoard.getFreeBoardId()));
+                .anyMatch(freeBoard -> freeBoard.getFreeBoardId().equals(findfreeBoard.getFreeBoardId()));
 
         if (isAlreadyBookMarked) {
             return ResponseEntity.badRequest().body("Already bookmarked.");
@@ -197,7 +226,7 @@ public class FreeBoardController {
         Bookmark bookmark = new Bookmark();
         bookmark.setBoardType(Like.BoardType.FREEBOARD);
         bookmark.setMember(currentMember);
-        bookmark.setFreeBoard(foundfreeBoard);
+        bookmark.setFreeBoard(findfreeBoard);
         bookmarkRepository.save(bookmark);
 
         // 현재 사용자의 bookmark 컬렉션에 bookmark 추가
@@ -209,32 +238,34 @@ public class FreeBoardController {
     }
 
     @DeleteMapping("/freeboard/{freeBoardId}/bookmark")
-    public ResponseEntity unbookmarkFeedbackBoard (@PathVariable("freeBoardId") @Positive Long freeBoardId) {
+    public ResponseEntity unbookmarkFeedbackBoard (@PathVariable("freeBoardId") @Positive Long freeBoardId,
+                                                   @RequestHeader(value = "Authorization") String authorizationToken) {
+
+        String token = authorizationToken.substring(7);
 
         // 현재 로그인한 사용자 정보 가져오기
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Member currentMember = memberService.findVerifiedMember(authentication.getName());
 
-        FreeBoard foundfreeBoard = freeBoardService.verifyFreeBoard(freeBoardId);
+        FreeBoard findfreeBoard = freeBoardService.verifyFreeBoard(freeBoardId);
         // 현재 로그인한 사용자가 해당 게시물을 북마크 했는지 확인
 
         Optional<Set<Bookmark>> bookmarks = Optional.ofNullable(currentMember.getBookmarks());
 
         Set<Bookmark> foundBookmarks = bookmarks.orElse(Collections.emptySet())
                 .stream()
-                .filter(l -> l != null && l.getFreeBoard() != null && l.getFreeBoard().getFreeBoardId().equals(foundfreeBoard.getFreeBoardId()))
+                .filter(l -> l != null && l.getFreeBoard() != null && l.getFreeBoard().getFreeBoardId().equals(findfreeBoard.getFreeBoardId()))
                 .collect(Collectors.toSet());
 
         if (foundBookmarks.isEmpty()) {
             return ResponseEntity.badRequest().body("Not bookmarked.");
         }
 
-        // 현재 사용자의 bookmarks 컬렉션에서 북마크 삭제
-        currentMember.getBookmarks().removeAll(foundBookmarks);
-
         // 삭제된 북마크 엔티티들을 데이터베이스에서 삭제
         bookmarkRepository.deleteAll(foundBookmarks);
 
+        // 현재 사용자의 bookmarks 컬렉션에서 북마크 삭제
+        currentMember.getBookmarks().removeAll(foundBookmarks);
         memberRepository.save(currentMember);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

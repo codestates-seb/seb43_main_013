@@ -1,5 +1,6 @@
 package com.CreatorConnect.server.board.feedbackboard.controller;
 
+import com.CreatorConnect.server.board.feedbackboard.repository.FeedbackBoardRepository;
 import com.CreatorConnect.server.board.feedbackboard.service.FeedbackBoardService;
 import com.CreatorConnect.server.board.feedbackboard.dto.FeedbackBoardDto;
 import com.CreatorConnect.server.board.feedbackboard.dto.FeedbackBoardResponseDto;
@@ -32,7 +33,7 @@ import java.util.stream.Collectors;
 @Validated
 public class FeedbackBoardController {
     private final FeedbackBoardService feedbackBoardService;
-
+    private final FeedbackBoardRepository feedbackBoardRepository;
     private final FeedbackBoardMapper mapper;
     private final TagMapper tagMapper;
     private final MemberService memberService;
@@ -41,16 +42,20 @@ public class FeedbackBoardController {
     private final BookmarkRepository bookmarkRepository;
 
     @PostMapping("/feedbackboard/new")
-    public ResponseEntity<FeedbackBoardResponseDto.Post> postFeedback(@Valid @RequestBody FeedbackBoardDto.Post postDto) {
+    public ResponseEntity<FeedbackBoardResponseDto.Post> postFeedback(@Valid @RequestBody FeedbackBoardDto.Post postDto,
+                                                                      @RequestHeader(value = "Authorization") String authorizationToken) {
+
         FeedbackBoardResponseDto.Post response = feedbackBoardService.createFeedback(postDto);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
     @PatchMapping("/feedbackboard/{feedbackBoardId}")
     public ResponseEntity<FeedbackBoardResponseDto.Patch> patchFeedback(@PathVariable("feedbackBoardId") Long feedbackBoardId,
-                                                                        @Valid @RequestBody FeedbackBoardDto.Patch patchDto){
+                                                                        @Valid @RequestBody FeedbackBoardDto.Patch patchDto,
+                                                                        @RequestHeader(value = "Authorization") String authorizationToken){
+        String token = authorizationToken.substring(7);
+
         List<Tag> tags = tagMapper.tagPostDtosToTag(patchDto.getTags());
 
-//        FeedbackBoard feedbackBoard = feedbackBoardService.updateFeedback(feedbackBoardId, patchDto);
         FeedbackBoardResponseDto.Patch response = feedbackBoardService.updateFeedback(feedbackBoardId, patchDto);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -75,19 +80,24 @@ public class FeedbackBoardController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
     @DeleteMapping("/feedbackboard/{feedbackBoardId}")
-    public ResponseEntity<HttpStatus> deleteFeedback(@PathVariable("feedbackBoardId") @Positive Long feedbackBoardId) {
+    public ResponseEntity<HttpStatus> deleteFeedback(@PathVariable("feedbackBoardId") @Positive Long feedbackBoardId,
+                                                     @RequestHeader(value = "Authorization") String authorizationToken) {
+
+        String token = authorizationToken.substring(7);
+
         feedbackBoardService.deleteFeedback(feedbackBoardId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @PostMapping("/feedbackboard/{feedbackBoardId}/like")
-    public ResponseEntity likeFeedbackBoard (@PathVariable("feedbackBoardId") @Positive Long feedbackBoardId) {
+    public ResponseEntity likeFeedbackBoard (@PathVariable("feedbackBoardId") @Positive Long feedbackBoardId,
+                                             @RequestHeader(value = "Authorization") String authorizationToken) {
 
         // 현재 로그인한 사용자 정보 가져오기
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Member currentMember = memberService.findVerifiedMember(authentication.getName());
 
-        FeedbackBoard foundfeedbackBoard = feedbackBoardService.findVerifiedFeedbackBoard(feedbackBoardId);
+        FeedbackBoard findfeedbackBoard = feedbackBoardService.findVerifiedFeedbackBoard(feedbackBoardId);
 
         // 현재 로그인한 사용자가 해당 게시물을 좋아요 했는지 확인
         boolean isAlreadyLiked = currentMember.getLikes().stream()
@@ -103,33 +113,37 @@ public class FeedbackBoardController {
         Like like = new Like();
         like.setBoardType(Like.BoardType.FEEDBACKBOARD);
         like.setMember(currentMember);
-        like.setFeedbackBoard(foundfeedbackBoard);
+        like.setFeedbackBoard(findfeedbackBoard);
         likeRepository.save(like);
 
         // 현재 사용자의 likes 컬렉션에 좋아요 추가
         currentMember.getLikes().add(like);
         memberRepository.save(currentMember);
 
+        // 게시물의 likeCount 증가
+        findfeedbackBoard.setLikeCount(findfeedbackBoard.getLikeCount() + 1);
+        feedbackBoardRepository.save(findfeedbackBoard);
+
         return new ResponseEntity<>(HttpStatus.OK);
 
     }
 
     @DeleteMapping("/feedbackboard/{feedbackBoardId}/like")
-    public ResponseEntity unlikeFeedbackBoard (@PathVariable("feedbackBoardId") @Positive Long feedbackBoardId) {
+    public ResponseEntity unlikeFeedbackBoard (@PathVariable("feedbackBoardId") @Positive Long feedbackBoardId,
+                                               @RequestHeader(value = "Authorization") String authorizationToken) {
 
         // 현재 로그인한 사용자 정보 가져오기
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Member currentMember = memberService.findVerifiedMember(authentication.getName());
 
-        FeedbackBoard feedbackBoard = feedbackBoardService.findVerifiedFeedbackBoard(feedbackBoardId);
+        FeedbackBoard findfeedbackBoard = feedbackBoardService.findVerifiedFeedbackBoard(feedbackBoardId);
 
         // 현재 로그인한 사용자가 해당 게시물을 좋아요 했는지 확인
-
         Optional<Set<Like>> likes = Optional.ofNullable(currentMember.getLikes());
 
         Set<Like> foundLikes = likes.orElse(Collections.emptySet())
                 .stream()
-                .filter(l -> l != null && l.getFeedbackBoard() != null && l.getFeedbackBoard().getFeedbackBoardId().equals(feedbackBoard.getFeedbackBoardId()))
+                .filter(l -> l != null && l.getFeedbackBoard() != null && l.getFeedbackBoard().getFeedbackBoardId().equals(findfeedbackBoard.getFeedbackBoardId()))
                 .collect(Collectors.toSet());
 
         if (foundLikes.isEmpty()) {
@@ -144,6 +158,10 @@ public class FeedbackBoardController {
 
         memberRepository.save(currentMember);
 
+        // 게시물의 likeCount 삭제
+        findfeedbackBoard.setLikeCount(findfeedbackBoard.getLikeCount() - 1);
+        feedbackBoardRepository.save(findfeedbackBoard);
+
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 
     }
@@ -155,7 +173,7 @@ public class FeedbackBoardController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Member currentMember = memberService.findVerifiedMember(authentication.getName());
 
-        FeedbackBoard foundfeedbackBoard = feedbackBoardService.findVerifiedFeedbackBoard(feedbackBoardId);
+        FeedbackBoard findfeedbackBoard = feedbackBoardService.findVerifiedFeedbackBoard(feedbackBoardId);
 
         // 현재 로그인한 사용자가 해당 게시물을 북마크 했는지 확인
         boolean isAlreadyBookMarked = currentMember.getBookmarks().stream()
@@ -171,7 +189,7 @@ public class FeedbackBoardController {
         Bookmark bookmark = new Bookmark();
         bookmark.setBoardType(Like.BoardType.FEEDBACKBOARD);
         bookmark.setMember(currentMember);
-        bookmark.setFeedbackBoard(foundfeedbackBoard);
+        bookmark.setFeedbackBoard(findfeedbackBoard);
         bookmarkRepository.save(bookmark);
 
         // 현재 사용자의 bookmark 컬렉션에 bookmark 추가

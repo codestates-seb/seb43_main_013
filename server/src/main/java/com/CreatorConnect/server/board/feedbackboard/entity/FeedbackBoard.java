@@ -3,8 +3,8 @@ package com.CreatorConnect.server.board.feedbackboard.entity;
 import com.CreatorConnect.server.audit.Auditable;
 import com.CreatorConnect.server.board.Board;
 import com.CreatorConnect.server.board.categories.category.entity.Category;
-import com.CreatorConnect.server.board.comments.comment.entity.FeedbackComment;
 import com.CreatorConnect.server.board.categories.feedbackcategory.entity.FeedbackCategory;
+import com.CreatorConnect.server.board.comments.feedbackcomment.entity.FeedbackComment;
 import com.CreatorConnect.server.member.entity.Member;
 import com.CreatorConnect.server.board.tag.entity.TagToFeedbackBoard;
 import lombok.AllArgsConstructor;
@@ -30,10 +30,12 @@ public class FeedbackBoard extends Auditable implements Board {
     private String title;
     @Column
     private String link;
-    @Column
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
     @Column
     private Long commentCount;
+    @Column
+    private Long maxCommentCount;
     @Column
     private Long likeCount;
     @Column
@@ -44,6 +46,7 @@ public class FeedbackBoard extends Auditable implements Board {
     @PrePersist
     public void prePersist() {
         this.commentCount = this.commentCount == null ? 0 : this.commentCount;
+        this.maxCommentCount = this.maxCommentCount == null ? 0 : this.maxCommentCount;
         this.likeCount = this.likeCount == null ? 0 : this.likeCount;
         this.viewCount = this.viewCount == null ? 0 : this.viewCount;
     }
@@ -101,7 +104,6 @@ public class FeedbackBoard extends Auditable implements Board {
     @OneToMany(mappedBy = "feedbackBoard", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<FeedbackComment> feedbackComments = new ArrayList<>();
 
-//    Todo FeedbackBoard-tag연결
     @OneToMany(mappedBy = "feedbackBoard", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<TagToFeedbackBoard> tagBoards = new ArrayList<>();
 

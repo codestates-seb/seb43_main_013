@@ -35,6 +35,7 @@ public class FeedbackBoardDto {
     @Setter
     @NoArgsConstructor
     public static class Patch {
+        private long memberId;
         private String title;
         private String link;
         private String content;
@@ -42,6 +43,12 @@ public class FeedbackBoardDto {
         private String categoryName;
         private String feedbackCategoryName;
         private List<TagDto.TagInfo> tags; // 태그
+
+        public Member getMember() {
+            Member member = new Member();
+            member.setMemberId(memberId);
+            return member;
+        }
     }
 
 }

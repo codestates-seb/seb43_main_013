@@ -17,7 +17,7 @@ public class HttpServletWrappingFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
         response.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
-        response.setHeader("Access-Control-Allow-Method","POST,GET,DELETE,PATCH");
+        response.setHeader("Access-Control-Allow-Methods","POST, GET, DELETE, PATCH, OPTIONS");
         response.setHeader("Access-Control-Max-Age","3600");
         response.setHeader("Access-Control-Allow-Headers","Content-Type,x-requested-with,Authorization,Access-Control-Allow-Origin");
         response.setHeader("Access-Control-Allow-Credentials","true");

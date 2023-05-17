@@ -1,11 +1,13 @@
 package com.CreatorConnect.server.member.entity;
 
 import com.CreatorConnect.server.audit.Auditable;
-import com.CreatorConnect.server.board.comments.comment.entity.FeedbackComment;
-import com.CreatorConnect.server.board.comments.comment.entity.FreeComment;
+import com.CreatorConnect.server.board.comments.feedbackcomment.entity.FeedbackComment;
+import com.CreatorConnect.server.board.comments.freecomment.entity.FreeComment;
 import com.CreatorConnect.server.board.freeboard.entity.FreeBoard;
 import com.CreatorConnect.server.board.feedbackboard.entity.FeedbackBoard;
 import com.CreatorConnect.server.board.jobboard.entity.JobBoard;
+import com.CreatorConnect.server.board.recomments.feedbackrecomment.entity.FeedbackReComment;
+import com.CreatorConnect.server.board.recomments.freerecomment.entity.FreeReComment;
 import com.CreatorConnect.server.member.bookmark.entity.Bookmark;
 import com.CreatorConnect.server.member.like.entity.Like;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -66,9 +68,17 @@ public class Member extends Auditable {
     @JsonIgnoreProperties("followings") // Jackson 에서 순환 참조 처리
     private Set<Member> followers = new HashSet<>(); // SET : 중복 방지
 
+    public int getFollowerCount() {
+        return followers.size();
+    }
+
     @ManyToMany(mappedBy = "followers")
     @JsonIgnoreProperties("followers")
     private Set<Member> followings = new HashSet<>();
+
+    public int getFollowingCount() {
+        return followings.size();
+    }
 
     public void follow (Member member) { // 다른 사람이 나를 팔로우 하는 로직
         followers.add(member);
@@ -97,6 +107,12 @@ public class Member extends Auditable {
 
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<FreeComment> freeComments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<FeedbackReComment> feedbackReComments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<FreeReComment> freeReComments = new ArrayList<>();
 //
 //    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 //    private List<ReComment> reComments = new ArrayList<>();

@@ -1,7 +1,7 @@
 package com.CreatorConnect.server.advice;
 
 import com.CreatorConnect.server.exception.BusinessLogicException;
-import com.CreatorConnect.server.errorresponse.ErrorResponse;
+import com.CreatorConnect.server.response.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

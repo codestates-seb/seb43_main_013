@@ -3,7 +3,8 @@ package com.CreatorConnect.server.board.freeboard.entity;
 import com.CreatorConnect.server.audit.Auditable;
 import com.CreatorConnect.server.board.Board;
 import com.CreatorConnect.server.board.categories.category.entity.Category;
-import com.CreatorConnect.server.board.comments.comment.entity.FreeComment;
+import com.CreatorConnect.server.board.comments.freecomment.entity.FreeComment;
+import com.CreatorConnect.server.board.tag.entity.Tag;
 import com.CreatorConnect.server.board.tag.entity.TagToFreeBoard;
 import com.CreatorConnect.server.member.entity.Member;
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -30,14 +31,14 @@ public class FreeBoard extends Auditable implements Board {
     @Column(nullable = false)
     private String title; // 게시글 제목
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String content; // 게시글 내용
-
-//    @OneToMany(mappedBy = "freeBoard")
-//    private final List<TagToFreeBoard> tagBoardList = new ArrayList<>();
 
     @Column
     private long commentCount; // 댓글수
+
+    @Column
+    private long maxCommentCount; //삭제된 댓글까지 포함된 댓글 수
 
     @Column
     private long likeCount; // 좋아요수

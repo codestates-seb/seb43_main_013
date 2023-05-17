@@ -14,5 +14,6 @@ public class MemberFollowResponseDto {
     private Long memberId;
     private String nickname;
     private String profileImageUrl;
+    private Boolean followed;
 
 }

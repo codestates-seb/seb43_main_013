@@ -17,6 +17,7 @@ import com.CreatorConnect.server.board.tag.dto.TagDto;
 import com.CreatorConnect.server.board.tag.entity.Tag;
 import com.CreatorConnect.server.board.tag.mapper.TagMapper;
 import com.CreatorConnect.server.board.tag.service.FeedbackBoardTagService;
+import com.CreatorConnect.server.member.entity.Member;
 import com.CreatorConnect.server.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -47,10 +48,10 @@ public class FeedbackBoardService {
     private final MemberService memberService;
 
     //등록
-    public FeedbackBoardResponseDto.Post createFeedback(FeedbackBoardDto.Post postDto){
-        // 멤버 검증
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        memberService.verifiedAuthenticatedMember(postDto.getMemberId(), authentication.getName());
+    public FeedbackBoardResponseDto.Post createFeedback(FeedbackBoardDto.Post postDto) {
+
+        // post dto memberId 와 로그인 멤버 id 비교
+        memberService.verifiedAuthenticatedMember(postDto.getMemberId());
 
         // Dto-Entity 변환
         FeedbackBoard feedbackBoard = mapper.feedbackBoardPostDtoToFeedbackBoard(postDto);
@@ -65,7 +66,6 @@ public class FeedbackBoardService {
         // 태그 저장
         List<Tag> tags = tagMapper.tagPostDtosToTag(postDto.getTags());
         List<Tag> createTAgs = feedbackBoardTagService.createFeedbackBoardTag(tags, savedfeedbackBoard);
-
 
         // Entity-Dto 변환 후 리턴
         FeedbackBoardResponseDto.Post responseDto = mapper.feedbackBoardToFeedbackBoardPostResponse(savedfeedbackBoard);
@@ -83,8 +83,7 @@ public class FeedbackBoardService {
         FeedbackBoard foundFeedbackBoard = findVerifiedFeedbackBoard(feedbackBoard.getFeedbackBoardId());
 
         // 글 작성한 멤버가 현재 로그인한 멤버와 같은지 확인
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        memberService.verifiedAuthenticatedMember(foundFeedbackBoard.getMemberId(), authentication.getName());
+        memberService.verifiedAuthenticatedMember(foundFeedbackBoard.getMemberId());
 
         // 찾은 Entity의 값 변경
         Optional.ofNullable(feedbackBoard.getTitle())
@@ -129,18 +128,42 @@ public class FeedbackBoardService {
 
     // 개별 조회
     public FeedbackBoardResponseDto.Details responseFeedback(Long feedbackBoardId){
+
         // 클라이언트에서 보낸 ID값으로 Entity 조회
         FeedbackBoard foundFeedbackBoard = findVerifiedFeedbackBoard(feedbackBoardId);
 
         // 게시글에 있는 태그 추가
-        List<TagDto.TagInfo> tags = foundFeedbackBoard.getTagBoards().stream().map(tagToFeedbackBoard -> {
-            TagDto.TagInfo tagInfo = tagMapper.tagToTagToBoard(tagToFeedbackBoard.getTag());
-            return tagInfo;
-        }).collect(Collectors.toList());
+        List<TagDto.TagInfo> tags = foundFeedbackBoard.getTagBoards().stream()
+                .map(tagToFeedbackBoard -> tagMapper.tagToTagToBoard(tagToFeedbackBoard.getTag()))
+                .collect(Collectors.toList());
 
-        //조회수 증가
+        // 조회수 증가
         addViews(foundFeedbackBoard);
-        return mapper.feedbackBoardToResponse(foundFeedbackBoard, tags);
+
+        // 로그인한 멤버
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        boolean bookmarked = false;
+        boolean liked = false;
+
+        if (authentication != null && authentication.isAuthenticated() && !"anonymousUser".equals(authentication.getName())) {
+            Member loggedinMember = memberService.findVerifiedMember(authentication.getName());
+
+            // 게시물을 북마크한 경우
+            bookmarked = loggedinMember.getBookmarks().stream()
+                    .anyMatch(bookmark -> bookmark.getFeedbackBoard().equals(foundFeedbackBoard));
+
+            // 게시물을 좋아요한 경우
+            liked = loggedinMember.getLikes().stream()
+                    .anyMatch(like -> like.getFeedbackBoard().equals(foundFeedbackBoard));
+        }
+
+        // 매핑
+        FeedbackBoardResponseDto.Details response = mapper.feedbackBoardToResponse(foundFeedbackBoard, tags);
+        response.setBookmarked(bookmarked);
+        response.setLiked(liked);
+
+        return response;
+
     }
 
     //목록 조회
@@ -186,8 +209,7 @@ public class FeedbackBoardService {
         FeedbackBoard feedbackBoard = findVerifiedFeedbackBoard(feedbackBoardId);
 
         // 글 작성한 멤버가 현재 로그인한 멤버와 같은지 확인
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        memberService.verifiedAuthenticatedMember(feedbackBoard.getMemberId(), authentication.getName());
+        memberService.verifiedAuthenticatedMember(feedbackBoard.getMemberId());
 
         // 삭제
         feedbackBoardRepository.delete(feedbackBoard);
