@@ -92,6 +92,14 @@ public class JobCategoryService {
                 new BusinessLogicException(ExceptionCode.CATEGORY_NOT_FOUND));
     }
 
+    // 카테고리 검증 메서드 CategoryName을 통해 검증
+    public void findVerifiedJobCategoryByJobCategoryName(String jobCategoryName) {
+        Optional<JobCategory> optionalJobCategory = jobCategoryRepository.findByJobCategoryName(jobCategoryName);
+        if (!optionalJobCategory.isPresent()) { // 해당 구인구직 카테고리가 존재하지 않는 경우
+            throw new BusinessLogicException(ExceptionCode.CATEGORY_NOT_FOUND);
+        }
+    }
+
 
 
 }
