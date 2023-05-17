@@ -144,7 +144,7 @@ public class MemberService {
             throw new BusinessLogicException(ExceptionCode.MEMBER_EXISTS, String.format(" %s : 이미 등록된 이메일입니다. 다른 이메일을 사용해주세요. ", email));
     }
 
-    public Member findVerifiedMember(long memberId) {
+    public Member findVerifiedMember(Long memberId) {
 
         Optional<Member> optionalMember = memberRepository.findById(memberId);
         Member findMember = optionalMember.orElseThrow(()
