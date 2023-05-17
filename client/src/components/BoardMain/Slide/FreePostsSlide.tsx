@@ -74,16 +74,15 @@ const FreePostsSlide = () => {
     // centerPadding: "60px",
     infinite: true,
     draggable: true,
-    swipeToSlide: true,
+    // swipeToSlide: true,
     slidesToShow: silderPage,
     autoplay: true,
     // autoplaySpeed: 4000,
-    speed: 3000,
+    speed: 500,
     dots: true,
     arrow: true,
     appendDots: appendDots,
     customPaging: customPaging,
-    pauseOnHover: true,
   };
 
   /** 2023/05/17 자유게시판 목록 get 요청 - by leekoby */
