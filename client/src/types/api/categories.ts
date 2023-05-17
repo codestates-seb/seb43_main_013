@@ -1,4 +1,9 @@
-import type { CategoryType, ResponseCategoriesType, ResponseFeedbackCategoriesType } from ".";
+import type {
+  CategoryType,
+  ResponseCategoriesType,
+  ResponseFeedbackCategoriesType,
+  ResponsePromotionCategoriesType,
+} from ".";
 
 // ============================== 카테고리들 ==============================
 /** 2023/05/09 - 카테고리들 요청 송신 타입 - by 1-blue */
@@ -25,4 +30,17 @@ export type ApiFetchFeedbackCategoriesResponse = ResponseFeedbackCategoriesType[
 /** 2023/05/14 - 피드백 카테고리들 요청 핸들러 - by leekoby */
 export interface ApiFetchFeedbackCategoriesHandler {
   (body: ApiFetchFeedbackCategoriesRequest): Promise<ApiFetchFeedbackCategoriesResponse>;
+}
+
+// ============================== 피드백 카테고리들 ==============================
+/** 2023/05/17 - 홍보 카테고리들 요청 송신 타입 - by leekoby */
+export interface ApiFetchPromotionCategoriesRequest {
+  type: CategoryType;
+}
+/** 2023/05/17 - 홍보 카테고리들 요청 수신 타입 - by leekoby */
+export type ApiFetchPromotionCategoriesResponse = ResponsePromotionCategoriesType[];
+
+/** 2023/05/17 - 홍보 카테고리들 요청 핸들러 - by leekoby */
+export interface ApiFetchPromotionCategoriesHandler {
+  (body: ApiFetchPromotionCategoriesRequest): Promise<ApiFetchPromotionCategoriesResponse>;
 }

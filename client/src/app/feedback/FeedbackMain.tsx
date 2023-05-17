@@ -9,11 +9,11 @@ import { useFetchFeedbackBoardList } from "@/hooks/query/useFetchFeedbackBoardLi
 import { useCategoriesStore, useSortStore } from "@/store";
 import { useFeedbackCategoriesStore } from "@/store/useFeedbackCategoriesStore";
 import Link from "next/link";
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useRef, useEffect, useCallback } from "react";
 import FeedbackContentItem from "./FeedbackContentItem";
 import FeedbackCategories from "./FeedbackCategories";
 
-/** 2023/05/08 - 피드백 메인 화면 - by leekoby */
+/** 2023/05/08 - 피드백 게시판 메인 화면 - by leekoby */
 const FeedbackMain = () => {
   /** 2023/05/14 - 사이드 카테고리 상태 - by leekoby */
   const selectedCategory = useCategoriesStore((state) => state.selectedCategory);
@@ -22,7 +22,6 @@ const FeedbackMain = () => {
 
   console.log(selected);
   /**  2023/05/15 - 피드백 카테고리 상태 - by leekoby */
-  // TODO: 전역상태 만들기
   const selectedFeedbackCategory = useFeedbackCategoriesStore((state) => state.selectedFeedbackCategory);
 
   /** 2023/05/15 - 정렬 전역 상태 - by leekoby */
@@ -31,7 +30,7 @@ const FeedbackMain = () => {
   /** 2023/05/11 피드백 목록 get 요청 - by leekoby */
   const { data, fetchNextPage, hasNextPage, isFetching, refetch } = useFetchFeedbackBoardList({
     selected,
-    selectedFeedback: selectedCategory?.categoryId,
+    selectedFeedback: selectedFeedbackCategory?.feedbackCategoryId,
     sorted: sortSelectedOption?.optionName,
     page: 1,
     size: 10,
@@ -70,7 +69,7 @@ const FeedbackMain = () => {
       <h1 className="text-3xl font-bold text-left">🔥 피드백 게시판 🔥</h1>
       <div className="flex flex-col md:flex-row ">
         {/* Left Side */}
-        <aside className=" flex flex-row md:flex-col items-center justify-center md:justify-start  md:w-0 md:grow-[2]  ">
+        <aside className="flex flex-row md:flex-col items-center justify-center md:justify-start  md:w-0 md:grow-[2]  ">
           {/* side category  */}
           {categories && <SideCategories selectedCategory={selectedCategory} categories={categories} />}
           {/* <SideCategories categoryData={categoryDummyData} /> */}
@@ -86,7 +85,6 @@ const FeedbackMain = () => {
           </div>
 
           {/* post item */}
-
           {/*  2023/05/14 - 무한스크롤 피드백 게시글 목록 - by leekoby  */}
           <div className="flex flex-col flex-wrap gap-5 md:flex-row">
             {/* TODO: //*게시글 북마크 좋아요 클릭되게 하는 방법 생각해보기  */}

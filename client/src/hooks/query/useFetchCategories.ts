@@ -1,13 +1,18 @@
 import { useQuery } from "@tanstack/react-query";
 
 // api
-import { apiFetchCategories, apiFetchFeedbackCategories } from "@/apis";
+import { apiFetchCategories, apiFetchFeedbackCategories, apiFetchPromotionCategories } from "@/apis";
 
 // key
 import { QUERY_KEYS } from "@/hooks/query";
 
 // type
-import type { ApiFetchCategoriesResponse, ApiFetchFeedbackCategoriesResponse, CategoryType } from "@/types/api";
+import type {
+  ApiFetchCategoriesResponse,
+  ApiFetchFeedbackCategoriesResponse,
+  ApiFetchPromotionCategoriesResponse,
+  CategoryType,
+} from "@/types/api";
 
 interface Props {
   type: CategoryType;
@@ -24,7 +29,7 @@ const useFetchCategories = ({ type }: Props) => {
 
 export { useFetchCategories };
 
-/** 2023/05/14 - 피드백 카테고리들을 패치하는 훅 - by leekoby */
+/** 2023/05/14 - 피드백 게시판 카테고리들을 패치하는 훅 - by leekoby */
 const useFetchFeedbackCategories = ({ type }: Props) => {
   const { data, isLoading } = useQuery<ApiFetchFeedbackCategoriesResponse>([QUERY_KEYS.feedbackCategories, type], () =>
     apiFetchFeedbackCategories({ type }),
@@ -34,3 +39,14 @@ const useFetchFeedbackCategories = ({ type }: Props) => {
 };
 
 export { useFetchFeedbackCategories };
+
+/** 2023/05/14 - 홍보 게시판 카테고리들을 패치하는 훅 - by leekoby */
+const useFetchPromotionCategories = ({ type }: Props) => {
+  const { data, isLoading } = useQuery<ApiFetchPromotionCategoriesResponse>([QUERY_KEYS.feedbackCategories, type], () =>
+    apiFetchPromotionCategories({ type }),
+  );
+
+  return { promotionCategories: data, promotionIsLoading: isLoading };
+};
+
+export { useFetchPromotionCategories };
