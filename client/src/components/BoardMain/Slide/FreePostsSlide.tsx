@@ -74,7 +74,7 @@ const FreePostsSlide = () => {
     // centerPadding: "60px",
     infinite: true,
     draggable: true,
-    // swipeToSlide: true,
+    swipeToSlide: true,
     slidesToShow: silderPage,
     autoplay: true,
     // autoplaySpeed: 4000,
