@@ -32,7 +32,7 @@ public class FreeCommentController {
                                                                           @Valid @RequestBody CommentDto.Patch patchDto,
                                                    @RequestHeader(value = "Authorization") String authorizationToken) {
         String token = authorizationToken.substring(7);
-        freeCommentService.updateComment(token, freeBoardId, commentId, patchDto);
+        freeCommentService.updateComment(freeBoardId, commentId, patchDto);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -57,7 +57,7 @@ public class FreeCommentController {
                                                     @RequestHeader(value = "Authorization") String authorizationToken) {
 
         String token = authorizationToken.substring(7);
-        freeCommentService.deleteComment(token, freeBoardId, commentId);
+        freeCommentService.deleteComment(freeBoardId, commentId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
