@@ -14,9 +14,8 @@ public class CommentResponseDto {
     @Setter
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class CommentContent {
+    public static class Post {
         private long commentId;
-        private String content;
     }
 
     @Getter
@@ -33,7 +32,7 @@ public class CommentResponseDto {
         private long reCommentCount;
         private LocalDateTime createdAt;
         private LocalDateTime modifiedAt;
-//        private List<CommentResponseDto.Multi> reComments;
+        private List<String> reComments;
     }
     @Getter
     @AllArgsConstructor

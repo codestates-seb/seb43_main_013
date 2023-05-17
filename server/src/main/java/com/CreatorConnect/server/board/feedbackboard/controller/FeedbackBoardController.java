@@ -54,7 +54,6 @@ public class FeedbackBoardController {
 
         List<Tag> tags = tagMapper.tagPostDtosToTag(patchDto.getTags());
 
-//        FeedbackBoard feedbackBoard = feedbackBoardService.updateFeedback(feedbackBoardId, patchDto);
         FeedbackBoardResponseDto.Patch response = feedbackBoardService.updateFeedback(token, feedbackBoardId, patchDto);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

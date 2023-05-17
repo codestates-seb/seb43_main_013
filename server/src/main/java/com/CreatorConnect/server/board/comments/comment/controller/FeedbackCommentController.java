@@ -20,21 +20,21 @@ public class FeedbackCommentController {
     private final FeedbackCommentServiceImpl feedbackCommentService;
 
     @PostMapping("/feedbackboard/{feedbackBoardId}/comment/new")
-    public ResponseEntity<CommentResponseDto.CommentContent> postComment(@PathVariable("feedbackBoardId") @Positive Long feedbackBoardId,
+    public ResponseEntity<CommentResponseDto.Post> postComment(@PathVariable("feedbackBoardId") @Positive Long feedbackBoardId,
                                                                        @Valid @RequestBody CommentDto.Post postDto) {
-        CommentResponseDto.CommentContent response = feedbackCommentService.createComment(feedbackBoardId, postDto);
+        CommentResponseDto.Post response = feedbackCommentService.createComment(feedbackBoardId, postDto);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @PatchMapping("/feedbackboard/{feedbackBoardId}/comment/{commentId}")
-    public ResponseEntity<CommentResponseDto.CommentContent> patchComment(@PathVariable("feedbackBoardId") @Positive Long feedbackBoardId,
-                                                                          @PathVariable("commentId") @Positive Long commentId,
-                                                                          @Valid @RequestBody CommentDto.Patch patchDto,
-                                                                          @RequestHeader(value = "Authorization") String authorizationToken){
-        String token = authorizationToken.substring(7);
+    public ResponseEntity<HttpStatus> patchComment(@PathVariable("feedbackBoardId") @Positive Long feedbackBoardId,
+                                                                               @PathVariable("commentId") @Positive Long commentId,
+                                                                               @Valid @RequestBody CommentDto.Patch patchDto,
+                                                   @RequestHeader(value = "Authorization") String authorizationToken){
 
-        CommentResponseDto.CommentContent response = feedbackCommentService.updateComment(token, feedbackBoardId, commentId, patchDto);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        String token = authorizationToken.substring(7);
+        feedbackCommentService.updateComment(token, feedbackBoardId, commentId, patchDto);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/feedbackboard/{feedbackBoardId}/comment/{commentId}")
@@ -58,9 +58,7 @@ public class FeedbackCommentController {
                                                     @RequestHeader(value = "Authorization") String authorizationToken) {
 
         String token = authorizationToken.substring(7);
-
         feedbackCommentService.deleteComment(token, feedbackBoardId, commentId);
-
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 

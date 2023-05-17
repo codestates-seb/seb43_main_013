@@ -20,21 +20,20 @@ public class FreeCommentController {
     private final FreeCommentServiceImpl freeCommentService;
 
     @PostMapping("/freeboard/{freeBoardId}/comment/new")
-    public ResponseEntity<CommentResponseDto.CommentContent> postComment(@PathVariable("freeBoardId") @Positive Long freeBoardId,
+    public ResponseEntity<CommentResponseDto.Post> postComment(@PathVariable("freeBoardId") @Positive Long freeBoardId,
                                                                              @Valid @RequestBody CommentDto.Post postDto) {
-        CommentResponseDto.CommentContent response = freeCommentService.createComment(freeBoardId, postDto);
+        CommentResponseDto.Post response = freeCommentService.createComment(freeBoardId, postDto);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @PatchMapping("/freeboard/{freeBoardId}/comment/{commentId}")
-    public ResponseEntity<CommentResponseDto.CommentContent> patchComment(@PathVariable("freeBoardId") @Positive Long freeBoardId,
+    public ResponseEntity<HttpStatus> patchComment(@PathVariable("freeBoardId") @Positive Long freeBoardId,
                                                                           @PathVariable("commentId") @Positive Long commentId,
                                                                           @Valid @RequestBody CommentDto.Patch patchDto,
-                                                                          @RequestHeader(value = "Authorization") String authorizationToken) {
+                                                   @RequestHeader(value = "Authorization") String authorizationToken) {
         String token = authorizationToken.substring(7);
-
-        CommentResponseDto.CommentContent response = freeCommentService.updateComment(token, freeBoardId, commentId, patchDto);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        freeCommentService.updateComment(token, freeBoardId, commentId, patchDto);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/freeboard/{freeBoardId}/comment/{commentId}")
@@ -58,9 +57,7 @@ public class FreeCommentController {
                                                     @RequestHeader(value = "Authorization") String authorizationToken) {
 
         String token = authorizationToken.substring(7);
-
         freeCommentService.deleteComment(token, freeBoardId, commentId);
-
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
