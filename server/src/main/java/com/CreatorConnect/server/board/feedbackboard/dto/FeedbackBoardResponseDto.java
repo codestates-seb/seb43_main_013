@@ -53,8 +53,8 @@ public class FeedbackBoardResponseDto {
         private String nickname;
         private String email;
         private String profileImageUrl;
-        private Boolean bookmarked;
-        private Boolean liked;
+        private Boolean bookmarked = false;
+        private Boolean liked = false;
 
     }
 
