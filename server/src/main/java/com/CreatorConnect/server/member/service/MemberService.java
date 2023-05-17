@@ -18,6 +18,9 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -27,6 +30,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestTemplate;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
@@ -172,9 +177,9 @@ public class MemberService {
 
     public void verifiedAuthenticatedMember(String jwtToken, Member findMember) {
 
-        String encodeKey = encode(secretKey);
-
         try {
+            String encodeKey = encode(secretKey);
+
             Jws<Claims> claims = jwtTokenizer.getClaims(jwtToken, encodeKey);
             Claims tokenClaims = claims.getBody();
             String userEmail = tokenClaims.getSubject();
@@ -183,20 +188,21 @@ public class MemberService {
                 throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_ALLOWED);
             }
 
+            // todo JWT 토큰 인증 실패 시 OAuth 2.0 액세스 토큰을 사용하여 인증
+
         } catch (JwtException e) {
             throw new BusinessLogicException(ExceptionCode.INVALID_TOKEN);
         }
     }
 
-    public String verifiedEmailByToken (String jwtToken) {
+    public void verifiedAuthenticatedMember (Member member) {
 
-        String encodeKey = encode(secretKey);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        Jws<Claims> claims = jwtTokenizer.getClaims(jwtToken, encodeKey);
-        Claims tokenClaims = claims.getBody();
-        String userEmail = tokenClaims.getSubject();
+        if (!authentication.getName().equals(member.getEmail())) {
+            throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_ALLOWED);
+        }
 
-        return userEmail;
     }
 
     public void verifyActivatedMember (Member member){
