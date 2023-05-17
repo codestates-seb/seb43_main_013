@@ -56,7 +56,7 @@ public class FeedbackBoardController {
 
         List<Tag> tags = tagMapper.tagPostDtosToTag(patchDto.getTags());
 
-        FeedbackBoardResponseDto.Patch response = feedbackBoardService.updateFeedback(token, feedbackBoardId, patchDto);
+        FeedbackBoardResponseDto.Patch response = feedbackBoardService.updateFeedback(feedbackBoardId, patchDto);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
     @GetMapping("/feedbackboard/{feedbackBoardId}")
@@ -85,7 +85,7 @@ public class FeedbackBoardController {
 
         String token = authorizationToken.substring(7);
 
-        feedbackBoardService.deleteFeedback(token, feedbackBoardId);
+        feedbackBoardService.deleteFeedback(feedbackBoardId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
@@ -93,7 +93,7 @@ public class FeedbackBoardController {
     public ResponseEntity likeFeedbackBoard (@PathVariable("feedbackBoardId") @Positive Long feedbackBoardId,
                                              @RequestHeader(value = "Authorization") String authorizationToken) {
 
-        // 현재 로그인한 사용자 정보 가져오기 todo token 인증 방식으로 변경
+        // 현재 로그인한 사용자 정보 가져오기
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Member currentMember = memberService.findVerifiedMember(authentication.getName());
 
@@ -132,7 +132,7 @@ public class FeedbackBoardController {
     public ResponseEntity unlikeFeedbackBoard (@PathVariable("feedbackBoardId") @Positive Long feedbackBoardId,
                                                @RequestHeader(value = "Authorization") String authorizationToken) {
 
-        // 현재 로그인한 사용자 정보 가져오기 todo token 인증 방식으로 변경
+        // 현재 로그인한 사용자 정보 가져오기
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Member currentMember = memberService.findVerifiedMember(authentication.getName());
 
@@ -169,7 +169,7 @@ public class FeedbackBoardController {
     @PostMapping("/feedbackboard/{feedbackBoardId}/bookmark")
     public ResponseEntity bookmarkFeedbackBoard (@PathVariable("feedbackBoardId") @Positive Long feedbackBoardId) {
 
-        // 현재 로그인한 사용자 정보 가져오기 todo token 인증 방식으로 변경
+        // 현재 로그인한 사용자 정보 가져오기
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Member currentMember = memberService.findVerifiedMember(authentication.getName());
 
@@ -203,7 +203,7 @@ public class FeedbackBoardController {
     @DeleteMapping("/feedbackboard/{feedbackBoardId}/bookmark")
     public ResponseEntity unbookmarkFeedbackBoard (@PathVariable("feedbackBoardId") @Positive Long feedbackBoardId) {
 
-        // 현재 로그인한 사용자 정보 가져오기 todo token 인증 방식으로 변경
+        // 현재 로그인한 사용자 정보 가져오기
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Member currentMember = memberService.findVerifiedMember(authentication.getName());
 

@@ -50,6 +50,9 @@ public class FeedbackBoardService {
     //등록
     public FeedbackBoardResponseDto.Post createFeedback(FeedbackBoardDto.Post postDto) {
 
+        // post dto memberId 와 로그인 멤버 id 비교
+        memberService.verifiedAuthenticatedMember(postDto.getMemberId());
+
         // Dto-Entity 변환
         FeedbackBoard feedbackBoard = mapper.feedbackBoardPostDtoToFeedbackBoard(postDto);
         Optional<Category> category = categoryRepository.findByCategoryName(postDto.getCategoryName());
@@ -70,7 +73,7 @@ public class FeedbackBoardService {
     }
 
     //수정
-    public FeedbackBoardResponseDto.Patch updateFeedback(String token, Long feedbackBoardId, FeedbackBoardDto.Patch patchDto){
+    public FeedbackBoardResponseDto.Patch updateFeedback(Long feedbackBoardId, FeedbackBoardDto.Patch patchDto){
 
         // Dto-Entity 변환
         FeedbackBoard feedbackBoard = mapper.feedbackBoardPatchDtoToFeedbackBoard(patchDto);
@@ -80,8 +83,7 @@ public class FeedbackBoardService {
         FeedbackBoard foundFeedbackBoard = findVerifiedFeedbackBoard(feedbackBoard.getFeedbackBoardId());
 
         // 글 작성한 멤버가 현재 로그인한 멤버와 같은지 확인
-        Member findMember = memberService.findVerifiedMember(feedbackBoard.getMemberId());
-        memberService.verifiedAuthenticatedMember(token,findMember);
+        memberService.verifiedAuthenticatedMember(foundFeedbackBoard.getMemberId());
 
         // 찾은 Entity의 값 변경
         Optional.ofNullable(feedbackBoard.getTitle())
@@ -202,13 +204,12 @@ public class FeedbackBoardService {
     }
 
     //삭제
-    public void deleteFeedback(String token, Long feedbackBoardId) {
+    public void deleteFeedback(Long feedbackBoardId) {
         // 피드백 ID로 피드백 찾기
         FeedbackBoard feedbackBoard = findVerifiedFeedbackBoard(feedbackBoardId);
 
         // 글 작성한 멤버가 현재 로그인한 멤버와 같은지 확인
-        Member findMember = memberService.findVerifiedMember(feedbackBoard.getMemberId());
-        memberService.verifiedAuthenticatedMember(token, findMember);
+        memberService.verifiedAuthenticatedMember(feedbackBoard.getMemberId());
 
         // 삭제
         feedbackBoardRepository.delete(feedbackBoard);
