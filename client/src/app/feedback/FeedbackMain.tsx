@@ -43,7 +43,7 @@ const FeedbackMain = () => {
   /** 2023/05/13 - 공통 사이드 카테고리  - by leekoby */
   const { categories, isLoading } = useFetchCategories({ type: "normal" });
   /** 2023/05/13 - 피드백게시판 피드백 카테고리  - by leekoby */
-  const { feedbackCategories, feedbackIsLoading } = useFetchFeedbackCategories({ type: "feedback" });
+  const { feedbackCategories, feedbackCategoryIsLoading } = useFetchFeedbackCategories({ type: "feedback" });
 
   /** 2023/05/14 - 무한스크롤 불러오기를 위해 사용 - by leekoby */
   const observerRef = useRef<IntersectionObserver | null>(null);

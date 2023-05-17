@@ -2,6 +2,7 @@ import type {
   CategoryType,
   ResponseCategoriesType,
   ResponseFeedbackCategoriesType,
+  ResponseJobCategoriesType,
   ResponsePromotionCategoriesType,
 } from ".";
 
@@ -32,7 +33,7 @@ export interface ApiFetchFeedbackCategoriesHandler {
   (body: ApiFetchFeedbackCategoriesRequest): Promise<ApiFetchFeedbackCategoriesResponse>;
 }
 
-// ============================== 피드백 카테고리들 ==============================
+// ============================== 홍보 카테고리들 ==============================
 /** 2023/05/17 - 홍보 카테고리들 요청 송신 타입 - by leekoby */
 export interface ApiFetchPromotionCategoriesRequest {
   type: CategoryType;
@@ -43,4 +44,17 @@ export type ApiFetchPromotionCategoriesResponse = ResponsePromotionCategoriesTyp
 /** 2023/05/17 - 홍보 카테고리들 요청 핸들러 - by leekoby */
 export interface ApiFetchPromotionCategoriesHandler {
   (body: ApiFetchPromotionCategoriesRequest): Promise<ApiFetchPromotionCategoriesResponse>;
+}
+
+// ============================== 구인구직 카테고리들 ==============================
+/** 2023/05/17 - 구인구직 카테고리들 요청 송신 타입 - by leekoby */
+export interface ApiFetchJobCategoriesRequest {
+  type: CategoryType;
+}
+/** 2023/05/17 - 구인구직 카테고리들 요청 수신 타입 - by leekoby */
+export type ApiFetchJobCategoriesResponse = ResponseJobCategoriesType[];
+
+/** 2023/05/17 - 구인구직 카테고리들 요청 핸들러 - by leekoby */
+export interface ApiFetchJobCategoriesHandler {
+  (body: ApiFetchJobCategoriesRequest): Promise<ApiFetchJobCategoriesResponse>;
 }
