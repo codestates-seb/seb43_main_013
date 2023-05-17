@@ -24,7 +24,7 @@ public class Bookmark extends Auditable {
     private Long bookmarkId;
 
     @ManyToOne
-    @JoinColumn(name = "likedmember_id")
+    @JoinColumn(name = "bookmarkedmember_id")
     private Member member;
 
     @ManyToOne(fetch = LAZY, cascade = CascadeType.ALL)
@@ -44,7 +44,5 @@ public class Bookmark extends Auditable {
         PROMOTIONBOARD,
         JOBOARD
     }
-
-
 
 }
