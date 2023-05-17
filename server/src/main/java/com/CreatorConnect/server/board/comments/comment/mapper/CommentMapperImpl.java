@@ -26,7 +26,7 @@ public class CommentMapperImpl implements CommentMapper{
         details.setReCommentCount(comment.getReCommentCount());
         details.setCreatedAt(comment.getCreatedAt());
         details.setModifiedAt(comment.getModifiedAt());
-        // details.setReComments();
+        details.setReComments(new ArrayList<>());
         return details;
     }
     @Override
@@ -46,7 +46,7 @@ public class CommentMapperImpl implements CommentMapper{
 
         // dto-entity 매핑
         FeedbackComment feedbackComment = new FeedbackComment();
-        CommentPK commentPK = new CommentPK(id, feedbackBoard.getCommentCount()+1);
+        CommentPK commentPK = new CommentPK(id, feedbackBoard.getMaxCommentCount()+1);
         feedbackComment.setCommentPK(commentPK);
         feedbackComment.setContent(postDto.getContent());
         feedbackComment.setMember(postDto.getMember());
@@ -54,6 +54,7 @@ public class CommentMapperImpl implements CommentMapper{
 
         // board commentCount +1
         feedbackBoard.setCommentCount(feedbackBoard.getCommentCount()+1);
+        feedbackBoard.setMaxCommentCount(feedbackBoard.getMaxCommentCount()+1);
         return feedbackComment;
     }
 
@@ -69,7 +70,7 @@ public class CommentMapperImpl implements CommentMapper{
         details.setReCommentCount(comment.getReCommentCount());
         details.setCreatedAt(comment.getCreatedAt());
         details.setModifiedAt(comment.getModifiedAt());
-        // details.setReComments();
+        details.setReComments(new ArrayList<>());
         return details;
     }
 
@@ -91,7 +92,7 @@ public class CommentMapperImpl implements CommentMapper{
 
         // dto-entity 매핑
         FreeComment freeComment = new FreeComment();
-        CommentPK commentPK = new CommentPK(id, freeBoard.getCommentCount()+1);
+        CommentPK commentPK = new CommentPK(id, freeBoard.getMaxCommentCount()+1);
         freeComment.setCommentPK(commentPK);
         freeComment.setContent(postDto.getContent());
         freeComment.setMember(postDto.getMember());
@@ -99,6 +100,7 @@ public class CommentMapperImpl implements CommentMapper{
 
         // board commentCount +1
         freeBoard.setCommentCount(freeBoard.getCommentCount()+1);
+        freeBoard.setMaxCommentCount(freeBoard.getMaxCommentCount()+1);
         return freeComment;
     }
 }

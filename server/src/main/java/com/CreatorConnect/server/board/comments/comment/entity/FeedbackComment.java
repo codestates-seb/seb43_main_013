@@ -18,7 +18,7 @@ public class FeedbackComment extends Auditable {
     private CommentPK commentPK;
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
-    @Column(nullable = false, columnDefinition = "TEXT")
+    @Column
     private Long reCommentCount;
 
     @PrePersist

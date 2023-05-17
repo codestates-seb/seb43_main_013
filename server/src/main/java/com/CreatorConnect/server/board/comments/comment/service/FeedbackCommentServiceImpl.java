@@ -16,8 +16,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,7 +33,7 @@ public class FeedbackCommentServiceImpl implements CommentService {
 
     // 댓글 등록
     @Override
-    public CommentResponseDto.CommentContent createComment(Long id, CommentDto.Post postDto) {
+    public CommentResponseDto.Post createComment(Long id, CommentDto.Post postDto) {
 
         //feedbackBoard찾기
         Optional<FeedbackBoard> feedbackBoard = feedbackBoardRepository.findById(id);
@@ -45,15 +43,14 @@ public class FeedbackCommentServiceImpl implements CommentService {
         FeedbackComment feedbackComment = mapper.dtoToFeedbackComment(id, postDto, foundFeedback);
 
         // entity to dto
-        CommentResponseDto.CommentContent post = new CommentResponseDto.CommentContent();
+        CommentResponseDto.Post post = new CommentResponseDto.Post();
         post.setCommentId(feedbackComment.getCommentPK().getCommentId());
-        post.setContent( feedbackComment.getContent());
         return post;
     }
 
     //댓글 수정
     @Override
-    public CommentResponseDto.CommentContent updateComment(String token, Long feedbackBoardId, Long commentId, CommentDto.Patch patchDto){
+    public void updateComment(String token, Long feedbackBoardId, Long commentId, CommentDto.Patch patchDto){
 
         // Dto의 Id값으로 Entity찾기
         FeedbackComment foundfeedbackComment = findVerifiedFeedbackComment(feedbackBoardId, commentId);
@@ -67,10 +64,8 @@ public class FeedbackCommentServiceImpl implements CommentService {
                 .ifPresent(foundfeedbackComment::setContent);
 
         // 저장
-        FeedbackComment updatedFeedbackComment = feedbackCommentRepository.save(foundfeedbackComment);
+        feedbackCommentRepository.save(foundfeedbackComment);
 
-        // Entity-Dto 변환 후 리턴
-        return new CommentResponseDto.CommentContent(updatedFeedbackComment.getCommentPK().getCommentId(), updatedFeedbackComment.getContent());
     }
 
     // 댓글 조회
@@ -85,7 +80,7 @@ public class FeedbackCommentServiceImpl implements CommentService {
     // 댓글 목록 조회
     @Override
     public CommentResponseDto.Multi<CommentResponseDto.Details> responseComments(Long feedbackBoardId, int page, int size){
-        PageRequest pageRequest = PageRequest.of(page - 1, size, Sort.by("commentPK").descending());
+        PageRequest pageRequest = PageRequest.of(page - 1, size, Sort.by("commentPK").ascending());
         // Page 생성 - 최신순
         Page<FeedbackComment> feedbackCommentsPage = feedbackCommentRepository.findByFeedbackBoardId(feedbackBoardId, pageRequest);
 
@@ -109,6 +104,10 @@ public class FeedbackCommentServiceImpl implements CommentService {
         Member findMember = memberService.findVerifiedMember(foundComment.getMemberId());
         memberService.verifiedAuthenticatedMember(token, findMember);
 
+        // 댓글 수 -1
+        Long commentCount = foundComment.getFeedbackBoard().getCommentCount();
+        foundComment.getFeedbackBoard().setCommentCount(commentCount - 1);
+
         // 삭제
         feedbackCommentRepository.delete(foundComment);
     }
@@ -118,5 +117,4 @@ public class FeedbackCommentServiceImpl implements CommentService {
         Optional<FeedbackComment> feedbackComment = feedbackCommentRepository.findById(new CommentPK(feedbackBoardId, commentId));
         return feedbackComment.orElseThrow(() -> new BusinessLogicException(ExceptionCode.COMMENT_NOT_FOUND));
     }
-
 }
