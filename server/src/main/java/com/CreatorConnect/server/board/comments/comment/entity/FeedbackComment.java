@@ -16,9 +16,9 @@ import javax.persistence.*;
 public class FeedbackComment extends Auditable {
     @EmbeddedId
     private CommentPK commentPK;
-    @Column
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
-    @Column
+    @Column(nullable = false, columnDefinition = "TEXT")
     private Long reCommentCount;
 
     @PrePersist

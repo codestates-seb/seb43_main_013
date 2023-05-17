@@ -29,8 +29,11 @@ public class FreeCommentController {
     @PatchMapping("/freeboard/{freeBoardId}/comment/{commentId}")
     public ResponseEntity<CommentResponseDto.CommentContent> patchComment(@PathVariable("freeBoardId") @Positive Long freeBoardId,
                                                                           @PathVariable("commentId") @Positive Long commentId,
-                                                                          @Valid @RequestBody CommentDto.Patch patchDto) {
-        CommentResponseDto.CommentContent response = freeCommentService.updateComment(freeBoardId, commentId, patchDto);
+                                                                          @Valid @RequestBody CommentDto.Patch patchDto,
+                                                                          @RequestHeader(value = "Authorization") String authorizationToken) {
+        String token = authorizationToken.substring(7);
+
+        CommentResponseDto.CommentContent response = freeCommentService.updateComment(token, freeBoardId, commentId, patchDto);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -51,8 +54,13 @@ public class FreeCommentController {
 
     @DeleteMapping("/freeboard/{freeBoardId}/comment/{commentId}")
     public ResponseEntity<HttpStatus> deleteComment(@PathVariable("freeBoardId") @Positive Long freeBoardId,
-                                                    @PathVariable("commentId") @Positive Long commentId) {
-        freeCommentService.deleteComment(freeBoardId, commentId);
+                                                    @PathVariable("commentId") @Positive Long commentId,
+                                                    @RequestHeader(value = "Authorization") String authorizationToken) {
+
+        String token = authorizationToken.substring(7);
+
+        freeCommentService.deleteComment(token, freeBoardId, commentId);
+
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

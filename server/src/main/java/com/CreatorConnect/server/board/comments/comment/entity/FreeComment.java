@@ -19,7 +19,7 @@ import javax.persistence.*;
 public class FreeComment extends Auditable {
     @EmbeddedId
     private CommentPK commentPK;
-    @Column
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
     @Column
     private Long reCommentCount;

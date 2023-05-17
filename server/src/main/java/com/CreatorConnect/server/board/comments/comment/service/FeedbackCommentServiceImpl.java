@@ -10,6 +10,7 @@ import com.CreatorConnect.server.exception.BusinessLogicException;
 import com.CreatorConnect.server.exception.ExceptionCode;
 import com.CreatorConnect.server.board.feedbackboard.entity.FeedbackBoard;
 import com.CreatorConnect.server.board.feedbackboard.repository.FeedbackBoardRepository;
+import com.CreatorConnect.server.member.entity.Member;
 import com.CreatorConnect.server.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -35,9 +36,6 @@ public class FeedbackCommentServiceImpl implements CommentService {
     // 댓글 등록
     @Override
     public CommentResponseDto.CommentContent createComment(Long id, CommentDto.Post postDto) {
-        // 멤버 검증
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        memberService.verifiedAuthenticatedMember(postDto.getMemberId(), authentication.getName());
 
         //feedbackBoard찾기
         Optional<FeedbackBoard> feedbackBoard = feedbackBoardRepository.findById(id);
@@ -55,14 +53,14 @@ public class FeedbackCommentServiceImpl implements CommentService {
 
     //댓글 수정
     @Override
-    public CommentResponseDto.CommentContent updateComment(Long feedbackBoardId, Long commentId, CommentDto.Patch patchDto){
+    public CommentResponseDto.CommentContent updateComment(String token, Long feedbackBoardId, Long commentId, CommentDto.Patch patchDto){
 
         // Dto의 Id값으로 Entity찾기
         FeedbackComment foundfeedbackComment = findVerifiedFeedbackComment(feedbackBoardId, commentId);
 
         // 멤버 검증
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        memberService.verifiedAuthenticatedMember(foundfeedbackComment.getMemberId(), authentication.getName());
+        Member findMember = memberService.findVerifiedMember(foundfeedbackComment.getMemberId());
+        memberService.verifiedAuthenticatedMember(token, findMember);
 
         //찾은 Entity의 값 변경
         Optional.ofNullable(patchDto.getContent())
@@ -103,13 +101,13 @@ public class FeedbackCommentServiceImpl implements CommentService {
 
     // 댓글 삭제
     @Override
-    public void deleteComment(Long feedbackBoardId, Long commentId) {
+    public void deleteComment(String token, Long feedbackBoardId, Long commentId) {
         // 댓글 찾기
         FeedbackComment foundComment = findVerifiedFeedbackComment(feedbackBoardId, commentId);
 
         // 멤버 검증
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        memberService.verifiedAuthenticatedMember(foundComment.getMemberId(), authentication.getName());
+        Member findMember = memberService.findVerifiedMember(foundComment.getMemberId());
+        memberService.verifiedAuthenticatedMember(token, findMember);
 
         // 삭제
         feedbackCommentRepository.delete(foundComment);

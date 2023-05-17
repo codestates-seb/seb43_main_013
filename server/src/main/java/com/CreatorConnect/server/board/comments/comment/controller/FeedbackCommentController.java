@@ -28,9 +28,12 @@ public class FeedbackCommentController {
 
     @PatchMapping("/feedbackboard/{feedbackBoardId}/comment/{commentId}")
     public ResponseEntity<CommentResponseDto.CommentContent> patchComment(@PathVariable("feedbackBoardId") @Positive Long feedbackBoardId,
-                                                                               @PathVariable("commentId") @Positive Long commentId,
-                                                                               @Valid @RequestBody CommentDto.Patch patchDto){
-        CommentResponseDto.CommentContent response = feedbackCommentService.updateComment(feedbackBoardId, commentId, patchDto);
+                                                                          @PathVariable("commentId") @Positive Long commentId,
+                                                                          @Valid @RequestBody CommentDto.Patch patchDto,
+                                                                          @RequestHeader(value = "Authorization") String authorizationToken){
+        String token = authorizationToken.substring(7);
+
+        CommentResponseDto.CommentContent response = feedbackCommentService.updateComment(token, feedbackBoardId, commentId, patchDto);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -51,8 +54,13 @@ public class FeedbackCommentController {
 
     @DeleteMapping("/feedbackboard/{feedbackBoardId}/comment/{commentId}")
     public ResponseEntity<HttpStatus> deleteComment(@PathVariable("feedbackBoardId") @Positive Long feedbackBoardId,
-                                                     @PathVariable("commentId") @Positive Long commentId) {
-        feedbackCommentService.deleteComment(feedbackBoardId, commentId);
+                                                    @PathVariable("commentId") @Positive Long commentId,
+                                                    @RequestHeader(value = "Authorization") String authorizationToken) {
+
+        String token = authorizationToken.substring(7);
+
+        feedbackCommentService.deleteComment(token, feedbackBoardId, commentId);
+
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
