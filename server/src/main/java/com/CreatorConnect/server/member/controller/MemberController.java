@@ -229,6 +229,7 @@ public class MemberController {
         // 조회 할 사용자 정보
         Member member = memberService.findVerifiedMember(memberId);
         Set<Member> followings = member.getFollowings();
+        int totalElements = followings.size();
 
         List<MemberFollowResponseDto> response = followings.stream()
                 .map(following -> {
@@ -245,7 +246,7 @@ public class MemberController {
                 .collect(Collectors.toList());
 
         Page<MemberFollowResponseDto> pageResponse =
-                new PageImpl<>(response, PageRequest.of(page - 1, size), response.size());
+                new PageImpl<>(response, PageRequest.of(page - 1, size), totalElements);
 
         return new ResponseEntity(new MultiResponseDto<>(pageResponse.getContent(), pageResponse), HttpStatus.OK);
     }
@@ -267,6 +268,7 @@ public class MemberController {
         // 조회할 사용자 정보
         Member member = memberService.findVerifiedMember(memberId);
         Set<Member> followers = member.getFollowers();
+        int totalElements = followers.size();
 
         List<MemberFollowResponseDto> response = followers.stream()
                 .map(follower -> {
@@ -283,7 +285,7 @@ public class MemberController {
                 .collect(Collectors.toList());
 
         Page<MemberFollowResponseDto> pageResponse =
-                new PageImpl<>(response, PageRequest.of(page - 1, size), response.size());
+                new PageImpl<>(response, PageRequest.of(page - 1, size), totalElements);
 
         return new ResponseEntity(new MultiResponseDto<>(pageResponse.getContent(), pageResponse), HttpStatus.OK);
     }
@@ -296,6 +298,7 @@ public class MemberController {
         Member member = memberService.findVerifiedMember(memberId);
 
         Set<Like> liked = member.getLikes();
+        int totalElements = liked.size();
 
         List<MemberBoardResponseDto> response = liked.stream()
                 .map(like -> {
@@ -342,7 +345,7 @@ public class MemberController {
                 .collect(Collectors.toList());
 
         Page<MemberBoardResponseDto> pageResponse =
-                new PageImpl<>(response, PageRequest.of(page - 1, size), liked.size());
+                new PageImpl<>(response, PageRequest.of(page - 1, size), totalElements);
 
         return new ResponseEntity( new MultiResponseDto<>(pageResponse.getContent(), pageResponse), HttpStatus.OK);
 
@@ -356,6 +359,7 @@ public class MemberController {
         Member member = memberService.findVerifiedMember(memberId);
 
         Set<Bookmark> bookmarked = member.getBookmarks();
+        int totalElements = bookmarked.size();
 
         List<MemberBoardResponseDto> response = bookmarked.stream()
                 .map(bookmark -> {
@@ -403,7 +407,7 @@ public class MemberController {
                 .collect(Collectors.toList());
 
         Page<MemberBoardResponseDto> pageResponse =
-                new PageImpl<>(response, PageRequest.of(page - 1, size), bookmarked.size());
+                new PageImpl<>(response, PageRequest.of(page - 1, size), totalElements);
 
         return new ResponseEntity( new MultiResponseDto<>(pageResponse.getContent(), pageResponse), HttpStatus.OK);
     }
@@ -456,8 +460,10 @@ public class MemberController {
                 .limit(size)
                 .collect(Collectors.toList());
 
+        int totalElements = response.size();
+
         Page<MemberBoardResponseDto> pageResponse = new PageImpl<>(response,
-                PageRequest.of(page - 1, size), response.size());
+                PageRequest.of(page - 1, size), totalElements);
 
         return new ResponseEntity<>(new MultiResponseDto<>(pageResponse.getContent(), pageResponse), HttpStatus.OK);
     }
