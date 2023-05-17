@@ -39,10 +39,37 @@ public class JobBoard extends Auditable implements Board {
     @ManyToOne // JobBoard - Member 다대일 매핑
     @JoinColumn(name = "MEMBER_ID")
     private Member member;
+    public Long getMemberId() {
+        return member.getMemberId();
+    }
+    public String getNickname() {
+        return member.getNickname();
+    }
+    public String getEmail() {return member.getEmail();}
+    public String getProfileImageUrl() {return member.getProfileImageUrl();}
+
+    public void setMember(Member member) {
+        this.member = member;
+        if (!this.member.getJobBoards().contains(this)) {
+            this.member.getJobBoards().add(this);
+        }
+    }
 
     @ManyToOne // JobBoard - JobCategory 다대일 매핑
     @JoinColumn(name = "JOBCATEGORY_ID")
     private JobCategory jobCategory;
+
+    public String getJobCategoryName() {
+        return jobCategory.getJobCategoryName();
+    }
+
+    // 매핑
+    public void setJobCategory(JobCategory jobCategory) {
+        this.jobCategory = jobCategory;
+        if (!this.jobCategory.getJobBoards().contains(this)) {
+            this.jobCategory.getJobBoards().add(this);
+        }
+    }
 
     @PrePersist
     public void prePersist() { // 조회수, 댓글수, 좋아요수가 없으면 0으로 초기화
