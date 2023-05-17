@@ -104,11 +104,15 @@ public class FeedbackBoardController {
                 .filter(Objects::nonNull) // null인 요소 필터링
                 .map(Like::getFeedbackBoard)
                 .filter(Objects::nonNull) // null인 FeedbackBoard 필터링
-                .anyMatch(feedbackBoard -> feedbackBoard.getFeedbackBoardId().equals(feedbackBoardId));
+                .anyMatch(feedbackBoard -> feedbackBoard.getFeedbackBoardId().equals(findfeedbackBoard.getFeedbackBoardId()));
 
         if (isAlreadyLiked) {
             return ResponseEntity.badRequest().body("Already liked.");
         }
+
+        // 게시물의 likeCount 증가
+        findfeedbackBoard.setLikeCount(findfeedbackBoard.getLikeCount() + 1);
+        feedbackBoardRepository.save(findfeedbackBoard);
 
         Like like = new Like();
         like.setBoardType(Like.BoardType.FEEDBACKBOARD);
@@ -120,12 +124,7 @@ public class FeedbackBoardController {
         currentMember.getLikes().add(like);
         memberRepository.save(currentMember);
 
-        // 게시물의 likeCount 증가
-        findfeedbackBoard.setLikeCount(findfeedbackBoard.getLikeCount() + 1);
-        feedbackBoardRepository.save(findfeedbackBoard);
-
         return new ResponseEntity<>(HttpStatus.OK);
-
     }
 
     @DeleteMapping("/feedbackboard/{feedbackBoardId}/like")
@@ -150,6 +149,12 @@ public class FeedbackBoardController {
             return ResponseEntity.badRequest().body("Not liked.");
         }
 
+        // 게시글의 likeCount 감소
+        if (findfeedbackBoard.getLikeCount() > 0) {
+            findfeedbackBoard.setLikeCount(findfeedbackBoard.getLikeCount() - 1);
+            feedbackBoardRepository.save(findfeedbackBoard);
+        }
+
         // 현재 사용자의 likes 컬렉션에서 좋아요 삭제
         for (Like foundLike : foundLikes) {
             currentMember.getLikes().remove(foundLike);
@@ -158,16 +163,14 @@ public class FeedbackBoardController {
 
         memberRepository.save(currentMember);
 
-        // 게시물의 likeCount 삭제
-        findfeedbackBoard.setLikeCount(findfeedbackBoard.getLikeCount() - 1);
-        feedbackBoardRepository.save(findfeedbackBoard);
-
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-
     }
 
     @PostMapping("/feedbackboard/{feedbackBoardId}/bookmark")
-    public ResponseEntity bookmarkFeedbackBoard (@PathVariable("feedbackBoardId") @Positive Long feedbackBoardId) {
+    public ResponseEntity bookmarkFeedbackBoard (@PathVariable("feedbackBoardId") @Positive Long feedbackBoardId,
+                                                 @RequestHeader(value = "Authorization") String authorizationToken) {
+
+        String token = authorizationToken.substring(7);
 
         // 현재 로그인한 사용자 정보 가져오기
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -180,7 +183,7 @@ public class FeedbackBoardController {
                 .filter(Objects::nonNull) // null인 요소 필터링
                 .map(Bookmark::getFeedbackBoard)
                 .filter(Objects::nonNull) // null인 FeedbackBoard 필터링
-                .anyMatch(feedbackBoard -> feedbackBoard.getFeedbackBoardId().equals(feedbackBoardId));
+                .anyMatch(feedbackBoard -> feedbackBoard.getFeedbackBoardId().equals(findfeedbackBoard.getFeedbackBoardId()));
 
         if (isAlreadyBookMarked) {
             return ResponseEntity.badRequest().body("Already bookmarked.");
@@ -197,11 +200,13 @@ public class FeedbackBoardController {
         memberRepository.save(currentMember);
 
         return new ResponseEntity<>(HttpStatus.OK);
-
     }
 
     @DeleteMapping("/feedbackboard/{feedbackBoardId}/bookmark")
-    public ResponseEntity unbookmarkFeedbackBoard (@PathVariable("feedbackBoardId") @Positive Long feedbackBoardId) {
+    public ResponseEntity unbookmarkFeedbackBoard (@PathVariable("feedbackBoardId") @Positive Long feedbackBoardId,
+                                                   @RequestHeader(value = "Authorization") String authorizationToken) {
+
+        String token = authorizationToken.substring(7);
 
         // 현재 로그인한 사용자 정보 가져오기
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -210,7 +215,6 @@ public class FeedbackBoardController {
         FeedbackBoard feedbackBoard = feedbackBoardService.findVerifiedFeedbackBoard(feedbackBoardId);
 
         // 현재 로그인한 사용자가 해당 게시물을 북마크 했는지 확인
-
         Optional<Set<Bookmark>> bookmarks = Optional.ofNullable(currentMember.getBookmarks());
 
         Set<Bookmark> foundBookmarks = bookmarks.orElse(Collections.emptySet())
@@ -223,14 +227,13 @@ public class FeedbackBoardController {
         }
 
         // 현재 사용자의 bookmarks 컬렉션에서 북마크 삭제
-        currentMember.getBookmarks().removeAll(foundBookmarks);
-
-        // 삭제된 북마크 엔티티들을 데이터베이스에서 삭제
-        bookmarkRepository.deleteAll(foundBookmarks);
+        for (Bookmark foundBookmark : foundBookmarks) {
+            currentMember.getBookmarks().remove(foundBookmark);
+            bookmarkRepository.delete(foundBookmark);
+        }
 
         memberRepository.save(currentMember);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-
     }
 }

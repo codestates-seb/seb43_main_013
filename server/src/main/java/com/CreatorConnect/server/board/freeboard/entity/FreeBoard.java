@@ -6,7 +6,9 @@ import com.CreatorConnect.server.board.categories.category.entity.Category;
 import com.CreatorConnect.server.board.comments.freecomment.entity.FreeComment;
 import com.CreatorConnect.server.board.tag.entity.Tag;
 import com.CreatorConnect.server.board.tag.entity.TagToFreeBoard;
+import com.CreatorConnect.server.member.bookmark.entity.Bookmark;
 import com.CreatorConnect.server.member.entity.Member;
+import com.CreatorConnect.server.member.like.entity.Like;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -14,8 +16,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Entity
 @Getter
@@ -105,4 +106,13 @@ public class FreeBoard extends Auditable implements Board {
     // FreeBoard - FreeComment 일대다 매핑
     @OneToMany(mappedBy = "freeBoard", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<FreeComment> freeComments = new ArrayList<>();
+
+    // FreeBoard - Bookmark 일대다 매핑
+    @OneToMany(mappedBy = "freeBoard", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Set<Bookmark> bookmarks = new HashSet<>();
+
+    // FreeBoard - Like 일대다 매핑
+    @OneToMany(mappedBy = "freeBoard", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Set<Like> likes = new HashSet<>();
+
 }

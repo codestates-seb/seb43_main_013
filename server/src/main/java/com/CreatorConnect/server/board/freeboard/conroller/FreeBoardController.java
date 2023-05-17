@@ -138,7 +138,7 @@ public class FreeBoardController {
                 .filter(Objects::nonNull) // null인 요소 필터링
                 .map(Like::getFreeBoard)
                 .filter(Objects::nonNull) // null인 FreeBoard 필터링
-                .anyMatch(freeBoard -> freeBoard.getFreeBoardId().equals(freeBoardId));
+                .anyMatch(freeBoard -> freeBoard.getFreeBoardId().equals(findfreeBoard.getFreeBoardId()));
 
         if (isAlreadyLiked) {
             return ResponseEntity.badRequest().body("Already liked.");
@@ -159,7 +159,6 @@ public class FreeBoardController {
         memberRepository.save(currentMember);
 
         return new ResponseEntity<>(HttpStatus.OK);
-
     }
 
     @DeleteMapping("/freeboard/{freeBoardId}/like")
@@ -174,6 +173,7 @@ public class FreeBoardController {
 
         FreeBoard findfreeBoard = freeBoardService.verifyFreeBoard(freeBoardId);
 
+        // 현재 로그인한 사용자가 해당 게시물을 좋아요 했는지 확인
         Optional<Set<Like>> likes = Optional.ofNullable(currentMember.getLikes());
 
         Set<Like> foundLikes = likes.orElse(Collections.emptySet())
@@ -185,19 +185,21 @@ public class FreeBoardController {
             return ResponseEntity.badRequest().body("Not liked.");
         }
 
-        // 게시물의 likeCount 감소
-        findfreeBoard.setLikeCount(findfreeBoard.getLikeCount() - 1);
-        freeBoardRepository.save(findfreeBoard);
+        // 게시글의 likeCount 감소
+        if (findfreeBoard.getLikeCount() > 0) {
+            findfreeBoard.setLikeCount(findfreeBoard.getLikeCount() - 1);
+            freeBoardRepository.save(findfreeBoard);
+        }
 
         // 현재 사용자의 likes 컬렉션에서 좋아요 삭제
         for (Like foundLike : foundLikes) {
             currentMember.getLikes().remove(foundLike);
             likeRepository.delete(foundLike);
         }
+
         memberRepository.save(currentMember);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-
     }
 
     @PostMapping("/freeboard/{freeBoardId}/bookmark")
@@ -234,7 +236,6 @@ public class FreeBoardController {
         memberRepository.save(currentMember);
 
         return new ResponseEntity<>(HttpStatus.OK);
-
     }
 
     @DeleteMapping("/freeboard/{freeBoardId}/bookmark")
@@ -248,8 +249,8 @@ public class FreeBoardController {
         Member currentMember = memberService.findVerifiedMember(authentication.getName());
 
         FreeBoard findfreeBoard = freeBoardService.verifyFreeBoard(freeBoardId);
-        // 현재 로그인한 사용자가 해당 게시물을 북마크 했는지 확인
 
+        // 현재 로그인한 사용자가 해당 게시물을 북마크 했는지 확인
         Optional<Set<Bookmark>> bookmarks = Optional.ofNullable(currentMember.getBookmarks());
 
         Set<Bookmark> foundBookmarks = bookmarks.orElse(Collections.emptySet())
@@ -261,15 +262,14 @@ public class FreeBoardController {
             return ResponseEntity.badRequest().body("Not bookmarked.");
         }
 
-        // 삭제된 북마크 엔티티들을 데이터베이스에서 삭제
-        bookmarkRepository.deleteAll(foundBookmarks);
-
         // 현재 사용자의 bookmarks 컬렉션에서 북마크 삭제
-        currentMember.getBookmarks().removeAll(foundBookmarks);
+        for (Bookmark foundBookmark : foundBookmarks) {
+            currentMember.getBookmarks().remove(foundBookmark);
+            bookmarkRepository.delete(foundBookmark);
+        }
         memberRepository.save(currentMember);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-
     }
 
 }
