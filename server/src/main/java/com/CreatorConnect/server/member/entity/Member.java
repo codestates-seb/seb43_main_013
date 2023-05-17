@@ -65,9 +65,17 @@ public class Member extends Auditable {
     @JsonIgnoreProperties("followings") // Jackson 에서 순환 참조 처리
     private Set<Member> followers = new HashSet<>(); // SET : 중복 방지
 
+    public int getFollowerCount() {
+        return followers.size();
+    }
+
     @ManyToMany(mappedBy = "followers")
     @JsonIgnoreProperties("followers")
     private Set<Member> followings = new HashSet<>();
+
+    public int getFollowingCount() {
+        return followings.size();
+    }
 
     public void follow (Member member) { // 다른 사람이 나를 팔로우 하는 로직
         followers.add(member);

@@ -20,8 +20,10 @@ public class MemberResponseDto {
     private String introduction;
     private String link;
     private String profileImageUrl;
-    private boolean followed = false;
-    private boolean myPage = false;
+    private int followerCount;
+    private int followingCount;
+    private Boolean followed = false;
+    private Boolean myPage = false;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 

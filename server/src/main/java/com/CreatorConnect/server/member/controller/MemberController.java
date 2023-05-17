@@ -86,21 +86,32 @@ public class MemberController {
     @GetMapping(MEMBER_DEFAULT_URL + "/{member-id}")
     public ResponseEntity getMember(@PathVariable("member-id") @Positive Long memberId) {
 
-        Member loginUser = memberService.findVerifiedMember(SecurityContextHolder.getContext().getAuthentication().getName());
-        Member findmember = memberService.findMember(memberId);
-        MemberResponseDto responseDto = mapper.memberToMemberResponseDto(findmember);
-
-        if (loginUser.getFollowings().stream().anyMatch(
-                member -> member.equals(findmember)
-        )){
-            responseDto.setFollowed(true);
-            return new ResponseEntity<>(responseDto, HttpStatus.OK);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        final Member loginUser;
+        if (authentication != null && authentication.isAuthenticated() && !"anonymousUser".equals(authentication.getName())) {
+            loginUser = memberService.findVerifiedMember(authentication.getName());
+        } else {
+            loginUser = null;
         }
 
-        if (loginUser.getMemberId() == memberId){
-            responseDto.setMyPage(true);
-        } return new ResponseEntity(responseDto, HttpStatus.OK);
+        Member findMember = memberService.findMember(memberId);
+        if (findMember == null) {
+            throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND);
+        }
 
+        MemberResponseDto responseDto = mapper.memberToMemberResponseDto(findMember);
+
+        if (loginUser != null) {
+            if (loginUser.getFollowings().stream().anyMatch(member -> member.equals(findMember))) {
+                responseDto.setFollowed(true);
+            }
+
+            if (loginUser.getMemberId().equals(memberId)) {
+                responseDto.setMyPage(true);
+            }
+        }
+
+        return new ResponseEntity(responseDto, HttpStatus.OK);
     }
 
     @Secured("ROLE_ADMIN")
@@ -145,15 +156,16 @@ public class MemberController {
     }
 
     @PostMapping("/api/member/{member-id}/follow")
-    public ResponseEntity followMember(@PathVariable("member-id") @Positive Long memberId,
-                                       Authentication authentication) {
-        // 현재 로그인한 사용자 정보 가져오기
-        Member currentMember = memberService.findVerifiedMember(authentication.getName());
+    public ResponseEntity followMember(@PathVariable("member-id") @Positive Long memberId) {
+
+        // 현재 로그인한 사용자 정보
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Member loginUser = memberService.findVerifiedMember(authentication.getName());
 
         // 팔로우할 사용자 정보 가져오기
         Member memberToFollow = memberService.findVerifiedMember(memberId);
 
-        if (currentMember.getMemberId() == memberToFollow.getMemberId()){
+        if (loginUser.getMemberId() == memberToFollow.getMemberId()){
             return new ResponseEntity(
                     new BusinessLogicException(ExceptionCode.INVALID_MEMBER).getExceptionCode().getMessage(),
                     HttpStatus.CONFLICT
@@ -161,13 +173,13 @@ public class MemberController {
         }
 
         // 현재 로그인한 사용자가 이미 해당 사용자를 팔로우하고 있는지 확인
-        boolean isAlreadyFollowing = currentMember.getFollowings().contains(memberToFollow);
+        boolean isAlreadyFollowing = loginUser.getFollowings().contains(memberToFollow);
 
         // 현재 로그인한 사용자가 해당 사용자를 팔로우하지 않았다면 팔로우
         if (!isAlreadyFollowing) {
-            memberToFollow.follow(currentMember);
+            memberToFollow.follow(loginUser);
             memberRepository.save(memberToFollow);
-            memberRepository.save(currentMember);
+            memberRepository.save(loginUser);
 
             return new ResponseEntity<>(HttpStatus.OK);
 
@@ -177,21 +189,22 @@ public class MemberController {
     }
 
     @DeleteMapping("/api/member/{member-id}/follow")
-    public ResponseEntity unfollowMember(@PathVariable("member-id") @Positive Long memberId,
-                                       Authentication authentication) {
-        // 현재 로그인한 사용자 정보 가져오기
-        Member currentMember = memberService.findVerifiedMember(authentication.getName());
+    public ResponseEntity unfollowMember(@PathVariable("member-id") @Positive Long memberId) {
 
-        // 팔로우할 사용자 정보 가져오기
-        Member memberToFollow = memberService.findVerifiedMember(memberId);
+        // 현재 로그인한 사용자 정보
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Member loginUser = memberService.findVerifiedMember(authentication.getName());
+
+        // 언팔로우할 사용자 정보
+        Member memberToUnFollow = memberService.findVerifiedMember(memberId);
 
         // 현재 로그인한 사용자가 이미 해당 사용자를 팔로우하고 있는지 확인
-        boolean isAlreadyFollowing = currentMember.getFollowings().contains(memberToFollow);
+        boolean isAlreadyFollowing = loginUser.getFollowings().contains(memberToUnFollow);
 
         if (isAlreadyFollowing){
-            memberToFollow.unfollow(currentMember);
-            memberRepository.save(memberToFollow);
-            memberRepository.save(currentMember);
+            memberToUnFollow.unfollow(loginUser);
+            memberRepository.save(memberToUnFollow);
+            memberRepository.save(loginUser);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 
         } else return new ResponseEntity(
@@ -204,22 +217,36 @@ public class MemberController {
                                         @RequestParam(defaultValue = "1") int page,
                                         @RequestParam(defaultValue = "10") int size) {
 
+        // 현재 로그인한 사용자 정보
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        final Member loginUser;
+        if (authentication != null && authentication.isAuthenticated() && !"anonymousUser".equals(authentication.getName())) {
+            loginUser = memberService.findVerifiedMember(authentication.getName());
+        } else {
+            loginUser = null;
+        }
+
+        // 조회 할 사용자 정보
         Member member = memberService.findVerifiedMember(memberId);
         Set<Member> followings = member.getFollowings();
+        int totalElements = followings.size();
 
         List<MemberFollowResponseDto> response = followings.stream()
-                .map(following -> new MemberFollowResponseDto(
-                        following.getMemberId(),
-                        following.getNickname(),
-                        following.getProfileImageUrl(),
-                        false // todo 로그인 한 유저의 팔로우 여부
-                ))
+                .map(following -> {
+                    boolean isFollowing = loginUser != null && loginUser.getFollowings().contains(following);
+                    return new MemberFollowResponseDto(
+                            following.getMemberId(),
+                            following.getNickname(),
+                            following.getProfileImageUrl(),
+                            isFollowing // 팔로우 여부 설정
+                    );
+                })
                 .skip((page - 1) * size) // 페이지네이션 처리
                 .limit(size)
                 .collect(Collectors.toList());
 
         Page<MemberFollowResponseDto> pageResponse =
-                new PageImpl<>(response, PageRequest.of(page - 1, size), response.size());
+                new PageImpl<>(response, PageRequest.of(page - 1, size), totalElements);
 
         return new ResponseEntity(new MultiResponseDto<>(pageResponse.getContent(), pageResponse), HttpStatus.OK);
     }
@@ -229,22 +256,36 @@ public class MemberController {
                                        @RequestParam(defaultValue = "1") int page,
                                        @RequestParam(defaultValue = "10") int size) {
 
+        // 현재 로그인한 사용자 정보
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        final Member loginUser;
+        if (authentication != null && authentication.isAuthenticated() && !"anonymousUser".equals(authentication.getName())) {
+            loginUser = memberService.findVerifiedMember(authentication.getName());
+        } else {
+            loginUser = null;
+        }
+
+        // 조회할 사용자 정보
         Member member = memberService.findVerifiedMember(memberId);
         Set<Member> followers = member.getFollowers();
+        int totalElements = followers.size();
 
         List<MemberFollowResponseDto> response = followers.stream()
-                .map(follower -> new MemberFollowResponseDto(
-                        follower.getMemberId(),
-                        follower.getNickname(),
-                        follower.getProfileImageUrl(),
-                        false // todo 로그인 한 유저의 팔로우 여부
-                ))
+                .map(follower -> {
+                    boolean isFollowing = loginUser != null && loginUser.getFollowings().contains(follower);
+                    return new MemberFollowResponseDto(
+                            follower.getMemberId(),
+                            follower.getNickname(),
+                            follower.getProfileImageUrl(),
+                            isFollowing // 팔로우 여부 설정
+                    );
+                })
                 .skip((page - 1) * size) // 페이지네이션 처리
                 .limit(size)
                 .collect(Collectors.toList());
 
         Page<MemberFollowResponseDto> pageResponse =
-                new PageImpl<>(response, PageRequest.of(page - 1, size), response.size());
+                new PageImpl<>(response, PageRequest.of(page - 1, size), totalElements);
 
         return new ResponseEntity(new MultiResponseDto<>(pageResponse.getContent(), pageResponse), HttpStatus.OK);
     }
@@ -257,6 +298,7 @@ public class MemberController {
         Member member = memberService.findVerifiedMember(memberId);
 
         Set<Like> liked = member.getLikes();
+        int totalElements = liked.size();
 
         List<MemberBoardResponseDto> response = liked.stream()
                 .map(like -> {
@@ -303,7 +345,7 @@ public class MemberController {
                 .collect(Collectors.toList());
 
         Page<MemberBoardResponseDto> pageResponse =
-                new PageImpl<>(response, PageRequest.of(page - 1, size), liked.size());
+                new PageImpl<>(response, PageRequest.of(page - 1, size), totalElements);
 
         return new ResponseEntity( new MultiResponseDto<>(pageResponse.getContent(), pageResponse), HttpStatus.OK);
 
@@ -317,6 +359,7 @@ public class MemberController {
         Member member = memberService.findVerifiedMember(memberId);
 
         Set<Bookmark> bookmarked = member.getBookmarks();
+        int totalElements = bookmarked.size();
 
         List<MemberBoardResponseDto> response = bookmarked.stream()
                 .map(bookmark -> {
@@ -364,7 +407,7 @@ public class MemberController {
                 .collect(Collectors.toList());
 
         Page<MemberBoardResponseDto> pageResponse =
-                new PageImpl<>(response, PageRequest.of(page - 1, size), bookmarked.size());
+                new PageImpl<>(response, PageRequest.of(page - 1, size), totalElements);
 
         return new ResponseEntity( new MultiResponseDto<>(pageResponse.getContent(), pageResponse), HttpStatus.OK);
     }
@@ -417,8 +460,10 @@ public class MemberController {
                 .limit(size)
                 .collect(Collectors.toList());
 
+        int totalElements = response.size();
+
         Page<MemberBoardResponseDto> pageResponse = new PageImpl<>(response,
-                PageRequest.of(page - 1, size), response.size());
+                PageRequest.of(page - 1, size), totalElements);
 
         return new ResponseEntity<>(new MultiResponseDto<>(pageResponse.getContent(), pageResponse), HttpStatus.OK);
     }
