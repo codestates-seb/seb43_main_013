@@ -42,9 +42,8 @@ public class JobBoardService {
     public JobBoard createJobBoard(JobBoardDto.Post post) {
         JobBoard jobBoard = mapper.jobBoardPostDtoToJobBoard(post);
 
-        // 1. 회원 검증
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        memberService.verifiedAuthenticatedMember(post.getMemberId(), authentication.getName());
+        // 1. 회원 검증 post dto 의 memberId 와 로그인 한 유저 비교
+        memberService.verifiedAuthenticatedMember(post.getMemberId());
 
         // 2. 회원 매핑
         Optional<Member> member = memberRepository.findById(post.getMemberId());
@@ -63,12 +62,13 @@ public class JobBoardService {
     /**
      * <구인구직 게시판 수정>
      * 1. 게시글 존재 여부 검증
-     * 2. 구인구직 카테고리 유효성 검증(존재하는 카테고리?)
-     * 3. 수정
-     *  3-1. 카테고리 수정
-     *  3-2. 제목 수정
-     *  3-3. 내용 수정
-     * 4. 저장
+     * 2. 작성자와 로그인한 멤버 비교
+     * 3. 구인구직 카테고리 유효성 검증(존재하는 카테고리?)
+     * 4. 수정
+     *  4-1. 카테고리 수정
+     *  4-2. 제목 수정
+     *  4-3. 내용 수정
+     * 5. 저장
      */
     public JobBoard updateJobBoard(JobBoardDto.Patch patch, Long jobBoardId) {
         // 1. 게시글 존쟈 여부 확인
@@ -76,22 +76,25 @@ public class JobBoardService {
         JobBoard jobBoard = mapper.jobBoardPatchDtoToJobBoard(patch);
         JobBoard checkedJobBoard = verifyJobBoard(jobBoard.getJobBoardId());
 
-        // 2. 구인구직 카테고리 유효성 검증(존재하는 카테고리?)
+        // 2. 작성자와 로그인한 멤버 비교
+        memberService.verifiedAuthenticatedMember(checkedJobBoard.getMember().getMemberId());
+
+        // 3. 구인구직 카테고리 유효성 검증(존재하는 카테고리?)
         if (patch.getJobCategoryName() != null) { // 구인구직 카테고리 수정된 경우
             jobCategoryService.findVerifiedJobCategoryByJobCategoryName(patch.getJobCategoryName()); // 수정된 카테고리 존재 여부 확인
-            // 3. 수정
+            // 4. 수정
 
-            // 3-1. 카테고리 수정
+            // 4-1. 카테고리 수정
             Optional<JobCategory> jobCategory = jobCategoryRepository.findByJobCategoryName(patch.getJobCategoryName());
             checkedJobBoard.setJobCategory(jobCategory.orElseThrow(() ->
                     new BusinessLogicException(ExceptionCode.CATEGORY_NOT_FOUND)));
         }
 
-        // 3-2. 제목 수정
+        // 4-2. 제목 수정
         Optional.ofNullable(jobBoard.getTitle())
                 .ifPresent(title -> checkedJobBoard.setContent(title));
 
-        // 3-3. 내용 수정
+        // 4-3. 내용 수정
         Optional.ofNullable(jobBoard.getContent())
                 .ifPresent(content -> checkedJobBoard.setContent(content));
 
@@ -135,7 +138,8 @@ public class JobBoardService {
      * <구인구직 게시판 게시글 상세조회>
      * 1. 게시글 존재 여부 확인
      * 2. 조회수 증가
-     * 3. 리턴
+     * 3. 호그인한 멤버
+     * 4. 매핑
      */
     public JobBoard getJobBoardDetail(Long jobBoardId) {
         // 1. 게시글 존재 여부 확인
@@ -143,6 +147,28 @@ public class JobBoardService {
 
         // 2. 조회수 증가
         addViews(jobBoard);
+
+        // 3. 로그인한 멤버
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        boolean bookmarked = false;
+        boolean liked = false;
+
+        if (authentication != null && authentication.isAuthenticated() && !"anonymousUser".equals(authentication.getName())) {
+            Member loggedinMember = memberService.findVerifiedMember(authentication.getName());
+
+            // 게시물을 북마크한 경우
+            bookmarked = loggedinMember.getBookmarks().stream()
+                    .anyMatch(bookmark -> bookmark.getFreeBoard().equals(jobBoard));
+
+            // 게시물을 좋아요한 경우
+            liked = loggedinMember.getLikes().stream()
+                    .anyMatch(like -> like.getFreeBoard().equals(jobBoard));
+        }
+
+        // 4. 매핑
+        JobBoardDto.Response response = mapper.jobBoardToJobBoardResponseDto(jobBoard);
+        response.setBookmarked(bookmarked);
+        response.setLiked(liked);
 
         return jobBoard;
     }
@@ -157,7 +183,8 @@ public class JobBoardService {
         // 1. 게시글 존재 여부 확인
         JobBoard jobBoard = verifyJobBoard(jobBoardId);
 
-        // 2. 삭제하려는 유저와 게시글을 작성한 유저가 같은 유저인지 검증(구현 예정)
+        // 2. 삭제하려는 유저와 게시글을 작성한 유저가 같은 유저인지 검증
+        memberService.verifiedAuthenticatedMember(jobBoard.getMember().getMemberId());
 
         // 3. 삭제
         jobBoardRepository.delete(jobBoard);
