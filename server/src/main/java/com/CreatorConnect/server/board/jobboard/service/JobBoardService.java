@@ -131,6 +131,22 @@ public class JobBoardService {
         return new JobBoardDto.MultiResponseDto<>(response, jobBoards);
     }
 
+    /**
+     * <구인구직 게시판 게시글 상세조회>
+     * 1. 게시글 존재 여부 확인
+     * 2. 조회수 증가
+     * 3. 리턴
+     */
+    public JobBoard getJobBoardDetail(Long jobBoardId) {
+        // 1. 게시글 존재 여부 확인
+        JobBoard jobBoard = verifyJobBoard(jobBoardId);
+
+        // 2. 조회수 증가
+        addViews(jobBoard);
+
+        return jobBoard;
+    }
+
     // 게시글 존재 여부 검증 메서드
     private JobBoard verifyJobBoard(Long jobBoardId) {
         Optional<JobBoard> optionalJobBoard = jobBoardRepository.findById(jobBoardId);
@@ -151,6 +167,11 @@ public class JobBoardService {
         }
     }
 
+    // 조회수 증가 메서드
+    private void addViews(JobBoard jobBoard) {
+        jobBoard.setViewCount(jobBoard.getViewCount() + 1);
+        jobBoardRepository.save(jobBoard);
+    }
 
 
 }
