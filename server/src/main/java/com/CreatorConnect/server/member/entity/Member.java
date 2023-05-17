@@ -5,6 +5,7 @@ import com.CreatorConnect.server.board.comments.feedbackcomment.entity.FeedbackC
 import com.CreatorConnect.server.board.comments.freecomment.entity.FreeComment;
 import com.CreatorConnect.server.board.freeboard.entity.FreeBoard;
 import com.CreatorConnect.server.board.feedbackboard.entity.FeedbackBoard;
+import com.CreatorConnect.server.board.jobboard.entity.JobBoard;
 import com.CreatorConnect.server.board.recomments.feedbackrecomment.entity.FeedbackReComment;
 import com.CreatorConnect.server.board.recomments.freerecomment.entity.FreeReComment;
 import com.CreatorConnect.server.member.bookmark.entity.Bookmark;
@@ -98,8 +99,8 @@ public class Member extends Auditable {
 //    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 //    private List<PromotionBoard> promotionBoards = new ArrayList<>();
 //
-//    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-//    private List<JobBoard> jobBoards = new ArrayList<>();
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<JobBoard> jobBoards = new ArrayList<>();
 //
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<FeedbackComment> feedbackComments = new ArrayList<>();
