@@ -42,7 +42,8 @@ public class FeedbackBoardController {
     private final BookmarkRepository bookmarkRepository;
 
     @PostMapping("/feedbackboard/new")
-    public ResponseEntity<FeedbackBoardResponseDto.Post> postFeedback(@Valid @RequestBody FeedbackBoardDto.Post postDto) {
+    public ResponseEntity<FeedbackBoardResponseDto.Post> postFeedback(@Valid @RequestBody FeedbackBoardDto.Post postDto,
+                                                                      @RequestHeader(value = "Authorization") String authorizationToken) {
 
         FeedbackBoardResponseDto.Post response = feedbackBoardService.createFeedback(postDto);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
