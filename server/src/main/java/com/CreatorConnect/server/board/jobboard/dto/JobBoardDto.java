@@ -81,6 +81,10 @@ public class JobBoardDto {
         private String email; // 작성자 이메일
 
         private String profileImageUrl; // 작성자 프로필 이미지
+
+        private Boolean bookmarked = false; // 북마크
+
+        private Boolean liked = false; // 좋아요
     }
 
     // 페이지네이션 관련 dto
