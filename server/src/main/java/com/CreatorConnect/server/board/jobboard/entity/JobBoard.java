@@ -21,10 +21,10 @@ public class JobBoard extends Auditable implements Board {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long jobBoardId;
 
-    @Column
+    @Column(nullable = false)
     private String title; // 게시글 제목
 
-    @Column
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String content; // 게시글 내용
 
     @Column
