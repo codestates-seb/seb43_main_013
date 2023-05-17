@@ -1,5 +1,6 @@
 package com.CreatorConnect.server.board.feedbackboard.controller;
 
+import com.CreatorConnect.server.board.feedbackboard.repository.FeedbackBoardRepository;
 import com.CreatorConnect.server.board.feedbackboard.service.FeedbackBoardService;
 import com.CreatorConnect.server.board.feedbackboard.dto.FeedbackBoardDto;
 import com.CreatorConnect.server.board.feedbackboard.dto.FeedbackBoardResponseDto;
@@ -32,7 +33,7 @@ import java.util.stream.Collectors;
 @Validated
 public class FeedbackBoardController {
     private final FeedbackBoardService feedbackBoardService;
-
+    private final FeedbackBoardRepository feedbackBoardRepository;
     private final FeedbackBoardMapper mapper;
     private final TagMapper tagMapper;
     private final MemberService memberService;
@@ -118,6 +119,10 @@ public class FeedbackBoardController {
         currentMember.getLikes().add(like);
         memberRepository.save(currentMember);
 
+        // 게시물의 likeCount 증가
+        findfeedbackBoard.setLikeCount(findfeedbackBoard.getLikeCount() + 1);
+        feedbackBoardRepository.save(findfeedbackBoard);
+
         return new ResponseEntity<>(HttpStatus.OK);
 
     }
@@ -152,6 +157,10 @@ public class FeedbackBoardController {
 
         memberRepository.save(currentMember);
 
+        // 게시물의 likeCount 삭제
+        findfeedbackBoard.setLikeCount(findfeedbackBoard.getLikeCount() - 1);
+        feedbackBoardRepository.save(findfeedbackBoard);
+
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 
     }
@@ -163,7 +172,7 @@ public class FeedbackBoardController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Member currentMember = memberService.findVerifiedMember(authentication.getName());
 
-        FeedbackBoard foundfeedbackBoard = feedbackBoardService.findVerifiedFeedbackBoard(feedbackBoardId);
+        FeedbackBoard findfeedbackBoard = feedbackBoardService.findVerifiedFeedbackBoard(feedbackBoardId);
 
         // 현재 로그인한 사용자가 해당 게시물을 북마크 했는지 확인
         boolean isAlreadyBookMarked = currentMember.getBookmarks().stream()
@@ -179,7 +188,7 @@ public class FeedbackBoardController {
         Bookmark bookmark = new Bookmark();
         bookmark.setBoardType(Like.BoardType.FEEDBACKBOARD);
         bookmark.setMember(currentMember);
-        bookmark.setFeedbackBoard(foundfeedbackBoard);
+        bookmark.setFeedbackBoard(findfeedbackBoard);
         bookmarkRepository.save(bookmark);
 
         // 현재 사용자의 bookmark 컬렉션에 bookmark 추가
