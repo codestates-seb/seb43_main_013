@@ -115,9 +115,21 @@ public class JobBoardService {
 
     }
 
-    //    public Page<FreeBoard> getFreeBoards(int page, int size) {
-//        return freeBoardRepository.findAll(PageRequest.of(page, size, Sort.by("freeBoardId").descending()));
-//    }
+    /**
+     * <구인구직 게시판 게시글 목록>
+     * 1. 페이지네이션 적용 - 최신순 / 등록순 / 인기순
+     * 2. 게시글 목록 가져오기
+     */
+    public JobBoardDto.MultiResponseDto<JobBoardDto.Response> getAllJobBoardsByCategory(Long jobCategoryId, int page, int size, String sort) {
+        // 1. 페이지네이션 적용 - 최신순 / 등록순 / 인기순
+        Page<JobBoard> jobBoards =
+                jobBoardRepository.findJobBoardsByCategoryId(jobCategoryId, sortedBy(page, size, sort));
+
+        // 2. 게시글 목록 가져오기
+        List<JobBoardDto.Response> response = mapper.jobBoardsToJobBoardResponseDtos(jobBoards.getContent());
+
+        return new JobBoardDto.MultiResponseDto<>(response, jobBoards);
+    }
 
     // 게시글 존재 여부 검증 메서드
     private JobBoard verifyJobBoard(Long jobBoardId) {

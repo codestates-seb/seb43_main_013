@@ -50,4 +50,16 @@ public class JobBoardController {
 
         return new ResponseEntity<>(pageJobBoards, HttpStatus.OK);
     }
+
+    // 구인구직 게시판 카테고리 별 목록
+    @GetMapping("/jobboards/jobcategories/{jobCategoryId}")
+    public ResponseEntity getJobBoardsByCategory(@PathVariable("jobCategoryId") @Positive Long categoryId,
+                                                 @RequestParam String sort,
+                                                 @RequestParam @Positive int page,
+                                                 @RequestParam @Positive int size) {
+        JobBoardDto.MultiResponseDto<JobBoardDto.Response> pageJobBoards =
+                jobBoardService.getAllJobBoardsByCategory(categoryId, page, size, sort);
+
+        return new ResponseEntity<>(pageJobBoards, HttpStatus.OK);
+    }
 }
