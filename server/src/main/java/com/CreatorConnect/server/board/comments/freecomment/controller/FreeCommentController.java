@@ -21,18 +21,20 @@ public class FreeCommentController {
 
     @PostMapping("/freeboard/{freeBoardId}/comment/new")
     public ResponseEntity<CommentResponseDto.Post> postComment(@PathVariable("freeBoardId") @Positive Long freeBoardId,
-                                                                             @Valid @RequestBody CommentDto.Post postDto) {
+                                                               @Valid @RequestBody CommentDto.Post postDto,
+                                                               @RequestHeader(value = "Authorization") String authorizationToken) {
+        String token = authorizationToken.substring(7);
         CommentResponseDto.Post response = freeCommentService.createComment(freeBoardId, postDto);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @PatchMapping("/freeboard/{freeBoardId}/comment/{commentId}")
     public ResponseEntity<HttpStatus> patchComment(@PathVariable("freeBoardId") @Positive Long freeBoardId,
-                                                                          @PathVariable("commentId") @Positive Long commentId,
-                                                                          @Valid @RequestBody CommentDto.Patch patchDto,
+                                                   @PathVariable("commentId") @Positive Long commentId,
+                                                   @Valid @RequestBody CommentDto.Patch patchDto,
                                                    @RequestHeader(value = "Authorization") String authorizationToken) {
         String token = authorizationToken.substring(7);
-        freeCommentService.updateComment(token, freeBoardId, commentId, patchDto);
+        freeCommentService.updateComment(freeBoardId, commentId, patchDto);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -55,9 +57,8 @@ public class FreeCommentController {
     public ResponseEntity<HttpStatus> deleteComment(@PathVariable("freeBoardId") @Positive Long freeBoardId,
                                                     @PathVariable("commentId") @Positive Long commentId,
                                                     @RequestHeader(value = "Authorization") String authorizationToken) {
-
         String token = authorizationToken.substring(7);
-        freeCommentService.deleteComment(token, freeBoardId, commentId);
+        freeCommentService.deleteComment(freeBoardId, commentId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

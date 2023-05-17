@@ -21,25 +21,30 @@ public class FeedbackCommentController {
 
     @PostMapping("/feedbackboard/{feedbackBoardId}/comment/new")
     public ResponseEntity<CommentResponseDto.Post> postComment(@PathVariable("feedbackBoardId") @Positive Long feedbackBoardId,
-                                                                       @Valid @RequestBody CommentDto.Post postDto) {
+                                                               @Valid @RequestBody CommentDto.Post postDto,
+                                                               @RequestHeader(value = "Authorization") String authorizationToken) {
+
+        String token = authorizationToken.substring(7);
+
         CommentResponseDto.Post response = feedbackCommentService.createComment(feedbackBoardId, postDto);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @PatchMapping("/feedbackboard/{feedbackBoardId}/comment/{commentId}")
     public ResponseEntity<HttpStatus> patchComment(@PathVariable("feedbackBoardId") @Positive Long feedbackBoardId,
-                                                                               @PathVariable("commentId") @Positive Long commentId,
-                                                                               @Valid @RequestBody CommentDto.Patch patchDto,
+                                                   @PathVariable("commentId") @Positive Long commentId,
+                                                   @Valid @RequestBody CommentDto.Patch patchDto,
                                                    @RequestHeader(value = "Authorization") String authorizationToken){
 
         String token = authorizationToken.substring(7);
-        feedbackCommentService.updateComment(token, feedbackBoardId, commentId, patchDto);
+
+        feedbackCommentService.updateComment(feedbackBoardId, commentId, patchDto);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/feedbackboard/{feedbackBoardId}/comment/{commentId}")
     public ResponseEntity<CommentResponseDto.Details> getComment(@PathVariable("feedbackBoardId") @Positive Long feedbackBoardId,
-                                                                        @PathVariable("commentId") @Positive Long commentId){
+                                                                 @PathVariable("commentId") @Positive Long commentId){
         CommentResponseDto.Details response = feedbackCommentService.responseComment(feedbackBoardId, commentId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -58,7 +63,7 @@ public class FeedbackCommentController {
                                                     @RequestHeader(value = "Authorization") String authorizationToken) {
 
         String token = authorizationToken.substring(7);
-        feedbackCommentService.deleteComment(token, feedbackBoardId, commentId);
+        feedbackCommentService.deleteComment(feedbackBoardId, commentId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
