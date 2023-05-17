@@ -10,6 +10,8 @@ import type {
   ApiUpdateFreeBoardResponse,
   ApiDeleteFreeBoardHandler,
   ApiDeleteFreeBoardResponse,
+  ApiFetchFreeBoardListHandler,
+  ApiFetchFreeBoardListResponse,
 } from "@/types/api";
 
 /** 2023/05/10 - 자유 게시판 생성 요청 - by 1-blue */
@@ -33,6 +35,14 @@ export const apiUpdateFreeBoard: ApiUpdateFreeBoardHandler = async ({ freeBoardI
 /** 2023/05/10 - 자유 게시판 삭제 요청 - by 1-blue */
 export const apiDeleteFreeBoard: ApiDeleteFreeBoardHandler = async ({ freeBoardId }) => {
   const { data } = await serverInstance.delete<ApiDeleteFreeBoardResponse>(`/freeboard/${freeBoardId}`);
+
+  return data;
+};
+/** 2023/05/11 - 자유 게시판 게시글 리스트 요청 - by leekoby */
+export const apiFetchFreeBoardList: ApiFetchFreeBoardListHandler = async ({ selected, sorted, page, size }) => {
+  const { data } = await serverInstance.get<ApiFetchFreeBoardListResponse>(
+    `/freeboards${selected}?sort=${sorted}&page=${page}&size=${size}`,
+  );
 
   return data;
 };

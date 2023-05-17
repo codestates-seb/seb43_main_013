@@ -10,6 +10,9 @@ const nextConfig = {
       "cloudflare-ipfs.com",
       // 유튜브 썸네일 링크
       "img.youtube.com",
+
+      // default avatar image
+      "ibb.co"
     ],
   },
 };

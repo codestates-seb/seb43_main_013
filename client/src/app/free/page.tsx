@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   title: "CC | 자유 게시판",
 };
 
-/** 2023/05/09 - 자유 게시판 메인 화면 - by leekoby */
+/** 2023/05/09 - 자유 게시판 메인 화면 페이지- by leekoby */
 const Page = () => {
   return <FreeMain />;
 };

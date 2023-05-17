@@ -1,18 +1,21 @@
 import { FormEventHandler, useEffect, useState } from "react";
-import { useToast } from "@chakra-ui/react";
 import { type InfiniteData, useQueryClient } from "@tanstack/react-query";
+
+import { QUERY_KEYS } from "@/hooks/query";
 
 // api
 import { apiCreateComment } from "@/apis";
 
-import { QUERY_KEYS } from "@/hooks/query";
+// hook
+import useResizeTextarea from "@/hooks/useResizeTextarea";
+import { useMemberStore } from "@/store/useMemberStore";
+import useCustomToast from "@/hooks/useCustomToast";
 
 // store
 import { useLoadingStore } from "@/store";
 
 // type
 import type { ApiFetchCommentsResponse, BoardType } from "@/types/api";
-import useResizeTextarea from "@/hooks/useResizeTextarea";
 interface Props {
   type: BoardType;
   boardId: number;
@@ -20,12 +23,13 @@ interface Props {
 
 /** 2023/05/11 - 댓글 폼 컴포넌트 - by 1-blue */
 const BoardCommentForm: React.FC<Props> = ({ type, boardId }) => {
-  const toast = useToast();
-  const { start, end } = useLoadingStore((state) => state);
+  const toast = useCustomToast();
+  const { loading } = useLoadingStore((state) => state);
+  const { member } = useMemberStore();
 
   const [content, setContent] = useState("");
 
-  /** 2023/05/11 - 로그인한 유저 정보 - by 1-blue */
+  /** 2023/05/13 - textarea 리사이징 - by 1-blue */
   const [textareaRef, handleResizeHeight] = useResizeTextarea();
 
   /** 2023/05/11 - comment의 content인 textarea 높이 초기화 - by 1-blue */
@@ -38,23 +42,17 @@ const BoardCommentForm: React.FC<Props> = ({ type, boardId }) => {
   const onSubmitComment: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
 
-    if (!content.trim().length)
-      return toast({
-        description: "댓글을 입력해주세요!",
-        status: "warning",
-        duration: 2500,
-        isClosable: true,
-      });
+    if (!member) {
+      return toast({ title: "로그인후에 접근해주세요!", status: "error" });
+    }
+
+    if (!content.trim().length) return toast({ title: "댓글을 입력해주세요!", status: "warning" });
 
     try {
-      start();
+      loading.start();
 
-      // TODO: memberId 넣기
-      const { commentId } = await apiCreateComment(type, { boardId, content, memberId: 1 });
+      const { commentId } = await apiCreateComment(type, { boardId, content, memberId: member.memberId });
 
-      end();
-
-      // TODO: 멤버 데이터 넣기
       queryClient.setQueryData<InfiniteData<ApiFetchCommentsResponse> | undefined>(
         [QUERY_KEYS.comment, type],
         (prev) =>
@@ -70,11 +68,11 @@ const BoardCommentForm: React.FC<Props> = ({ type, boardId }) => {
                   createdAt: new Date(),
                   modifiedAt: new Date(),
                   email: "",
-                  memberId: 1,
-                  nickname: "대충 살자",
-                  profileImageUrl:
-                    "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/7.jpg",
+                  memberId: member.memberId,
+                  nickname: member.nickname,
+                  profileImageUrl: member.profileImageUrl,
                   recommntCount: 0,
+                  recomments: [],
                 },
               ],
             })),
@@ -83,21 +81,13 @@ const BoardCommentForm: React.FC<Props> = ({ type, boardId }) => {
 
       setContent("");
 
-      return toast({
-        description: "댓글을 등록했습니다.",
-        status: "success",
-        duration: 2500,
-        isClosable: true,
-      });
+      return toast({ title: "댓글을 등록했습니다.", status: "success" });
     } catch (error) {
       console.error(error);
 
-      return toast({
-        description: "댓글 등록에 실패했습니다. 잠시후에 다시 시도해주세요!",
-        status: "error",
-        duration: 2500,
-        isClosable: true,
-      });
+      return toast({ title: "댓글 등록에 실패했습니다. 잠시후에 다시 시도해주세요!", status: "error" });
+    } finally {
+      loading.end();
     }
   };
 
@@ -110,7 +100,7 @@ const BoardCommentForm: React.FC<Props> = ({ type, boardId }) => {
           setContent(e.target.value);
           handleResizeHeight();
         }}
-        className="resize-none bg-gray-200 w-full min-h-[120px] focus:outline-main-300 rounded-md p-2 focus:bg-gray-100"
+        className="resize-none bg-sub-200 w-full min-h-[120px] focus:outline-main-300 rounded-md p-2 focus:bg-sub-100"
       />
       <button
         type="submit"

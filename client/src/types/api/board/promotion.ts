@@ -1,6 +1,7 @@
 // https://main-project.gitbook.io/main-project/undefined-1/undefined-2
 
-import type { Board } from "./";
+import { PageInfo } from "..";
+import type { Board, DetailTag, Tag } from "./";
 
 /** 2023/05/10 - 홍보 게시판 타입 - by 1-blue */
 export interface PromotionBoard extends Board {
@@ -8,7 +9,7 @@ export interface PromotionBoard extends Board {
   link: string; // 유튜브 링크
   channelName: string; // 유튜브 채널명
   subscriberCount: number; // 구독자수
-  tag: string[]; // 태그
+  tags: DetailTag[];
   categoryName: string; // 카테고리
 }
 
@@ -21,7 +22,7 @@ export interface ApiCreatePromotionBoardRequest {
   channelName: string;
   subscriberCount: number;
   content: string;
-  tag: string[];
+  tags: Tag[];
   categoryName: string;
 }
 /** 2023/05/10 - 홍보 게시판 생성 요청 수신 타입 - by 1-blue */
@@ -54,7 +55,7 @@ export interface ApiUpdatePromotionBoardRequest {
   channelName: string;
   subscriberCount: number;
   content: string;
-  tag: string[];
+  tags: Tag[];
   categoryName: string;
 }
 /** 2023/05/10 - 홍보 게시판 수정 요청 수신 타입 - by 1-blue */
@@ -74,4 +75,20 @@ export interface ApiDeletePromotionBoardResponse {}
 /** 2023/05/10 - 홍보 게시판 삭제 요청 핸들러 - by 1-blue */
 export interface ApiDeletePromotionBoardHandler {
   (body: ApiDeletePromotionBoardRequest): Promise<ApiDeletePromotionBoardResponse>;
+}
+
+// ============================== 홍보 게시판 게시글리스트 조회 ==============================
+/** 2023/05/12- 홍보 게시판 게시글리스트 조회 요청 송신 타입 - by leekoby */
+export interface ApiFetchPromotionBoardListRequest {
+  page: number;
+  size: number;
+}
+/** 2023/05/12 - 홍보 게시판 게시글리스트 조회 요청 수신 타입 - by leekoby */
+export interface ApiFetchPromotionBoardListResponse {
+  data: PromotionBoard[];
+  pageInfo: PageInfo;
+}
+/** 2023/05/12 - 홍보 게시판 게시글리스트 조회 요청 핸들러 - by leekoby */
+export interface ApiFetchPromotionBoardListHandler {
+  (body: ApiFetchPromotionBoardListRequest): Promise<ApiFetchPromotionBoardListResponse>;
 }

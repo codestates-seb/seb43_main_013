@@ -38,7 +38,7 @@ const Board: React.FC<Props> = ({ boardId }) => {
 
       {/* 라인 */}
       <div>
-        <hr className="h-0.5 bg-gray-200 my-6" />
+        <hr className="h-0.5 bg-sub-200 my-6" />
       </div>
 
       {/* 썸네일/영상 */}
@@ -46,11 +46,17 @@ const Board: React.FC<Props> = ({ boardId }) => {
       <BoardContent content={data.content} />
 
       {/* 댓글 정보 / 좋아요 정보 */}
-      <BoardFooter commentCount={data.commentCount} likeCount={data.likeCount} />
+      <BoardFooter
+        type="free"
+        boardId={boardId}
+        commentCount={data.commentCount}
+        likeCount={data.likeCount}
+        liked={data.liked}
+      />
 
       {/* 라인 */}
       <div>
-        <hr className="h-0.5 bg-gray-200 my-4" />
+        <hr className="h-0.5 bg-sub-200 my-4" />
       </div>
 
       {/* 댓글과 답글 */}

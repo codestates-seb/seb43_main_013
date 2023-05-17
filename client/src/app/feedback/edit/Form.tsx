@@ -3,8 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { useToast } from "@chakra-ui/react";
 import { PhotoIcon, ArrowPathIcon } from "@heroicons/react/24/solid";
+import { useQueryClient } from "@tanstack/react-query";
 
 // api
 import { apiUpdateFeedbackBoard } from "@/apis";
@@ -18,11 +18,14 @@ import { useLoadingStore } from "@/store";
 // hook
 import useTags from "@/hooks/useTags";
 import { useFetchFeedbackBoard } from "@/hooks/query";
+import { useMemberStore } from "@/store/useMemberStore";
+import useCustomToast from "@/hooks/useCustomToast";
 
 // component
 import Input from "@/components/Board/Form/Input";
 import Editor from "@/components/Editor";
-import Category from "@/components/Board/Form/Category";
+import NormalCategory from "@/components/Board/Form/NormalCategory";
+import FeedbackCategory from "@/components/Board/Form/FeedbackCategory";
 import Tag from "@/components/Board/Form/Tag";
 import Skeleton from "@/components/Skeleton";
 
@@ -33,9 +36,11 @@ interface Props {
 
 /** 2023/05/09 - 피드백 게시글 작성 form 컴포넌트 - by 1-blue */
 const Form: React.FC<Props> = ({ boardId }) => {
-  const toast = useToast();
+  const toast = useCustomToast();
   const router = useRouter();
-  const { start, end } = useLoadingStore((state) => state);
+  const { loading } = useLoadingStore((state) => state);
+  const { member } = useMemberStore();
+  const queryClient = useQueryClient();
 
   /** 2023/05/09 - 작성한 태그들 - by 1-blue */
   const [selectedTags, onSelectedTag, onDeleteTag, setSelectedTags] = useTags();
@@ -76,15 +81,24 @@ const Form: React.FC<Props> = ({ boardId }) => {
     if (!data) return;
 
     // TODO: thumbnail
-    setSelectedTags(data.tag);
+    setSelectedTags(data.tags.map((tag) => tag.tagName));
     setContent(data.content);
     setSelectedNormalCategory(data.categoryName);
-    setSelectedFeedbackCategory(data.feedbackCateogoryName);
+    setSelectedFeedbackCategory(data.feedbackCategoryName);
   }, [data]);
 
   /** 2023/05/09 - 피드백 게시글 생성 - by 1-blue */
   const onSubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
+
+    if (!member) {
+      return toast({
+        description: "로그인후에 접근해주세요!",
+        status: "error",
+        duration: 2500,
+        isClosable: true,
+      });
+    }
 
     const values: string[] = [];
     const formData = new FormData(e.currentTarget);
@@ -98,39 +112,23 @@ const Form: React.FC<Props> = ({ boardId }) => {
     const [title, link] = values;
 
     // 제목 유효성 검사
-    if (title.trim().length <= 1)
-      return toast({
-        description: "제목을 두 글자 이상 입력해주세요!",
-        status: "error",
-        duration: 2500,
-        isClosable: true,
-      });
+    if (title.trim().length <= 1) {
+      return toast({ title: "제목을 두 글자 이상 입력해주세요!", status: "error" });
+    }
     // 썸네일이나 링크중 하나는 있는지 확인
-    if (thumbnail?.length === 0 && link.length === 0)
-      return toast({
-        description: "썸네일이나 링크중 하나는 입력해주세요!",
-        status: "error",
-        duration: 2500,
-        isClosable: true,
-      });
+    if (thumbnail?.length === 0 && link.length === 0) {
+      return toast({ title: "썸네일이나 링크중 하나는 입력해주세요!", status: "error" });
+    }
     // 유효한 URL인지 확인
-    if (!validateYoutubeURL(link))
-      return toast({
-        description: "유효한 링크를 입력해주세요!",
-        status: "error",
-        duration: 2500,
-        isClosable: true,
-      });
-    if (content.trim().length <= 100)
-      return toast({
-        description: "내용이 너무 적습니다!",
-        status: "error",
-        duration: 2500,
-        isClosable: true,
-      });
+    if (!validateYoutubeURL(link)) {
+      return toast({ title: "유효한 링크를 입력해주세요!", status: "error" });
+    }
+    if (content.trim().length <= 100) {
+      return toast({ title: "내용이 너무 적습니다!", status: "error" });
+    }
 
     try {
-      start();
+      loading.start();
 
       // TODO: thumbnail url 넣어서 보내주기 ( memberId )
       await apiUpdateFeedbackBoard({
@@ -138,30 +136,22 @@ const Form: React.FC<Props> = ({ boardId }) => {
         title,
         link,
         content,
-        tag: selectedTags,
+        tags: selectedTags.map((tag) => ({ tagName: tag })),
         categoryName: selectedNormalCategory,
-        feedbackCateogoryName: selectedFeedbackCategory,
+        feedbackCategoryName: selectedFeedbackCategory,
       });
 
-      end();
+      queryClient.invalidateQueries(["feedbackBoard", boardId + ""]);
 
-      toast({
-        description: "게시글 수정했습니다.\n수정된 게시글 페이지로 이동됩니다.",
-        status: "success",
-        duration: 2500,
-        isClosable: true,
-      });
+      toast({ title: "게시글 수정했습니다.\n수정된 게시글 페이지로 이동됩니다.", status: "success" });
 
       router.push(`/feedback/${boardId}`);
     } catch (error) {
       console.error(error);
 
-      return toast({
-        description: "에러가 발생했습니다.\n잠시후에 다시 시도해주세요!",
-        status: "error",
-        duration: 2500,
-        isClosable: true,
-      });
+      return toast({ description: "에러가 발생했습니다.\n잠시후에 다시 시도해주세요!", status: "error" });
+    } finally {
+      loading.end();
     }
   };
 
@@ -176,13 +166,8 @@ const Form: React.FC<Props> = ({ boardId }) => {
           <Input name="제목" type="text" placeholder="제목을 입력해주세요!" defaultValue={data?.title} />
           <Input name="유튜브 링크" type="text" placeholder="유튜브 링크을 입력해주세요!" defaultValue={data?.link} />
           <div className="flex flex-col pb-3 md:flex-row space-y-4 md:space-x-4 md:space-y-0">
-            <Category
-              type="normal"
-              selectedCategory={selectedNormalCategory}
-              setSelectedCategory={setSelectedNormalCategory}
-            />
-            <Category
-              type="feedback"
+            <NormalCategory selectedCategory={selectedNormalCategory} setSelectedCategory={setSelectedNormalCategory} />
+            <FeedbackCategory
               selectedCategory={selectedFeedbackCategory}
               setSelectedCategory={setSelectedFeedbackCategory}
             />
@@ -192,7 +177,7 @@ const Form: React.FC<Props> = ({ boardId }) => {
         {/* thumbnail( + preview) */}
         <div className="md:w-[400px] flex flex-col">
           <label>
-            <span className="text-base font-bold text-gray-800 mb-1">썸네일</span>
+            <span className="text-base font-bold text-sub-800 mb-1">썸네일</span>
           </label>
           <figure className="group pt-[60%] md:pt-0 flex-1 relative border-2 border-dotted border-black rounded-md p-2">
             <input type="file" hidden ref={ThumbnailRef} onChange={onUploadPreview} />
@@ -203,9 +188,9 @@ const Form: React.FC<Props> = ({ boardId }) => {
               onClick={() => ThumbnailRef.current?.click()}
             >
               {preview ? (
-                <ArrowPathIcon className="w-12 h-12 text-gray-300 z-[1] transition-colors group-hover:text-gray-200" />
+                <ArrowPathIcon className="w-12 h-12 text-sub-300 z-[1] transition-colors group-hover:text-sub-200" />
               ) : (
-                <PhotoIcon className="w-12 h-12 text-gray-400 z-[1] transition-colors group-hover:text-gray-200" />
+                <PhotoIcon className="w-12 h-12 text-sub-400 z-[1] transition-colors group-hover:text-sub-200" />
               )}
             </button>
 
@@ -234,7 +219,7 @@ const Form: React.FC<Props> = ({ boardId }) => {
       {/* wysiwyg */}
       <section className="flex flex-col space-y-1">
         <label>
-          <span className="text-base font-bold text-gray-800">내용</span>
+          <span className="text-base font-bold text-sub-800">내용</span>
         </label>
         <Editor content={content} setContent={setContent} />
       </section>

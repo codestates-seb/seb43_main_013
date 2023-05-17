@@ -1,39 +1,69 @@
-import SideCategories from "@/components/SideCategories";
-import SortPosts from "@/components/SortPosts";
-import ContentItem from "../feedback/ContentItem";
+"use client";
+
+import SideCategories from "@/components/BoardMain/SideCategories";
+import SortPosts from "@/components/BoardMain/SortPosts";
+import RightSideButton from "@/components/RightSideButton";
+import FullSpinner from "@/components/Spinner/FullSpinner";
+import { useFetchCategories, useFetchFeedbackCategories } from "@/hooks/query";
+import { useFetchFeedbackBoardList } from "@/hooks/query/useFetchFeedbackBoardList";
+import { useCategoriesStore, useSortStore } from "@/store";
+import { useFeedbackCategoriesStore } from "@/store/useFeedbackCategoriesStore";
+import Link from "next/link";
+import { useState, useRef, useEffect, useCallback } from "react";
+import FeedbackContentItem from "./FeedbackContentItem";
 import FeedbackCategories from "./FeedbackCategories";
 
-const categoryDummyData = ["전체", "먹방", "게임", "스포츠", "이슈", "음악", "뷰티", "영화", "쿠킹", "동물", "IT"];
-const feedbackCateogoryName = ["영상", "채널", "썸네일"];
-
-const contentItemDummyData1 = {
-  feedbackCateogoryName: 1,
-  title: " 차냥해 갓상은!",
-  content: `인생은 갓상은처럼 인생은 갓형욱처럼 인생은 나처럼 인생은 갓상은처럼 인생은 갓형욱처럼 인생은 나처럼인생은 갓상은처럼 인생은 갓형욱처럼 인생은 나처럼인생은 갓상은처럼 인생은 갓형욱처럼 인생은 나처럼인생은 갓상은처럼 인생은 갓형욱처럼 인생은 나처럼`,
-  commentCount: 999,
-  viewCount: 999,
-  likeCount: 999,
-  tag: ["먹방", "코딩", "IT"],
-  category: "",
-  createdAt: new Date(),
-  nickname: "인생은갓상은처럼",
-};
-
-const contentItemDummyData2 = {
-  feedbackCateogoryName: 1,
-  title: " 차냥해 갓상은!",
-  content: `인생은 갓상은처럼 인생은 갓형욱처럼 인생은 나처럼 `,
-  commentCount: 999,
-  viewCount: 999,
-  likeCount: 999,
-  tag: ["먹방", "코딩", "IT"],
-  category: "",
-  createdAt: new Date(),
-  nickname: "인생은갓상은처럼",
-};
-
-/** 2023/05/08 - 자유게시판 메인 화면 - by leekoby */
+/** 2023/05/08 - 피드백 메인 화면 - by leekoby */
 const FeedbackMain = () => {
+  /** 2023/05/14 - 사이드 카테고리 상태 - by leekoby */
+  const selectedCategory = useCategoriesStore((state) => state.selectedCategory);
+  const selected =
+    !selectedCategory || selectedCategory?.categoryName === "전체" ? "" : `/categories/${selectedCategory?.categoryId}`;
+
+  console.log(selected);
+  /**  2023/05/15 - 피드백 카테고리 상태 - by leekoby */
+  // TODO: 전역상태 만들기
+  const selectedFeedbackCategory = useFeedbackCategoriesStore((state) => state.selectedFeedbackCategory);
+
+  /** 2023/05/15 - 정렬 전역 상태 - by leekoby */
+  const sortSelectedOption = useSortStore((state) => state.selectedOption);
+
+  /** 2023/05/11 피드백 목록 get 요청 - by leekoby */
+  const { data, fetchNextPage, hasNextPage, isFetching, refetch } = useFetchFeedbackBoardList({
+    selected,
+    selectedFeedback: selectedCategory?.categoryId,
+    sorted: sortSelectedOption?.optionName,
+    page: 1,
+    size: 10,
+  });
+
+  useEffect(() => {
+    refetch();
+  }, [selectedCategory, sortSelectedOption, selectedFeedbackCategory]);
+
+  /** 2023/05/13 - 공통 사이드 카테고리  - by leekoby */
+  const { categories, isLoading } = useFetchCategories({ type: "normal" });
+  /** 2023/05/13 - 피드백게시판 피드백 카테고리  - by leekoby */
+  const { feedbackCategories, feedbackIsLoading } = useFetchFeedbackCategories({ type: "feedback" });
+
+  /** 2023/05/14 - 무한스크롤 불러오기를 위해 사용 - by leekoby */
+  const observerRef = useRef<IntersectionObserver | null>(null);
+  /** 2023/05/14 - 무한스크롤 불러오기를 위한 lodaer 함수 - by leekoby */
+  const loader = useCallback(
+    (node: HTMLDivElement | null) => {
+      if (isFetching || !hasNextPage) return;
+      if (observerRef.current) observerRef.current.disconnect();
+      const currentObserver = (observerRef.current = new IntersectionObserver(([entry]) => {
+        if (entry.isIntersecting) fetchNextPage();
+      }));
+      if (node) currentObserver.observe(node);
+    },
+    [fetchNextPage, hasNextPage, isFetching],
+  );
+
+  if (!data) return <FullSpinner />;
+  if (data.pages.length < 1) return <FullSpinner />;
+
   return (
     //  전체 컨테이너
     <div className="mx-auto mt-6 min-w-min">
@@ -41,34 +71,64 @@ const FeedbackMain = () => {
       <div className="flex flex-col md:flex-row ">
         {/* Left Side */}
         <aside className=" flex flex-row md:flex-col items-center justify-center md:justify-start  md:w-0 md:grow-[2]  ">
-          {/* category  */}
-          <SideCategories categoryData={categoryDummyData} />
+          {/* side category  */}
+          {categories && <SideCategories selectedCategory={selectedCategory} categories={categories} />}
+          {/* <SideCategories categoryData={categoryDummyData} /> */}
         </aside>
         {/* rightside freeboard post list */}
         <section className="flex flex-col md:w-0 ml-5  grow-[8]">
           {/* freeboard list header */}
-          <div className="flex justify-between my-1">
-            <div className="flex text-3xl font-bold text-left ">
-              [영상, 썸네일, ...]
-              {/* <FeedbackCategories /> */}
-            </div>
-
-            <div className="">
+          <div className="flex flex-col md:flex-row md:justify-between ">
+            {feedbackCategories && <FeedbackCategories feedbackCategoryData={feedbackCategories} />}
+            <div className="flex self-end">
               <SortPosts />
             </div>
           </div>
 
           {/* post item */}
-          <div className="flex flex-col flex-wrap w-full md:flex-row">
-            <ContentItem {...contentItemDummyData1} />
-            <ContentItem {...contentItemDummyData2} />
-            <ContentItem {...contentItemDummyData1} />
-            <ContentItem {...contentItemDummyData2} />
-          </div>
 
-          <div className="flex flex-col items-center m-auto">무한스크롤</div>
+          {/*  2023/05/14 - 무한스크롤 피드백 게시글 목록 - by leekoby  */}
+          <div className="flex flex-col flex-wrap gap-5 md:flex-row">
+            {/* TODO: //*게시글 북마크 좋아요 클릭되게 하는 방법 생각해보기  */}
+            {data.pages.map((page, pageIndex) =>
+              page.data.map((innerData, itemIndex) => {
+                const isLastItem = pageIndex === data.pages.length - 1 && itemIndex === page.data.length - 1;
+                return (
+                  <Link
+                    key={innerData.feedbackBoardId}
+                    href={`/feedback/${innerData.feedbackBoardId}`}
+                    className="lg:w-[48%]"
+                  >
+                    <FeedbackContentItem props={innerData} ref={isLastItem ? loader : undefined} />
+                  </Link>
+                );
+              }),
+            )}
+          </div>
+          {/*  2023/05/14 - 무한스크롤 피드백 게시글 목록 - by leekoby  */}
+          <div className="flex flex-col flex-wrap gap-5 md:flex-row">
+            {/* TODO: //*게시글 북마크 좋아요 클릭되게 하는 방법 생각해보기  */}
+            {data.pages.map((page, pageIndex) =>
+              page.data.map((innerData, itemIndex) => {
+                const isLastItem = pageIndex === data.pages.length - 1 && itemIndex === page.data.length - 1;
+                return (
+                  <Link
+                    key={innerData.feedbackBoardId}
+                    href={`/feedback/${innerData.feedbackBoardId}`}
+                    className="lg:w-[48%]"
+                  >
+                    <FeedbackContentItem props={innerData} ref={isLastItem ? loader : undefined} />
+                  </Link>
+                );
+              }),
+            )}
+          </div>
+          <div className="flex flex-col items-center m-auto">{}</div>
         </section>
-        {/* 🔺🔻 버튼? */}
+        {/* 오른쪽 사이드 영역 */}
+        <div className="flex flex-col items-center justify-center ml-2">
+          <RightSideButton destination={`/feedback/write`} />
+        </div>
       </div>
     </div>
   );

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useToast } from "@chakra-ui/react";
+import { useQueryClient } from "@tanstack/react-query";
 
 // api
 import { apiUpdateJobBoard } from "@/apis";
@@ -12,11 +12,13 @@ import { useLoadingStore } from "@/store";
 
 // hook
 import { useFetchJobBoard } from "@/hooks/query";
+import { useMemberStore } from "@/store/useMemberStore";
+import useCustomToast from "@/hooks/useCustomToast";
 
 // component
 import Input from "@/components/Board/Form/Input";
 import Editor from "@/components/Editor";
-import Category from "@/components/Board/Form/Category";
+import NormalCategory from "@/components/Board/Form/NormalCategory";
 import Skeleton from "@/components/Skeleton";
 
 // type
@@ -26,9 +28,11 @@ interface Props {
 
 /** 2023/05/10 - 구인구직 게시글 수정 form 컴포넌트 - by 1-blue */
 const Form: React.FC<Props> = ({ boardId }) => {
-  const toast = useToast();
+  const toast = useCustomToast();
   const router = useRouter();
-  const { start, end } = useLoadingStore((state) => state);
+  const { loading } = useLoadingStore((state) => state);
+  const { member } = useMemberStore();
+  const queryClient = useQueryClient();
 
   /** 2023/05/10 - wysiwyg 으로 받는 content - by 1-blue */
   const [content, setContent] = useState("");
@@ -51,6 +55,8 @@ const Form: React.FC<Props> = ({ boardId }) => {
   const onSubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
 
+    if (!member) return toast({ title: "로그인후에 접근해주세요!", status: "error" });
+
     const values: string[] = [];
     const formData = new FormData(e.currentTarget);
 
@@ -63,23 +69,11 @@ const Form: React.FC<Props> = ({ boardId }) => {
     const [title] = values;
 
     // 제목 유효성 검사
-    if (title.trim().length <= 1)
-      return toast({
-        description: "제목을 두 글자 이상 입력해주세요!",
-        status: "error",
-        duration: 2500,
-        isClosable: true,
-      });
-    if (content.trim().length <= 100)
-      return toast({
-        description: "내용이 너무 적습니다!",
-        status: "error",
-        duration: 2500,
-        isClosable: true,
-      });
+    if (title.trim().length <= 1) return toast({ title: "제목을 두 글자 이상 입력해주세요!", status: "error" });
+    if (content.trim().length <= 100) return toast({ title: "내용이 너무 적습니다!", status: "error" });
 
     try {
-      start();
+      loading.start();
 
       apiUpdateJobBoard({
         jobBoardId: boardId,
@@ -88,25 +82,17 @@ const Form: React.FC<Props> = ({ boardId }) => {
         jobCategoryName: selectedJobCategory,
       });
 
-      end();
+      queryClient.invalidateQueries(["jobBoard", boardId + ""]);
 
-      toast({
-        description: "게시글 수정했습니다.\n수정된 게시글 페이지로 이동됩니다.",
-        status: "success",
-        duration: 2500,
-        isClosable: true,
-      });
+      toast({ title: "게시글 수정했습니다.\n수정된 게시글 페이지로 이동됩니다.", status: "success" });
 
       router.push(`/job/${boardId}`);
     } catch (error) {
       console.error(error);
 
-      return toast({
-        description: "에러가 발생했습니다.\n잠시후에 다시 시도해주세요!",
-        status: "error",
-        duration: 2500,
-        isClosable: true,
-      });
+      return toast({ title: "에러가 발생했습니다.\n잠시후에 다시 시도해주세요!", status: "error" });
+    } finally {
+      loading.end();
     }
   };
 
@@ -120,7 +106,7 @@ const Form: React.FC<Props> = ({ boardId }) => {
         <div className="w-full md:w-0 md:flex-1 space-y-2 z-[1]">
           <Input name="제목" type="text" placeholder="제목을 입력해주세요!" defaultValue={data?.title} />
           <div className="flex flex-col md:flex-row space-y-4 md:space-x-4 md:space-y-0">
-            <Category type="job" selectedCategory={selectedJobCategory} setSelectedCategory={setSelectedJobCategory} />
+            <NormalCategory selectedCategory={selectedJobCategory} setSelectedCategory={setSelectedJobCategory} />
           </div>
         </div>
       </section>
@@ -128,7 +114,7 @@ const Form: React.FC<Props> = ({ boardId }) => {
       {/* wysiwyg */}
       <section className="flex flex-col space-y-1">
         <label>
-          <span className="text-base font-bold text-gray-800">내용</span>
+          <span className="text-base font-bold text-sub-800">내용</span>
         </label>
         <Editor content={content} setContent={setContent} />
       </section>

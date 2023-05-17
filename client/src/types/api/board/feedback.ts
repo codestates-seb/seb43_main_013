@@ -1,14 +1,15 @@
 // https://main-project.gitbook.io/main-project/undefined-1/undefined-1
 
-import type { Board } from "./";
+import { PageInfo } from "..";
+import type { Board, DetailTag, Tag } from "./";
 
 /** 2023/05/10 - 피드백 게시판 타입 - by 1-blue */
 export interface FeedbackBoard extends Board {
   feedbackBoardId: number;
   link: string;
-  tag: string[]; // 태그
+  tags: DetailTag[]; // 태그
   categoryName: string; // 카테고리
-  feedbackCateogoryName: string; // 피드백 게시판 카테고리 (영상, 채널, 썸네일)
+  feedbackCategoryName: string; // 피드백 게시판 카테고리 (영상, 채널, 썸네일)
 }
 
 // ============================== C 피드백 게시판 생성 ==============================
@@ -18,9 +19,9 @@ export interface ApiCreateFeedbackBoardRequest {
   title: string;
   link: string;
   content: string;
-  tag: string[];
+  tags: Tag[];
   categoryName: string;
-  feedbackCateogoryName: string;
+  feedbackCategoryName: string;
 }
 /** 2023/05/10 - 피드백 게시판 생성 요청 수신 타입 - by 1-blue */
 export interface ApiCreateFeedbackBoardResponse {
@@ -45,7 +46,15 @@ export interface ApiFetchFeedbackBoardHandler {
 
 // ============================== U 피드백 게시판 수정 ==============================
 /** 2023/05/10 - 피드백 게시판 수정 요청 송신 타입 - by 1-blue */
-export interface ApiUpdateFeedbackBoardRequest {}
+export interface ApiUpdateFeedbackBoardRequest {
+  feedbackBoardId: number;
+  title: string;
+  link: string;
+  content: string;
+  tags: Tag[];
+  categoryName: string;
+  feedbackCategoryName: string;
+}
 /** 2023/05/10 - 피드백 게시판 수정 요청 수신 타입 - by 1-blue */
 export interface ApiUpdateFeedbackBoardResponse {}
 /** 2023/05/10 - 피드백 게시판 수정 요청 핸들러 - by 1-blue */
@@ -63,4 +72,23 @@ export interface ApiDeleteFeedbackBoardResponse {}
 /** 2023/05/10 - 피드백 게시판 삭제 요청 핸들러 - by 1-blue */
 export interface ApiDeleteFeedbackBoardHandler {
   (body: ApiDeleteFeedbackBoardRequest): Promise<ApiDeleteFeedbackBoardResponse>;
+}
+
+// ============================== 피드백 게시판 게시글리스트 조회 ==============================
+/** 2023/05/12- 피드백 게시판 게시글리스트 조회 요청 송신 타입 - by leekoby */
+export interface ApiFetchFeedbackBoardListRequest {
+  selected: string;
+  selectedFeedback: number;
+  sorted: string;
+  page: number;
+  size: number;
+}
+/** 2023/05/12 - 피드백 게시판 게시글리스트 조회 요청 수신 타입 - by leekoby */
+export interface ApiFetchFeedbackBoardListResponse {
+  data: FeedbackBoard[];
+  pageInfo: PageInfo;
+}
+/** 2023/05/12 - 피드백 게시판 게시글리스트 조회 요청 핸들러 - by leekoby */
+export interface ApiFetchFeedbackBoardListHandler {
+  (body: ApiFetchFeedbackBoardListRequest): Promise<ApiFetchFeedbackBoardListResponse>;
 }
