@@ -1,4 +1,4 @@
-package com.CreatorConnect.server.errorresponse;
+package com.CreatorConnect.server.response;
 
 import com.CreatorConnect.server.exception.ExceptionCode;
 import lombok.Getter;
