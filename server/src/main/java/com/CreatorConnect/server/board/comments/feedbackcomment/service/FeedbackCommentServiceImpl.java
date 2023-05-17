@@ -51,14 +51,13 @@ public class FeedbackCommentServiceImpl implements CommentService {
 
     //댓글 수정
     @Override
-    public void updateComment(String token, Long feedbackBoardId, Long commentId, CommentDto.Patch patchDto){
+    public void updateComment(Long feedbackBoardId, Long commentId, CommentDto.Patch patchDto){
 
         // Dto의 Id값으로 Entity찾기
         FeedbackComment foundfeedbackComment = findVerifiedFeedbackComment(feedbackBoardId, commentId);
 
         // 멤버 검증
-        Member findMember = memberService.findVerifiedMember(foundfeedbackComment.getMemberId());
-        memberService.verifiedAuthenticatedMember(token, findMember);
+        memberService.verifiedAuthenticatedMember(foundfeedbackComment.getMemberId());
 
         //찾은 Entity의 값 변경
         Optional.ofNullable(patchDto.getContent())
@@ -97,13 +96,12 @@ public class FeedbackCommentServiceImpl implements CommentService {
 
     // 댓글 삭제
     @Override
-    public void deleteComment(String token, Long feedbackBoardId, Long commentId) {
+    public void deleteComment(Long feedbackBoardId, Long commentId) {
         // 댓글 찾기
         FeedbackComment foundComment = findVerifiedFeedbackComment(feedbackBoardId, commentId);
 
         // 멤버 검증
-        Member findMember = memberService.findVerifiedMember(foundComment.getMemberId());
-        memberService.verifiedAuthenticatedMember(token, findMember);
+        memberService.verifiedAuthenticatedMember(foundComment.getMemberId());
 
         // 댓글 수 -1
         Long commentCount = foundComment.getFeedbackBoard().getCommentCount();

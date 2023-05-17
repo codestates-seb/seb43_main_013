@@ -51,13 +51,12 @@ public class FreeCommentServiceImpl implements CommentService {
 
     //댓글 수정
     @Override
-    public void updateComment(String token, Long freeBoardId, Long commentId, CommentDto.Patch patchDto) {
+    public void updateComment(Long freeBoardId, Long commentId, CommentDto.Patch patchDto) {
         // Dto의 Id값으로 Entity찾기
         FreeComment foundfreeComment = findVerifiedFreeComment(freeBoardId, commentId);
 
         // 멤버 검증
-        Member findMember = memberService.findVerifiedMember(foundfreeComment.getMemberId());
-        memberService.verifiedAuthenticatedMember(token, findMember);
+        memberService.verifiedAuthenticatedMember(foundfreeComment.getMemberId());
 
         //찾은 Entity의 값 변경
         Optional.ofNullable(patchDto.getContent())
@@ -95,13 +94,12 @@ public class FreeCommentServiceImpl implements CommentService {
 
     // 댓글 삭제
     @Override
-    public void deleteComment(String token, Long freeBoardId, Long commentId) {
+    public void deleteComment(Long freeBoardId, Long commentId) {
         // 댓글 찾기
         FreeComment foundComment = findVerifiedFreeComment(freeBoardId, commentId);
 
         // 멤버 검증
-        Member findMember = memberService.findVerifiedMember(foundComment.getMemberId());
-        memberService.verifiedAuthenticatedMember(token, findMember);
+        memberService.verifiedAuthenticatedMember(foundComment.getMemberId());
 
         // 댓글 수 -1
         long commentCount = foundComment.getFreeBoard().getCommentCount();
