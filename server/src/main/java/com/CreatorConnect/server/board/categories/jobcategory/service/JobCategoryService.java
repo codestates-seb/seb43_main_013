@@ -7,9 +7,13 @@ import com.CreatorConnect.server.board.categories.jobcategory.repository.JobCate
 import com.CreatorConnect.server.exception.BusinessLogicException;
 import com.CreatorConnect.server.exception.ExceptionCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.swing.text.html.Option;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -60,6 +64,17 @@ public class JobCategoryService {
         // 2. 조회
         return mapper.jobCategoryToJobCategoryResponseDto(jobCategory);
 
+    }
+
+    /**
+     * <구인구직 카테고리 목록 조회>
+     * 1. 카테고리 목록 정렬
+     */
+    public List<JobCategoryDto.Response> getJobCategories() {
+        // 1. 카테고리 목록 정렬
+        PageRequest pageRequest = PageRequest.of(0, 20, Sort.by("jobCategoryId").descending());
+        Page<JobCategory> jobCategories = jobCategoryRepository.findAll(pageRequest);
+        return mapper.jobCategoryToJobCategoryResponseDtos(jobCategories.getContent());
     }
 
     // 중복 카테고리 존재 여부 검증 메서드
