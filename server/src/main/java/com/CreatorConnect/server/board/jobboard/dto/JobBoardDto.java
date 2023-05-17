@@ -1,12 +1,15 @@
 package com.CreatorConnect.server.board.jobboard.dto;
 
+import com.CreatorConnect.server.board.freeboard.dto.FreeBoardDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.domain.Page;
 
 import javax.validation.constraints.Positive;
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class JobBoardDto {
     @AllArgsConstructor
@@ -30,7 +33,7 @@ public class JobBoardDto {
     public static class Patch{
         private Long memberId; // 게시글 작성자
 
-        private Long freeBoardId; // 게시글 id
+        private Long jobBoardId; // 게시글 id
 
         private String title; // 게시글 제목
 
@@ -78,5 +81,29 @@ public class JobBoardDto {
         private String email; // 작성자 이메일
 
         private String profileImageUrl; // 작성자 프로필 이미지
+    }
+
+    // 페이지네이션 관련 dto
+    @Getter
+    @NoArgsConstructor
+    public static class MultiResponseDto<T> {
+        private List<T> data;
+        private FreeBoardDto.PageInfo pageInfo;
+
+        public MultiResponseDto(List<T> data, Page page) {
+            this.data = data;
+            this.pageInfo = new FreeBoardDto.PageInfo(page.getNumber() + 1,
+                    page.getSize(), page.getTotalElements(), page.getTotalPages());
+        }
+    }
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PageInfo {
+        private int page;
+        private int size;
+        private long totalElements;
+        private int totalPages;
     }
 }
