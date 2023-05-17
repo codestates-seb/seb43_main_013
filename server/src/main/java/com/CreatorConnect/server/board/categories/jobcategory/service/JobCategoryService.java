@@ -78,7 +78,7 @@ public class JobCategoryService {
     }
 
     // 중복 카테고리 존재 여부 검증 메서드
-    private void verifyExistsJobCategory(String jobCategoryName) {
+    public void verifyExistsJobCategory(String jobCategoryName) {
         Optional<JobCategory> optionalJobCategory = jobCategoryRepository.findByJobCategoryName(jobCategoryName);
         if (optionalJobCategory.isPresent()) { // 구인 구직 카테고리가 이미 존재하면 예외 처리
             throw new BusinessLogicException(ExceptionCode.CATEGORY_EXISTS);
