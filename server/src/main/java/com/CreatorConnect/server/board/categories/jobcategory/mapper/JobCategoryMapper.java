@@ -11,4 +11,7 @@ public interface JobCategoryMapper {
 
     // JobCategory -> JobCategoryResponseDto
     JobCategoryDto.Response jobCategoryToJobCategoryResponseDto(JobCategory jobCategory);
+
+    // JobCategoryDto.Patch -> JobCategory
+    JobCategory jobCategoryPatchDtoToJobCategory(JobCategoryDto.Patch patch);
 }
