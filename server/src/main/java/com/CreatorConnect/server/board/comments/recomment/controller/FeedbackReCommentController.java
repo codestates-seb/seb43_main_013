@@ -39,4 +39,22 @@ public class FeedbackReCommentController {
         feedbackReCommentService.updateReComment(token, feedbackBoardId, commentId, reCommentId, patchDto);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @GetMapping("/feedbackboard/{feedbackBoardId}/comment/{commentId}/recomment/{reCommentId}")
+    public ResponseEntity<ReCommentResponseDto.Details> getComment(@PathVariable("feedbackBoardId") @Positive Long feedbackBoardId,
+                                                                 @PathVariable("commentId") @Positive Long commentId,
+                                                                 @PathVariable("reCommentId") @Positive Long reCommentId){
+        ReCommentResponseDto.Details response = feedbackReCommentService.responseReComment(feedbackBoardId, commentId, reCommentId);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+    @DeleteMapping("/feedbackboard/{feedbackBoardId}/comment/{commentId}/recomment/{reCommentId}")
+    public ResponseEntity<HttpStatus> deleteComment(@PathVariable("feedbackBoardId") @Positive Long feedbackBoardId,
+                                                    @PathVariable("commentId") @Positive Long commentId,
+                                                    @PathVariable("reCommentId") @Positive Long reCommentId,
+                                                    @RequestHeader(value = "Authorization") String authorizationToken) {
+
+        String token = authorizationToken.substring(7);
+        feedbackReCommentService.deleteReComment(token, feedbackBoardId, commentId, reCommentId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 }

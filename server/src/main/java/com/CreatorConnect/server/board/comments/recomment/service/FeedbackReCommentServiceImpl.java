@@ -70,6 +70,22 @@ public class FeedbackReCommentServiceImpl {
         return mapper.feedbackReCommentToReCommentDetailsResponse(foundFeedbackReComment);
     }
 
+    public void deleteReComment(String token, Long feedbackBoardId, Long commentId, Long reCommentId){
+        // 대댓글 찾기
+        FeedbackReComment foundReComment = findVerifiedFeedbackReComment(feedbackBoardId, commentId, reCommentId);
+
+        // 멤버 검증
+        Member findMember = memberService.findVerifiedMember(foundReComment.getMemberId());
+        memberService.verifiedAuthenticatedMember(token, findMember);
+
+        // 대댓글 수 -1
+        Long reCommentCount = foundReComment.getFeedbackComment().getReCommentCount();
+        foundReComment.getFeedbackComment().setReCommentCount(reCommentCount - 1);
+
+        // 삭제
+        feedbackReCommentRepository.delete(foundReComment);
+    }
+
     // 피드백 대댓글 찾는 메서드
     private FeedbackReComment findVerifiedFeedbackReComment(Long feedbackBoardId, Long commentId, Long reCommentId) {
         Optional<FeedbackReComment> feedbackReComment = feedbackReCommentRepository.findById(new ReCommentPK(new CommentPK(feedbackBoardId, commentId),reCommentId));
