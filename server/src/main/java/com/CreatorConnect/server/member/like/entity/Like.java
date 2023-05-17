@@ -28,11 +28,11 @@ public class Like extends Auditable {
     @JoinColumn(name = "likedmember_id")
     private Member member;
 
-    @ManyToOne(fetch = LAZY)
+    @ManyToOne(fetch = LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "likedfeedbackboard_id")
     private FeedbackBoard feedbackBoard;
 
-    @ManyToOne(fetch = LAZY)
+    @ManyToOne(fetch = LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "likedfreeboard_id")
     private FreeBoard freeBoard;
 
