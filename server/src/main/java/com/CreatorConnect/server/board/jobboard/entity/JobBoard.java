@@ -43,4 +43,11 @@ public class JobBoard extends Auditable implements Board {
     @ManyToOne // JobBoard - JobCategory 다대일 매핑
     @JoinColumn(name = "JOBCATEGORY_ID")
     private JobCategory jobCategory;
+
+    @PrePersist
+    public void prePersist() { // 조회수, 댓글수, 좋아요수가 없으면 0으로 초기화
+        this.commentCount = this.commentCount == null ? 0 : this.commentCount;
+        this.likeCount = this.likeCount == null ? 0 : this.likeCount;
+        this.viewCount = this.viewCount == null ? 0 : this.viewCount;
+    }
 }
