@@ -1,25 +1,42 @@
 package com.CreatorConnect.server.member.service;
 
 import com.CreatorConnect.server.auth.event.MemberRegistrationApplicationEvent;
+import com.CreatorConnect.server.auth.jwt.JwtAuthenticationToken;
+import com.CreatorConnect.server.auth.jwt.JwtTokenizer;
 import com.CreatorConnect.server.auth.utils.CustomAuthorityUtils;
 import com.CreatorConnect.server.exception.BusinessLogicException;
 import com.CreatorConnect.server.exception.ExceptionCode;
 import com.CreatorConnect.server.member.entity.Member;
 import com.CreatorConnect.server.member.repository.MemberRepository;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.JwtException;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestTemplate;
+
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Slf4j
 @Transactional
@@ -30,14 +47,19 @@ public class MemberService {
     private final ApplicationEventPublisher publisher;
     private final CustomAuthorityUtils authorityUtils;
     private final PasswordEncoder passwordEncoder;
+    private final JwtTokenizer jwtTokenizer;
 
-    public MemberService(MemberRepository memberRepository, ApplicationEventPublisher publisher,
-                         PasswordEncoder passwordEncoder, CustomAuthorityUtils authorityUtils) {
+    public MemberService(MemberRepository memberRepository, ApplicationEventPublisher publisher, CustomAuthorityUtils authorityUtils, PasswordEncoder passwordEncoder, JwtTokenizer jwtTokenizer) {
         this.memberRepository = memberRepository;
         this.publisher = publisher;
-        this.passwordEncoder = passwordEncoder;
         this.authorityUtils = authorityUtils;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtTokenizer = jwtTokenizer;
     }
+
+    @Getter
+    @Value("${jwt.key}")
+    private String secretKey;
 
     public Member createMember(Member member) {
 
@@ -60,28 +82,29 @@ public class MemberService {
     }
 
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE)
-    public Member updateMember(Long memberId, Member member, String email) {
+    public Member updateMember(String jwtToken, Long memberId, Member member) {
 
-        verifiedAuthenticatedMember(memberId, email);
+        Member findMember = findVerifiedMember(memberId);
 
-        Member findMember = findVerifiedMember(member.getMemberId());
-
-        Optional.ofNullable(member.getPassword())
-                .ifPresent(findMember::setPassword);
-        Optional.ofNullable(member.getNickname())
-                .ifPresent(findMember::setNickname);
-        Optional.ofNullable(member.getPhone())
-                .ifPresent(findMember::setPhone);
-        Optional.ofNullable(member.getIntroduction())
-                .ifPresent(findMember::setIntroduction);
-        Optional.ofNullable(member.getLink())
-                .ifPresent(findMember::setLink);
-        Optional.ofNullable(member.getProfileImageUrl())
-                .ifPresent(findMember::setProfileImageUrl);
+        verifiedAuthenticatedMember(jwtToken, findMember);
 
         if (member.getPassword() != null) {
-            findMember.setPassword(
-                    passwordEncoder.encode(member.getPassword()));
+            findMember.setPassword(passwordEncoder.encode(member.getPassword()));
+        }
+        if (member.getNickname() != null) {
+            findMember.setNickname(member.getNickname());
+        }
+        if (member.getPhone() != null) {
+            findMember.setPhone(member.getPhone());
+        }
+        if (member.getIntroduction() != null) {
+            findMember.setIntroduction(member.getIntroduction());
+        }
+        if (member.getLink() != null) {
+            findMember.setLink(member.getLink());
+        }
+        if (member.getProfileImageUrl() != null) {
+            findMember.setProfileImageUrl(member.getProfileImageUrl());
         }
 
         return memberRepository.save(findMember);
@@ -100,10 +123,10 @@ public class MemberService {
                 Sort.by("memberId").descending()));
     }
 
-    public void deleteMember(long memberId, String email) {
+    public void deleteMember(String token, Long memberId) {
 
-        verifiedAuthenticatedMember(memberId, email);
         Member findMember = findVerifiedMember(memberId);
+        verifiedAuthenticatedMember(token, findMember);
 
         String delEmail = "del_" + findMember.getEmail();
 
@@ -121,7 +144,7 @@ public class MemberService {
             throw new BusinessLogicException(ExceptionCode.MEMBER_EXISTS, String.format(" %s : 이미 등록된 이메일입니다. 다른 이메일을 사용해주세요. ", email));
     }
 
-    public Member findVerifiedMember(long memberId) {
+    public Member findVerifiedMember(Long memberId) {
 
         Optional<Member> optionalMember = memberRepository.findById(memberId);
         Member findMember = optionalMember.orElseThrow(()
@@ -144,26 +167,44 @@ public class MemberService {
         return findMember;
     }
 
-    public boolean checkPassword (Long memberId, String password, String email){
+    public boolean checkPassword(String token, Long memberId, String password) {
 
-        verifiedAuthenticatedMember(memberId, email);
-        Member findMember = memberRepository.findByEmail(email).get();
+        Member findMember = findVerifiedMember(memberId);
+        verifiedAuthenticatedMember(token, findMember);
+
         return passwordEncoder.matches(password, findMember.getPassword());
     }
 
-    public void verifiedAuthenticatedMember(Long memberId, String email) {
+    public void verifiedAuthenticatedMember(String jwtToken, Member findMember) {
 
+        try {
+            String encodeKey = encode(secretKey);
+
+            Jws<Claims> claims = jwtTokenizer.getClaims(jwtToken, encodeKey);
+            Claims tokenClaims = claims.getBody();
+            String userEmail = tokenClaims.getSubject();
+
+            if (!userEmail.equals(findMember.getEmail())) {
+                throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_ALLOWED);
+            }
+
+        } catch (JwtException e) {
+            throw new BusinessLogicException(ExceptionCode.INVALID_TOKEN);
+        }
+    }
+
+    public void verifiedAuthenticatedMember(Long memberId) {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Member findMember = findVerifiedMember(memberId);
 
-        if (email == null || email.isEmpty() ){
-            throw new BusinessLogicException(ExceptionCode.MEMBER_FIELD_NOT_FOUND);
-        } else if (!email.equals(findMember.getEmail())) {
+        if (!authentication.getName().equals(findMember.getEmail())) {
             throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_ALLOWED);
         }
 
     }
 
-    public void verifyActivatedMember (Member member) {
+    public void verifyActivatedMember (Member member){
 
         if (member.getMemberStatus() == Member.MemberStatus.MEMBER_QUIT) {
             throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND, String.format("탈퇴한 회원입니다."));
@@ -173,6 +214,17 @@ public class MemberService {
 
     }
 
+    public static String encode(String secretKey) {
+
+        // 시크릿 키를 UTF-8 문자열로 인코딩
+        byte[] keyBytes = secretKey.getBytes(StandardCharsets.UTF_8);
+
+        // UTF-8로 인코딩된 문자열을 Base64로 인코딩
+        String base64EncodedKey = Base64.getEncoder().encodeToString(keyBytes);
+
+        return base64EncodedKey;
+    }
 
 }
+
 
