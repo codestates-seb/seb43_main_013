@@ -13,7 +13,7 @@ public class ReCommentResponseDto {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class Post {
-        private long reCommentId;
+        private long recommentId;
     }
 
     @Getter
@@ -21,7 +21,7 @@ public class ReCommentResponseDto {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class Details {
-        private long reCommentId;
+        private long recommentId;
         private String content;
         private long memberId;
         private String nickname;

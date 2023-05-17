@@ -30,10 +30,10 @@ public class FreeCommentMapper {
         details.setNickname(comment.getNickname());
         details.setEmail(comment.getEmail());
         details.setProfileImageUrl(comment.getProfileImageUrl());
-        details.setReCommentCount(comment.getReCommentCount());
+        details.setRecommentCount(comment.getReCommentCount());
         details.setCreatedAt(comment.getCreatedAt());
         details.setModifiedAt(comment.getModifiedAt());
-        details.setReComments(freeReCommentListToFreeReCommentResponseDTOList(comment.getFreeReComments()));
+        details.setRecomments(freeReCommentListToFreeReCommentResponseDTOList(comment.getFreeReComments()));
         return details;
     }
 

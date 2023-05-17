@@ -28,7 +28,7 @@ public class FeedbackReCommentMapper {
 
     public ReCommentResponseDto.Details feedbackReCommentToReCommentDetailsResponse(FeedbackReComment reComment){
         ReCommentResponseDto.Details details = new ReCommentResponseDto.Details();
-        details.setReCommentId(reComment.getReCommentPK().getReCommentId());
+        details.setRecommentId(reComment.getReCommentPK().getReCommentId());
         details.setContent(reComment.getContent());
         details.setMemberId(reComment.getMemberId());
         details.setNickname(reComment.getNickname());
