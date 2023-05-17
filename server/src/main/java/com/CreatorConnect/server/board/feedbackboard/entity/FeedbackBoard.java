@@ -35,6 +35,8 @@ public class FeedbackBoard extends Auditable implements Board {
     @Column
     private Long commentCount;
     @Column
+    private Long maxCommentCount;
+    @Column
     private Long likeCount;
     @Column
     private Long viewCount;
@@ -44,6 +46,7 @@ public class FeedbackBoard extends Auditable implements Board {
     @PrePersist
     public void prePersist() {
         this.commentCount = this.commentCount == null ? 0 : this.commentCount;
+        this.maxCommentCount = this.maxCommentCount == null ? 0 : this.maxCommentCount;
         this.likeCount = this.likeCount == null ? 0 : this.likeCount;
         this.viewCount = this.viewCount == null ? 0 : this.viewCount;
     }

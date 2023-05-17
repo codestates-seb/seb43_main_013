@@ -40,6 +40,9 @@ public class FreeBoard extends Auditable implements Board {
     private long commentCount; // 댓글수
 
     @Column
+    private long maxCommentCount; //삭제된 댓글까지 포함된 댓글 수
+
+    @Column
     private long likeCount; // 좋아요수
 
     @Column

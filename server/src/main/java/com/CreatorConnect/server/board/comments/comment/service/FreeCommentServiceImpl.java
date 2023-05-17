@@ -34,7 +34,7 @@ public class FreeCommentServiceImpl implements CommentService {
 
     // 댓글 등록
     @Override
-    public CommentResponseDto.CommentContent createComment(Long id, CommentDto.Post postDto) {
+    public CommentResponseDto.Post createComment(Long id, CommentDto.Post postDto) {
         // 멤버 검증
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         memberService.verifiedAuthenticatedMember(postDto.getMemberId(), authentication.getName());
@@ -47,15 +47,14 @@ public class FreeCommentServiceImpl implements CommentService {
         FreeComment freeComment = mapper.postDtoToFreeComment(id, postDto, foundFreeBoard);
 
         // entity to dto
-        CommentResponseDto.CommentContent post = new CommentResponseDto.CommentContent();
+        CommentResponseDto.Post post = new CommentResponseDto.Post();
         post.setCommentId(freeComment.getCommentPK().getCommentId());
-        post.setContent( freeComment.getContent());
         return post;
     }
 
     //댓글 수정
     @Override
-    public CommentResponseDto.CommentContent updateComment(Long freeBoardId, Long commentId, CommentDto.Patch patchDto) {
+    public void updateComment(Long freeBoardId, Long commentId, CommentDto.Patch patchDto) {
         // Dto의 Id값으로 Entity찾기
         FreeComment foundfreeComment = findVerifiedFreeComment(freeBoardId, commentId);
 
@@ -68,10 +67,7 @@ public class FreeCommentServiceImpl implements CommentService {
                 .ifPresent(foundfreeComment::setContent);
 
         // 저장
-        FreeComment updatedFreeComment = freeCommentRepository.save(foundfreeComment);
-
-        // Entity-Dto 변환 후 리턴
-        return new CommentResponseDto.CommentContent(updatedFreeComment.getCommentPK().getCommentId(), updatedFreeComment.getContent());
+        freeCommentRepository.save(foundfreeComment);
     }
 
     //댓글 조회
@@ -86,7 +82,7 @@ public class FreeCommentServiceImpl implements CommentService {
     // 댓글 목록 조회
     @Override
     public CommentResponseDto.Multi<CommentResponseDto.Details> responseComments(Long freeBoardId, int page, int size) {
-        PageRequest pageRequest = PageRequest.of(page - 1, size, Sort.by("commentPK").descending());
+        PageRequest pageRequest = PageRequest.of(page - 1, size, Sort.by("commentPK").ascending());
         // Page 생성 - 최신순
         Page<FreeComment> freeCommentsPage = freeCommentRepository.findByFreeBoardId(freeBoardId, pageRequest);
 
@@ -109,6 +105,10 @@ public class FreeCommentServiceImpl implements CommentService {
         // 멤버 검증
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         memberService.verifiedAuthenticatedMember(foundComment.getMemberId(), authentication.getName());
+
+        // 댓글 수 -1
+        long commentCount = foundComment.getFreeBoard().getCommentCount();
+        foundComment.getFreeBoard().setCommentCount(commentCount - 1);
 
         // 삭제
         freeCommentRepository.delete(foundComment);

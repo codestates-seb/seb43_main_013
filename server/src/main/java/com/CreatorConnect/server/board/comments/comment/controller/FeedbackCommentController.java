@@ -20,18 +20,18 @@ public class FeedbackCommentController {
     private final FeedbackCommentServiceImpl feedbackCommentService;
 
     @PostMapping("/feedbackboard/{feedbackBoardId}/comment/new")
-    public ResponseEntity<CommentResponseDto.CommentContent> postComment(@PathVariable("feedbackBoardId") @Positive Long feedbackBoardId,
+    public ResponseEntity<CommentResponseDto.Post> postComment(@PathVariable("feedbackBoardId") @Positive Long feedbackBoardId,
                                                                        @Valid @RequestBody CommentDto.Post postDto) {
-        CommentResponseDto.CommentContent response = feedbackCommentService.createComment(feedbackBoardId, postDto);
+        CommentResponseDto.Post response = feedbackCommentService.createComment(feedbackBoardId, postDto);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @PatchMapping("/feedbackboard/{feedbackBoardId}/comment/{commentId}")
-    public ResponseEntity<CommentResponseDto.CommentContent> patchComment(@PathVariable("feedbackBoardId") @Positive Long feedbackBoardId,
+    public ResponseEntity<HttpStatus> patchComment(@PathVariable("feedbackBoardId") @Positive Long feedbackBoardId,
                                                                                @PathVariable("commentId") @Positive Long commentId,
                                                                                @Valid @RequestBody CommentDto.Patch patchDto){
-        CommentResponseDto.CommentContent response = feedbackCommentService.updateComment(feedbackBoardId, commentId, patchDto);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        feedbackCommentService.updateComment(feedbackBoardId, commentId, patchDto);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/feedbackboard/{feedbackBoardId}/comment/{commentId}")
