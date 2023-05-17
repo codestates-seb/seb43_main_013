@@ -3,7 +3,7 @@ package com.CreatorConnect.server.board.freeboard.entity;
 import com.CreatorConnect.server.audit.Auditable;
 import com.CreatorConnect.server.board.Board;
 import com.CreatorConnect.server.board.categories.category.entity.Category;
-import com.CreatorConnect.server.board.comments.comment.entity.FreeComment;
+import com.CreatorConnect.server.board.comments.freecomment.entity.FreeComment;
 import com.CreatorConnect.server.board.tag.entity.Tag;
 import com.CreatorConnect.server.board.tag.entity.TagToFreeBoard;
 import com.CreatorConnect.server.member.entity.Member;
