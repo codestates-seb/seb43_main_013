@@ -18,15 +18,15 @@ import axios from "axios";
 import { useTokenStore } from "@/store/useTokenStore";
 import { useMemberStore } from "@/store/useMemberStore";
 import { useRouter } from "next/navigation";
-import { useToast } from "@chakra-ui/react";
 import { useLoadingStore } from "@/store";
+import useCustomToast from "@/hooks/useCustomToast";
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
 /** 2023/05/05 - 로그인 페이지 컴포넌트 - by Kadesti */
 const LoginWindow = () => {
   const router = useRouter();
-  const toast = useToast();
+  const toast = useCustomToast();
   const { loading } = useLoadingStore();
 
   const [emailData, setEmailData] = useState("");
@@ -52,23 +52,13 @@ const LoginWindow = () => {
       localStorage.setItem("refreshToken", refreshtoken);
       localStorage.setItem("member", JSON.stringify(response.data));
 
-      toast({
-        description: "로그인에 성공했습니다.\n메인 페이지로 이동됩니다.",
-        status: "success",
-        duration: 2500,
-        isClosable: true,
-      });
+      toast({ title: "로그인에 성공했습니다.\n메인 페이지로 이동됩니다.", status: "success" });
 
       return router.replace("/");
     } catch (error) {
       console.error(error);
 
-      toast({
-        description: "로그인에 실패했습니다.",
-        status: "error",
-        duration: 2500,
-        isClosable: true,
-      });
+      toast({ title: "로그인에 실패했습니다.", status: "error" });
     } finally {
       loading.end();
     }

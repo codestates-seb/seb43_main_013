@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useToast } from "@chakra-ui/react";
 
 // api
 import { apiCreateJobBoard } from "@/apis";
@@ -10,6 +9,7 @@ import { apiCreateJobBoard } from "@/apis";
 // store
 import { useLoadingStore } from "@/store";
 import { useMemberStore } from "@/store/useMemberStore";
+import useCustomToast from "@/hooks/useCustomToast";
 
 // component
 import Input from "@/components/Board/Form/Input";
@@ -18,7 +18,7 @@ import NormalCategory from "@/components/Board/Form/NormalCategory";
 
 /** 2023/05/09 - 구인구직 게시글 작성 form 컴포넌트 - by 1-blue */
 const Form = () => {
-  const toast = useToast();
+  const toast = useCustomToast();
   const router = useRouter();
   const { loading } = useLoadingStore((state) => state);
   const { member } = useMemberStore();
@@ -33,14 +33,7 @@ const Form = () => {
   const onSubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
 
-    if (!member) {
-      return toast({
-        description: "로그인후에 접근해주세요!",
-        status: "error",
-        duration: 2500,
-        isClosable: true,
-      });
-    }
+    if (!member) return toast({ title: "로그인후에 접근해주세요!", status: "error" });
 
     const values: string[] = [];
     const formData = new FormData(e.currentTarget);
@@ -54,20 +47,8 @@ const Form = () => {
     const [title] = values;
 
     // 제목 유효성 검사
-    if (title.trim().length <= 1)
-      return toast({
-        description: "제목을 두 글자 이상 입력해주세요!",
-        status: "error",
-        duration: 2500,
-        isClosable: true,
-      });
-    if (content.trim().length <= 100)
-      return toast({
-        description: "내용이 너무 적습니다!",
-        status: "error",
-        duration: 2500,
-        isClosable: true,
-      });
+    if (title.trim().length <= 1) return toast({ title: "제목을 두 글자 이상 입력해주세요!", status: "error" });
+    if (content.trim().length <= 100) return toast({ title: "내용이 너무 적습니다!", status: "error" });
 
     try {
       loading.start();
@@ -79,23 +60,13 @@ const Form = () => {
         jobCategoryName: selectedJobCategory,
       });
 
-      toast({
-        description: "게시글 생성했습니다.\n생성된 게시글 페이지로 이동됩니다.",
-        status: "success",
-        duration: 2500,
-        isClosable: true,
-      });
+      toast({ title: "게시글 생성했습니다.\n생성된 게시글 페이지로 이동됩니다.", status: "success" });
 
       router.push(`/job/${jobBoardId}`);
     } catch (error) {
       console.error(error);
 
-      return toast({
-        description: "에러가 발생했습니다.\n잠시후에 다시 시도해주세요!",
-        status: "error",
-        duration: 2500,
-        isClosable: true,
-      });
+      return toast({ title: "에러가 발생했습니다.\n잠시후에 다시 시도해주세요!", status: "error" });
     } finally {
       loading.end();
     }

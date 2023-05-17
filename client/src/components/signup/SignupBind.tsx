@@ -1,6 +1,6 @@
 "use client";
+import useCustomToast from "@/hooks/useCustomToast";
 import { useLoadingStore } from "@/store";
-import { useToast } from "@chakra-ui/react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
@@ -9,7 +9,7 @@ import { useState } from "react";
 
 /** 2023/05/13 - 회원가입 데이터 바인딩 및 submit 함수 - by Kadesti */
 const SignupBind = () => {
-  const toast = useToast();
+  const toast = useCustomToast();
   const { loading } = useLoadingStore();
   const router = useRouter();
 
@@ -54,23 +54,13 @@ const SignupBind = () => {
 
       await axios.post(`${baseUrl}/api/signup`, data);
 
-      toast({
-        description: "회원가입에 성공했습니다.\n로그인 페이지로 이동됩니다.",
-        status: "success",
-        duration: 2500,
-        isClosable: true,
-      });
+      toast({ title: "회원가입에 성공했습니다.\n로그인 페이지로 이동됩니다.", status: "success" });
 
       router.replace("/login");
     } catch (error) {
       console.error(error);
 
-      toast({
-        description: "회원가입에 실패했습니다.",
-        status: "success",
-        duration: 2500,
-        isClosable: true,
-      });
+      toast({ title: "회원가입에 실패했습니다.", status: "error" });
     } finally {
       loading.end();
     }

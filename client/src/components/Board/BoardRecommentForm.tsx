@@ -1,5 +1,4 @@
 import { FormEventHandler, useEffect, useState } from "react";
-import { useToast } from "@chakra-ui/react";
 import { type InfiniteData, useQueryClient } from "@tanstack/react-query";
 
 // api
@@ -10,6 +9,7 @@ import { QUERY_KEYS } from "@/hooks/query";
 // hook
 import useResizeTextarea from "@/hooks/useResizeTextarea";
 import { useMemberStore } from "@/store/useMemberStore";
+import useCustomToast from "@/hooks/useCustomToast";
 
 // store
 import { useLoadingStore } from "@/store";
@@ -24,7 +24,7 @@ interface Props {
 
 /** 2023/05/13 - 답글 폼 컴포넌트 - by 1-blue */
 const BoardRecommentForm: React.FC<Props> = ({ type, boardId, commentId }) => {
-  const toast = useToast();
+  const toast = useCustomToast();
   const { loading } = useLoadingStore((state) => state);
   const { member } = useMemberStore();
 
@@ -43,22 +43,9 @@ const BoardRecommentForm: React.FC<Props> = ({ type, boardId, commentId }) => {
   const onSubmitComment: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
 
-    if (!member) {
-      return toast({
-        description: "로그인후에 접근해주세요!",
-        status: "error",
-        duration: 2500,
-        isClosable: true,
-      });
-    }
+    if (!member) return toast({ title: "로그인후에 접근해주세요!", status: "error" });
 
-    if (!content.trim().length)
-      return toast({
-        description: "답글을 입력해주세요!",
-        status: "warning",
-        duration: 2500,
-        isClosable: true,
-      });
+    if (!content.trim().length) return toast({ title: "답글을 입력해주세요!", status: "warning" });
 
     try {
       loading.start();
@@ -104,21 +91,11 @@ const BoardRecommentForm: React.FC<Props> = ({ type, boardId, commentId }) => {
 
       setContent("");
 
-      return toast({
-        description: "답글을 등록했습니다.",
-        status: "success",
-        duration: 2500,
-        isClosable: true,
-      });
+      return toast({ title: "답글을 등록했습니다.", status: "success" });
     } catch (error) {
       console.error(error);
 
-      return toast({
-        description: "답글 등록에 실패했습니다. 잠시후에 다시 시도해주세요!",
-        status: "error",
-        duration: 2500,
-        isClosable: true,
-      });
+      return toast({ title: "답글 등록에 실패했습니다. 잠시후에 다시 시도해주세요!", status: "error" });
     } finally {
       loading.end();
     }
@@ -137,9 +114,9 @@ const BoardRecommentForm: React.FC<Props> = ({ type, boardId, commentId }) => {
       />
       <button
         type="submit"
-        className="ml-auto mt-3 px-3 py-2 bg-main-400 text-white font-bold rounded-sm transition-colors hover:bg-main-500 active:bg-main-600"
+        className="ml-auto mt-3 px-3 py-2 text-sm bg-main-400 text-white font-bold rounded-sm transition-colors hover:bg-main-500 active:bg-main-600"
       >
-        답글작성
+        답글 작성
       </button>
     </form>
   );

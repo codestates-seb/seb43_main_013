@@ -1,5 +1,4 @@
 import { useCallback } from "react";
-import { useToast } from "@chakra-ui/react";
 import { type InfiniteData, useQueryClient } from "@tanstack/react-query";
 
 import { QUERY_KEYS } from "@/hooks/query";
@@ -12,6 +11,7 @@ import { useLoadingStore } from "@/store";
 
 // hook
 import { useFetchComments } from "@/hooks/query/useFetchComments";
+import useCustomToast from "@/hooks/useCustomToast";
 
 // component
 import BoardComment from "./BoardComment";
@@ -26,7 +26,7 @@ interface Props {
 
 /** 2023/05/11 - 게시판의 댓글들 컴포넌트 - by 1-blue */
 const BoardComments: React.FC<Props> = ({ type, boardId }) => {
-  const toast = useToast();
+  const toast = useCustomToast();
   const { loading } = useLoadingStore((state) => state);
 
   const { data, fetchNextPage, hasNextPage, isFetching } = useFetchComments({
@@ -64,21 +64,11 @@ const BoardComments: React.FC<Props> = ({ type, boardId }) => {
             },
         );
 
-        return toast({
-          description: "댓글을 삭제했습니다.",
-          status: "success",
-          duration: 2500,
-          isClosable: true,
-        });
+        return toast({ title: "댓글을 삭제했습니다.", status: "success" });
       } catch (error) {
         console.error(error);
 
-        return toast({
-          description: "댓글 삭제에 실패했습니다. 잠시후에 다시 시도해주세요!",
-          status: "error",
-          duration: 2500,
-          isClosable: true,
-        });
+        return toast({ title: "댓글 삭제에 실패했습니다. 잠시후에 다시 시도해주세요!", status: "error" });
       } finally {
         loading.end();
       }

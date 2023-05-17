@@ -1,9 +1,9 @@
 import { useCallback, useState } from "react";
-import { useToast } from "@chakra-ui/react";
+import useCustomToast from "./useCustomToast";
 
 /** 2023/05/09 - 게시글 작성 시 사용하는 태그 훅 - by 1-blue */
 const useTags = (ininitalTags: string[] = []) => {
-  const toast = useToast();
+  const toast = useCustomToast();
 
   /** 2023/05/09 - 선택한 태그들 - by 1-blue */
   const [selectedTags, setSelectedTags] = useState(ininitalTags);
@@ -26,34 +26,19 @@ const useTags = (ininitalTags: string[] = []) => {
       if (target.value.trim().length === 0) {
         target.value = "";
 
-        return toast({
-          description: "태그를 작성해주세요!",
-          status: "warning",
-          duration: 2500,
-          isClosable: true,
-        });
+        return toast({ title: "태그를 작성해주세요!", status: "warning" });
       }
       // 태그가 10개 이상인 경우
       if (selectedTags.length > 10) {
         target.value = "";
 
-        return toast({
-          description: "태그는 최대 10개까지 생성 가능합니다!",
-          status: "warning",
-          duration: 2500,
-          isClosable: true,
-        });
+        return toast({ title: "태그는 최대 10개까지 생성 가능합니다!", status: "warning" });
       }
       // 태그가 이미 존재하는 경우
       if (selectedTags.some((selectedTag) => target.value === selectedTag)) {
         target.value = "";
 
-        return toast({
-          description: "이미 존재하는 태그입니다!",
-          status: "warning",
-          duration: 2500,
-          isClosable: true,
-        });
+        return toast({ title: "이미 존재하는 태그입니다!", status: "warning" });
       }
 
       const tag = target.value.trim();
@@ -64,12 +49,7 @@ const useTags = (ininitalTags: string[] = []) => {
       // 리셋
       target.value = "";
 
-      toast({
-        description: "태그를 추가했습니다.",
-        status: "success",
-        duration: 2500,
-        isClosable: true,
-      });
+      toast({ title: "태그를 추가했습니다.", status: "success" });
     },
     [selectedTags],
   );
@@ -81,12 +61,7 @@ const useTags = (ininitalTags: string[] = []) => {
 
     setSelectedTags((selectedTags) => selectedTags.filter((selectedTag) => selectedTag !== target.dataset.tag));
 
-    toast({
-      description: "태그를 제거했습니다.",
-      status: "success",
-      duration: 2500,
-      isClosable: true,
-    });
+    toast({ title: "태그를 제거했습니다.", status: "success" });
   };
 
   return [selectedTags, onSelectedTag, onDeleteTag, setSelectedTags] as const;

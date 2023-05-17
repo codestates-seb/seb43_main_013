@@ -26,3 +26,5 @@ export * from "./categories";
 export * from "./board";
 export * from "./comment";
 export * from "./recomment";
+export * from "./bookmark";
+export * from "./like";

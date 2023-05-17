@@ -1,5 +1,6 @@
 // css
 import "@/css/globals.css";
+import "@/css/viewer.css";
 
 // provider
 import Provider from "@/provider";

@@ -78,6 +78,7 @@ const Editor: React.FC<Props> = ({ content, setContent }) => {
       value={content}
       placeholder="내용을 입력하세요."
       onChange={(content, delta, source, editor) => setContent(content)}
+      className="editor"
     />
   );
 };
