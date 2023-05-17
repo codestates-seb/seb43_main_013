@@ -59,7 +59,10 @@ public class MemberController {
     }
 
     @PostMapping("/api/signup")
-    public ResponseEntity postMember(@Valid @RequestBody MemberDto.Post memberDtoPost) {
+    public ResponseEntity postMember(@Valid @RequestBody MemberDto.Post memberDtoPost,
+                                     @RequestHeader(value = "Authorization") String authorizationToken) {
+
+        String token = authorizationToken.substring(7);
 
         Member member = mapper.memberPostDtoToMember(memberDtoPost);
         Member createdMember = memberService.createMember(member);
@@ -156,7 +159,10 @@ public class MemberController {
     }
 
     @PostMapping("/api/member/{member-id}/follow")
-    public ResponseEntity followMember(@PathVariable("member-id") @Positive Long memberId) {
+    public ResponseEntity followMember(@PathVariable("member-id") @Positive Long memberId,
+                                       @RequestHeader(value = "Authorization") String authorizationToken) {
+
+        String token = authorizationToken.substring(7);
 
         // 현재 로그인한 사용자 정보
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -189,7 +195,10 @@ public class MemberController {
     }
 
     @DeleteMapping("/api/member/{member-id}/follow")
-    public ResponseEntity unfollowMember(@PathVariable("member-id") @Positive Long memberId) {
+    public ResponseEntity unfollowMember(@PathVariable("member-id") @Positive Long memberId,
+                                         @RequestHeader(value = "Authorization") String authorizationToken) {
+
+        String token = authorizationToken.substring(7);
 
         // 현재 로그인한 사용자 정보
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

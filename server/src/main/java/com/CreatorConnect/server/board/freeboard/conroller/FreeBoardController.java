@@ -49,7 +49,11 @@ public class FreeBoardController {
 
     // 자유 게시판 게시글 등록
     @PostMapping("/freeboard/new")
-    public ResponseEntity postFreeBoard(@Valid @RequestBody FreeBoardDto.Post post) {
+    public ResponseEntity postFreeBoard(@Valid @RequestBody FreeBoardDto.Post post,
+                                        @RequestHeader(value = "Authorization") String authorizationToken) {
+
+        String token = authorizationToken.substring(7);
+
         FreeBoard freeBoardPost = freeBoardService.createFreeBoard(post);
         FreeBoardDto.PostResponse postResponse = mapper.freeBoardToFreeBoardPostResponseDto(freeBoardPost);
 
@@ -59,7 +63,10 @@ public class FreeBoardController {
     // 자유 게시판 게시글 수정
     @PatchMapping("/freeboard/{freeboardId}")
     public ResponseEntity patchFreeBoard(@Valid @RequestBody FreeBoardDto.Patch patch,
-                                         @PathVariable("freeboardId") long freeBoardId) {
+                                         @PathVariable("freeboardId") long freeBoardId,
+                                         @RequestHeader(value = "Authorization") String authorizationToken) {
+
+        String token = authorizationToken.substring(7);
 
         List<Tag> tags = tagMapper.tagPostDtosToTag(patch.getTags());
 
@@ -104,14 +111,21 @@ public class FreeBoardController {
 
     // 자유 게시판 게시글 삭제
     @DeleteMapping("/freeboard/{freeboardId}")
-    public ResponseEntity deleteFreeBoard(@Positive @PathVariable("freeboardId") long freeboardId) {
+    public ResponseEntity deleteFreeBoard(@Positive @PathVariable("freeboardId") long freeboardId,
+                                          @RequestHeader(value = "Authorization") String authorizationToken) {
+
+        String token = authorizationToken.substring(7);
+
         freeBoardService.removeFreeBoard(freeboardId);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @PostMapping("/freeboard/{freeBoardId}/like")
-    public ResponseEntity likeFreeBoard (@PathVariable("freeBoardId") @Positive Long freeBoardId) {
+    public ResponseEntity likeFreeBoard (@PathVariable("freeBoardId") @Positive Long freeBoardId,
+                                         @RequestHeader(value = "Authorization") String authorizationToken) {
+
+        String token = authorizationToken.substring(7);
 
         // 현재 로그인한 사용자 정보 가져오기
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -130,6 +144,10 @@ public class FreeBoardController {
             return ResponseEntity.badRequest().body("Already liked.");
         }
 
+        // 게시물의 likeCount 증가
+        findfreeBoard.setLikeCount(findfreeBoard.getLikeCount() + 1);
+        freeBoardRepository.save(findfreeBoard);
+
         Like like = new Like();
         like.setBoardType(Like.BoardType.FREEBOARD);
         like.setMember(currentMember);
@@ -140,16 +158,15 @@ public class FreeBoardController {
         currentMember.getLikes().add(like);
         memberRepository.save(currentMember);
 
-        // 게시물의 likeCount 증가
-        findfreeBoard.setLikeCount(findfreeBoard.getLikeCount() + 1);
-        freeBoardRepository.save(findfreeBoard);
-
         return new ResponseEntity<>(HttpStatus.OK);
 
     }
 
     @DeleteMapping("/freeboard/{freeBoardId}/like")
-    public ResponseEntity unlikeFreeBoard (@PathVariable("freeBoardId") @Positive Long freeBoardId) {
+    public ResponseEntity unlikeFreeBoard (@PathVariable("freeBoardId") @Positive Long freeBoardId,
+                                           @RequestHeader(value = "Authorization") String authorizationToken) {
+
+        String token = authorizationToken.substring(7);
 
         // 현재 로그인한 사용자 정보 가져오기
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -168,24 +185,26 @@ public class FreeBoardController {
             return ResponseEntity.badRequest().body("Not liked.");
         }
 
+        // 게시물의 likeCount 감소
+        findfreeBoard.setLikeCount(findfreeBoard.getLikeCount() - 1);
+        freeBoardRepository.save(findfreeBoard);
+
         // 현재 사용자의 likes 컬렉션에서 좋아요 삭제
         for (Like foundLike : foundLikes) {
             currentMember.getLikes().remove(foundLike);
             likeRepository.delete(foundLike);
         }
-
         memberRepository.save(currentMember);
-
-        // 게시물의 likeCount 삭제
-        findfreeBoard.setLikeCount(findfreeBoard.getLikeCount() - 1);
-        freeBoardRepository.save(findfreeBoard);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 
     }
 
     @PostMapping("/freeboard/{freeBoardId}/bookmark")
-    public ResponseEntity bookmarkFeedbackBoard (@PathVariable("freeBoardId") @Positive Long freeBoardId) {
+    public ResponseEntity bookmarkFeedbackBoard (@PathVariable("freeBoardId") @Positive Long freeBoardId,
+                                                 @RequestHeader(value = "Authorization") String authorizationToken) {
+
+        String token = authorizationToken.substring(7);
 
         // 현재 로그인한 사용자 정보 가져오기
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -219,7 +238,10 @@ public class FreeBoardController {
     }
 
     @DeleteMapping("/freeboard/{freeBoardId}/bookmark")
-    public ResponseEntity unbookmarkFeedbackBoard (@PathVariable("freeBoardId") @Positive Long freeBoardId) {
+    public ResponseEntity unbookmarkFeedbackBoard (@PathVariable("freeBoardId") @Positive Long freeBoardId,
+                                                   @RequestHeader(value = "Authorization") String authorizationToken) {
+
+        String token = authorizationToken.substring(7);
 
         // 현재 로그인한 사용자 정보 가져오기
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -239,12 +261,11 @@ public class FreeBoardController {
             return ResponseEntity.badRequest().body("Not bookmarked.");
         }
 
-        // 현재 사용자의 bookmarks 컬렉션에서 북마크 삭제
-        currentMember.getBookmarks().removeAll(foundBookmarks);
-
         // 삭제된 북마크 엔티티들을 데이터베이스에서 삭제
         bookmarkRepository.deleteAll(foundBookmarks);
 
+        // 현재 사용자의 bookmarks 컬렉션에서 북마크 삭제
+        currentMember.getBookmarks().removeAll(foundBookmarks);
         memberRepository.save(currentMember);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
