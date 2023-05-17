@@ -9,12 +9,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
 
 @RestController
 @RequestMapping("/api")
@@ -31,5 +29,15 @@ public class JobBoardController {
         JobBoard createdJobBoard = jobBoardService.createJobBoard(post);
 
         return new ResponseEntity<>(mapper.jobBoardToJobBoardPostResposneDto(createdJobBoard), HttpStatus.CREATED);
+    }
+
+    // 구인구직 게시판 게시글 수정
+    @PatchMapping("/jobboard/{jobBoardId}")
+    @Secured("ROLE_USER")
+    public ResponseEntity patchJobBoard(@PathVariable("jobBoardId") @Positive Long jobBoardId,
+                                        @Valid @RequestBody JobBoardDto.Patch patch) {
+        JobBoard updatedJobBoard = jobBoardService.updateJobBoard(patch, jobBoardId);
+
+        return new ResponseEntity<>(mapper.jobBoardToJobBoardPostResposneDto(updatedJobBoard), HttpStatus.OK);
     }
 }
