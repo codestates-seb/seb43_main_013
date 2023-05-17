@@ -1,4 +1,4 @@
-package com.CreatorConnect.server.errorresponse;
+package com.CreatorConnect.server.response;
 
 import com.google.gson.Gson;
 import org.springframework.http.HttpStatus;

@@ -1,5 +1,7 @@
 package com.CreatorConnect.server.member.controller;
 
+import com.CreatorConnect.server.board.feedbackboard.entity.FeedbackBoard;
+import com.CreatorConnect.server.board.freeboard.entity.FreeBoard;
 import com.CreatorConnect.server.exception.BusinessLogicException;
 import com.CreatorConnect.server.exception.ExceptionCode;
 import com.CreatorConnect.server.member.bookmark.entity.Bookmark;
@@ -12,8 +14,11 @@ import com.CreatorConnect.server.member.like.entity.Like;
 import com.CreatorConnect.server.member.mapper.MemberMapper;
 import com.CreatorConnect.server.member.repository.MemberRepository;
 import com.CreatorConnect.server.member.service.MemberService;
+import com.CreatorConnect.server.response.MultiResponseDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -23,10 +28,12 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Slf4j
 @Validated
@@ -193,7 +200,9 @@ public class MemberController {
     }
 
     @GetMapping("/api/member/{member-id}/followings")
-    public ResponseEntity getFollowings(@PathVariable("member-id") @Positive Long memberId) {
+    public ResponseEntity getFollowings(@PathVariable("member-id") @Positive Long memberId,
+                                        @RequestParam(defaultValue = "1") int page,
+                                        @RequestParam(defaultValue = "10") int size) {
 
         Member member = memberService.findVerifiedMember(memberId);
         Set<Member> followings = member.getFollowings();
@@ -202,14 +211,23 @@ public class MemberController {
                 .map(following -> new MemberFollowResponseDto(
                         following.getMemberId(),
                         following.getNickname(),
-                        following.getProfileImageUrl()
-                )).collect(Collectors.toList());
+                        following.getProfileImageUrl(),
+                        false // todo 로그인 한 유저의 팔로우 여부
+                ))
+                .skip((page - 1) * size) // 페이지네이션 처리
+                .limit(size)
+                .collect(Collectors.toList());
 
-        return new ResponseEntity(response, HttpStatus.OK);
+        Page<MemberFollowResponseDto> pageResponse =
+                new PageImpl<>(response, PageRequest.of(page - 1, size), response.size());
+
+        return new ResponseEntity(new MultiResponseDto<>(pageResponse.getContent(), pageResponse), HttpStatus.OK);
     }
 
     @GetMapping("/api/member/{member-id}/followers")
-    public ResponseEntity getFollowers(@PathVariable("member-id") @Positive Long memberId) {
+    public ResponseEntity getFollowers(@PathVariable("member-id") @Positive Long memberId,
+                                       @RequestParam(defaultValue = "1") int page,
+                                       @RequestParam(defaultValue = "10") int size) {
 
         Member member = memberService.findVerifiedMember(memberId);
         Set<Member> followers = member.getFollowers();
@@ -218,14 +236,23 @@ public class MemberController {
                 .map(follower -> new MemberFollowResponseDto(
                         follower.getMemberId(),
                         follower.getNickname(),
-                        follower.getProfileImageUrl()
-                )).collect(Collectors.toList());
+                        follower.getProfileImageUrl(),
+                        false // todo 로그인 한 유저의 팔로우 여부
+                ))
+                .skip((page - 1) * size) // 페이지네이션 처리
+                .limit(size)
+                .collect(Collectors.toList());
 
-        return new ResponseEntity(response, HttpStatus.OK);
+        Page<MemberFollowResponseDto> pageResponse =
+                new PageImpl<>(response, PageRequest.of(page - 1, size), response.size());
+
+        return new ResponseEntity(new MultiResponseDto<>(pageResponse.getContent(), pageResponse), HttpStatus.OK);
     }
 
     @GetMapping("/api/member/{member-id}/liked")
-    public ResponseEntity getliked(@PathVariable("member-id") @Positive Long memberId) {
+    public ResponseEntity getliked(@PathVariable("member-id") @Positive Long memberId,
+                                   @RequestParam(defaultValue = "1") int page,
+                                   @RequestParam(defaultValue = "10") int size) {
 
         Member member = memberService.findVerifiedMember(memberId);
 
@@ -233,32 +260,59 @@ public class MemberController {
 
         List<MemberBoardResponseDto> response = liked.stream()
                 .map(like -> {
-                    if (like.getBoardType() == Like.BoardType.FEEDBACKBOARD) {
-                        return new MemberBoardResponseDto(
-                                like.getBoardType().toString(),
-                                like.getFeedbackBoard().getFeedbackBoardId(),
-                                like.getFeedbackBoard().getTitle(),
-                                like.getFeedbackBoard().getContent()
-                        );
-                    } else if (like.getBoardType() == Like.BoardType.FREEBOARD) {
+                    if (like.getBoardType() == Like.BoardType.FREEBOARD) {
                         return new MemberBoardResponseDto(
                                 like.getBoardType().toString(),
                                 like.getFreeBoard().getFreeBoardId(),
                                 like.getFreeBoard().getTitle(),
-                                like.getFreeBoard().getContent()
+                                like.getFreeBoard().getContent(),
+                                like.getFreeBoard().getCommentCount(),
+                                like.getFreeBoard().getLikeCount(),
+                                like.getFreeBoard().getViewCount(),
+                                like.getFreeBoard().getCategoryName(),
+                                like.getFreeBoard().getMember().getMemberId(),
+                                like.getFreeBoard().getMember().getEmail(),
+                                like.getFreeBoard().getMember().getNickname(),
+                                like.getFreeBoard().getMember().getProfileImageUrl(),
+                                like.getFreeBoard().getCreatedAt(),
+                                like.getFreeBoard().getModifiedAt()
+                        );
+                    } else if (like.getBoardType() == Like.BoardType.FEEDBACKBOARD) {
+                        return new MemberBoardResponseDto(
+                                like.getBoardType().toString(),
+                                like.getFeedbackBoard().getFeedbackBoardId(),
+                                like.getFeedbackBoard().getTitle(),
+                                like.getFeedbackBoard().getContent(),
+                                like.getFeedbackBoard().getCommentCount(),
+                                like.getFeedbackBoard().getLikeCount(),
+                                like.getFeedbackBoard().getViewCount(),
+                                like.getFeedbackBoard().getCategoryName(),
+                                like.getFeedbackBoard().getMember().getMemberId(),
+                                like.getFeedbackBoard().getMember().getEmail(),
+                                like.getFeedbackBoard().getMember().getNickname(),
+                                like.getFeedbackBoard().getMember().getProfileImageUrl(),
+                                like.getFeedbackBoard().getCreatedAt(),
+                                like.getFeedbackBoard().getModifiedAt()
                         );
                     }
                     return null;
                 })
                 .filter(Objects::nonNull)
+                .skip((page - 1) * size) // 페이지네이션 처리
+                .limit(size)
                 .collect(Collectors.toList());
 
-        return new ResponseEntity(response, HttpStatus.OK);
+        Page<MemberBoardResponseDto> pageResponse =
+                new PageImpl<>(response, PageRequest.of(page - 1, size), liked.size());
+
+        return new ResponseEntity( new MultiResponseDto<>(pageResponse.getContent(), pageResponse), HttpStatus.OK);
 
     }
 
     @GetMapping("/api/member/{member-id}/bookmarked")
-    public ResponseEntity getbookmarked(@PathVariable("member-id") @Positive Long memberId) {
+    public ResponseEntity getbookmarked(@PathVariable("member-id") @Positive Long memberId,
+                                        @RequestParam(defaultValue = "1") int page,
+                                        @RequestParam(defaultValue = "10") int size) {
 
         Member member = memberService.findVerifiedMember(memberId);
 
@@ -266,28 +320,107 @@ public class MemberController {
 
         List<MemberBoardResponseDto> response = bookmarked.stream()
                 .map(bookmark -> {
-                    if (bookmark.getBoardType() == Like.BoardType.FEEDBACKBOARD) {
-                        return new MemberBoardResponseDto(
-                                bookmark.getBoardType().toString(),
-                                bookmark.getFeedbackBoard().getFeedbackBoardId(),
-                                bookmark.getFeedbackBoard().getTitle(),
-                                bookmark.getFeedbackBoard().getContent()
-                        );
-                    } else if (bookmark.getBoardType() == Like.BoardType.FREEBOARD) {
+                    if (bookmark.getBoardType() == Like.BoardType.FREEBOARD) {
                         return new MemberBoardResponseDto(
                                 bookmark.getBoardType().toString(),
                                 bookmark.getFreeBoard().getFreeBoardId(),
                                 bookmark.getFreeBoard().getTitle(),
-                                bookmark.getFreeBoard().getContent()
+                                bookmark.getFreeBoard().getContent(),
+                                bookmark.getFreeBoard().getCommentCount(),
+                                bookmark.getFreeBoard().getLikeCount(),
+                                bookmark.getFreeBoard().getViewCount(),
+                                bookmark.getFreeBoard().getCategoryName(),
+                                bookmark.getFreeBoard().getMember().getMemberId(),
+                                bookmark.getFreeBoard().getMember().getEmail(),
+                                bookmark.getFreeBoard().getMember().getNickname(),
+                                bookmark.getFreeBoard().getMember().getProfileImageUrl(),
+                                bookmark.getFreeBoard().getCreatedAt(),
+                                bookmark.getFreeBoard().getModifiedAt()
+                        );
+                    } else if (bookmark.getBoardType() == Like.BoardType.FEEDBACKBOARD) {
+                        return new MemberBoardResponseDto(
+                                bookmark.getBoardType().toString(),
+                                bookmark.getFeedbackBoard().getFeedbackBoardId(),
+                                bookmark.getFeedbackBoard().getTitle(),
+                                bookmark.getFeedbackBoard().getContent(),
+                                bookmark.getFeedbackBoard().getCommentCount(),
+                                bookmark.getFeedbackBoard().getLikeCount(),
+                                bookmark.getFeedbackBoard().getViewCount(),
+                                bookmark.getFeedbackBoard().getCategoryName(),
+                                bookmark.getFeedbackBoard().getMember().getMemberId(),
+                                bookmark.getFeedbackBoard().getMember().getEmail(),
+                                bookmark.getFeedbackBoard().getMember().getNickname(),
+                                bookmark.getFeedbackBoard().getMember().getProfileImageUrl(),
+                                bookmark.getFeedbackBoard().getCreatedAt(),
+                                bookmark.getFeedbackBoard().getModifiedAt()
+
                         );
                     }
                     return null;
                 })
                 .filter(Objects::nonNull)
+                .skip((page - 1) * size) // 페이지네이션 처리
+                .limit(size)
                 .collect(Collectors.toList());
 
-        return new ResponseEntity(response, HttpStatus.OK);
+        Page<MemberBoardResponseDto> pageResponse =
+                new PageImpl<>(response, PageRequest.of(page - 1, size), bookmarked.size());
 
+        return new ResponseEntity( new MultiResponseDto<>(pageResponse.getContent(), pageResponse), HttpStatus.OK);
+    }
+
+    @GetMapping("/api/member/{member-id}/written")
+    public ResponseEntity getwritten(@PathVariable("member-id") @Positive Long memberId,
+                                        @RequestParam(defaultValue = "1") int page,
+                                        @RequestParam(defaultValue = "10") int size) {
+
+        Member member = memberService.findVerifiedMember(memberId);
+
+        List<FreeBoard> freeBoards = member.getFreeBoards();
+        List<FeedbackBoard> feedbackBoards = member.getFeedbackBoards();
+
+        List<MemberBoardResponseDto> response = Stream.concat(
+                        freeBoards.stream().map(freeBoard -> new MemberBoardResponseDto(
+                                "FREEBOARD",
+                                freeBoard.getFreeBoardId(),
+                                freeBoard.getTitle(),
+                                freeBoard.getContent(),
+                                freeBoard.getCommentCount(),
+                                freeBoard.getLikeCount(),
+                                freeBoard.getViewCount(),
+                                freeBoard.getCategoryName(),
+                                freeBoard.getMember().getMemberId(),
+                                freeBoard.getMember().getEmail(),
+                                freeBoard.getMember().getNickname(),
+                                freeBoard.getMember().getProfileImageUrl(),
+                                freeBoard.getCreatedAt(),
+                                freeBoard.getModifiedAt()
+                        )),
+                        feedbackBoards.stream().map(feedbackBoard -> new MemberBoardResponseDto(
+                                "FEEDBACKBOARD",
+                                feedbackBoard.getFeedbackBoardId(),
+                                feedbackBoard.getTitle(),
+                                feedbackBoard.getContent(),
+                                feedbackBoard.getCommentCount(),
+                                feedbackBoard.getLikeCount(),
+                                feedbackBoard.getViewCount(),
+                                feedbackBoard.getCategoryName(),
+                                feedbackBoard.getMember().getMemberId(),
+                                feedbackBoard.getMember().getEmail(),
+                                feedbackBoard.getMember().getNickname(),
+                                feedbackBoard.getMember().getProfileImageUrl(),
+                                feedbackBoard.getCreatedAt(),
+                                feedbackBoard.getModifiedAt()
+                        )))
+                .sorted(Comparator.comparing(MemberBoardResponseDto::getCreatedAt).reversed())
+                .skip((page - 1) * size)
+                .limit(size)
+                .collect(Collectors.toList());
+
+        Page<MemberBoardResponseDto> pageResponse = new PageImpl<>(response,
+                PageRequest.of(page - 1, size), response.size());
+
+        return new ResponseEntity<>(new MultiResponseDto<>(pageResponse.getContent(), pageResponse), HttpStatus.OK);
     }
 
 }

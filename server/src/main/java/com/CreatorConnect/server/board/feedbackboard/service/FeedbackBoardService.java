@@ -23,6 +23,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -124,18 +126,42 @@ public class FeedbackBoardService {
 
     // 개별 조회
     public FeedbackBoardResponseDto.Details responseFeedback(Long feedbackBoardId){
+
         // 클라이언트에서 보낸 ID값으로 Entity 조회
         FeedbackBoard foundFeedbackBoard = findVerifiedFeedbackBoard(feedbackBoardId);
 
         // 게시글에 있는 태그 추가
-        List<TagDto.TagInfo> tags = foundFeedbackBoard.getTagBoards().stream().map(tagToFeedbackBoard -> {
-            TagDto.TagInfo tagInfo = tagMapper.tagToTagToBoard(tagToFeedbackBoard.getTag());
-            return tagInfo;
-        }).collect(Collectors.toList());
+        List<TagDto.TagInfo> tags = foundFeedbackBoard.getTagBoards().stream()
+                .map(tagToFeedbackBoard -> tagMapper.tagToTagToBoard(tagToFeedbackBoard.getTag()))
+                .collect(Collectors.toList());
 
-        //조회수 증가
+        // 조회수 증가
         addViews(foundFeedbackBoard);
-        return mapper.feedbackBoardToResponse(foundFeedbackBoard, tags);
+
+        // 로그인한 멤버
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        boolean bookmarked = false;
+        boolean liked = false;
+
+        if (authentication != null && authentication.isAuthenticated() && !"anonymousUser".equals(authentication.getName())) {
+            Member loggedinMember = memberService.findVerifiedMember(authentication.getName());
+
+            // 게시물을 북마크한 경우
+            bookmarked = loggedinMember.getBookmarks().stream()
+                    .anyMatch(bookmark -> bookmark.getFeedbackBoard().equals(foundFeedbackBoard));
+
+            // 게시물을 좋아요한 경우
+            liked = loggedinMember.getLikes().stream()
+                    .anyMatch(like -> like.getFeedbackBoard().equals(foundFeedbackBoard));
+        }
+
+        // 매핑
+        FeedbackBoardResponseDto.Details response = mapper.feedbackBoardToResponse(foundFeedbackBoard, tags);
+        response.setBookmarked(bookmarked);
+        response.setLiked(liked);
+
+        return response;
+
     }
 
     //목록 조회

@@ -4,6 +4,7 @@ import com.CreatorConnect.server.board.categories.category.service.CategoryServi
 import com.CreatorConnect.server.board.freeboard.dto.FreeBoardDto;
 import com.CreatorConnect.server.board.freeboard.entity.FreeBoard;
 import com.CreatorConnect.server.board.freeboard.mapper.FreeBoardMapper;
+import com.CreatorConnect.server.board.freeboard.repository.FreeBoardRepository;
 import com.CreatorConnect.server.board.freeboard.service.FreeBoardService;
 import com.CreatorConnect.server.board.tag.service.FeedbackBoardTagService;
 import com.CreatorConnect.server.board.tag.service.FreeBoardTagService;
@@ -35,6 +36,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class FreeBoardController {
     private final FreeBoardService freeBoardService;
+    private final FreeBoardRepository freeBoardRepository;
     private final FreeBoardMapper mapper;
     private final CategoryService categoryService;
     private final TagMapper tagMapper;
@@ -115,7 +117,7 @@ public class FreeBoardController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Member currentMember = memberService.findVerifiedMember(authentication.getName());
 
-        FreeBoard foundfreeBoard = freeBoardService.verifyFreeBoard(freeBoardId);
+        FreeBoard findfreeBoard = freeBoardService.verifyFreeBoard(freeBoardId);
 
         // 현재 로그인한 사용자가 해당 게시물을 좋아요 했는지 확인
         boolean isAlreadyLiked = currentMember.getLikes().stream()
@@ -131,12 +133,16 @@ public class FreeBoardController {
         Like like = new Like();
         like.setBoardType(Like.BoardType.FREEBOARD);
         like.setMember(currentMember);
-        like.setFreeBoard(foundfreeBoard);
+        like.setFreeBoard(findfreeBoard);
         likeRepository.save(like);
 
         // 현재 사용자의 likes 컬렉션에 좋아요 추가
         currentMember.getLikes().add(like);
         memberRepository.save(currentMember);
+
+        // 게시물의 likeCount 증가
+        findfreeBoard.setLikeCount(findfreeBoard.getLikeCount() + 1);
+        freeBoardRepository.save(findfreeBoard);
 
         return new ResponseEntity<>(HttpStatus.OK);
 
@@ -149,13 +155,13 @@ public class FreeBoardController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Member currentMember = memberService.findVerifiedMember(authentication.getName());
 
-        FreeBoard freeBoard = freeBoardService.verifyFreeBoard(freeBoardId);
+        FreeBoard findfreeBoard = freeBoardService.verifyFreeBoard(freeBoardId);
 
         Optional<Set<Like>> likes = Optional.ofNullable(currentMember.getLikes());
 
         Set<Like> foundLikes = likes.orElse(Collections.emptySet())
                 .stream()
-                .filter(l -> l != null && l.getFreeBoard() != null && l.getFreeBoard().getFreeBoardId().equals(freeBoard.getFreeBoardId()))
+                .filter(l -> l != null && l.getFreeBoard() != null && l.getFreeBoard().getFreeBoardId().equals(findfreeBoard.getFreeBoardId()))
                 .collect(Collectors.toSet());
 
         if (foundLikes.isEmpty()) {
@@ -170,6 +176,10 @@ public class FreeBoardController {
 
         memberRepository.save(currentMember);
 
+        // 게시물의 likeCount 삭제
+        findfreeBoard.setLikeCount(findfreeBoard.getLikeCount() - 1);
+        freeBoardRepository.save(findfreeBoard);
+
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 
     }
@@ -181,14 +191,14 @@ public class FreeBoardController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Member currentMember = memberService.findVerifiedMember(authentication.getName());
 
-        FreeBoard foundfreeBoard = freeBoardService.verifyFreeBoard(freeBoardId);
+        FreeBoard findfreeBoard = freeBoardService.verifyFreeBoard(freeBoardId);
 
         // 현재 로그인한 사용자가 해당 게시물을 북마크 했는지 확인
         boolean isAlreadyBookMarked = currentMember.getBookmarks().stream()
                 .filter(Objects::nonNull) // null인 요소 필터링
                 .map(Bookmark::getFreeBoard)
                 .filter(Objects::nonNull) // null인 FeedbackBoard 필터링
-                .anyMatch(freeBoard -> freeBoard.getFreeBoardId().equals(foundfreeBoard.getFreeBoardId()));
+                .anyMatch(freeBoard -> freeBoard.getFreeBoardId().equals(findfreeBoard.getFreeBoardId()));
 
         if (isAlreadyBookMarked) {
             return ResponseEntity.badRequest().body("Already bookmarked.");
@@ -197,7 +207,7 @@ public class FreeBoardController {
         Bookmark bookmark = new Bookmark();
         bookmark.setBoardType(Like.BoardType.FREEBOARD);
         bookmark.setMember(currentMember);
-        bookmark.setFreeBoard(foundfreeBoard);
+        bookmark.setFreeBoard(findfreeBoard);
         bookmarkRepository.save(bookmark);
 
         // 현재 사용자의 bookmark 컬렉션에 bookmark 추가
@@ -215,14 +225,14 @@ public class FreeBoardController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Member currentMember = memberService.findVerifiedMember(authentication.getName());
 
-        FreeBoard foundfreeBoard = freeBoardService.verifyFreeBoard(freeBoardId);
+        FreeBoard findfreeBoard = freeBoardService.verifyFreeBoard(freeBoardId);
         // 현재 로그인한 사용자가 해당 게시물을 북마크 했는지 확인
 
         Optional<Set<Bookmark>> bookmarks = Optional.ofNullable(currentMember.getBookmarks());
 
         Set<Bookmark> foundBookmarks = bookmarks.orElse(Collections.emptySet())
                 .stream()
-                .filter(l -> l != null && l.getFreeBoard() != null && l.getFreeBoard().getFreeBoardId().equals(foundfreeBoard.getFreeBoardId()))
+                .filter(l -> l != null && l.getFreeBoard() != null && l.getFreeBoard().getFreeBoardId().equals(findfreeBoard.getFreeBoardId()))
                 .collect(Collectors.toSet());
 
         if (foundBookmarks.isEmpty()) {
