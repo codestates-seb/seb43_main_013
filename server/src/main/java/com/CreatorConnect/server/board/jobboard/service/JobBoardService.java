@@ -147,6 +147,22 @@ public class JobBoardService {
         return jobBoard;
     }
 
+    /**
+     * <구인구직 게시판 게시글 삭제>
+     * 1. 게시글 존재 여부 확인
+     * 2. 삭제하려는 유저와 게시글을 작성한 유저가 같은 유저인지 검증
+     * 3. 삭제
+     */
+    public void removeJobBoard(Long jobBoardId) {
+        // 1. 게시글 존재 여부 확인
+        JobBoard jobBoard = verifyJobBoard(jobBoardId);
+
+        // 2. 삭제하려는 유저와 게시글을 작성한 유저가 같은 유저인지 검증(구현 예정)
+
+        // 3. 삭제
+        jobBoardRepository.delete(jobBoard);
+    }
+
     // 게시글 존재 여부 검증 메서드
     private JobBoard verifyJobBoard(Long jobBoardId) {
         Optional<JobBoard> optionalJobBoard = jobBoardRepository.findById(jobBoardId);
@@ -172,6 +188,7 @@ public class JobBoardService {
         jobBoard.setViewCount(jobBoard.getViewCount() + 1);
         jobBoardRepository.save(jobBoard);
     }
+
 
 
 }

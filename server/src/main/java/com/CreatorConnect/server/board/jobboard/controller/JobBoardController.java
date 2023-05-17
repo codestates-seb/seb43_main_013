@@ -71,4 +71,12 @@ public class JobBoardController {
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+    // 구인구직 게시판 삭제
+    @DeleteMapping("/jobboard/{jobBoardId}")
+    public ResponseEntity deleteJobBoard(@PathVariable("jobBoardId") @Positive Long jobBoardId) {
+        jobBoardService.removeJobBoard(jobBoardId);
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 }
