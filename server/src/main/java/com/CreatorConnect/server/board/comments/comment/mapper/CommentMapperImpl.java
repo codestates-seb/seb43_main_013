@@ -5,6 +5,9 @@ import com.CreatorConnect.server.board.comments.comment.dto.CommentResponseDto;
 import com.CreatorConnect.server.board.comments.comment.entity.CommentPK;
 import com.CreatorConnect.server.board.comments.comment.entity.FeedbackComment;
 import com.CreatorConnect.server.board.comments.comment.entity.FreeComment;
+import com.CreatorConnect.server.board.comments.recomment.dto.ReCommentResponseDto;
+import com.CreatorConnect.server.board.comments.recomment.entity.FeedbackReComment;
+import com.CreatorConnect.server.board.comments.recomment.mapper.ReCommentMapper;
 import com.CreatorConnect.server.board.feedbackboard.entity.FeedbackBoard;
 import com.CreatorConnect.server.board.freeboard.entity.FreeBoard;
 import org.springframework.stereotype.Component;
@@ -14,6 +17,12 @@ import java.util.List;
 
 @Component
 public class CommentMapperImpl implements CommentMapper{
+    private final ReCommentMapper mapper;
+
+    public CommentMapperImpl(ReCommentMapper mapper) {
+        this.mapper = mapper;
+    }
+
     @Override
     public CommentResponseDto.Details feedbackCommentToCommentDetailsResponse(FeedbackComment comment){
         CommentResponseDto.Details details = new CommentResponseDto.Details();
@@ -26,7 +35,7 @@ public class CommentMapperImpl implements CommentMapper{
         details.setReCommentCount(comment.getReCommentCount());
         details.setCreatedAt(comment.getCreatedAt());
         details.setModifiedAt(comment.getModifiedAt());
-        details.setReComments(new ArrayList<>());
+        details.setReComments(feedbackReCommentListToFeedbackReCommentResponseDTOList(comment.getFeedbackReComments()));
         return details;
     }
     @Override
@@ -102,5 +111,18 @@ public class CommentMapperImpl implements CommentMapper{
         freeBoard.setCommentCount(freeBoard.getCommentCount()+1);
         freeBoard.setMaxCommentCount(freeBoard.getMaxCommentCount()+1);
         return freeComment;
+    }
+
+    protected List<ReCommentResponseDto.Details> feedbackReCommentListToFeedbackReCommentResponseDTOList(List<FeedbackReComment> list) {
+        if ( list == null ) {
+            return null;
+        }
+
+        List<ReCommentResponseDto.Details> list1 = new ArrayList<>( list.size() );
+        for ( FeedbackReComment feedbackReComment : list ) {
+            list1.add( mapper.feedbackReCommentToReCommentDetailsResponse( feedbackReComment ) );
+        }
+
+        return list1;
     }
 }

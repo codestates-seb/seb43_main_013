@@ -1,5 +1,6 @@
 package com.CreatorConnect.server.board.comments.comment.dto;
 
+import com.CreatorConnect.server.board.comments.recomment.dto.ReCommentResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,7 +33,7 @@ public class CommentResponseDto {
         private long reCommentCount;
         private LocalDateTime createdAt;
         private LocalDateTime modifiedAt;
-        private List<String> reComments;
+        private List<ReCommentResponseDto.Details> reComments;
     }
     @Getter
     @AllArgsConstructor

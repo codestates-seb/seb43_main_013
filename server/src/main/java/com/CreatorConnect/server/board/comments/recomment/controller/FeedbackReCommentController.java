@@ -1,5 +1,6 @@
 package com.CreatorConnect.server.board.comments.recomment.controller;
 
+import com.CreatorConnect.server.board.comments.comment.dto.CommentDto;
 import com.CreatorConnect.server.board.comments.recomment.dto.ReCommentDto;
 import com.CreatorConnect.server.board.comments.recomment.dto.ReCommentResponseDto;
 import com.CreatorConnect.server.board.comments.recomment.service.FeedbackReCommentServiceImpl;
@@ -25,5 +26,17 @@ public class FeedbackReCommentController {
                                                                    @Valid @RequestBody ReCommentDto.Post postDto) {
         ReCommentResponseDto.Post response = feedbackReCommentService.createReComment(feedbackBoardId, commentId, postDto);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+    @PatchMapping("/feedbackboard/{feedbackBoardId}/comment/{commentId}/recomment/{reCommentId}")
+    public ResponseEntity<HttpStatus> patchComment(@PathVariable("feedbackBoardId") @Positive Long feedbackBoardId,
+                                                   @PathVariable("commentId") @Positive Long commentId,
+                                                   @PathVariable("reCommentId") @Positive Long reCommentId,
+                                                   @Valid @RequestBody CommentDto.Patch patchDto,
+                                                   @RequestHeader(value = "Authorization") String authorizationToken){
+
+        String token = authorizationToken.substring(7);
+        feedbackReCommentService.updateReComment(token, feedbackBoardId, commentId, reCommentId, patchDto);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
