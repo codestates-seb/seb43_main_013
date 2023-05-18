@@ -18,14 +18,13 @@ import static javax.persistence.FetchType.LAZY;
 @Getter
 @Setter
 @Entity
-
 public class Bookmark extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long bookmarkId;
 
-    @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "likedmember_id")
+    @ManyToOne
+    @JoinColumn(name = "bookmarkedmember_id")
     private Member member;
 
     @ManyToOne(fetch = LAZY)
@@ -45,7 +44,5 @@ public class Bookmark extends Auditable {
         PROMOTIONBOARD,
         JOBOARD
     }
-
-
 
 }

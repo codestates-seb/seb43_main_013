@@ -3,6 +3,7 @@ package com.CreatorConnect.server.board.freeboard.service;
 import com.CreatorConnect.server.board.categories.category.entity.Category;
 import com.CreatorConnect.server.board.categories.category.repository.CategoryRepository;
 import com.CreatorConnect.server.board.categories.category.service.CategoryService;
+import com.CreatorConnect.server.board.feedbackboard.dto.FeedbackBoardResponseDto;
 import com.CreatorConnect.server.board.freeboard.mapper.FreeBoardMapper;
 import com.CreatorConnect.server.board.freeboard.repository.FreeBoardRepository;
 import com.CreatorConnect.server.exception.BusinessLogicException;
@@ -20,6 +21,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -68,6 +71,9 @@ public class FreeBoardService {
     public FreeBoard createFreeBoard(FreeBoardDto.Post post) {
         FreeBoard freeBoard = mapper.freeBoardPostDtoToFreeBoard(post);
 
+        // post dto 의 memberId 와 로그인 한 유저 비교
+        memberService.verifiedAuthenticatedMember(post.getMemberId());
+
         // 회원 매핑
         Optional<Member> member = memberRepository.findById(post.getMemberId());
         freeBoard.setMember(member.orElseThrow(() ->
@@ -101,8 +107,10 @@ public class FreeBoardService {
         FreeBoard freeBoard = mapper.freeBoardPatchDtoToFreeBoard(patch);
         FreeBoard checkedFreeBoard = verifyFreeBoard(freeBoard.getFreeBoardId());
 
+        // 2. 작성자와 로그인한 멤버 비교
+        memberService.verifiedAuthenticatedMember(checkedFreeBoard.getMember().getMemberId());
 
-        // 2. 카테고리를 수정할 경우 카테고리 유효성 검증 (변경한 카테고리가 존재하는 카테고리?)
+        // 3. 카테고리를 수정할 경우 카테고리 유효성 검증 (변경한 카테고리가 존재하는 카테고리?)
         if (patch.getCategoryName() != null) { // 카테고리 변경이 된 경우
             categoryService.verifyCategory(patch.getCategoryName()); // 수정된 카테고리 존재 여부 확인
             // 카테고리 수정
@@ -112,7 +120,7 @@ public class FreeBoardService {
         }
 
 
-        // 3. 수정
+        // 4. 수정
         Optional.ofNullable(freeBoard.getTitle())
                 .ifPresent(title -> checkedFreeBoard.setTitle(title)); // 게시글 제목 수정
 
@@ -121,7 +129,7 @@ public class FreeBoardService {
 
         log.info("categoryName : {}",checkedFreeBoard.getCategoryName());
 
-        // 4. 수정된 데이터 저장
+        // 5. 수정된 데이터 저장
         return freeBoardRepository.save(checkedFreeBoard);
 
     }
@@ -189,9 +197,29 @@ public class FreeBoardService {
         // 3. 조회수 증가
         addViews(freeBoard);
 
-        // 4. 리턴
-        FreeBoardDto.Response response = mapper.freeBoardToResponse(freeBoard, tags);
+        // 로그인한 멤버
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        boolean bookmarked = false;
+        boolean liked = false;
 
+        if (authentication != null && authentication.isAuthenticated() && !"anonymousUser".equals(authentication.getName())) {
+            Member loggedinMember = memberService.findVerifiedMember(authentication.getName());
+
+            // 게시물을 북마크한 경우
+            bookmarked = loggedinMember.getBookmarks().stream()
+                    .anyMatch(bookmark -> bookmark.getFreeBoard().equals(freeBoard));
+
+            // 게시물을 좋아요한 경우
+            liked = loggedinMember.getLikes().stream()
+                    .anyMatch(like -> like.getFreeBoard().equals(freeBoard));
+        }
+
+        // 4. 매핑
+        FreeBoardDto.Response response = mapper.freeBoardToResponse(freeBoard, tags);
+        response.setBookmarked(bookmarked);
+        response.setLiked(liked);
+
+        // 5. 리턴
         return response;
     }
 
@@ -205,7 +233,10 @@ public class FreeBoardService {
         // 1. 게시글 존재 여부 획인
         FreeBoard freeBoard = verifyFreeBoard(freeboardId);
 
-        // 2. 삭제
+        // 2. 작성자와 로그인한 멤버 비교
+        memberService.verifiedAuthenticatedMember(freeBoard.getMember().getMemberId());
+
+        // 3. 삭제
         freeBoardRepository.delete(freeBoard);
     }
 
