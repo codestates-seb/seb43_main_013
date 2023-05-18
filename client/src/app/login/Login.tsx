@@ -76,7 +76,7 @@ const LoginWindow = () => {
   };
 
   return (
-    <div className="bg-white w-2/5 flex flex-col items-center p-6 rounded-xl drop-shadow-xl">
+    <div className="bg-white w-2/5 min-w-[450px] max-w-[600px] flex flex-col items-center p-6 rounded-xl drop-shadow-xl">
       <h1 className="text-4xl mb-6">로그인</h1>
       <form
         className="w-full"
