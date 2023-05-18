@@ -38,9 +38,22 @@ module.exports = {
           "50%": { "background-color": "rgba(165, 165, 165, 0.4)" },
           "100%": { "background-color": "rgba(165, 165, 165, 0.6)" },
         },
+        swing: {
+          "20%": { transform: "rotate(15deg)" },
+          "40%": { transform: "rotate(-10deg)" },
+          "60%": { transform: "rotate(5deg)" },
+          "80%": { transform: "rotate(-5deg)" },
+          "100%": { transform: "rotate(0deg)" },
+        },
+        "fade-in": {
+          "0%": { opacity: "0.01" },
+          "100%": { opacity: "1" },
+        },
       },
       animation: {
         "skeleton-gradient": "skeleton-gradient 0.8s linear infinite alternate",
+        swing: "swing 2s ease infinite",
+        "fade-in": "fade-in 0.6s ease",
       },
     },
   },

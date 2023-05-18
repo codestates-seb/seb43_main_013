@@ -10,6 +10,7 @@ import { apiCreateLikeOfPost, apiDeleteLikeOfPost } from "@/apis";
 
 // hook
 import useCustomToast from "@/hooks/useCustomToast";
+import { useMemberStore } from "@/store/useMemberStore";
 
 // type
 import type { BoardType, FreeBoard } from "@/types/api";
@@ -22,11 +23,14 @@ interface Props extends Pick<FreeBoard, "commentCount" | "likeCount"> {
 /** 2023/05/11 - 게시판 하단 컴포넌트 - by 1-blue */
 const BoardFooter: React.FC<Props> = ({ type, boardId, commentCount, likeCount, liked }) => {
   const toast = useCustomToast();
+  const { member } = useMemberStore();
 
   const queryClient = useQueryClient();
 
   /** 2023/05/17 - 게시글 좋아요 - by 1-blue */
   const onClickLike = async () => {
+    if (!member) return toast({ title: "로그인후에 접근해주세요!", status: "error" });
+
     try {
       if (liked) {
         await apiDeleteLikeOfPost(type, { boardId });
