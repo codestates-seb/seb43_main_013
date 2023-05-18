@@ -11,4 +11,10 @@ public interface NoticeMapper {
 
     // Notice -> NoticeDto.PostResponse
     NoticeDto.PostResponse noticeToNoticePostResponseDto(Notice notice);
+
+    // NoticeDto.Patch -> Notice
+    Notice noticePatchDtoToNotice(NoticeDto.Patch patch);
+
+    // Notice -> NoticeDto.Response
+    NoticeDto.Response noticeToNoticeResponseDto(Notice notice);
 }
