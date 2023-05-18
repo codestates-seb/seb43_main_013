@@ -4,6 +4,8 @@ import com.CreatorConnect.server.board.notice.dto.NoticeDto;
 import com.CreatorConnect.server.board.notice.entity.Notice;
 import org.mapstruct.Mapper;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring")
 public interface NoticeMapper {
     // NoticeDto.Post -> Notice
@@ -17,4 +19,6 @@ public interface NoticeMapper {
 
     // Notice -> NoticeDto.Response
     NoticeDto.Response noticeToNoticeResponseDto(Notice notice);
+
+    List<NoticeDto.Response> noticesToNoticeResponseDtos(List<Notice> notices);
 }

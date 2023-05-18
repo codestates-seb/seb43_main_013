@@ -10,9 +10,13 @@ import com.CreatorConnect.server.member.entity.Member;
 import com.CreatorConnect.server.member.repository.MemberRepository;
 import com.CreatorConnect.server.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -75,10 +79,40 @@ public class NoticeService {
         return noticeRepository.save(checkedNotice);
     }
 
+    /**
+     * <공지사항 목록>
+     *  1. 페이지네이션 적용 - 최신순 / 등록순 / 인기순
+     *  2. 게시글 목록 가져오기
+     */
+    public NoticeDto.MultiResponseDto<NoticeDto.Response> getAllNotices(int page, int size, String sort) {
+        // 1. 페이지네이션 적용 - 최신순 / 등록순 / 인기순
+        Page<Notice> notices =
+                noticeRepository.findAll(sortedBy(page, size, sort));
+
+        // 2. 게시글 목록 가져오기
+        List<NoticeDto.Response> response = mapper.noticesToNoticeResponseDtos(notices.getContent());
+
+        return new NoticeDto.MultiResponseDto<>(response, notices);
+    }
+
+
     // 게시글 검증 메서드
     private Notice verifyNotice(Long noticeId) {
         Optional<Notice> optionalNotice = noticeRepository.findById(noticeId);
         return optionalNotice.orElseThrow(() ->
                 new BusinessLogicException(ExceptionCode.NOTICE_NOT_FOUND));
+    }
+
+    // 게시글 정렬 메서드
+    private PageRequest sortedBy(int page, int size, String sort) {
+        if (sort.equals("최신순")) {
+            return PageRequest.of(page - 1, size, Sort.by("noticeId").descending());
+        } else if (sort.equals("등록순")) {
+            return PageRequest.of(page - 1, size, Sort.by("noticeId").ascending());
+        } else if (sort.equals("인기순")) {
+            return PageRequest.of(page - 1, size, Sort.by("viewCount", "noticeId").descending());
+        } else {
+            return PageRequest.of(page - 1, size, Sort.by("noticeId").ascending());
+        }
     }
 }
