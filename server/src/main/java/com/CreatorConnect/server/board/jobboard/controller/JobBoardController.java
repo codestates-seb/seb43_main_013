@@ -91,10 +91,8 @@ public class JobBoardController {
     // 구인구직 게시판 게시글 상세조회
     @GetMapping("/jobboard/{jobBoardId}")
     public ResponseEntity getJobBoardDetail(@PathVariable("jobBoardId") @Positive Long jobBoardId) {
-        JobBoard jobBoard = jobBoardService.getJobBoardDetail(jobBoardId);
-        JobBoardDto.Response response = mapper.jobBoardToJobBoardResponseDto(jobBoard);
 
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return new ResponseEntity<>(jobBoardService.getJobBoardDetail(jobBoardId), HttpStatus.OK);
     }
 
     // 구인구직 게시판 삭제
