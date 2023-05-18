@@ -77,6 +77,19 @@ public class JobCategoryService {
         return mapper.jobCategoryToJobCategoryResponseDtos(jobCategories.getContent());
     }
 
+    /**
+     * <카테고리 삭제>
+     * 1. 카테고리 존재 여부 검증
+     * 2. 존재하면 삭제
+     */
+    public void removeJobCategory(Long categoryId) {
+        // 1. 카테고리 존재 여부 검증
+        JobCategory jobCategory = findverifiedJobCategory(categoryId);
+
+        // 2. 삭제
+        jobCategoryRepository.delete(jobCategory);
+    }
+
     // 중복 카테고리 존재 여부 검증 메서드
     public void verifyExistsJobCategory(String jobCategoryName) {
         Optional<JobCategory> optionalJobCategory = jobCategoryRepository.findByJobCategoryName(jobCategoryName);
@@ -99,5 +112,6 @@ public class JobCategoryService {
             throw new BusinessLogicException(ExceptionCode.CATEGORY_NOT_FOUND);
         }
     }
+
 
 }

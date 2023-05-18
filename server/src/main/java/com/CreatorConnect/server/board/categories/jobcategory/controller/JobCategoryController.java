@@ -48,7 +48,6 @@ public class JobCategoryController {
     }
 
     // 구인구직 카테고리 조회
-    @PreAuthorize("permitAll()") // 유저 권한에 상관없이 접근 가능
     @GetMapping("/jobcategory/{jobCategoryId}")
     public ResponseEntity getJobCategory(@PathVariable("jobCategoryId") @Positive Long jobCategoryId) {
         JobCategoryDto.Response response = jobCategoryService.getJobCategory(jobCategoryId);
@@ -57,11 +56,19 @@ public class JobCategoryController {
     }
 
     // 구인구직 카테고리 목록 조회
-    @PreAuthorize("permitAll()") // 유저 권한에 상관없이 접근 가능
     @GetMapping("/jobcategories")
     public ResponseEntity getJobCategories() {
         List<JobCategoryDto.Response> responses = jobCategoryService.getJobCategories();
 
         return new ResponseEntity<>(responses, HttpStatus.OK);
+    }
+
+    // 구인구직 카테고리 삭제
+    @Secured("ROLE_ADMIN")
+    @DeleteMapping("/jobcategory/{jobCategoryId}")
+    public ResponseEntity deleteJobCategory(@PathVariable("jobCategoryId") @Positive Long categoryId) {
+        jobCategoryService.removeJobCategory(categoryId);
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
