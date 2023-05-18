@@ -1,5 +1,6 @@
 import LoginBtn from "../Button/LoginBtn";
 import Image from "next/image";
+
 import 구글로그인 from "/src/public/images/google.svg";
 import 네이버로그인 from "/src/public/images/naver.svg";
 import 카카오로그인 from "/src/public/images/kakao.svg";
@@ -7,6 +8,7 @@ import 카카오로그인 from "/src/public/images/kakao.svg";
 /** 2023/05/10 - 로그인 버튼 컨테이너  - by Kadesti */
 const OAuthCon = () => {
   const btnText: string[] = ["Google", "Naver", "kakao"];
+
   return (
     <ul>
       <li

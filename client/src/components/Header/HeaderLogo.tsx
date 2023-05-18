@@ -1,3 +1,4 @@
+import React from "react";
 import Link from "next/link";
 
 /** 2023/05/10 - 헤더 로고 이미지 영역 - by Kadesti */

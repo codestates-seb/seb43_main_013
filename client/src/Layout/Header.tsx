@@ -1,27 +1,29 @@
 "use client";
 
+import React from "react";
 import { useEffect, useState } from "react";
 
-import SearchDiv from "@/components/Header/SearchDiv";
-import IsLoginSide from "@/components/Header/LoginSide";
-import HeaderLogo from "@/components/Header/HeaderLogo";
-import SearchSide from "@/components/Header/SearchSide";
-import headerArr from "@/components/Header/HeaderArr";
+import SearchDiv from "../components/Header/SearchDiv";
+import IsLoginSide from "../components/Header/LoginSide";
+
+import HeaderLogo from "../components/Header/HeaderLogo";
+import SearchSide from "../components/Header/SearchSide";
+import headerArr from "../components/Header/HeaderArr";
 
 /** 2023/05/04 - 헤더 컴포넌트 - by Kadesti */
 const Header: React.FC = () => {
-  const access_token = localStorage.getItem("accessToken");
-  const refresh_token = localStorage.getItem("refreshToken");
-
   const [isLogin, setIsLogin] = useState(false);
 
   useEffect(() => {
+    const access_token = localStorage.getItem("accessToken");
+    const refresh_token = localStorage.getItem("refreshToken");
+
     if (access_token) {
       setIsLogin(true);
     } else {
       setIsLogin(false);
     }
-  }, [access_token]);
+  }, []);
 
   const nickState = useState(false);
   const { leftArr, rightArr } = headerArr();

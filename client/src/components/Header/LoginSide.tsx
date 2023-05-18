@@ -1,5 +1,5 @@
-import Link from "next/link";
-import { ChevronUpIcon, ChevronDownIcon, UserCircleIcon } from "@/components/HeaderIcon";
+import React from "react";
+import { ChevronUpIcon, ChevronDownIcon, UserCircleIcon } from "../HeaderIcon";
 import NickModal from "./NickModal";
 import { useEffect, useState } from "react";
 
@@ -40,8 +40,6 @@ const IsLoginSide = ({ nickState }: { nickState: [boolean, React.Dispatch<boolea
           )}
         </div>
       </div>
-
-      {/* <img src={profileSrc} className="w-12 cursor-pointer" /> */}
       <img src="https://youtu.be/f8IcRLd54v4" className="w-12 cursor-pointer" />
 
       {/* {profileSrc !== "" ? (
