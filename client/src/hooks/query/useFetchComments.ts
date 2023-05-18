@@ -18,7 +18,7 @@ interface Props {
 /** 2023/05/11 - 게시글의 댓글들 조회 상세 정보 패치하는 훅 - by 1-blue */
 const useFetchComments = ({ type, boardId, page, size }: Props) => {
   const { data, fetchNextPage, hasNextPage, isFetching } = useInfiniteQuery<ApiFetchCommentsResponse>(
-    [QUERY_KEYS.comment, type],
+    [QUERY_KEYS.comment, type, boardId],
     ({ pageParam = page }) => apiFetchComments(type, { boardId, page: pageParam, size }),
     {
       getNextPageParam: (lastPage, allPage) =>

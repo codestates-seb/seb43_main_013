@@ -1,5 +1,4 @@
 import { FormEventHandler, useEffect, useState } from "react";
-import { useToast } from "@chakra-ui/react";
 import { type InfiniteData, useQueryClient } from "@tanstack/react-query";
 
 import { QUERY_KEYS } from "@/hooks/query";
@@ -10,6 +9,7 @@ import { apiCreateComment } from "@/apis";
 // hook
 import useResizeTextarea from "@/hooks/useResizeTextarea";
 import { useMemberStore } from "@/store/useMemberStore";
+import useCustomToast from "@/hooks/useCustomToast";
 
 // store
 import { useLoadingStore } from "@/store";
@@ -23,7 +23,7 @@ interface Props {
 
 /** 2023/05/11 - 댓글 폼 컴포넌트 - by 1-blue */
 const BoardCommentForm: React.FC<Props> = ({ type, boardId }) => {
-  const toast = useToast();
+  const toast = useCustomToast();
   const { loading } = useLoadingStore((state) => state);
   const { member } = useMemberStore();
 
@@ -43,21 +43,10 @@ const BoardCommentForm: React.FC<Props> = ({ type, boardId }) => {
     e.preventDefault();
 
     if (!member) {
-      return toast({
-        description: "로그인후에 접근해주세요!",
-        status: "error",
-        duration: 2500,
-        isClosable: true,
-      });
+      return toast({ title: "로그인후에 접근해주세요!", status: "error" });
     }
 
-    if (!content.trim().length)
-      return toast({
-        description: "댓글을 입력해주세요!",
-        status: "warning",
-        duration: 2500,
-        isClosable: true,
-      });
+    if (!content.trim().length) return toast({ title: "댓글을 입력해주세요!", status: "warning" });
 
     try {
       loading.start();
@@ -92,21 +81,11 @@ const BoardCommentForm: React.FC<Props> = ({ type, boardId }) => {
 
       setContent("");
 
-      return toast({
-        description: "댓글을 등록했습니다.",
-        status: "success",
-        duration: 2500,
-        isClosable: true,
-      });
+      return toast({ title: "댓글을 등록했습니다.", status: "success" });
     } catch (error) {
       console.error(error);
 
-      return toast({
-        description: "댓글 등록에 실패했습니다. 잠시후에 다시 시도해주세요!",
-        status: "error",
-        duration: 2500,
-        isClosable: true,
-      });
+      return toast({ title: "댓글 등록에 실패했습니다. 잠시후에 다시 시도해주세요!", status: "error" });
     } finally {
       loading.end();
     }

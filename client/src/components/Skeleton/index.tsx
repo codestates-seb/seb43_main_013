@@ -5,6 +5,8 @@ import Text from "./Text";
 import Comment from "./Comment";
 import Board from "./Board";
 import BoardEdit from "./BoardEdit";
+import ProfileBoard from "./ProfileBoard";
+import ProfileCard from "./ProfileCard";
 
 /** 2023/05/12 - 스켈레톤 UI container - by 1-blue */
 const Skeleton = {
@@ -21,6 +23,10 @@ const Skeleton = {
   Board,
   /** 2023/05/12 - 게시판 수정 스켈레톤 UI 컴포넌트 - by 1-blue */
   BoardEdit,
+  /** 2023/05/17 - 프로필 게시판 수정 스켈레톤 UI 컴포넌트 - by 1-blue */
+  ProfileBoard,
+  /** 2023/05/17 - 프로필 카드 수정 스켈레톤 UI 컴포넌트 - by 1-blue */
+  ProfileCard,
 };
 
 export default Skeleton;
