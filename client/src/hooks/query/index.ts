@@ -14,6 +14,8 @@ export const QUERY_KEYS = {
   promotionBoardList: "promotionBoardList",
   jobBoardList: "jobBoardList",
   feedbackCategories: "feedbackCategories",
+  promotionCategories: "promotionCategories",
+  jobCategories: "jobCategories",
 };
 
 export * from "./useFetchCategories";
