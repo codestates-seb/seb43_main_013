@@ -1,17 +1,19 @@
 import Image from "next/image";
 import { BookmarkIcon as BookmarkIconUnchecked } from "@heroicons/react/24/outline";
-import sample_thumnail1 from "@/public/images/sample_thumnail1.png";
+import sample_thumnail2 from "@/public/images/sample_thumnail2.png";
 import ContentFooter from "../../components/BoardMain/ContentFooter";
 import TagItem from "../../components/BoardMain/TagItem";
-import { FeedbackBoard } from "@/types/api";
 import { forwardRef } from "react";
 import { getYoutubeThumbnail } from "@/libs";
+import { PromotionBoard } from "@/types/api";
 
 interface ContentItemProps {
-  props: FeedbackBoard;
+  props: PromotionBoard;
 }
-/** 2023/05/09 - 피드백 게시판 게시글 - by leekoby */
-const FeedbackContentItem = forwardRef<HTMLDivElement, ContentItemProps>(({ props }, ref) => {
+
+/** 2023/05/17 - 홍보 게시판 게시글 - by leekoby */
+
+const PromotionContentItem = forwardRef<HTMLDivElement, ContentItemProps>(({ props }, ref) => {
   return (
     <>
       {/*  list container */}
@@ -23,7 +25,7 @@ const FeedbackContentItem = forwardRef<HTMLDivElement, ContentItemProps>(({ prop
           {/* List Item * */}
           <div className="flex flex-col items-center w-full h-full p-5 bg-sub-100 rounded-md ">
             {/* Thumnail */}
-            <Image src={sample_thumnail1} className="w-auto h-auto mx-1 my-1 border rounded-lg " alt="" />
+            <Image src={sample_thumnail2} className="w-auto h-auto mx-1 my-1 border rounded-lg " alt="" />
             {/* right content */}
 
             <div className="flex flex-col w-full h-full gap-2 p-2">
@@ -55,4 +57,4 @@ const FeedbackContentItem = forwardRef<HTMLDivElement, ContentItemProps>(({ prop
   );
 });
 
-export default FeedbackContentItem;
+export default PromotionContentItem;

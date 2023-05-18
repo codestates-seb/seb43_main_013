@@ -78,17 +78,20 @@ export interface ApiDeletePromotionBoardHandler {
 }
 
 // ============================== 홍보 게시판 게시글리스트 조회 ==============================
-/** 2023/05/12- 홍보 게시판 게시글리스트 조회 요청 송신 타입 - by leekoby */
+/** 2023/05/17- 홍보 게시판 게시글리스트 조회 요청 송신 타입 - by leekoby */
 export interface ApiFetchPromotionBoardListRequest {
+  selected: string;
+  selectedPromotion: number;
+  sorted: string;
   page: number;
   size: number;
 }
-/** 2023/05/12 - 홍보 게시판 게시글리스트 조회 요청 수신 타입 - by leekoby */
+/** 2023/05/17 - 홍보 게시판 게시글리스트 조회 요청 수신 타입 - by leekoby */
 export interface ApiFetchPromotionBoardListResponse {
   data: PromotionBoard[];
   pageInfo: PageInfo;
 }
-/** 2023/05/12 - 홍보 게시판 게시글리스트 조회 요청 핸들러 - by leekoby */
+/** 2023/05/17 - 홍보 게시판 게시글리스트 조회 요청 핸들러 - by leekoby */
 export interface ApiFetchPromotionBoardListHandler {
   (body: ApiFetchPromotionBoardListRequest): Promise<ApiFetchPromotionBoardListResponse>;
 }

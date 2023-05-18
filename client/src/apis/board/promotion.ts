@@ -42,10 +42,15 @@ export const apiDeletePromotionBoard: ApiDeletePromotionBoardHandler = async ({ 
   return data;
 };
 
-/** 2023/05/12 - 홍보 게시판 게시글 리스트 요청 - by leekoby */
-export const apiFetchPromotionBoardList: ApiFetchPromotionBoardListHandler = async ({ page, size }) => {
+/** 2023/05/17 - 홍보 게시판 게시글 리스트 요청 - by leekoby */
+export const apiFetchPromotionBoardList: ApiFetchPromotionBoardListHandler = async ({
+  selected,
+  sorted,
+  page,
+  size,
+}) => {
   const { data } = await serverInstance.get<ApiFetchPromotionBoardListResponse>(
-    `/promotionboards?page=${page}&size=${size}`,
+    `/promotionboards?sort=${sorted}&page=${page}&size=${size}`,
   );
 
   return data;
