@@ -112,18 +112,20 @@ const FeedbackMain = () => {
               page.data.map((innerData, itemIndex) => {
                 const isLastItem = pageIndex === data.pages.length - 1 && itemIndex === page.data.length - 1;
                 return (
-                  <Link
-                    key={innerData.feedbackBoardId}
-                    href={`/feedback/${innerData.feedbackBoardId}`}
-                    className="lg:w-[48%]"
-                  >
+                  // <Link
+                  //   key={innerData.feedbackBoardId}
+                  //   href={`/feedback/${innerData.feedbackBoardId}`}
+                  //   className="lg:w-[48%]"
+                  // >
+                  //   <FeedbackContentItem props={innerData} ref={isLastItem ? loader : undefined} key={innerData.feedbackBoardId} />
+                  // </Link>
+                  <div key={innerData.feedbackBoardId} className="lg:w-[48%]">
                     <FeedbackContentItem props={innerData} ref={isLastItem ? loader : undefined} />
-                  </Link>
+                  </div>
                 );
               }),
             )}
           </div>
-          <div className="flex flex-col items-center m-auto">{}</div>
         </section>
         {/* 오른쪽 사이드 영역 */}
         <div className="flex flex-col items-center justify-center ml-2">

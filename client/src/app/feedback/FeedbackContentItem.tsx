@@ -7,6 +7,7 @@ import TagItem from "../../components/BoardMain/TagItem";
 import { FeedbackBoard } from "@/types/api";
 import { forwardRef } from "react";
 import { getYoutubeThumbnail } from "@/libs";
+import Link from "next/link";
 
 interface ContentItemProps {
   props: FeedbackBoard;
@@ -30,8 +31,12 @@ const FeedbackContentItem = forwardRef<HTMLDivElement, ContentItemProps>(({ prop
             <div className="flex flex-col w-full h-full gap-2 p-2">
               {/* content header */}
               <div className="flex items-center justify-between">
-                {/* rightside title */}
-                <h1 className="text-xl font-bold text-left ">{props.title}</h1>
+                {/* 게시글 제목 */}
+                <Link href={`/feedback/${props.feedbackBoardId}`}>
+                  <h1 className="text-xl font-bold text-left hover:underline hover:underline-offset-4 hover:text-blue-600">
+                    {props.title}
+                  </h1>
+                </Link>
                 <BookmarkIconUnchecked className="w-5 h-5 text-black cursor-pointer " />
               </div>
               {/* content body */}
@@ -41,14 +46,7 @@ const FeedbackContentItem = forwardRef<HTMLDivElement, ContentItemProps>(({ prop
                 {props.tags && props.tags.map((item) => <TagItem tag={item.tagName} />)}
               </div>
             </div>
-            <ContentFooter
-              position="main"
-              nickName={props.nickname}
-              viewCount={props.viewCount}
-              likeCount={props.likeCount}
-              commentCount={props.commentCount}
-              createdAt={props.createdAt}
-            />
+            <ContentFooter position="main" footerData={props} />
           </div>
         </div>
       </div>

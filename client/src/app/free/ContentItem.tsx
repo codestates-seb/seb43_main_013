@@ -35,14 +35,7 @@ const ContentItem: React.FC<ContentItemProps> = ({ props }) => {
               </div>
             </div>
           </div>
-          <ContentFooter
-            position="main"
-            nickName={props.nickname}
-            viewCount={props.viewCount}
-            likeCount={props.likeCount}
-            commentCount={props.commentCount}
-            createdAt={props.createdAt}
-          />
+          <ContentFooter position="main" footerData={props} />
         </div>
       </div>
     </>
