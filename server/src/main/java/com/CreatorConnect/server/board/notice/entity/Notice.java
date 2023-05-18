@@ -1,5 +1,7 @@
 package com.CreatorConnect.server.board.notice.entity;
 
+import com.CreatorConnect.server.audit.Auditable;
+import com.CreatorConnect.server.board.Board;
 import com.CreatorConnect.server.member.entity.Member;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,7 +15,7 @@ import javax.persistence.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Notice { // 공지사항 엔티티
+public class Notice extends Auditable implements Board { // 공지사항 엔티티
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long noticeId;
