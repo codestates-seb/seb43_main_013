@@ -3,9 +3,13 @@ package com.CreatorConnect.server.board.search.controller;
 import com.CreatorConnect.server.board.search.dto.SearchBoardResponseDto;
 import com.CreatorConnect.server.board.search.dto.SearchMemberResponseDto;
 import com.CreatorConnect.server.board.search.dto.SearchResponseDto;
+import com.CreatorConnect.server.board.search.entity.PopularSearch;
 import com.CreatorConnect.server.board.search.service.SearchService;
+import com.CreatorConnect.server.member.dto.MemberFollowResponseDto;
+import com.CreatorConnect.server.response.MultiResponseDto;
 import org.springframework.data.domain.Page;
 
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -27,50 +31,24 @@ public class SearchController {
         this.searchService = searchService;
     }
 
-    // GET /search?keyword=example&page=0&size=10
+    // GET /api/search?keyword=example&page=0&size=10
     @GetMapping
-    public ResponseEntity search (
-            @RequestParam(required = false) String keyword,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+    public ResponseEntity search (@RequestParam(required = false) String keyword,
+                                  @RequestParam(defaultValue = "0") int page,
+                                  @RequestParam(defaultValue = "10") int size) {
 
-        Pageable pageable = PageRequest.of(page, size);
+        Page<SearchResponseDto> pageResponse = searchService.searchPosts(keyword, PageRequest.of(page, size));
 
-        Page<SearchResponseDto> searchResults = searchService.searchPosts(keyword, pageable);
+        return new ResponseEntity(new MultiResponseDto<>(pageResponse.getContent(), pageResponse), HttpStatus.OK);
+    }
 
-        List<SearchResponseDto> response = searchResults.getContent().stream()
-                .map(searchResult -> {
-                    if ("MEMBER".equals(searchResult.getBoardType())) {
-                        SearchMemberResponseDto memberDto = new SearchMemberResponseDto();
-                        memberDto.setBoardType(searchResult.getBoardType());
-                        memberDto.setId(searchResult.getId());
-                        memberDto.setMemberId(searchResult.getMemberId());
-                        memberDto.setEmail(searchResult.getEmail());
-                        memberDto.setName(searchResult.getName());
-                        memberDto.setNickname(searchResult.getNickname());
-                        memberDto.setProfileImageUrl(searchResult.getProfileImageUrl());
-                        memberDto.setCreatedAt(searchResult.getCreatedAt());
-                        memberDto.setModifiedAt(searchResult.getModifiedAt());
-                        return memberDto;
-                    } else {
-                        SearchBoardResponseDto boardDto = new SearchBoardResponseDto();
-                        boardDto.setBoardType(searchResult.getBoardType());
-                        boardDto.setId(searchResult.getId());
-                        boardDto.setTitle(searchResult.getTitle());
-                        boardDto.setContent(searchResult.getContent());
-                        boardDto.setCommentCount(searchResult.getCommentCount());
-                        boardDto.setLikeCount(searchResult.getLikeCount());
-                        boardDto.setViewCount(searchResult.getViewCount());
-                        boardDto.setCategoryName(searchResult.getCategoryName());
-                        boardDto.setMemberId(searchResult.getMemberId());
-                        boardDto.setProfileImageUrl(searchResult.getProfileImageUrl());
-                        boardDto.setCreatedAt(searchResult.getCreatedAt());
-                        boardDto.setModifiedAt(searchResult.getModifiedAt());
-                        return boardDto;
-                    }
-                })
-                .collect(Collectors.toList());
+    @GetMapping("/popularkeywords")
+    public ResponseEntity getPopularSearchKeywords(@RequestParam(defaultValue = "0") int page,
+                                                   @RequestParam(defaultValue = "10") int size) {
 
-        return new ResponseEntity<>(response, HttpStatus.OK);
+
+        Page<String> pageResponse = searchService.getPopularSearchKeywords(PageRequest.of(page, size));
+
+        return new ResponseEntity(new MultiResponseDto<>(pageResponse.getContent(), pageResponse), HttpStatus.OK);
     }
 }
