@@ -42,7 +42,7 @@ export const apiDeleteJobBoard: ApiDeleteJobBoardHandler = async ({ jobBoardId }
 /** 2023/05/12 - 구인구직 게시판 게시글 리스트 요청 - by leekoby */
 export const apiFetchJobBoardList: ApiFetchJobBoardListHandler = async ({ selected, sorted, page, size }) => {
   const { data } = await serverInstance.get<ApiFetchJobBoardListResponse>(
-    `/jobboards?sort=${sorted}&page=${page}&size=${size}`,
+    `/jobboards${selected}?sort=${sorted}&page=${page}&size=${size}`,
   );
 
   return data;

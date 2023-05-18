@@ -75,7 +75,7 @@ const FeedbackPostsSlide = () => {
     slidesToShow: silderPage,
     autoplay: true,
     speed: 3000,
-    dots: true,
+    dots: false,
     arrow: true,
     appendDots: appendDots,
     customPaging: customPaging,
