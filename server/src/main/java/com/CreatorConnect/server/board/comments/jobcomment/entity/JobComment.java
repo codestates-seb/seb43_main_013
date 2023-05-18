@@ -1,10 +1,9 @@
-package com.CreatorConnect.server.board.comments.feedbackcomment.entity;
-
+package com.CreatorConnect.server.board.comments.jobcomment.entity;
 
 import com.CreatorConnect.server.audit.Auditable;
 import com.CreatorConnect.server.board.comments.common.entity.CommentPK;
-import com.CreatorConnect.server.board.feedbackboard.entity.FeedbackBoard;
-import com.CreatorConnect.server.board.recomments.feedbackrecomment.entity.FeedbackReComment;
+import com.CreatorConnect.server.board.jobboard.entity.JobBoard;
+import com.CreatorConnect.server.board.recomments.jobrecomment.entity.JobReComment;
 import com.CreatorConnect.server.member.entity.Member;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -20,7 +19,7 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
-public class FeedbackComment extends Auditable {
+public class JobComment extends Auditable {
     @EmbeddedId
     private CommentPK commentPK;
     @Column(nullable = false, columnDefinition = "TEXT")
@@ -48,21 +47,21 @@ public class FeedbackComment extends Auditable {
     public String getProfileImageUrl() {return member.getProfileImageUrl();}
     public void setMember(Member member) {
         this.member = member;
-        if (!this.member.getFeedbackComments().contains(this)) {
-            this.member.getFeedbackComments().add(this);
+        if (!this.member.getJobComments().contains(this)) {
+            this.member.getJobComments().add(this);
         }
     }
     @MapsId("boardId")
     @ManyToOne
-    @JoinColumn(name = "feedback_board_id")
-    private FeedbackBoard feedbackBoard;
+    @JoinColumn(name = "job_board_id")
+    private JobBoard jobBoard;
 
-    public void setFeedbackBoard(FeedbackBoard feedbackBoard) {
-        this.feedbackBoard = feedbackBoard;
-        if (!this.feedbackBoard.getFeedbackComments().contains(this)) {
-            this.feedbackBoard.getFeedbackComments().add(this);
+    public void setJobBoard(JobBoard jobBoard) {
+        this.jobBoard = jobBoard;
+        if (!this.jobBoard.getJobComments().contains(this)) {
+            this.jobBoard.getJobComments().add(this);
         }
     }
-    @OneToMany(mappedBy = "feedbackComment", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<FeedbackReComment> feedbackReComments = new ArrayList<>();
+    @OneToMany(mappedBy = "jobComment", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<JobReComment> jobReComments = new ArrayList<>();
 }
