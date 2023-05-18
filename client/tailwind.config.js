@@ -45,10 +45,15 @@ module.exports = {
           "80%": { transform: "rotate(-5deg)" },
           "100%": { transform: "rotate(0deg)" },
         },
+        "fade-in": {
+          "0%": { opacity: "0.01" },
+          "100%": { opacity: "1" },
+        },
       },
       animation: {
         "skeleton-gradient": "skeleton-gradient 0.8s linear infinite alternate",
         swing: "swing 2s ease infinite",
+        "fade-in": "fade-in 0.6s ease",
       },
     },
   },

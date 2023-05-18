@@ -91,61 +91,73 @@ const ProfileCard: React.FC<Props> = ({ memberId }) => {
           )}
         </div>
 
-        <div className="space-x-6 text-sm">
+        {/* 자기소개 */}
+        {data.introduction && <p className="whitespace-pre font-bold text-sm">{data.introduction}</p>}
+
+        <div className="space-x-6 text-sm flex">
           <button
             type="button"
-            className="px-2 py-1 text-main-400 font-bold border-2 border-main-400 rounded-md transition-colors hover:text-white hover:bg-main-400"
+            className="flex flex-col items-center text-sm transition-colors hover:text-main-400"
             onClick={() => {
               if (data.followingCount === 0) return toast({ title: "팔로잉이 없습니다", status: "info" });
 
               setIsShowFollowings(true);
             }}
           >
-            팔로잉 {data.followingCount}명
+            <span className="text-sm">팔로잉</span>
+            <span className="text-sm font-bold">{data.followingCount}명</span>
           </button>
+          <div className="border border-sub-300" />
           <button
             type="button"
-            className="px-2 py-1 text-main-400 font-bold border-2 border-main-400 rounded-md transition-colors hover:text-white hover:bg-main-400"
+            className="flex flex-col items-center text-sm transition-colors hover:text-main-400"
             onClick={() => {
               if (data.followerCount === 0) return toast({ title: "팔로워가 없습니다", status: "info" });
 
               setIsShowFollowers(true);
             }}
           >
-            팔로워 {data.followerCount}명
+            <span className="text-sm">팔로워</span>
+            <span className="text-sm font-bold">{data.followerCount}명</span>
           </button>
         </div>
 
-        {/* 자기소개 */}
-        <p className="pb-4">{data.introduction}</p>
-
-        {/* 유튜브 링크 */}
         <div className="flex w-full items-center">
-          {data.link && (
-            <Link href={data.link} target="_blank" referrerPolicy="no-referrer">
-              <OFilmIcon className="w-6 h-6 hover:stroke-2 transition-all" />
-            </Link>
-          )}
-
-          {data.memberId === member?.memberId ? (
-            <Link href="/profile/edit" className="ml-auto hover:underline-offset-4 hover:underline">
-              <OPencilSquareIcon className="w-6 h-6 hover:stroke-2 transition-all" />
-            </Link>
-          ) : (
+          {data.memberId !== member?.memberId && (
             <button
               type="button"
               onClick={onClickFollow}
-              className="m-auto px-2 py-1 text-main-400 font-bold text-xs border-2 border-main-400 rounded-md transition-colors hover:text-white hover:bg-main-400"
+              className="m-auto px-2 py-1 mt-4 text-white font-bold text-sm border-2 bg-main-400 rounded-md transition-colors hover:text-white hover:bg-main-500"
             >
               {data.followed ? "언팔로우" : "팔로우"}
             </button>
           )}
         </div>
+
+        {/* 유튜브 링크 / 정보수정 */}
+        {(data.link || data.memberId === member?.memberId) && (
+          <div className="flex w-full items-center">
+            {data.link && (
+              <Link href={data.link} target="_blank" referrerPolicy="no-referrer">
+                <OFilmIcon className="w-6 h-6 hover:stroke-2 transition-all" />
+              </Link>
+            )}
+            {data.memberId === member?.memberId && (
+              <Link href={`/profile/${memberId}/edit`} className="ml-auto hover:underline-offset-4 hover:underline">
+                <OPencilSquareIcon className="w-6 h-6 hover:stroke-2 transition-all" />
+              </Link>
+            )}
+          </div>
+        )}
       </div>
 
       {/* 팔로워/팔로잉 모달 */}
-      {isShowFollowers && <FollowerModal memberId={memberId} onCloseModal={() => setIsShowFollowers(false)} />}
-      {isShowFollowings && <FollowingModal memberId={memberId} onCloseModal={() => setIsShowFollowings(false)} />}
+      {isShowFollowers && (
+        <FollowerModal memberId={memberId} nickname={data.nickname} onCloseModal={() => setIsShowFollowers(false)} />
+      )}
+      {isShowFollowings && (
+        <FollowingModal memberId={memberId} nickname={data.nickname} onCloseModal={() => setIsShowFollowings(false)} />
+      )}
     </>
   );
 };

@@ -33,3 +33,5 @@ export * from "./member";
 export * from "./follow";
 export * from "./followers";
 export * from "./followings";
+export * from "./password";
+export * from "./auth";

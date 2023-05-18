@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { useQueryClient } from "@tanstack/react-query";
+import { BellAlertIcon } from "@heroicons/react/24/outline";
 
 // api
 import { apiCreateFollow, apiDeleteFollow } from "@/apis";
@@ -20,11 +21,12 @@ import InfiniteScrollContainer from "@/components/InfiniteScrollContainer";
 
 interface Props {
   memberId: number;
+  nickname: string;
   onCloseModal: () => void;
 }
 
 /** 2023/05/18 - 팔로워 모달 컴포넌트 - by 1-blue */
-const FollowingModal: React.FC<Props> = ({ memberId, onCloseModal }) => {
+const FollowingModal: React.FC<Props> = ({ memberId, nickname, onCloseModal }) => {
   const { member } = useMemberStore();
   const toast = useCustomToast();
   const { data, fetchNextPage, hasNextPage } = useFetchFollowings({ memberId, page: 1, size: 1 });
@@ -37,6 +39,7 @@ const FollowingModal: React.FC<Props> = ({ memberId, onCloseModal }) => {
     const modalCloseHandler = (e: MouseEvent) => {
       if (!(e.target instanceof HTMLElement)) return;
       if (e.target instanceof HTMLButtonElement) return;
+      if (e.target instanceof HTMLSpanElement) return;
       if (!modalRef.current) return;
       if (modalRef.current.contains(e.target)) return;
 
@@ -75,17 +78,24 @@ const FollowingModal: React.FC<Props> = ({ memberId, onCloseModal }) => {
   };
 
   return (
-    <section className="fixed inset-0 bg-black/70 flex justify-center items-center">
+    <section className="fixed inset-0 bg-black/70 flex justify-center items-center flex-col">
+      <h5>{nickname}님의 팔로잉들</h5>
+
       <ul
         className="w-[280px] max-h-[60vh] overflow-y-auto flex flex-col bg-sub-200 rounded-md scrollbar"
         ref={modalRef}
       >
+        <li className="py-4 bg-blue-200 text-center font-bold">
+          <div className="border-[3px] border-dotted inline-block rounded-full p-2 border-blue-600">
+            <BellAlertIcon className="w-14 h-14 text-blue-600" />
+          </div>
+        </li>
         <InfiniteScrollContainer fetchMore={fetchNextPage} hasMore={hasNextPage}>
           {data?.pages.map((page) =>
             page.data.map((follower) => (
               <li
                 key={follower.memberId}
-                className="px-4 py-2 flex items-center border-b border-sub-400 even:bg-sub-50"
+                className="px-4 py-2 flex items-center border-b border-sub-400 last-of-type:border-b-0 odd:bg-blue-100"
               >
                 <Avatar
                   src={follower.profileImageUrl}

@@ -28,3 +28,33 @@ export interface ApiFetchMemberResponse extends Member {}
 export interface ApiFetchMemberHandler {
   (body: ApiFetchMemberRequest): Promise<ApiFetchMemberResponse>;
 }
+
+// ============================== 로그인한 멤버 정보 수정 ==============================
+/** 2023/05/18 - 로그인한 멤버 정보 수정 송신 타입 - by leekoby */
+export interface ApiUpdateMemberRequest {
+  memberId: number;
+  password?: string;
+  nickname: string;
+  phone: string;
+  introduction: string;
+  link: string;
+  profileImageUrl: string;
+}
+/** 2023/05/18 - 로그인한 멤버 정보 수정 수신 타입 - by leekoby */
+export interface ApiUpdateMemberResponse extends Member {
+  createdAt: Date;
+  modifiedAt: Date;
+  memberId: number;
+  email: string;
+  name: string;
+  nickname: string;
+  phone: string;
+  oauth: boolean;
+  introduction: string;
+  link: string;
+  profileImageUrl: string;
+}
+/** 2023/05/18 - 로그인한 멤버 정보 수정 핸들러 - by leekoby */
+export interface ApiUpdateMemberHandler {
+  (body: ApiUpdateMemberRequest): Promise<ApiUpdateMemberResponse>;
+}
