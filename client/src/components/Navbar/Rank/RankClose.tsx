@@ -6,7 +6,7 @@ const RankClose = ({ rankBind }: { rankBind: [boolean, React.Dispatch<boolean>] 
   const item = currentRank[0];
 
   return (
-    <div className="flex justify-between mr-6 text-xl cursor-pointer relative">
+    <div className="flex justify-between text-xl cursor-pointer relative">
       <div className="hover:text-rose-400 flex">
         <div>{item.rank}</div>
         <div

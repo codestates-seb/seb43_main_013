@@ -1,19 +1,27 @@
 "use client";
 
-import { useState } from "react";
-import { useModalActions } from "@/components/Login/contextAPI/useModal";
+import { useEffect, useState } from "react";
 
 import SearchDiv from "@/components/Header/SearchDiv";
 import IsLoginSide from "@/components/Header/LoginSide";
-// import InputModal from "@/components/Header/InputModal";
 import HeaderLogo from "@/components/Header/HeaderLogo";
 import SearchSide from "@/components/Header/SearchSide";
 import headerArr from "@/components/Header/HeaderArr";
 
 /** 2023/05/04 - 헤더 컴포넌트 - by Kadesti */
 const Header: React.FC = () => {
+  const access_token = localStorage.getItem("accessToken");
+  const refresh_token = localStorage.getItem("refreshToken");
+
   const [isLogin, setIsLogin] = useState(false);
-  // const [isLogin, setIsLogin] = useState(true);
+
+  useEffect(() => {
+    if (access_token) {
+      setIsLogin(true);
+    } else {
+      setIsLogin(false);
+    }
+  }, [access_token]);
 
   const nickState = useState(false);
   const { leftArr, rightArr } = headerArr();
@@ -26,7 +34,6 @@ const Header: React.FC = () => {
         <SearchDiv />
         {isLogin ? <IsLoginSide nickState={nickState} /> : <SearchSide array={rightArr} />}
       </div>
-      {/* {inputModal && <InputModal setInputModal={setInputModal} />} */}
     </header>
   );
 };
