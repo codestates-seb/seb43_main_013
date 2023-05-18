@@ -103,24 +103,6 @@ const FeedbackMain = () => {
               }),
             )}
           </div>
-          {/*  2023/05/14 - 무한스크롤 피드백 게시글 목록 - by leekoby  */}
-          <div className="flex flex-col flex-wrap gap-5 md:flex-row">
-            {/* TODO: //*게시글 북마크 좋아요 클릭되게 하는 방법 생각해보기  */}
-            {data.pages.map((page, pageIndex) =>
-              page.data.map((innerData, itemIndex) => {
-                const isLastItem = pageIndex === data.pages.length - 1 && itemIndex === page.data.length - 1;
-                return (
-                  <Link
-                    key={innerData.feedbackBoardId}
-                    href={`/feedback/${innerData.feedbackBoardId}`}
-                    className="lg:w-[48%]"
-                  >
-                    <FeedbackContentItem props={innerData} ref={isLastItem ? loader : undefined} />
-                  </Link>
-                );
-              }),
-            )}
-          </div>
           <div className="flex flex-col items-center m-auto">{}</div>
         </section>
         {/* 오른쪽 사이드 영역 */}
