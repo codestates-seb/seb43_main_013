@@ -39,6 +39,8 @@ public class NoticeDto {
     public static class Patch{
         private Long memberId; // 공지사항 작성자(admin)
 
+        private Long noticeId;
+
         private String title; // 제목
 
         private String content; // 내용
