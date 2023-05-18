@@ -121,6 +121,23 @@ public class NoticeService {
         return notice;
     }
 
+    /**
+     * <공지사항 삭제>
+     * 1. 게시글 존재 여부 확인
+     * 2. 삭제하려는 유저와 게시글을 작성한 유저가 같은 유저인지 검증
+     * 3. 삭제
+     */
+    public void removeNotice(Long noticeId) {
+        // 1. 게시글 존재 여부 확인
+        Notice notice = verifyNotice(noticeId);
+
+        // 2. 삭제하려는 유저와 게시글을 작성한 유저가 같은 유저인지 검증
+        memberService.verifiedAuthenticatedMember(notice.getMember().getMemberId());
+
+        // 3. 삭제
+        noticeRepository.delete(notice);
+    }
+
     // 게시글 검증 메서드
     private Notice verifyNotice(Long noticeId) {
         Optional<Notice> optionalNotice = noticeRepository.findById(noticeId);
@@ -146,5 +163,6 @@ public class NoticeService {
         notice.setViewCount(notice.getViewCount() + 1);
         noticeRepository.save(notice);
     }
+
 
 }

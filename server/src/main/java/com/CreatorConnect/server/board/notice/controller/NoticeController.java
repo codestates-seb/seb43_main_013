@@ -65,4 +65,16 @@ public class NoticeController {
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+    // 공지사항 삭제
+    @DeleteMapping("/notice/{noticeId}")
+    @Secured("ROLE_ADMIN")
+    public ResponseEntity deleteNotice(@PathVariable("noticeId") @Positive Long noticeId,
+                                       @RequestHeader("Authorization") String authorizationToken) {
+        String token = authorizationToken.substring(7);
+
+        noticeService.removeNotice(noticeId);
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 }
