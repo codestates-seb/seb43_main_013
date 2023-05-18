@@ -226,7 +226,7 @@ public class FreeBoardController {
         }
 
         Bookmark bookmark = new Bookmark();
-        bookmark.setBoardType(Like.BoardType.FREEBOARD);
+        bookmark.setBoardType(Bookmark.BoardType.FREEBOARD);
         bookmark.setMember(currentMember);
         bookmark.setFreeBoard(findfreeBoard);
         bookmarkRepository.save(bookmark);

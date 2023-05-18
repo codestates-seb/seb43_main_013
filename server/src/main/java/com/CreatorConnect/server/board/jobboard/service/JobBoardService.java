@@ -3,6 +3,7 @@ package com.CreatorConnect.server.board.jobboard.service;
 import com.CreatorConnect.server.board.categories.jobcategory.entity.JobCategory;
 import com.CreatorConnect.server.board.categories.jobcategory.repository.JobCategoryRepository;
 import com.CreatorConnect.server.board.categories.jobcategory.service.JobCategoryService;
+import com.CreatorConnect.server.board.freeboard.entity.FreeBoard;
 import com.CreatorConnect.server.board.jobboard.dto.JobBoardDto;
 import com.CreatorConnect.server.board.jobboard.entity.JobBoard;
 import com.CreatorConnect.server.board.jobboard.mapper.JobBoardMapper;
@@ -191,7 +192,7 @@ public class JobBoardService {
     }
 
     // 게시글 존재 여부 검증 메서드
-    private JobBoard verifyJobBoard(Long jobBoardId) {
+    public JobBoard verifyJobBoard(Long jobBoardId) {
         Optional<JobBoard> optionalJobBoard = jobBoardRepository.findById(jobBoardId);
         return optionalJobBoard.orElseThrow(() ->
                 new BusinessLogicException(ExceptionCode.JOBBOARD_NOT_FOUND));
@@ -215,7 +216,4 @@ public class JobBoardService {
         jobBoard.setViewCount(jobBoard.getViewCount() + 1);
         jobBoardRepository.save(jobBoard);
     }
-
-
-
 }

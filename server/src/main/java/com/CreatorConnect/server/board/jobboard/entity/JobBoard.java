@@ -3,13 +3,17 @@ package com.CreatorConnect.server.board.jobboard.entity;
 import com.CreatorConnect.server.audit.Auditable;
 import com.CreatorConnect.server.board.Board;
 import com.CreatorConnect.server.board.categories.jobcategory.entity.JobCategory;
+import com.CreatorConnect.server.member.bookmark.entity.Bookmark;
 import com.CreatorConnect.server.member.entity.Member;
+import com.CreatorConnect.server.member.like.entity.Like;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -77,4 +81,12 @@ public class JobBoard extends Auditable implements Board {
         this.likeCount = this.likeCount == null ? 0 : this.likeCount;
         this.viewCount = this.viewCount == null ? 0 : this.viewCount;
     }
+
+    // jobBoard - Bookmark 일대다 매핑
+    @OneToMany(mappedBy = "jobBoard", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Set<Bookmark> bookmarks = new HashSet<>();
+
+    // jobBoard - Like 일대다 매핑
+    @OneToMany(mappedBy = "jobBoard", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Set<Like> likes = new HashSet<>();
 }
