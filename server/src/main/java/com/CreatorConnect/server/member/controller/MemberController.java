@@ -2,6 +2,7 @@ package com.CreatorConnect.server.member.controller;
 
 import com.CreatorConnect.server.board.feedbackboard.entity.FeedbackBoard;
 import com.CreatorConnect.server.board.freeboard.entity.FreeBoard;
+import com.CreatorConnect.server.board.jobboard.entity.JobBoard;
 import com.CreatorConnect.server.exception.BusinessLogicException;
 import com.CreatorConnect.server.exception.ExceptionCode;
 import com.CreatorConnect.server.member.bookmark.entity.Bookmark;
@@ -32,6 +33,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -334,13 +336,30 @@ public class MemberController {
                                 like.getFeedbackBoard().getCommentCount(),
                                 like.getFeedbackBoard().getLikeCount(),
                                 like.getFeedbackBoard().getViewCount(),
-                                like.getFeedbackBoard().getCategoryName(),
+                                like.getFeedbackBoard().getFeedbackCategoryName(),
                                 like.getFeedbackBoard().getMember().getMemberId(),
                                 like.getFeedbackBoard().getMember().getEmail(),
                                 like.getFeedbackBoard().getMember().getNickname(),
                                 like.getFeedbackBoard().getMember().getProfileImageUrl(),
                                 like.getFeedbackBoard().getCreatedAt(),
                                 like.getFeedbackBoard().getModifiedAt()
+                        );
+                    } else if (like.getBoardType() == Like.BoardType.JOBBOARD) {
+                        return new MemberBoardResponseDto(
+                                like.getBoardType().toString(),
+                                like.getJobBoard().getJobBoardId(),
+                                like.getJobBoard().getTitle(),
+                                like.getJobBoard().getContent(),
+                                like.getJobBoard().getCommentCount(),
+                                like.getJobBoard().getLikeCount(),
+                                like.getJobBoard().getViewCount(),
+                                like.getJobBoard().getJobCategoryName(),
+                                like.getJobBoard().getMember().getMemberId(),
+                                like.getJobBoard().getMember().getEmail(),
+                                like.getJobBoard().getMember().getNickname(),
+                                like.getJobBoard().getMember().getProfileImageUrl(),
+                                like.getJobBoard().getCreatedAt(),
+                                like.getJobBoard().getModifiedAt()
                         );
                     }
                     return null;
@@ -369,7 +388,7 @@ public class MemberController {
 
         List<MemberBoardResponseDto> response = bookmarked.stream()
                 .map(bookmark -> {
-                    if (bookmark.getBoardType() == Like.BoardType.FREEBOARD) {
+                    if (bookmark.getBoardType() == Bookmark.BoardType.FREEBOARD) {
                         return new MemberBoardResponseDto(
                                 bookmark.getBoardType().toString(),
                                 bookmark.getFreeBoard().getFreeBoardId(),
@@ -386,7 +405,7 @@ public class MemberController {
                                 bookmark.getFreeBoard().getCreatedAt(),
                                 bookmark.getFreeBoard().getModifiedAt()
                         );
-                    } else if (bookmark.getBoardType() == Like.BoardType.FEEDBACKBOARD) {
+                    } else if (bookmark.getBoardType() == Bookmark.BoardType.FEEDBACKBOARD) {
                         return new MemberBoardResponseDto(
                                 bookmark.getBoardType().toString(),
                                 bookmark.getFeedbackBoard().getFeedbackBoardId(),
@@ -395,14 +414,30 @@ public class MemberController {
                                 bookmark.getFeedbackBoard().getCommentCount(),
                                 bookmark.getFeedbackBoard().getLikeCount(),
                                 bookmark.getFeedbackBoard().getViewCount(),
-                                bookmark.getFeedbackBoard().getCategoryName(),
+                                bookmark.getFeedbackBoard().getFeedbackCategoryName(),
                                 bookmark.getFeedbackBoard().getMember().getMemberId(),
                                 bookmark.getFeedbackBoard().getMember().getEmail(),
                                 bookmark.getFeedbackBoard().getMember().getNickname(),
                                 bookmark.getFeedbackBoard().getMember().getProfileImageUrl(),
                                 bookmark.getFeedbackBoard().getCreatedAt(),
                                 bookmark.getFeedbackBoard().getModifiedAt()
-
+                        );
+                    } else if (bookmark.getBoardType() == Bookmark.BoardType.JOBBOARD) {
+                        return new MemberBoardResponseDto(
+                                bookmark.getBoardType().toString(),
+                                bookmark.getJobBoard().getJobBoardId(),
+                                bookmark.getJobBoard().getTitle(),
+                                bookmark.getJobBoard().getContent(),
+                                bookmark.getJobBoard().getCommentCount(),
+                                bookmark.getJobBoard().getLikeCount(),
+                                bookmark.getJobBoard().getViewCount(),
+                                bookmark.getJobBoard().getJobCategoryName(),
+                                bookmark.getJobBoard().getMember().getMemberId(),
+                                bookmark.getJobBoard().getMember().getEmail(),
+                                bookmark.getJobBoard().getMember().getNickname(),
+                                bookmark.getJobBoard().getMember().getProfileImageUrl(),
+                                bookmark.getJobBoard().getCreatedAt(),
+                                bookmark.getJobBoard().getModifiedAt()
                         );
                     }
                     return null;
@@ -427,40 +462,60 @@ public class MemberController {
 
         List<FreeBoard> freeBoards = member.getFreeBoards();
         List<FeedbackBoard> feedbackBoards = member.getFeedbackBoards();
+        List<JobBoard> jobBoards = member.getJobBoards();
 
         List<MemberBoardResponseDto> response = Stream.concat(
-                        freeBoards.stream().map(freeBoard -> new MemberBoardResponseDto(
-                                "FREEBOARD",
-                                freeBoard.getFreeBoardId(),
-                                freeBoard.getTitle(),
-                                freeBoard.getContent(),
-                                freeBoard.getCommentCount(),
-                                freeBoard.getLikeCount(),
-                                freeBoard.getViewCount(),
-                                freeBoard.getCategoryName(),
-                                freeBoard.getMember().getMemberId(),
-                                freeBoard.getMember().getEmail(),
-                                freeBoard.getMember().getNickname(),
-                                freeBoard.getMember().getProfileImageUrl(),
-                                freeBoard.getCreatedAt(),
-                                freeBoard.getModifiedAt()
-                        )),
-                        feedbackBoards.stream().map(feedbackBoard -> new MemberBoardResponseDto(
-                                "FEEDBACKBOARD",
-                                feedbackBoard.getFeedbackBoardId(),
-                                feedbackBoard.getTitle(),
-                                feedbackBoard.getContent(),
-                                feedbackBoard.getCommentCount(),
-                                feedbackBoard.getLikeCount(),
-                                feedbackBoard.getViewCount(),
-                                feedbackBoard.getCategoryName(),
-                                feedbackBoard.getMember().getMemberId(),
-                                feedbackBoard.getMember().getEmail(),
-                                feedbackBoard.getMember().getNickname(),
-                                feedbackBoard.getMember().getProfileImageUrl(),
-                                feedbackBoard.getCreatedAt(),
-                                feedbackBoard.getModifiedAt()
-                        )))
+                        Stream.concat(
+                                freeBoards.stream().map(freeBoard -> new MemberBoardResponseDto(
+                                        "FREEBOARD",
+                                        freeBoard.getFreeBoardId(),
+                                        freeBoard.getTitle(),
+                                        freeBoard.getContent(),
+                                        freeBoard.getCommentCount(),
+                                        freeBoard.getLikeCount(),
+                                        freeBoard.getViewCount(),
+                                        freeBoard.getCategoryName(),
+                                        freeBoard.getMember().getMemberId(),
+                                        freeBoard.getMember().getEmail(),
+                                        freeBoard.getMember().getNickname(),
+                                        freeBoard.getMember().getProfileImageUrl(),
+                                        freeBoard.getCreatedAt(),
+                                        freeBoard.getModifiedAt()
+                                )),
+                                feedbackBoards.stream().map(feedbackBoard -> new MemberBoardResponseDto(
+                                        "FEEDBACKBOARD",
+                                        feedbackBoard.getFeedbackBoardId(),
+                                        feedbackBoard.getTitle(),
+                                        feedbackBoard.getContent(),
+                                        feedbackBoard.getCommentCount(),
+                                        feedbackBoard.getLikeCount(),
+                                        feedbackBoard.getViewCount(),
+                                        feedbackBoard.getFeedbackCategoryName(),
+                                        feedbackBoard.getMember().getMemberId(),
+                                        feedbackBoard.getMember().getEmail(),
+                                        feedbackBoard.getMember().getNickname(),
+                                        feedbackBoard.getMember().getProfileImageUrl(),
+                                        feedbackBoard.getCreatedAt(),
+                                        feedbackBoard.getModifiedAt()
+                                ))
+                        ),
+                        jobBoards.stream().map(jobBoard -> new MemberBoardResponseDto(
+                                "JOBBOARD",
+                                jobBoard.getJobBoardId(),
+                                jobBoard.getTitle(),
+                                jobBoard.getContent(),
+                                jobBoard.getCommentCount(),
+                                jobBoard.getLikeCount(),
+                                jobBoard.getViewCount(),
+                                jobBoard.getJobCategoryName(),
+                                jobBoard.getMember().getMemberId(),
+                                jobBoard.getMember().getEmail(),
+                                jobBoard.getMember().getNickname(),
+                                jobBoard.getMember().getProfileImageUrl(),
+                                jobBoard.getCreatedAt(),
+                                jobBoard.getModifiedAt()
+                        ))
+                )
                 .sorted(Comparator.comparing(MemberBoardResponseDto::getCreatedAt).reversed())
                 .skip((page - 1) * size)
                 .limit(size)
