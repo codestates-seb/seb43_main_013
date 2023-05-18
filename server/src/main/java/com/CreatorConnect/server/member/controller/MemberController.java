@@ -76,7 +76,7 @@ public class MemberController {
 
         memberDtoPatch.setMemberId(memberId);
         Member member = mapper.memberPatchDtoToMember(memberDtoPatch);
-        Member updateMember = memberService.updateMember(token, memberId, member);
+        Member updateMember = memberService.updateMember(memberId, member);
 
         MemberResponseDto responseDto = mapper.memberToMemberResponseDto(updateMember);
 

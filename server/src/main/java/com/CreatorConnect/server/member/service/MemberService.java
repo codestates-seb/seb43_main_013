@@ -1,7 +1,6 @@
 package com.CreatorConnect.server.member.service;
 
 import com.CreatorConnect.server.auth.event.MemberRegistrationApplicationEvent;
-import com.CreatorConnect.server.auth.jwt.JwtAuthenticationToken;
 import com.CreatorConnect.server.auth.jwt.JwtTokenizer;
 import com.CreatorConnect.server.auth.utils.CustomAuthorityUtils;
 import com.CreatorConnect.server.exception.BusinessLogicException;
@@ -18,20 +17,13 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestTemplate;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
@@ -82,11 +74,10 @@ public class MemberService {
     }
 
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE)
-    public Member updateMember(String jwtToken, Long memberId, Member member) {
+    public Member updateMember(Long memberId, Member member) {
 
         Member findMember = findVerifiedMember(memberId);
-
-        verifiedAuthenticatedMember(jwtToken, findMember);
+        verifiedAuthenticatedMember(findMember.getMemberId());
 
         if (member.getPassword() != null) {
             findMember.setPassword(passwordEncoder.encode(member.getPassword()));
