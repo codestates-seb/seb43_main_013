@@ -1,4 +1,4 @@
-package com.CreatorConnect.server.board.freeboard.conroller;
+package com.CreatorConnect.server.board.freeboard.controller;
 
 import com.CreatorConnect.server.board.categories.category.service.CategoryService;
 import com.CreatorConnect.server.board.freeboard.dto.FreeBoardDto;
@@ -91,7 +91,7 @@ public class FreeBoardController {
     }
 
     // 자유 게시판 카테고리 별 목록 조회
-    @GetMapping("/freboards/category/{categoryId}")
+    @GetMapping("/freeboards/categories/{categoryId}")
     public ResponseEntity getFreeBoardsByCategory(@PathVariable("categoryId") long categoryId,
                                                   @RequestParam String sort,
                                                   @Positive @RequestParam int page,

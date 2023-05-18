@@ -5,7 +5,6 @@ import com.CreatorConnect.server.board.feedbackboard.service.FeedbackBoardServic
 import com.CreatorConnect.server.board.feedbackboard.dto.FeedbackBoardDto;
 import com.CreatorConnect.server.board.feedbackboard.dto.FeedbackBoardResponseDto;
 import com.CreatorConnect.server.board.feedbackboard.entity.FeedbackBoard;
-import com.CreatorConnect.server.board.feedbackboard.mapper.FeedbackBoardMapper;
 import com.CreatorConnect.server.board.tag.entity.Tag;
 import com.CreatorConnect.server.board.tag.mapper.TagMapper;
 import com.CreatorConnect.server.member.bookmark.entity.Bookmark;
@@ -34,7 +33,6 @@ import java.util.stream.Collectors;
 public class FeedbackBoardController {
     private final FeedbackBoardService feedbackBoardService;
     private final FeedbackBoardRepository feedbackBoardRepository;
-    private final FeedbackBoardMapper mapper;
     private final TagMapper tagMapper;
     private final MemberService memberService;
     private final MemberRepository memberRepository;
@@ -71,12 +69,24 @@ public class FeedbackBoardController {
         FeedbackBoardResponseDto.Multi response = feedbackBoardService.responseFeedbacks(sort, page, size);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+    //목록조회 -> 피드백 카테고리(선택) - 카테고리(전체)
     @GetMapping("/feedbackboards/feedbackcategories/{feedbackCategoryId}")
     public ResponseEntity getFeedbacksByFeedbackCategory(@PathVariable("feedbackCategoryId") @Positive Long feedbackCategoryId,
                                                          @RequestParam("sort") String sort,
                                                          @RequestParam("page") @Positive int page,
                                                          @RequestParam("size") @Positive int size) {
         FeedbackBoardResponseDto.Multi response = feedbackBoardService.responseFeedbacksByCategory(feedbackCategoryId, sort, page, size);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    //목록조회 -> 피드백 카테고리(선택) - 카테고리(선택)
+    @GetMapping("/feedbackboards/feedbackcategories/{feedbackCategoryId}/categories/{categoryId}")
+    public ResponseEntity getFeedbacksByFeedbackCategoryAndCategory(@PathVariable("feedbackCategoryId") @Positive Long feedbackCategoryId,
+                                                         @PathVariable("categoryId") @Positive Long categoryId,
+                                                         @RequestParam("sort") String sort,
+                                                         @RequestParam("page") @Positive int page,
+                                                         @RequestParam("size") @Positive int size) {
+        FeedbackBoardResponseDto.Multi response = feedbackBoardService.responseFeedbacksByCategory(feedbackCategoryId, categoryId, sort, page, size);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
     @DeleteMapping("/feedbackboard/{feedbackBoardId}")

@@ -26,7 +26,6 @@ public class FeedbackBoardResponseDto {
         private long feedbackBoardId;
         private String title;
         private String content;
-//        private String tag;
         private String categoryName;
         private String feedbackCategoryName;
         private List<TagDto.TagInfo> tags; // 태그
