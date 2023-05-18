@@ -159,11 +159,11 @@ public class JobBoardService {
 
             // 게시물을 북마크한 경우
             bookmarked = loggedinMember.getBookmarks().stream()
-                    .anyMatch(bookmark -> bookmark.getFreeBoard().equals(jobBoard));
+                    .anyMatch(bookmark -> jobBoard.equals(bookmark.getFreeBoard()));
 
             // 게시물을 좋아요한 경우
             liked = loggedinMember.getLikes().stream()
-                    .anyMatch(like -> like.getFreeBoard().equals(jobBoard));
+                    .anyMatch(like -> jobBoard.equals(like.getFreeBoard()));
         }
 
         // 4. 매핑

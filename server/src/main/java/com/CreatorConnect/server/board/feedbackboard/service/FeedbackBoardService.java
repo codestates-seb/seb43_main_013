@@ -148,11 +148,11 @@ public class FeedbackBoardService {
 
             // 게시물을 북마크한 경우
             bookmarked = loggedinMember.getBookmarks().stream()
-                    .anyMatch(bookmark -> bookmark.getFeedbackBoard().equals(foundFeedbackBoard));
+                    .anyMatch(bookmark -> foundFeedbackBoard.equals(bookmark.getFeedbackBoard()));
 
             // 게시물을 좋아요한 경우
             liked = loggedinMember.getLikes().stream()
-                    .anyMatch(like -> like.getFeedbackBoard().equals(foundFeedbackBoard));
+                    .anyMatch(like -> foundFeedbackBoard.equals(like.getFeedbackBoard()));
         }
 
         // 매핑

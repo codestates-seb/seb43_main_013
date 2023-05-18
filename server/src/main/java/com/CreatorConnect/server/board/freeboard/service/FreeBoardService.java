@@ -207,11 +207,11 @@ public class FreeBoardService {
 
             // 게시물을 북마크한 경우
             bookmarked = loggedinMember.getBookmarks().stream()
-                    .anyMatch(bookmark -> bookmark.getFreeBoard().equals(freeBoard));
+                    .anyMatch(bookmark -> freeBoard.equals(bookmark.getFreeBoard()));
 
             // 게시물을 좋아요한 경우
             liked = loggedinMember.getLikes().stream()
-                    .anyMatch(like -> like.getFreeBoard().equals(freeBoard));
+                    .anyMatch(like -> freeBoard.equals(like.getFreeBoard()));
         }
 
         // 4. 매핑
