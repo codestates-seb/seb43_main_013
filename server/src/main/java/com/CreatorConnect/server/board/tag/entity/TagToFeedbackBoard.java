@@ -13,7 +13,7 @@ import javax.persistence.*;
 public class TagToFeedbackBoard { // 피드백 게시판 - 태그 매핑 테이블
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long feedbackBoardId;
+    private Long tagToFeedbackBoardId;
 
     @ManyToOne
     @JoinColumn(name = "FEEDBACKBOARD_ID")
