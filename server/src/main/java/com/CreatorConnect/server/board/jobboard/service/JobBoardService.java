@@ -142,7 +142,7 @@ public class JobBoardService {
      * 3. 호그인한 멤버
      * 4. 매핑
      */
-    public JobBoard getJobBoardDetail(Long jobBoardId) {
+    public JobBoardDto.Response getJobBoardDetail(Long jobBoardId) {
         // 1. 게시글 존재 여부 확인
         JobBoard jobBoard = verifyJobBoard(jobBoardId);
 
@@ -171,7 +171,7 @@ public class JobBoardService {
         response.setBookmarked(bookmarked);
         response.setLiked(liked);
 
-        return jobBoard;
+        return response;
     }
 
     /**
