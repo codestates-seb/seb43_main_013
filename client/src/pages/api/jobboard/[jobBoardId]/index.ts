@@ -27,6 +27,7 @@ const dummyJobBoard: JobBoard = {
   email: "1-blue@naver.com", // 작성자 이메일
   nickname: "1-blue", // 작성자 닉네임
   profileImageUrl: faker.image.avatar(),
+  tags: [],
 };
 
 /** 2023/05/10 - 구인구직 게시글 생성/수정/삭제 요청 - by 1-blue */

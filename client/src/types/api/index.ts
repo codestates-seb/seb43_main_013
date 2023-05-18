@@ -16,6 +16,11 @@ export interface ResponsePromotionCategoriesType {
   promotionCategoryId: number;
   promotionCategoryName: string;
 }
+/** 2023/05/17 - Api Job Response 카테고리 타입 - by leekoby */
+export interface ResponseJobCategoriesType {
+  jobCategoryId: number;
+  jobCategoryName: string;
+}
 
 /** 2023/05/10 - 페이지 정보 타입 - by 1-blue */
 export interface PageInfo {
