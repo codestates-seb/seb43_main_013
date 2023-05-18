@@ -6,6 +6,7 @@ import com.CreatorConnect.server.board.comments.freecomment.entity.FreeComment;
 import com.CreatorConnect.server.board.freeboard.entity.FreeBoard;
 import com.CreatorConnect.server.board.feedbackboard.entity.FeedbackBoard;
 import com.CreatorConnect.server.board.jobboard.entity.JobBoard;
+import com.CreatorConnect.server.board.notice.entity.Notice;
 import com.CreatorConnect.server.board.recomments.feedbackrecomment.entity.FeedbackReComment;
 import com.CreatorConnect.server.board.recomments.freerecomment.entity.FreeReComment;
 import com.CreatorConnect.server.member.bookmark.entity.Bookmark;
@@ -119,6 +120,9 @@ public class Member extends Auditable {
 
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<Bookmark> bookmarks = new HashSet<>();
+
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Notice> notices = new ArrayList<>();
 
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> roles = new ArrayList<>();
