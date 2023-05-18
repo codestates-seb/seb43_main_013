@@ -101,17 +101,12 @@ public class FeedbackBoardService {
             foundFeedbackBoard.setCategory(category.orElseThrow(() ->
                     new BusinessLogicException(ExceptionCode.CATEGORY_NOT_FOUND)));
         }
-//        Optional<Category> category = categoryRepository.findByCategoryName(patchDto.getCategoryName());
-//        foundFeedbackBoard.setCategory(category.orElseThrow(() -> new BusinessLogicException(ExceptionCode.CATEGORY_NOT_FOUND)));
 
         // 피드백 카테고리를 수정할 경우 카테고리 유효성 검증
         if (patchDto.getFeedbackCategoryName() != null) { // 피드백 카테고리가 변경이 된경우
             Optional<FeedbackCategory> feedbackCategory = feedbackCategoryRepository.findByFeedbackCategoryName(patchDto.getFeedbackCategoryName());
             foundFeedbackBoard.setFeedbackCategory(feedbackCategory.orElseThrow(() -> new BusinessLogicException(ExceptionCode.FEEDBACK_CATEGORY_NOT_FOUND)));
         }
-
-//        Optional.ofNullable(feedbackBoard.getTag())
-//                .ifPresent(foundFeedbackBoard::setTag);
 
         // 저장
         FeedbackBoard updatedFeedbackBoard = feedbackBoardRepository.save(foundFeedbackBoard);
@@ -190,8 +185,20 @@ public class FeedbackBoardService {
         // page생성 - 피드백 카테고리 ID로 검색 후 정렬 적용
         Page<FeedbackBoard> feedbackBoardsPage = feedbackBoardRepository.findFeedbackBoardsByFeedbackCategoryId(feedbackCategoryId, sortedPageRequest(sort, page, size));
 
-        // 피드백 리스트 가져오기
-//        List<FeedbackBoardResponseDto.Details> responses = mapper.feedbackBoardsToFeedbackBoardDetailsResponses(feedbackBoardsPage.getContent());
+        // pageInfo 가져오기
+        FeedbackBoardResponseDto.PageInfo pageInfo = new FeedbackBoardResponseDto.PageInfo(feedbackBoardsPage.getNumber() + 1, feedbackBoardsPage.getSize(), feedbackBoardsPage.getTotalElements(), feedbackBoardsPage.getTotalPages());
+
+        // 태그 정보 적용
+        List<FeedbackBoardResponseDto.Details> responses = getResponseList(feedbackBoardsPage);
+
+        //리턴
+        return new FeedbackBoardResponseDto.Multi<>(responses, pageInfo);
+    }
+
+    //피드백 카테고리 - 카테고리별 목록 조회
+    public FeedbackBoardResponseDto.Multi<FeedbackBoardResponseDto.Details> responseFeedbacksByCategory(Long feedbackCategoryId, Long categoryId, String sort, int page, int size){
+        // page생성 - 피드백 카테고리 ID 와 카테고리 ID로 검색 후 정렬 적용
+        Page<FeedbackBoard> feedbackBoardsPage = feedbackBoardRepository.findFeedbackBoardsByFeedbackCategoryIdAndCategoryId(feedbackCategoryId, categoryId, sortedPageRequest(sort, page, size));
 
         // pageInfo 가져오기
         FeedbackBoardResponseDto.PageInfo pageInfo = new FeedbackBoardResponseDto.PageInfo(feedbackBoardsPage.getNumber() + 1, feedbackBoardsPage.getSize(), feedbackBoardsPage.getTotalElements(), feedbackBoardsPage.getTotalPages());
