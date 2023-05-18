@@ -2,6 +2,9 @@ export * from "./free";
 export * from "./feedback";
 export * from "./promotion";
 export * from "./job";
+export * from "./written";
+export * from "./bookmarked";
+export * from "./liked";
 
 /** 2023/05/11 - 보드 공통 타입 - by 1-blue */
 export interface Board {
@@ -18,6 +21,13 @@ export interface Board {
   profileImageUrl: string; // 작성자 프로필 이미지
   bookmarked: boolean;
   liked: boolean;
+}
+
+/** 2023/05/17 - 프로필 페이지에서 사용하는 보드 타입 - by 1-blue */
+export interface BoardOfProfile extends Board {
+  id: number;
+  categoryName?: string;
+  boardType: string;
 }
 
 /** 2023/05/16 - 태그 공통 타입 - by 1-blue */

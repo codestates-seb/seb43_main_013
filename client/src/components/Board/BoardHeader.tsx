@@ -121,7 +121,6 @@ const BoardHeader: React.FC<Props> = ({
     }
 
     try {
-      // TODO: 북마크 여부에 따른 조건부 처리
       if (bookmarked) {
         await apiDeleteBookmark(type, { boardId });
         toast({ title: "북마크를 제거했습니다.", status: "success" });
