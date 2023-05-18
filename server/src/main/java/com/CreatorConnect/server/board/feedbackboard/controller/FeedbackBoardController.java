@@ -5,7 +5,6 @@ import com.CreatorConnect.server.board.feedbackboard.service.FeedbackBoardServic
 import com.CreatorConnect.server.board.feedbackboard.dto.FeedbackBoardDto;
 import com.CreatorConnect.server.board.feedbackboard.dto.FeedbackBoardResponseDto;
 import com.CreatorConnect.server.board.feedbackboard.entity.FeedbackBoard;
-import com.CreatorConnect.server.board.feedbackboard.mapper.FeedbackBoardMapper;
 import com.CreatorConnect.server.board.tag.entity.Tag;
 import com.CreatorConnect.server.board.tag.mapper.TagMapper;
 import com.CreatorConnect.server.member.bookmark.entity.Bookmark;
@@ -34,7 +33,6 @@ import java.util.stream.Collectors;
 public class FeedbackBoardController {
     private final FeedbackBoardService feedbackBoardService;
     private final FeedbackBoardRepository feedbackBoardRepository;
-    private final FeedbackBoardMapper mapper;
     private final TagMapper tagMapper;
     private final MemberService memberService;
     private final MemberRepository memberRepository;

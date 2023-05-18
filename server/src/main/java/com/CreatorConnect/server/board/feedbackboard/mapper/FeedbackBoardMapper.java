@@ -15,8 +15,6 @@ public interface FeedbackBoardMapper {
     FeedbackBoard feedbackBoardPatchDtoToFeedbackBoard(FeedbackBoardDto.Patch feedbackBoardPatchDto);
     FeedbackBoardResponseDto.Patch feedbackBoardToFeedbackBoardPatchResponse(FeedbackBoard feedbackBoard);
     FeedbackBoardResponseDto.Details feedbackBoardToFeedbackBoardDetailsResponse(FeedbackBoard feedbackBoard);
-    List<FeedbackBoardResponseDto.Details>  feedbackBoardsToFeedbackBoardDetailsResponses (List<FeedbackBoard> feedbackBoards);
-
     // 게시글 목록 조회 시 Response를 위한 매핑
     FeedbackBoardResponseDto.Details feedbackBoardToResponse(FeedbackBoard feedbackBoard, List<TagDto.TagInfo> tags);
 
