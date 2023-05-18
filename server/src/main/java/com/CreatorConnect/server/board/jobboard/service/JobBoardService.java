@@ -93,7 +93,7 @@ public class JobBoardService {
 
         // 4-2. 제목 수정
         Optional.ofNullable(jobBoard.getTitle())
-                .ifPresent(title -> checkedJobBoard.setContent(title));
+                .ifPresent(title -> checkedJobBoard.setTitle(title));
 
         // 4-3. 내용 수정
         Optional.ofNullable(jobBoard.getContent())

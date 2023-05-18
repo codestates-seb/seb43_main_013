@@ -55,4 +55,14 @@ public class NoticeController {
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+    // 공지사항 상세 조회
+    @GetMapping("/notice/{noticeId}")
+    public ResponseEntity getNoticeDetail(@PathVariable("noticeId") @Positive Long noticeId) {
+        Notice notice = noticeService.getNoticeDetail(noticeId);
+
+        NoticeDto.Response response = mapper.noticeToNoticeResponseDto(notice);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 }

@@ -13,6 +13,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -95,6 +97,29 @@ public class NoticeService {
         return new NoticeDto.MultiResponseDto<>(response, notices);
     }
 
+    /**
+     * <구인구직 게시판 게시글 상세조회>
+     * 1. 게시글 존재 여부 확인
+     * 2. 조회수 증가
+     * 3. 호그인한 멤버
+     * 4. 매핑
+     */
+    public Notice getNoticeDetail(Long noticeId) {
+        // 1. 게시글 존재 여부 확인
+        Notice notice = verifyNotice(noticeId);
+
+        // 2. 조회수 증가
+        addViews(notice);
+
+        // 3. 로그인한 멤버
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication != null && authentication.isAuthenticated() && !"anonymousUser".equals(authentication.getName())) {
+            Member loggedinMember = memberService.findVerifiedMember(authentication.getName());
+        }
+
+        return notice;
+    }
 
     // 게시글 검증 메서드
     private Notice verifyNotice(Long noticeId) {
@@ -115,4 +140,11 @@ public class NoticeService {
             return PageRequest.of(page - 1, size, Sort.by("noticeId").ascending());
         }
     }
+
+    // 조회수 증가 메서드
+    private void addViews(Notice notice) {
+        notice.setViewCount(notice.getViewCount() + 1);
+        noticeRepository.save(notice);
+    }
+
 }
