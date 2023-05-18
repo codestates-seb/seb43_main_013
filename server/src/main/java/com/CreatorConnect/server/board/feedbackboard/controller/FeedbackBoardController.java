@@ -71,12 +71,24 @@ public class FeedbackBoardController {
         FeedbackBoardResponseDto.Multi response = feedbackBoardService.responseFeedbacks(sort, page, size);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+    //목록조회 -> 피드백 카테고리(선택) - 카테고리(전체)
     @GetMapping("/feedbackboards/feedbackcategories/{feedbackCategoryId}")
     public ResponseEntity getFeedbacksByFeedbackCategory(@PathVariable("feedbackCategoryId") @Positive Long feedbackCategoryId,
                                                          @RequestParam("sort") String sort,
                                                          @RequestParam("page") @Positive int page,
                                                          @RequestParam("size") @Positive int size) {
         FeedbackBoardResponseDto.Multi response = feedbackBoardService.responseFeedbacksByCategory(feedbackCategoryId, sort, page, size);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    //목록조회 -> 피드백 카테고리(선택) - 카테고리(선택)
+    @GetMapping("/feedbackboards/feedbackcategories/{feedbackCategoryId}/categories/{categoryId}")
+    public ResponseEntity getFeedbacksByFeedbackCategoryAndCategory(@PathVariable("feedbackCategoryId") @Positive Long feedbackCategoryId,
+                                                         @PathVariable("categoryId") @Positive Long categoryId,
+                                                         @RequestParam("sort") String sort,
+                                                         @RequestParam("page") @Positive int page,
+                                                         @RequestParam("size") @Positive int size) {
+        FeedbackBoardResponseDto.Multi response = feedbackBoardService.responseFeedbacksByCategory(feedbackCategoryId, categoryId, sort, page, size);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
     @DeleteMapping("/feedbackboard/{feedbackBoardId}")
