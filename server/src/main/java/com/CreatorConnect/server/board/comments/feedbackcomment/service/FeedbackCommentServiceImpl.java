@@ -35,6 +35,8 @@ public class FeedbackCommentServiceImpl implements CommentService {
     // 댓글 등록
     @Override
     public CommentResponseDto.Post createComment(Long id, CommentDto.Post postDto) {
+        // 멤버 검증
+        memberService.verifiedAuthenticatedMember(postDto.getMemberId());
 
         //feedbackBoard찾기
         Optional<FeedbackBoard> feedbackBoard = feedbackBoardRepository.findById(id);
