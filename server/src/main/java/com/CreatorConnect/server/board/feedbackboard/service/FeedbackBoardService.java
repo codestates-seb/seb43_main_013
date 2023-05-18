@@ -129,7 +129,10 @@ public class FeedbackBoardService {
 
         // 게시글에 있는 태그 추가
         List<TagDto.TagInfo> tags = foundFeedbackBoard.getTagBoards().stream()
-                .map(tagToFeedbackBoard -> tagMapper.tagToTagToBoard(tagToFeedbackBoard.getTag()))
+                .map(tagToFeedbackBoard -> {
+                    TagDto.TagInfo tagInfo = tagMapper.tagToTagToBoard(tagToFeedbackBoard.getTag());
+                    return tagInfo;
+                })
                 .collect(Collectors.toList());
 
         // 조회수 증가
