@@ -18,7 +18,8 @@ public enum ExceptionCode {
     CATEGORY_EXISTS(409, "Category already exists. Please provide a different category"),
     MEMBER_FIELD_NOT_FOUND(500, "Member field not found. Please check the object and try again."),
     JOBBOARD_NOT_FOUND(404, "JobBoard not found, Please check the JobBoard ID and try again."),
-    INVALID_TOKEN(403, "Invalid token. Please provide a valid token.");
+    INVALID_TOKEN(403, "Invalid token. Please provide a valid token."),
+    NOTICE_NOT_FOUND(404, "Notice not found, Please check the Notice Id and try again");
 
     @Getter
     private int status;

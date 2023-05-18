@@ -455,8 +455,8 @@ public class MemberController {
 
     @GetMapping("/api/member/{member-id}/written")
     public ResponseEntity getwritten(@PathVariable("member-id") @Positive Long memberId,
-                                        @RequestParam(defaultValue = "1") int page,
-                                        @RequestParam(defaultValue = "10") int size) {
+                                     @RequestParam(defaultValue = "1") int page,
+                                     @RequestParam(defaultValue = "10") int size) {
 
         Member member = memberService.findVerifiedMember(memberId);
 
