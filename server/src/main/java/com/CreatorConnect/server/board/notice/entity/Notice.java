@@ -47,4 +47,9 @@ public class Notice extends Auditable implements Board { // 공지사항 엔티�
             this.member.getNotices().add(this);
         }
     }
+
+    @PrePersist
+    public void prePersist() { // 조회수가 없으면 0으로 초기화
+        this.viewCount = this.viewCount == null ? 0 : this.viewCount;
+    }
 }
