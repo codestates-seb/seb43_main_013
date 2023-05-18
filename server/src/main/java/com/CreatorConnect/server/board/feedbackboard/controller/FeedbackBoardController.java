@@ -200,7 +200,7 @@ public class FeedbackBoardController {
         }
 
         Bookmark bookmark = new Bookmark();
-        bookmark.setBoardType(Like.BoardType.FEEDBACKBOARD);
+        bookmark.setBoardType(Bookmark.BoardType.FEEDBACKBOARD);
         bookmark.setMember(currentMember);
         bookmark.setFeedbackBoard(findfeedbackBoard);
         bookmarkRepository.save(bookmark);

@@ -96,11 +96,11 @@ public class Member extends Auditable {
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<FeedbackBoard> feedbackBoards = new ArrayList<>();
 
-//    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-//    private List<PromotionBoard> promotionBoards = new ArrayList<>();
-//
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<JobBoard> jobBoards = new ArrayList<>();
+
+//    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+//    private List<PromotionBoard> promotionBoards = new ArrayList<>();
 //
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<FeedbackComment> feedbackComments = new ArrayList<>();
@@ -113,13 +113,7 @@ public class Member extends Auditable {
 
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<FreeReComment> freeReComments = new ArrayList<>();
-//
-//    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-//    private List<ReComment> reComments = new ArrayList<>();
-//
-//    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-//    private List<Bookmark> bookmarks = new ArrayList<>();
-//
+
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<Like> likes = new HashSet<>();
 
