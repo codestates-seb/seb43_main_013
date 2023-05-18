@@ -28,7 +28,10 @@ public class JobCategoryController {
     // 구인구직 카테고리 등록
     @Secured("ROLE_ADMIN")
     @PostMapping("/jobcategory/new")
-    public ResponseEntity postJobCategory(@Valid @RequestBody JobCategoryDto.Post post) {
+    public ResponseEntity postJobCategory(@Valid @RequestBody JobCategoryDto.Post post,
+                                          @RequestHeader("Authorization") String authorizationToken) {
+        String token = authorizationToken.substring(7);
+
         JobCategory jobCategory = mapper.jobCategoryPostDtoToJobCategory(post);
         JobCategory createdJobCategory = jobCategoryService.createJobCategory(jobCategory);
 
@@ -39,7 +42,10 @@ public class JobCategoryController {
     @Secured("ROLE_ADMIN")
     @PatchMapping("/jobcategory/{jobCategoryId}")
     public ResponseEntity patchJobCategory(@PathVariable("jobCategoryId") @Positive Long jobCategoryId,
-                                           @Valid @RequestBody JobCategoryDto.Patch patch) {
+                                           @Valid @RequestBody JobCategoryDto.Patch patch,
+                                           @RequestHeader("Authorization") String authorizationToken) {
+        String token = authorizationToken.substring(7);
+
         JobCategory jobCategory = mapper.jobCategoryPatchDtoToJobCategory(patch);
         jobCategory.setJobCategoryId(jobCategoryId);
         JobCategory updatedJobCategory = jobCategoryService.updateJobCategory(jobCategory, jobCategoryId);
@@ -66,7 +72,10 @@ public class JobCategoryController {
     // 구인구직 카테고리 삭제
     @Secured("ROLE_ADMIN")
     @DeleteMapping("/jobcategory/{jobCategoryId}")
-    public ResponseEntity deleteJobCategory(@PathVariable("jobCategoryId") @Positive Long categoryId) {
+    public ResponseEntity deleteJobCategory(@PathVariable("jobCategoryId") @Positive Long categoryId,
+                                            @RequestHeader("Authorization") String authorizationToken) {
+        String token = authorizationToken.substring(7);
+
         jobCategoryService.removeJobCategory(categoryId);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

@@ -25,7 +25,9 @@ public class JobBoardController {
     // 구인구직 게시판 게시글 등록
     @PostMapping("/jobboard/new")
     @Secured("ROLE_USER")
-    public ResponseEntity postJobBoard(@Valid @RequestBody JobBoardDto.Post post) {
+    public ResponseEntity postJobBoard(@Valid @RequestBody JobBoardDto.Post post,
+                                       @RequestHeader("Authorization") String authorizationToken) {
+        String token = authorizationToken.substring(7);
         JobBoard createdJobBoard = jobBoardService.createJobBoard(post);
 
         return new ResponseEntity<>(mapper.jobBoardToJobBoardPostResposneDto(createdJobBoard), HttpStatus.CREATED);
@@ -35,7 +37,9 @@ public class JobBoardController {
     @PatchMapping("/jobboard/{jobBoardId}")
     @Secured("ROLE_USER")
     public ResponseEntity patchJobBoard(@PathVariable("jobBoardId") @Positive Long jobBoardId,
-                                        @Valid @RequestBody JobBoardDto.Patch patch) {
+                                        @Valid @RequestBody JobBoardDto.Patch patch,
+                                        @RequestHeader("Authorization") String authorizationToken) {
+        String token = authorizationToken.substring(7);
         JobBoard updatedJobBoard = jobBoardService.updateJobBoard(patch, jobBoardId);
 
         return new ResponseEntity<>(mapper.jobBoardToJobBoardResponseDto(updatedJobBoard), HttpStatus.OK);
@@ -74,7 +78,9 @@ public class JobBoardController {
 
     // 구인구직 게시판 삭제
     @DeleteMapping("/jobboard/{jobBoardId}")
-    public ResponseEntity deleteJobBoard(@PathVariable("jobBoardId") @Positive Long jobBoardId) {
+    public ResponseEntity deleteJobBoard(@PathVariable("jobBoardId") @Positive Long jobBoardId,
+                                         @RequestHeader("Authorization") String authorizationToken) {
+        String token = authorizationToken.substring(7);
         jobBoardService.removeJobBoard(jobBoardId);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
