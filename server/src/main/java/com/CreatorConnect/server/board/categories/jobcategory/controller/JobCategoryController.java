@@ -62,4 +62,13 @@ public class JobCategoryController {
 
         return new ResponseEntity<>(responses, HttpStatus.OK);
     }
+
+    // 구인구직 카테고리 삭제
+    @Secured("ROLE_ADMIN")
+    @DeleteMapping("/jobcategory/{jobCategoryId}")
+    public ResponseEntity deleteJobCategory(@PathVariable("jobCategoryId") @Positive Long categoryId) {
+        jobCategoryService.removeJobCategory(categoryId);
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 }
