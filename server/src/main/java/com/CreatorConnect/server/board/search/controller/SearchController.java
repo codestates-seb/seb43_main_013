@@ -1,6 +1,8 @@
 package com.CreatorConnect.server.board.search.controller;
 
-import com.CreatorConnect.server.board.search.dto.SearchResponseDTO;
+import com.CreatorConnect.server.board.search.dto.SearchBoardResponseDto;
+import com.CreatorConnect.server.board.search.dto.SearchMemberResponseDto;
+import com.CreatorConnect.server.board.search.dto.SearchResponseDto;
 import com.CreatorConnect.server.board.search.service.SearchService;
 import org.springframework.data.domain.Page;
 
@@ -34,15 +36,38 @@ public class SearchController {
 
         Pageable pageable = PageRequest.of(page, size);
 
-        Page<SearchResponseDTO> searchResults = searchService.searchPosts(keyword, pageable);
-        List<SearchResponseDTO> response = searchResults.getContent().stream()
+        Page<SearchResponseDto> searchResults = searchService.searchPosts(keyword, pageable);
+
+        List<SearchResponseDto> response = searchResults.getContent().stream()
                 .map(searchResult -> {
-                    SearchResponseDTO dto = new SearchResponseDTO();
-                    dto.setBoardType(searchResult.getBoardType());
-                    dto.setId(searchResult.getId());
-                    dto.setTitle(searchResult.getTitle());
-                    dto.setContent(searchResult.getContent());
-                    return dto;
+                    if ("MEMBER".equals(searchResult.getBoardType())) {
+                        SearchMemberResponseDto memberDto = new SearchMemberResponseDto();
+                        memberDto.setBoardType(searchResult.getBoardType());
+                        memberDto.setId(searchResult.getId());
+                        memberDto.setMemberId(searchResult.getMemberId());
+                        memberDto.setEmail(searchResult.getEmail());
+                        memberDto.setName(searchResult.getName());
+                        memberDto.setNickname(searchResult.getNickname());
+                        memberDto.setProfileImageUrl(searchResult.getProfileImageUrl());
+                        memberDto.setCreatedAt(searchResult.getCreatedAt());
+                        memberDto.setModifiedAt(searchResult.getModifiedAt());
+                        return memberDto;
+                    } else {
+                        SearchBoardResponseDto boardDto = new SearchBoardResponseDto();
+                        boardDto.setBoardType(searchResult.getBoardType());
+                        boardDto.setId(searchResult.getId());
+                        boardDto.setTitle(searchResult.getTitle());
+                        boardDto.setContent(searchResult.getContent());
+                        boardDto.setCommentCount(searchResult.getCommentCount());
+                        boardDto.setLikeCount(searchResult.getLikeCount());
+                        boardDto.setViewCount(searchResult.getViewCount());
+                        boardDto.setCategoryName(searchResult.getCategoryName());
+                        boardDto.setMemberId(searchResult.getMemberId());
+                        boardDto.setProfileImageUrl(searchResult.getProfileImageUrl());
+                        boardDto.setCreatedAt(searchResult.getCreatedAt());
+                        boardDto.setModifiedAt(searchResult.getModifiedAt());
+                        return boardDto;
+                    }
                 })
                 .collect(Collectors.toList());
 
