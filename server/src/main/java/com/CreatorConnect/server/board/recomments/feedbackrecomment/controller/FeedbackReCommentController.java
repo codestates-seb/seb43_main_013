@@ -23,7 +23,9 @@ public class FeedbackReCommentController {
     @PostMapping("/feedbackboard/{feedbackBoardId}/comment/{commentId}/recomment/new")
     public ResponseEntity<ReCommentResponseDto.Post> postReComment(@PathVariable("feedbackBoardId") @Positive Long feedbackBoardId,
                                                                    @PathVariable("commentId") @Positive Long commentId,
-                                                                   @Valid @RequestBody ReCommentDto.Post postDto) {
+                                                                   @Valid @RequestBody ReCommentDto.Post postDto,
+                                                                   @RequestHeader(value = "Authorization") String authorizationToken) {
+        String token = authorizationToken.substring(7);
         ReCommentResponseDto.Post response = feedbackReCommentService.createReComment(feedbackBoardId, commentId, postDto);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
@@ -36,7 +38,7 @@ public class FeedbackReCommentController {
                                                    @RequestHeader(value = "Authorization") String authorizationToken){
 
         String token = authorizationToken.substring(7);
-        feedbackReCommentService.updateReComment(token, feedbackBoardId, commentId, reCommentId, patchDto);
+        feedbackReCommentService.updateReComment(feedbackBoardId, commentId, reCommentId, patchDto);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -54,7 +56,7 @@ public class FeedbackReCommentController {
                                                     @RequestHeader(value = "Authorization") String authorizationToken) {
 
         String token = authorizationToken.substring(7);
-        feedbackReCommentService.deleteReComment(token, feedbackBoardId, commentId, reCommentId);
+        feedbackReCommentService.deleteReComment(feedbackBoardId, commentId, reCommentId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

@@ -32,6 +32,9 @@ public class FeedbackReCommentServiceImpl implements ReCommentService {
 
     @Override
     public ReCommentResponseDto.Post createReComment(Long feedbackBoardId, Long commentId, ReCommentDto.Post postdto) {
+        // 멤버 검증
+        memberService.verifiedAuthenticatedMember(postdto.getMemberId());
+
         // 댓글 찾기
         Optional<FeedbackComment> feedbackComment = feedbackCommentRepository.findById(new CommentPK(feedbackBoardId,commentId));
         FeedbackComment foundFeedbackComment = feedbackComment.orElseThrow(() -> new BusinessLogicException(ExceptionCode.COMMENT_NOT_FOUND));
@@ -46,14 +49,13 @@ public class FeedbackReCommentServiceImpl implements ReCommentService {
         return  post;
     }
     @Override
-    public void updateReComment(String token, Long feedbackBoardId, Long commentId, Long reCommentId, CommentDto.Patch patchDto){
+    public void updateReComment(Long feedbackBoardId, Long commentId, Long reCommentId, CommentDto.Patch patchDto){
 
         // Dto의 Id값으로 Entity찾기
         FeedbackReComment foundFeedbackReComment = findVerifiedFeedbackReComment(feedbackBoardId, commentId, reCommentId);
 
         // 멤버 검증
-        Member findMember = memberService.findVerifiedMember(foundFeedbackReComment.getMemberId());
-        memberService.verifiedAuthenticatedMember(token, findMember);
+        memberService.verifiedAuthenticatedMember(patchDto.getMemberId());
 
         //찾은 Entity의 값 변경
         Optional.ofNullable(patchDto.getContent())
@@ -72,13 +74,12 @@ public class FeedbackReCommentServiceImpl implements ReCommentService {
         return mapper.feedbackReCommentToReCommentDetailsResponse(foundFeedbackReComment);
     }
     @Override
-    public void deleteReComment(String token, Long feedbackBoardId, Long commentId, Long reCommentId){
+    public void deleteReComment(Long feedbackBoardId, Long commentId, Long reCommentId){
         // 대댓글 찾기
         FeedbackReComment foundReComment = findVerifiedFeedbackReComment(feedbackBoardId, commentId, reCommentId);
 
         // 멤버 검증
-        Member findMember = memberService.findVerifiedMember(foundReComment.getMemberId());
-        memberService.verifiedAuthenticatedMember(token, findMember);
+        memberService.verifiedAuthenticatedMember(foundReComment.getMemberId());
 
         // 대댓글 수 -1
         Long reCommentCount = foundReComment.getFeedbackComment().getReCommentCount();
