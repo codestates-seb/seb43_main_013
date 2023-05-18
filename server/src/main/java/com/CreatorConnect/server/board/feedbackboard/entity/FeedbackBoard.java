@@ -44,8 +44,6 @@ public class FeedbackBoard extends Auditable implements Board {
     private Long likeCount;
     @Column
     private Long viewCount;
-    @Column
-    private String tag;
 
     @PrePersist
     public void prePersist() {
