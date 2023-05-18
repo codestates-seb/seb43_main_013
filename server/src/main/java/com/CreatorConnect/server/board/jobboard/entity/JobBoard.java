@@ -3,6 +3,7 @@ package com.CreatorConnect.server.board.jobboard.entity;
 import com.CreatorConnect.server.audit.Auditable;
 import com.CreatorConnect.server.board.Board;
 import com.CreatorConnect.server.board.categories.jobcategory.entity.JobCategory;
+import com.CreatorConnect.server.board.comments.jobcomment.entity.JobComment;
 import com.CreatorConnect.server.member.bookmark.entity.Bookmark;
 import com.CreatorConnect.server.member.entity.Member;
 import com.CreatorConnect.server.member.like.entity.Like;
@@ -12,7 +13,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -33,6 +36,9 @@ public class JobBoard extends Auditable implements Board {
 
     @Column
     private Long commentCount; // 댓글수
+
+    @Column
+    private long maxCommentCount; //삭제된 댓글까지 포함된 댓글 수
 
     @Column
     private Long likeCount; // 좋아요수
@@ -89,4 +95,8 @@ public class JobBoard extends Auditable implements Board {
     // jobBoard - Like 일대다 매핑
     @OneToMany(mappedBy = "jobBoard", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<Like> likes = new HashSet<>();
+
+    // jobBoard - comment 일대다 매핑
+    @OneToMany(mappedBy = "jobBoard", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<JobComment> jobComments = new ArrayList<>();
 }
