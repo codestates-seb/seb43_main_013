@@ -33,7 +33,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -56,9 +55,7 @@ public class MemberController {
     }
 
     @GetMapping("/")
-    public ResponseEntity home(){
-        return new ResponseEntity("home", HttpStatus.OK);
-    }
+    public ResponseEntity home(){return new ResponseEntity(HttpStatus.OK);}
 
     @PostMapping("/api/signup")
     public ResponseEntity postMember(@Valid @RequestBody MemberDto.Post memberDtoPost) {
@@ -74,8 +71,6 @@ public class MemberController {
                                       @Valid @RequestBody MemberDto.Patch memberDtoPatch,
                                       @RequestHeader(value = "Authorization") String authorizationToken) {
 
-        String token = authorizationToken.substring(7);
-
         memberDtoPatch.setMemberId(memberId);
         Member member = mapper.memberPatchDtoToMember(memberDtoPatch);
         Member updateMember = memberService.updateMember(memberId, member);
@@ -89,6 +84,7 @@ public class MemberController {
     public ResponseEntity getMember(@PathVariable("member-id") @Positive Long memberId) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
         final Member loginUser;
         if (authentication != null && authentication.isAuthenticated() && !"anonymousUser".equals(authentication.getName())) {
             loginUser = memberService.findVerifiedMember(authentication.getName());
@@ -133,8 +129,6 @@ public class MemberController {
     public ResponseEntity deleteMember(@PathVariable("member-id") @Positive Long memberId,
                                        @RequestHeader(value = "Authorization") String authorizationToken) {
 
-        String token = authorizationToken.substring(7);
-
         memberService.deleteMember(memberId);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -161,20 +155,12 @@ public class MemberController {
     public ResponseEntity followMember(@PathVariable("member-id") @Positive Long memberId,
                                        @RequestHeader(value = "Authorization") String authorizationToken) {
 
-        String token = authorizationToken.substring(7);
-
-        // 현재 로그인한 사용자 정보
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Member loginUser = memberService.findVerifiedMember(authentication.getName());
-
-        // 팔로우할 사용자 정보 가져오기
+        Member loginUser = memberService.getLoggedinMember();
         Member memberToFollow = memberService.findVerifiedMember(memberId);
 
         if (loginUser.getMemberId() == memberToFollow.getMemberId()){
             return new ResponseEntity(
-                    new BusinessLogicException(ExceptionCode.INVALID_MEMBER).getExceptionCode().getMessage(),
-                    HttpStatus.CONFLICT
-            );
+                    new BusinessLogicException(ExceptionCode.INVALID_MEMBER), HttpStatus.CONFLICT);
         }
 
         // 현재 로그인한 사용자가 이미 해당 사용자를 팔로우하고 있는지 확인
@@ -189,21 +175,14 @@ public class MemberController {
             return new ResponseEntity<>(HttpStatus.OK);
 
         } else return new ResponseEntity(
-                new BusinessLogicException(ExceptionCode.FOLLOWING_ALREADY_EXISTS).getExceptionCode().getMessage(),
-                HttpStatus.CONFLICT);
+                new BusinessLogicException(ExceptionCode.FOLLOWING_ALREADY_EXISTS), HttpStatus.CONFLICT);
     }
 
     @DeleteMapping("/api/member/{member-id}/follow")
     public ResponseEntity unfollowMember(@PathVariable("member-id") @Positive Long memberId,
                                          @RequestHeader(value = "Authorization") String authorizationToken) {
 
-        String token = authorizationToken.substring(7);
-
-        // 현재 로그인한 사용자 정보
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Member loginUser = memberService.findVerifiedMember(authentication.getName());
-
-        // 언팔로우할 사용자 정보
+        Member loginUser = memberService.getLoggedinMember();
         Member memberToUnFollow = memberService.findVerifiedMember(memberId);
 
         // 현재 로그인한 사용자가 이미 해당 사용자를 팔로우하고 있는지 확인
@@ -216,8 +195,7 @@ public class MemberController {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 
         } else return new ResponseEntity(
-                new BusinessLogicException(ExceptionCode.FOLLOWING_ALREADY_DELETED).getExceptionCode().getMessage(),
-                HttpStatus.CONFLICT);
+                new BusinessLogicException(ExceptionCode.FOLLOWING_ALREADY_DELETED), HttpStatus.CONFLICT);
     }
 
     @GetMapping("/api/member/{member-id}/followings")
@@ -373,7 +351,6 @@ public class MemberController {
                 new PageImpl<>(response, PageRequest.of(page - 1, size), totalElements);
 
         return new ResponseEntity( new MultiResponseDto<>(pageResponse.getContent(), pageResponse), HttpStatus.OK);
-
     }
 
     @GetMapping("/api/member/{member-id}/bookmarked")
@@ -528,4 +505,5 @@ public class MemberController {
 
         return new ResponseEntity<>(new MultiResponseDto<>(pageResponse.getContent(), pageResponse), HttpStatus.OK);
     }
+
 }
