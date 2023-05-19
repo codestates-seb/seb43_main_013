@@ -2,12 +2,34 @@
 @tailwind components;
 @tailwind utilities;
 
+/* 폰트 메인 ( https://noonnu.cc/index#google_vignette ) */
+@font-face {
+  font-family: 'Pretendard-Regular';
+  src: url('https://cdn.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+}
+/* 폰트 서브 ( https://noonnu.cc/font_page/738 ) */
+@font-face {
+  font-family: 'SBAggroB';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2108@1.1/SBAggroB.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+/* 폰트 특수 ( https://noonnu.cc/font_page/1132 ) */
+@font-face {
+  font-family: 'GoryeongStrawberry';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2304-01@1.0/GoryeongStrawberry.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+
 html {
   @apply text-[14px] md:text-[16px];
 }
 
 * {
-  @apply text-base;
+  @apply text-base font-main;
 }
 
 @layer utilities {

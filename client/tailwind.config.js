@@ -3,6 +3,12 @@ module.exports = {
   content: ["./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
+      /** 폰트 */
+      fontFamily: {
+        main: ["Pretendard-Regular"],
+        sub: ["SBAggroB"],
+        sp: ["GoryeongStrawberry"],
+      },
       colors: {
         bg: "#FBFBFB",
         main: {
