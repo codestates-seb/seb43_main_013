@@ -24,9 +24,8 @@ public class FeedbackCommentController {
                                                                @Valid @RequestBody CommentDto.Post postDto,
                                                                @RequestHeader(value = "Authorization") String authorizationToken) {
 
-        String token = authorizationToken.substring(7);
-
         CommentResponseDto.Post response = feedbackCommentService.createComment(feedbackBoardId, postDto);
+
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
@@ -36,24 +35,27 @@ public class FeedbackCommentController {
                                                    @Valid @RequestBody CommentDto.Patch patchDto,
                                                    @RequestHeader(value = "Authorization") String authorizationToken){
 
-        String token = authorizationToken.substring(7);
-
         feedbackCommentService.updateComment(feedbackBoardId, commentId, patchDto);
+
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/feedbackboard/{feedbackBoardId}/comment/{commentId}")
     public ResponseEntity<CommentResponseDto.Details> getComment(@PathVariable("feedbackBoardId") @Positive Long feedbackBoardId,
                                                                  @PathVariable("commentId") @Positive Long commentId){
+
         CommentResponseDto.Details response = feedbackCommentService.responseComment(feedbackBoardId, commentId);
+
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/feedbackboard/{feedbackBoardId}/comments")
     public ResponseEntity getComments(@PathVariable("feedbackBoardId") @Positive Long feedbackBoardId,
-                                       @RequestParam("page") @Positive int page,
-                                       @RequestParam("size") @Positive int size) {
+                                      @RequestParam("page") @Positive int page,
+                                      @RequestParam("size") @Positive int size) {
+
         CommentResponseDto.Multi response = feedbackCommentService.responseComments(feedbackBoardId, page, size);
+
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -62,8 +64,8 @@ public class FeedbackCommentController {
                                                     @PathVariable("commentId") @Positive Long commentId,
                                                     @RequestHeader(value = "Authorization") String authorizationToken) {
 
-        String token = authorizationToken.substring(7);
         feedbackCommentService.deleteComment(feedbackBoardId, commentId);
+
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 

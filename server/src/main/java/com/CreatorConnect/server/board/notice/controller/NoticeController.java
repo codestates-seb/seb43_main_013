@@ -27,7 +27,7 @@ public class NoticeController {
     @Secured("ROLE_ADMIN")
     public ResponseEntity postNotice(@RequestBody @Valid NoticeDto.Post post,
                                      @RequestHeader("Authorization") String authorizationToken) {
-        String token = authorizationToken.substring(7);
+
         Notice notice = noticeService.createNotice(post);
 
         return new ResponseEntity<>(mapper.noticeToNoticePostResponseDto(notice), HttpStatus.CREATED);
@@ -39,7 +39,7 @@ public class NoticeController {
     public ResponseEntity patchNotice(@PathVariable("noticeId") @Positive Long noticeId,
                                       @RequestBody @Valid NoticeDto.Patch patch,
                                       @RequestHeader("Authorization") String authorizationToken) {
-        String token = authorizationToken.substring(7);
+
         Notice notice = noticeService.updateNotice(patch, noticeId);
 
         return new ResponseEntity<>(mapper.noticeToNoticeResponseDto(notice), HttpStatus.OK);
@@ -50,8 +50,8 @@ public class NoticeController {
     public ResponseEntity getNotices(@RequestParam String sort,
                                      @RequestParam int page,
                                      @RequestParam int size) {
-        NoticeDto.MultiResponseDto<NoticeDto.Response> response =
-                noticeService.getAllNotices(page, size, sort);
+
+        NoticeDto.MultiResponseDto<NoticeDto.Response> response = noticeService.getAllNotices(page, size, sort);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -59,8 +59,8 @@ public class NoticeController {
     // 공지사항 상세 조회
     @GetMapping("/notice/{noticeId}")
     public ResponseEntity getNoticeDetail(@PathVariable("noticeId") @Positive Long noticeId) {
-        Notice notice = noticeService.getNoticeDetail(noticeId);
 
+        Notice notice = noticeService.getNoticeDetail(noticeId);
         NoticeDto.Response response = mapper.noticeToNoticeResponseDto(notice);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -71,10 +71,10 @@ public class NoticeController {
     @Secured("ROLE_ADMIN")
     public ResponseEntity deleteNotice(@PathVariable("noticeId") @Positive Long noticeId,
                                        @RequestHeader("Authorization") String authorizationToken) {
-        String token = authorizationToken.substring(7);
 
         noticeService.removeNotice(noticeId);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
 }

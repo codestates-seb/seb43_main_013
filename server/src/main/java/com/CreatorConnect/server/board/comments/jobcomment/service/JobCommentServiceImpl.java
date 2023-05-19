@@ -47,6 +47,7 @@ public class JobCommentServiceImpl implements CommentService  {
         // entity to dto
         CommentResponseDto.Post post = new CommentResponseDto.Post();
         post.setCommentId(jobComment.getCommentPK().getCommentId());
+
         return post;
     }
 
@@ -64,9 +65,7 @@ public class JobCommentServiceImpl implements CommentService  {
         Optional.ofNullable(patchDto.getContent())
                 .ifPresent(foundjobComment::setContent);
 
-        // 저장
         jobCommentRepository.save(foundjobComment);
-
     }
 
     // 댓글 조회
@@ -91,7 +90,6 @@ public class JobCommentServiceImpl implements CommentService  {
         // pageInfo 가져오기
         CommentResponseDto.PageInfo pageInfo = new CommentResponseDto.PageInfo(jobCommentsPage.getNumber() + 1, jobCommentsPage.getSize(), jobCommentsPage.getTotalElements(), jobCommentsPage.getTotalPages());
 
-        // 리턴
         return new CommentResponseDto.Multi<>(responses, pageInfo);
     }
 
@@ -108,7 +106,6 @@ public class JobCommentServiceImpl implements CommentService  {
         Long commentCount = foundComment.getJobBoard().getCommentCount();
         foundComment.getJobBoard().setCommentCount(commentCount - 1);
 
-        // 삭제
         jobCommentRepository.delete(foundComment);
     }
 
