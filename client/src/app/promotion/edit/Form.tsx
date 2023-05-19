@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useToast } from "@chakra-ui/react";
+import { useQueryClient } from "@tanstack/react-query";
 
 // api
 import { apiUpdatePromotionBoard } from "@/apis";
@@ -17,6 +17,7 @@ import { useLoadingStore } from "@/store";
 import useTags from "@/hooks/useTags";
 import { useFetchPromotionBoard } from "@/hooks/query";
 import { useMemberStore } from "@/store/useMemberStore";
+import useCustomToast from "@/hooks/useCustomToast";
 
 // component
 import Input from "@/components/Board/Form/Input";
@@ -32,10 +33,11 @@ interface Props {
 
 /** 2023/05/09 - 홍보 게시글 작성 form 컴포넌트 - by 1-blue */
 const Form: React.FC<Props> = ({ boardId }) => {
-  const toast = useToast();
+  const toast = useCustomToast();
   const router = useRouter();
   const { loading } = useLoadingStore((state) => state);
   const { member } = useMemberStore();
+  const queryClient = useQueryClient();
 
   /** 2023/05/09 - 작성한 태그들 - by 1-blue */
   const [selectedTags, onSelectedTag, onDeleteTag, setSelectedTags] = useTags();
@@ -62,14 +64,7 @@ const Form: React.FC<Props> = ({ boardId }) => {
   const onSubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
 
-    if (!member) {
-      return toast({
-        description: "로그인후에 접근해주세요!",
-        status: "error",
-        duration: 2500,
-        isClosable: true,
-      });
-    }
+    if (!member) return toast({ title: "로그인후에 접근해주세요!", status: "error" });
 
     const values: string[] = [];
     const formData = new FormData(e.currentTarget);
@@ -83,43 +78,14 @@ const Form: React.FC<Props> = ({ boardId }) => {
     const [title, link, channelName, subscriberCount] = values;
 
     // 제목 유효성 검사
-    if (title.trim().length <= 1)
-      return toast({
-        description: "제목을 두 글자 이상 입력해주세요!",
-        status: "error",
-        duration: 2500,
-        isClosable: true,
-      });
+    if (title.trim().length <= 1) return toast({ title: "제목을 두 글자 이상 입력해주세요!", status: "error" });
     // 유효한 URL인지 확인
-    if (!validateYoutubeURL(link))
-      return toast({
-        description: "유효한 링크를 입력해주세요!",
-        status: "error",
-        duration: 2500,
-        isClosable: true,
-      });
+    if (!validateYoutubeURL(link)) return toast({ title: "유효한 링크를 입력해주세요!", status: "error" });
     // 채널명 유효성 검사
-    if (channelName.trim().length <= 0)
-      return toast({
-        description: "채널명을 한 글자 이상 입력해주세요!",
-        status: "error",
-        duration: 2500,
-        isClosable: true,
-      });
-    if (+subscriberCount <= 0)
-      return toast({
-        description: "구독자 수를 0명 이상으로 입력해주세요!",
-        status: "error",
-        duration: 2500,
-        isClosable: true,
-      });
+    if (channelName.trim().length <= 0) return toast({ title: "채널명을 한 글자 이상 입력해주세요!", status: "error" });
+    if (+subscriberCount <= 0) return toast({ title: "구독자 수를 0명 이상으로 입력해주세요!", status: "error" });
     if (content.trim().length <= 100)
-      return toast({
-        description: "내용이 너무 적습니다!",
-        status: "error",
-        duration: 2500,
-        isClosable: true,
-      });
+      return toast({ title: `${100 - content.trim().length}자 더 입력해주세요!`, status: "error" });
 
     try {
       loading.start();
@@ -135,23 +101,15 @@ const Form: React.FC<Props> = ({ boardId }) => {
         content,
       });
 
-      toast({
-        description: "게시글 수정했습니다.\n수정된 게시글 페이지로 이동됩니다.",
-        status: "success",
-        duration: 2500,
-        isClosable: true,
-      });
+      queryClient.invalidateQueries(["promotionBoard", boardId + ""]);
+
+      toast({ title: "게시글 수정했습니다.\n수정된 게시글 페이지로 이동됩니다.", status: "success" });
 
       router.push(`/promotion/${boardId}`);
     } catch (error) {
       console.error(error);
 
-      return toast({
-        description: "에러가 발생했습니다.\n잠시후에 다시 시도해주세요!",
-        status: "error",
-        duration: 2500,
-        isClosable: true,
-      });
+      return toast({ title: "에러가 발생했습니다.\n잠시후에 다시 시도해주세요!", status: "error" });
     } finally {
       loading.end();
     }

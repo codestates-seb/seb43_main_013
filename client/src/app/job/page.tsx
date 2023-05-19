@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 /** 2023/05/12 - 구인구직 게시판 메인 화면 페이지 - by leekoby */
 const Page = () => {
-  return <>구인구직게시판</>;
+  return <JobMain />;
 };
 
 export default Page;

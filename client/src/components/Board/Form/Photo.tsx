@@ -7,15 +7,17 @@ import { twMerge } from "tailwind-merge";
 interface Props {
   setThumbnail: React.Dispatch<React.SetStateAction<FileList | null>>;
   className?: string;
+  name: string;
+  defaultPhoto?: string;
 }
 
 /** 2023/05/15 - Photo component - by 1-blue */
-const Photo: React.FC<Props> = ({ className, setThumbnail }) => {
+const Photo: React.FC<Props> = ({ className, setThumbnail, name, defaultPhoto = "" }) => {
   /** 2023/05/15 - 썸네일 ref - by 1-blue */
   const ThumbnailRef = useRef<HTMLInputElement>(null);
 
   /** 2023/05/15 - preview - by 1-blue */
-  const [preview, setPreview] = useState("");
+  const [preview, setPreview] = useState(defaultPhoto);
 
   /** 2023/05/15 - preview 등록 - by 1-blue */
   const onUploadPreview: React.ChangeEventHandler<HTMLInputElement> = (e) => {
@@ -33,7 +35,7 @@ const Photo: React.FC<Props> = ({ className, setThumbnail }) => {
   return (
     <div className={twMerge("md:w-[400px] flex flex-col", className)}>
       <label>
-        <span className="text-base font-bold text-gray-800 mb-1">썸네일</span>
+        <span className="text-base font-bold text-gray-800 mb-1">{name}</span>
       </label>
       <figure className="group pt-[60%] md:pt-0 flex-1 relative border-2 border-dotted border-black rounded-md p-2">
         <input type="file" hidden ref={ThumbnailRef} onChange={onUploadPreview} />
@@ -58,7 +60,7 @@ const Photo: React.FC<Props> = ({ className, setThumbnail }) => {
             quality={75}
             placeholder="blur"
             blurDataURL={"blurDataURL"}
-            className="p-1"
+            className="p-1 rounded-lg"
           />
         )}
       </figure>
