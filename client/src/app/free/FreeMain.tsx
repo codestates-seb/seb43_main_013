@@ -77,7 +77,7 @@ const FreeMain = () => {
 
             {/* postslist bottom */}
             <div className="flex justify-center items-center">
-              {/* TODO React Query를 이용한 PreFetch 방식으로 변경하기 */}
+              {/* TODO: React Query를 이용한 PreFetch 방식으로 변경하기 */}
               <Pagination
                 page={data?.pages[0].pageInfo.page}
                 totalPages={data?.pages[0].pageInfo.totalPages}

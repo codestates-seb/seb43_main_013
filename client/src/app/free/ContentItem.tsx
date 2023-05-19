@@ -2,7 +2,6 @@ import Image from "next/image";
 import { BookmarkIcon as BookmarkIconUnchecked } from "@heroicons/react/24/outline";
 import { BookmarkIcon as BookmarkIconChecked } from "@heroicons/react/24/solid";
 
-import defaultThumnail from "@/public/images/default-thumnail.jpg";
 import ContentFooter from "../../components/BoardMain/ContentFooter";
 import TagItem from "../../components/BoardMain/TagItem";
 import { FreeBoard } from "@/types/api";

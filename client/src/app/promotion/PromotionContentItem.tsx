@@ -52,7 +52,7 @@ const PromotionContentItem = forwardRef<HTMLDivElement, ContentItemProps>(({ pro
                 {props.tags && props.tags.map((item) => <TagItem tag={item.tagName} />)}
               </div>
             </div>
-            <ContentFooter position="main" footerData={props} />
+            {/* <ContentFooter position="main" type="promotion" footerData={props}  /> */}
           </div>
         </div>
       </div>
