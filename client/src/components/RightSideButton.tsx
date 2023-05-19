@@ -14,7 +14,7 @@ const RightSideButton: React.FC<RightSideButtonProps> = ({ destination }) => {
     window.scroll({ top: offset, left: 0, behavior: "smooth" });
   };
   return (
-    <>
+    <div className="flex flex-col items-center justify-center">
       <span
         onClick={() => scrollPage("top")}
         className="w-6 h-6 flex items-center justify-center duration-200 bg-sub-100 rounded-md  active:bg-main-500 hover:bg-main-400 hover:text-white hover:scale-105 transtition hover:shadow-md hover:shadow-sub-500/50"
@@ -33,7 +33,7 @@ const RightSideButton: React.FC<RightSideButtonProps> = ({ destination }) => {
       >
         <Down />
       </span>
-    </>
+    </div>
   );
 };
 
