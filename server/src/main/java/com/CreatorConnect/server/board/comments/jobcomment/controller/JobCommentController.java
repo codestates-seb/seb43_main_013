@@ -23,9 +23,8 @@ public class JobCommentController {
                                                                @Valid @RequestBody CommentDto.Post postDto,
                                                                @RequestHeader(value = "Authorization") String authorizationToken) {
 
-        String token = authorizationToken.substring(7);
-
         CommentResponseDto.Post response = jobCommentService.createComment(jobBoardId, postDto);
+
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
@@ -35,16 +34,17 @@ public class JobCommentController {
                                                    @Valid @RequestBody CommentDto.Patch patchDto,
                                                    @RequestHeader(value = "Authorization") String authorizationToken){
 
-        String token = authorizationToken.substring(7);
-
         jobCommentService.updateComment(jobBoardId, commentId, patchDto);
+
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/jobboard/{jobBoardId}/comment/{commentId}")
     public ResponseEntity<CommentResponseDto.Details> getComment(@PathVariable("jobBoardId") @Positive Long jobBoardId,
                                                                  @PathVariable("commentId") @Positive Long commentId){
+
         CommentResponseDto.Details response = jobCommentService.responseComment(jobBoardId, commentId);
+
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -52,7 +52,9 @@ public class JobCommentController {
     public ResponseEntity getComments(@PathVariable("jobBoardId") @Positive Long jobBoardId,
                                       @RequestParam("page") @Positive int page,
                                       @RequestParam("size") @Positive int size) {
+
         CommentResponseDto.Multi response = jobCommentService.responseComments(jobBoardId, page, size);
+
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -61,8 +63,9 @@ public class JobCommentController {
                                                     @PathVariable("commentId") @Positive Long commentId,
                                                     @RequestHeader(value = "Authorization") String authorizationToken) {
 
-        String token = authorizationToken.substring(7);
         jobCommentService.deleteComment(jobBoardId, commentId);
+
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
 }

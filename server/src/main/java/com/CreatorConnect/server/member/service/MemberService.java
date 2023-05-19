@@ -189,6 +189,7 @@ public class MemberService {
 
     public void verifiedAuthenticatedMember(Long memberId) {
 
+        // securitycontextholder 인증 검증 방식
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Member findMember = findVerifiedMember(memberId);
 
@@ -196,6 +197,12 @@ public class MemberService {
             throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_ALLOWED);
         }
 
+    }
+
+    // 현재 로그인한 사용자 정보
+    public Member getLoggedinMember() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return findVerifiedMember(authentication.getName());
     }
 
     public void verifyActivatedMember (Member member){

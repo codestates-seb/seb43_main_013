@@ -37,6 +37,7 @@ public class NoticeService {
      * 3. 등록
      */
     public Notice createNotice(NoticeDto.Post post) {
+
         Notice notice = mapper.noticePostDtoToNotice(post);
 
         // 1. 작성자 검증
@@ -47,7 +48,6 @@ public class NoticeService {
         notice.setMember(member.orElseThrow(() ->
                 new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND)));
 
-        // 3. 등록
         return noticeRepository.save(notice);
     }
 
@@ -111,13 +111,6 @@ public class NoticeService {
         // 2. 조회수 증가
         addViews(notice);
 
-        // 3. 로그인한 멤버
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        if (authentication != null && authentication.isAuthenticated() && !"anonymousUser".equals(authentication.getName())) {
-            Member loggedinMember = memberService.findVerifiedMember(authentication.getName());
-        }
-
         return notice;
     }
 
@@ -134,19 +127,20 @@ public class NoticeService {
         // 2. 삭제하려는 유저와 게시글을 작성한 유저가 같은 유저인지 검증
         memberService.verifiedAuthenticatedMember(notice.getMember().getMemberId());
 
-        // 3. 삭제
         noticeRepository.delete(notice);
     }
 
     // 게시글 검증 메서드
     private Notice verifyNotice(Long noticeId) {
+
         Optional<Notice> optionalNotice = noticeRepository.findById(noticeId);
-        return optionalNotice.orElseThrow(() ->
-                new BusinessLogicException(ExceptionCode.NOTICE_NOT_FOUND));
+
+        return optionalNotice.orElseThrow(() -> new BusinessLogicException(ExceptionCode.NOTICE_NOT_FOUND));
     }
 
     // 게시글 정렬 메서드
     private PageRequest sortedBy(int page, int size, String sort) {
+
         if (sort.equals("최신순")) {
             return PageRequest.of(page - 1, size, Sort.by("noticeId").descending());
         } else if (sort.equals("등록순")) {
@@ -160,9 +154,9 @@ public class NoticeService {
 
     // 조회수 증가 메서드
     private void addViews(Notice notice) {
+
         notice.setViewCount(notice.getViewCount() + 1);
         noticeRepository.save(notice);
     }
-
 
 }
