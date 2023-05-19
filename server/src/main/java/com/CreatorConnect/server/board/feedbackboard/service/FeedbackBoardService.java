@@ -17,37 +17,43 @@ import com.CreatorConnect.server.board.tag.dto.TagDto;
 import com.CreatorConnect.server.board.tag.entity.Tag;
 import com.CreatorConnect.server.board.tag.mapper.TagMapper;
 import com.CreatorConnect.server.board.tag.service.FeedbackBoardTagService;
+import com.CreatorConnect.server.member.bookmark.entity.Bookmark;
+import com.CreatorConnect.server.member.bookmark.repository.BookmarkRepository;
 import com.CreatorConnect.server.member.entity.Member;
+import com.CreatorConnect.server.member.like.entity.Like;
+import com.CreatorConnect.server.member.like.repository.LikeRepository;
+import com.CreatorConnect.server.member.repository.MemberRepository;
 import com.CreatorConnect.server.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class FeedbackBoardService {
-    private final FeedbackBoardRepository feedbackBoardRepository;
     private final FeedbackBoardMapper mapper;
-    private final CategoryRepository categoryRepository;
+    private final FeedbackBoardRepository feedbackBoardRepository;
     private final FeedbackCategoryRepository feedbackCategoryRepository;
-    private final FeedbackCategoryService feedbackCategoryService;
-    private final TagMapper tagMapper;
     private final FeedbackBoardTagService feedbackBoardTagService;
+    private final TagMapper tagMapper;
     private final CategoryService categoryService;
+    private final CategoryRepository categoryRepository;
     private final MemberService memberService;
+    private final MemberRepository memberRepository;
+    private final LikeRepository likeRepository;
+    private final BookmarkRepository bookmarkRepository;
 
-    //등록
+    // 등록
     public FeedbackBoardResponseDto.Post createFeedback(FeedbackBoardDto.Post postDto) {
 
         // post dto memberId 와 로그인 멤버 id 비교
@@ -65,14 +71,14 @@ public class FeedbackBoardService {
 
         // 태그 저장
         List<Tag> tags = tagMapper.tagPostDtosToTag(postDto.getTags());
-        List<Tag> createTAgs = feedbackBoardTagService.createFeedbackBoardTag(tags, savedfeedbackBoard);
+        List<Tag> createTags = feedbackBoardTagService.createFeedbackBoardTag(tags, savedfeedbackBoard);
 
         // Entity-Dto 변환 후 리턴
         FeedbackBoardResponseDto.Post responseDto = mapper.feedbackBoardToFeedbackBoardPostResponse(savedfeedbackBoard);
         return responseDto;
     }
 
-    //수정
+    // 수정
     public FeedbackBoardResponseDto.Patch updateFeedback(Long feedbackBoardId, FeedbackBoardDto.Patch patchDto){
 
         // Dto-Entity 변환
@@ -161,17 +167,13 @@ public class FeedbackBoardService {
         response.setLiked(liked);
 
         return response;
-
     }
 
-    //목록 조회
+    // 목록 조회
     public FeedbackBoardResponseDto.Multi<FeedbackBoardResponseDto.Details> responseFeedbacks(String sort, int page, int size){
         // Page 생성 - 최신순, 등록순, 인기순
         // 기본값 = 최신순
         Page<FeedbackBoard> feedbackBoardsPage = feedbackBoardRepository.findAll(sortedPageRequest(sort, page, size));
-
-        // 피드백 리스트 가져오기
-//        List<FeedbackBoardResponseDto.Details> responses = mapper.feedbackBoardsToFeedbackBoardDetailsResponses(feedbackBoardsPage.getContent());
 
         // pageInfo 가져오기
         FeedbackBoardResponseDto.PageInfo pageInfo = new FeedbackBoardResponseDto.PageInfo(feedbackBoardsPage.getNumber() + 1, feedbackBoardsPage.getSize(), feedbackBoardsPage.getTotalElements(), feedbackBoardsPage.getTotalPages());
@@ -179,11 +181,10 @@ public class FeedbackBoardService {
         // 태그 정보 적용
         List<FeedbackBoardResponseDto.Details> responses = getResponseList(feedbackBoardsPage);
 
-        // 리턴
         return new FeedbackBoardResponseDto.Multi<>(responses, pageInfo);
     }
 
-    //피드백 카테고리로 목록 조회
+    // 피드백 카테고리로 목록 조회
     public FeedbackBoardResponseDto.Multi<FeedbackBoardResponseDto.Details> responseFeedbacksByCategory(Long feedbackCategoryId, String sort, int page, int size){
         // page생성 - 피드백 카테고리 ID로 검색 후 정렬 적용
         Page<FeedbackBoard> feedbackBoardsPage = feedbackBoardRepository.findFeedbackBoardsByFeedbackCategoryId(feedbackCategoryId, sortedPageRequest(sort, page, size));
@@ -194,11 +195,10 @@ public class FeedbackBoardService {
         // 태그 정보 적용
         List<FeedbackBoardResponseDto.Details> responses = getResponseList(feedbackBoardsPage);
 
-        //리턴
         return new FeedbackBoardResponseDto.Multi<>(responses, pageInfo);
     }
 
-    //피드백 카테고리 - 카테고리별 목록 조회
+    // 피드백 카테고리 - 카테고리별 목록 조회
     public FeedbackBoardResponseDto.Multi<FeedbackBoardResponseDto.Details> responseFeedbacksByCategory(Long feedbackCategoryId, Long categoryId, String sort, int page, int size){
         // page생성 - 피드백 카테고리 ID 와 카테고리 ID로 검색 후 정렬 적용
         Page<FeedbackBoard> feedbackBoardsPage = feedbackBoardRepository.findFeedbackBoardsByFeedbackCategoryIdAndCategoryId(feedbackCategoryId, categoryId, sortedPageRequest(sort, page, size));
@@ -209,11 +209,10 @@ public class FeedbackBoardService {
         // 태그 정보 적용
         List<FeedbackBoardResponseDto.Details> responses = getResponseList(feedbackBoardsPage);
 
-        //리턴
         return new FeedbackBoardResponseDto.Multi<>(responses, pageInfo);
     }
 
-    //삭제
+    // 삭제
     public void deleteFeedback(Long feedbackBoardId) {
         // 피드백 ID로 피드백 찾기
         FeedbackBoard feedbackBoard = findVerifiedFeedbackBoard(feedbackBoardId);
@@ -225,21 +224,24 @@ public class FeedbackBoardService {
         feedbackBoardRepository.delete(feedbackBoard);
     }
 
-
-    //피드백 아이디로 피드백 찾는 메서드
+    // 피드백 아이디로 피드백 찾는 메서드
     public FeedbackBoard findVerifiedFeedbackBoard(Long feedbackBoardId) {
+
         Optional<FeedbackBoard> feedbackBoard = feedbackBoardRepository.findById(feedbackBoardId);
+
         return feedbackBoard.orElseThrow(() -> new BusinessLogicException(ExceptionCode.FEEDBACK_NOT_FOUND));
     }
 
-    //조회수 증가 메서드
+    // 조회수 증가 메서드
     private void addViews(FeedbackBoard feedbackBoard) {
+
         feedbackBoard.setViewCount(feedbackBoard.getViewCount() + 1);
         feedbackBoardRepository.save(feedbackBoard);
     }
 
-    //페이지 정렬 메서드
+    // 페이지 정렬 메서드
     private PageRequest sortedPageRequest(String sort, int page, int size) {
+
         if(Objects.equals(sort,"최신순")){
             return PageRequest.of(page - 1, size, Sort.by("feedbackBoardId").descending());
         } else if(Objects.equals(sort,"등록순")){
@@ -260,4 +262,121 @@ public class FeedbackBoardService {
             return mapper.feedbackBoardToResponse(feedbackBoard, tags);
         }).collect(Collectors.toList());
     }
+
+    public void likeFeedbackBoard(Long feedbackBoardId) {
+
+        FeedbackBoard findfeedbackBoard = findVerifiedFeedbackBoard(feedbackBoardId);
+        Member currentMember = memberService.getLoggedinMember();
+
+        // 현재 로그인한 사용자가 해당 게시물을 좋아요 했는지 확인
+        boolean isAlreadyLiked = currentMember.getLikes().stream()
+                .filter(Objects::nonNull) // null인 요소 필터링
+                .map(Like::getFeedbackBoard)
+                .filter(Objects::nonNull) // null인 FeedbackBoard 필터링
+                .anyMatch(feedbackBoard -> findfeedbackBoard.getFeedbackBoardId().equals(feedbackBoard.getFeedbackBoardId()));
+
+        if (isAlreadyLiked) {
+            throw new BusinessLogicException(ExceptionCode.LIKE_ALREADY_EXISTS);
+        }
+
+        // 게시물의 likeCount 증가
+        findfeedbackBoard.setLikeCount(findfeedbackBoard.getLikeCount() + 1);
+        feedbackBoardRepository.save(findfeedbackBoard);
+
+        Like like = new Like();
+        like.setBoardType(Like.BoardType.FEEDBACKBOARD);
+        like.setMember(currentMember);
+        like.setFeedbackBoard(findfeedbackBoard);
+        likeRepository.save(like);
+
+        // 현재 사용자의 likes 컬렉션에 좋아요 추가
+        currentMember.getLikes().add(like);
+        memberRepository.save(currentMember);
+    }
+
+    public void unlike(Long feedbackBoardId) {
+
+        FeedbackBoard findfeedbackBoard = findVerifiedFeedbackBoard(feedbackBoardId);
+        Member currentMember = memberService.getLoggedinMember();
+
+        // 현재 로그인한 사용자가 해당 게시물을 좋아요 했는지 확인
+        Optional<Set<Like>> likes = Optional.ofNullable(currentMember.getLikes());
+
+        Set<Like> foundLikes = likes.orElse(Collections.emptySet())
+                .stream()
+                .filter(l -> l != null && l.getFeedbackBoard() != null && l.getFeedbackBoard().getFeedbackBoardId().equals(findfeedbackBoard.getFeedbackBoardId()))
+                .collect(Collectors.toSet());
+
+        if (foundLikes.isEmpty()) {
+            throw new BusinessLogicException(ExceptionCode.LIKE_NOT_FOUND);
+        }
+
+        // 게시글의 likeCount 감소
+        if (findfeedbackBoard.getLikeCount() > 0) {
+            findfeedbackBoard.setLikeCount(findfeedbackBoard.getLikeCount() - 1);
+            feedbackBoardRepository.save(findfeedbackBoard);
+        }
+
+        // 현재 사용자의 likes 컬렉션에서 좋아요 삭제
+        for (Like foundLike : foundLikes) {
+            currentMember.getLikes().remove(foundLike);
+            likeRepository.delete(foundLike);
+        }
+
+        memberRepository.save(currentMember);
+    }
+
+    public void bookmarkFeedbackBoard(Long feedbackBoardId) {
+
+        FeedbackBoard findfeedbackBoard = findVerifiedFeedbackBoard(feedbackBoardId);
+        Member currentMember = memberService.getLoggedinMember();
+
+        // 현재 로그인한 사용자가 해당 게시물을 북마크 했는지 확인
+        boolean isAlreadyBookMarked = currentMember.getBookmarks().stream()
+                .filter(Objects::nonNull) // null인 요소 필터링
+                .map(Bookmark::getFeedbackBoard)
+                .filter(Objects::nonNull) // null인 FeedbackBoard 필터링
+                .anyMatch(feedbackBoard -> findfeedbackBoard.getFeedbackBoardId().equals(feedbackBoard.getFeedbackBoardId()));
+
+        if (isAlreadyBookMarked) {
+            throw new BusinessLogicException(ExceptionCode.BOOKMARK_ALREADY_EXISTS);
+        }
+
+        Bookmark bookmark = new Bookmark();
+        bookmark.setBoardType(Bookmark.BoardType.FEEDBACKBOARD);
+        bookmark.setMember(currentMember);
+        bookmark.setFeedbackBoard(findfeedbackBoard);
+        bookmarkRepository.save(bookmark);
+
+        // 현재 사용자의 bookmark 컬렉션에 bookmark 추가
+        currentMember.getBookmarks().add(bookmark);
+        memberRepository.save(currentMember);
+    }
+
+    public void unbookmarkFeedbackBoard(Long feedbackBoardId) {
+
+        FeedbackBoard feedbackBoard = findVerifiedFeedbackBoard(feedbackBoardId);
+        Member currentMember = memberService.getLoggedinMember();
+
+        // 현재 로그인한 사용자가 해당 게시물을 북마크 했는지 확인
+        Optional<Set<Bookmark>> bookmarks = Optional.ofNullable(currentMember.getBookmarks());
+
+        Set<Bookmark> foundBookmarks = bookmarks.orElse(Collections.emptySet())
+                .stream()
+                .filter(l -> l != null && l.getFeedbackBoard() != null && l.getFeedbackBoard().getFeedbackBoardId().equals(feedbackBoard.getFeedbackBoardId()))
+                .collect(Collectors.toSet());
+
+        if (foundBookmarks.isEmpty()) {
+            throw new BusinessLogicException(ExceptionCode.BOOKMARK_NOT_FOUND);
+        }
+
+        // 현재 사용자의 bookmarks 컬렉션에서 북마크 삭제
+        for (Bookmark foundBookmark : foundBookmarks) {
+            currentMember.getBookmarks().remove(foundBookmark);
+            bookmarkRepository.delete(foundBookmark);
+        }
+
+        memberRepository.save(currentMember);
+    }
+
 }
