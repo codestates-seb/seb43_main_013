@@ -14,6 +14,7 @@ import headerArr from "../components/Header/HeaderArr";
 const Header: React.FC = () => {
   const [isLogin, setIsLogin] = useState(false);
 
+  // TODO: zustand로 수정
   useEffect(() => {
     const access_token = localStorage.getItem("accessToken");
     const refresh_token = localStorage.getItem("refreshToken");

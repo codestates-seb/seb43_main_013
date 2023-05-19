@@ -40,7 +40,7 @@ const IsLoginSide = ({ nickState }: { nickState: [boolean, React.Dispatch<boolea
           )}
         </div>
       </div>
-      <img src="https://youtu.be/f8IcRLd54v4" className="w-12 cursor-pointer" />
+      {/* <Image src="https://youtu.be/f8IcRLd54v4" className="w-12 cursor-pointer" /> */}
 
       {/* {profileSrc !== "" ? (
         <img src={profileSrc} className="" />
