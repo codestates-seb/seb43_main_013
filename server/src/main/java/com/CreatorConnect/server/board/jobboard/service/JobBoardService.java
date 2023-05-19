@@ -3,14 +3,17 @@ package com.CreatorConnect.server.board.jobboard.service;
 import com.CreatorConnect.server.board.categories.jobcategory.entity.JobCategory;
 import com.CreatorConnect.server.board.categories.jobcategory.repository.JobCategoryRepository;
 import com.CreatorConnect.server.board.categories.jobcategory.service.JobCategoryService;
-import com.CreatorConnect.server.board.freeboard.entity.FreeBoard;
 import com.CreatorConnect.server.board.jobboard.dto.JobBoardDto;
 import com.CreatorConnect.server.board.jobboard.entity.JobBoard;
 import com.CreatorConnect.server.board.jobboard.mapper.JobBoardMapper;
 import com.CreatorConnect.server.board.jobboard.repository.JobBoardRepository;
 import com.CreatorConnect.server.exception.BusinessLogicException;
 import com.CreatorConnect.server.exception.ExceptionCode;
+import com.CreatorConnect.server.member.bookmark.entity.Bookmark;
+import com.CreatorConnect.server.member.bookmark.repository.BookmarkRepository;
 import com.CreatorConnect.server.member.entity.Member;
+import com.CreatorConnect.server.member.like.entity.Like;
+import com.CreatorConnect.server.member.like.repository.LikeRepository;
 import com.CreatorConnect.server.member.repository.MemberRepository;
 import com.CreatorConnect.server.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -21,18 +24,21 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class JobBoardService {
-    private final JobBoardRepository jobBoardRepository;
-    private final MemberService memberService;
     private final JobBoardMapper mapper;
-    private final MemberRepository memberRepository;
-    private final JobCategoryRepository jobCategoryRepository;
+    private final JobBoardRepository jobBoardRepository;
     private final JobCategoryService jobCategoryService;
+    private final JobCategoryRepository jobCategoryRepository;
+    private final MemberService memberService;
+    private final MemberRepository memberRepository;
+    private final LikeRepository likeRepository;
+    private final BookmarkRepository bookmarkRepository;
+
     /**
      * <구인구직 게시판 등록>
      * 1. 회원 검증
@@ -41,6 +47,7 @@ public class JobBoardService {
      * 4. 게시글 등록
      */
     public JobBoard createJobBoard(JobBoardDto.Post post) {
+
         JobBoard jobBoard = mapper.jobBoardPostDtoToJobBoard(post);
 
         // 1. 회원 검증 post dto 의 memberId 와 로그인 한 유저 비교
@@ -56,7 +63,6 @@ public class JobBoardService {
         jobBoard.setJobCategory(jobCategory.orElseThrow(() ->
                 new BusinessLogicException(ExceptionCode.CATEGORY_NOT_FOUND)));
 
-        // 4. 게시글 등록
         return jobBoardRepository.save(jobBoard);
     }
 
@@ -72,7 +78,8 @@ public class JobBoardService {
      * 5. 저장
      */
     public JobBoard updateJobBoard(JobBoardDto.Patch patch, Long jobBoardId) {
-        // 1. 게시글 존쟈 여부 확인
+
+        // 1. 게시글 존재 여부 확인
         patch.setJobBoardId(jobBoardId);
         JobBoard jobBoard = mapper.jobBoardPatchDtoToJobBoard(patch);
         JobBoard checkedJobBoard = verifyJobBoard(jobBoard.getJobBoardId());
@@ -108,15 +115,14 @@ public class JobBoardService {
      * 2. 게시글 목록 가져오기
      */
     public JobBoardDto.MultiResponseDto<JobBoardDto.Response> getAllJobBoards(int page, int size, String sort) {
+
         // 1. 페이지네이션 적용 - 최신순 / 등록순 / 인기순
         Page<JobBoard> jobBoards = jobBoardRepository.findAll(sortedBy(page, size, sort));
 
         // 2. 게시글 목록 가져오기
         List<JobBoardDto.Response> response = mapper.jobBoardsToJobBoardResponseDtos(jobBoards.getContent());
 
-        // new FreeBoardDto.MultiResponseDto<>(responses, freeBoards);
         return new JobBoardDto.MultiResponseDto<>(response, jobBoards);
-
     }
 
     /**
@@ -125,6 +131,7 @@ public class JobBoardService {
      * 2. 게시글 목록 가져오기
      */
     public JobBoardDto.MultiResponseDto<JobBoardDto.Response> getAllJobBoardsByCategory(Long jobCategoryId, int page, int size, String sort) {
+
         // 1. 페이지네이션 적용 - 최신순 / 등록순 / 인기순
         Page<JobBoard> jobBoards =
                 jobBoardRepository.findJobBoardsByCategoryId(jobCategoryId, sortedBy(page, size, sort));
@@ -143,6 +150,7 @@ public class JobBoardService {
      * 4. 매핑
      */
     public JobBoardDto.Response getJobBoardDetail(Long jobBoardId) {
+
         // 1. 게시글 존재 여부 확인
         JobBoard jobBoard = verifyJobBoard(jobBoardId);
 
@@ -181,25 +189,28 @@ public class JobBoardService {
      * 3. 삭제
      */
     public void removeJobBoard(Long jobBoardId) {
+
         // 1. 게시글 존재 여부 확인
         JobBoard jobBoard = verifyJobBoard(jobBoardId);
 
         // 2. 삭제하려는 유저와 게시글을 작성한 유저가 같은 유저인지 검증
         memberService.verifiedAuthenticatedMember(jobBoard.getMember().getMemberId());
 
-        // 3. 삭제
         jobBoardRepository.delete(jobBoard);
     }
 
     // 게시글 존재 여부 검증 메서드
     public JobBoard verifyJobBoard(Long jobBoardId) {
+
         Optional<JobBoard> optionalJobBoard = jobBoardRepository.findById(jobBoardId);
+
         return optionalJobBoard.orElseThrow(() ->
                 new BusinessLogicException(ExceptionCode.JOBBOARD_NOT_FOUND));
     }
 
     // 페이지네이션 정렬 기준 선택 메서드
     private PageRequest sortedBy(int page, int size, String sort) {
+
         if (sort.equals("최신순")) {
             return PageRequest.of(page - 1, size, Sort.by("jobBoardId").descending());
         } else if (sort.equals("등록순")) {
@@ -213,7 +224,124 @@ public class JobBoardService {
 
     // 조회수 증가 메서드
     private void addViews(JobBoard jobBoard) {
+
         jobBoard.setViewCount(jobBoard.getViewCount() + 1);
         jobBoardRepository.save(jobBoard);
     }
+
+    public void likeJobBoard (Long jobBoardId) {
+
+        JobBoard findjobBoard = verifyJobBoard(jobBoardId);
+        Member currentMember = memberService.getLoggedinMember();
+
+        // 현재 로그인한 사용자가 해당 게시물을 좋아요 했는지 확인
+        boolean isAlreadyLiked = currentMember.getLikes().stream()
+                .filter(Objects::nonNull) // null인 요소 필터링
+                .map(Like::getJobBoard)
+                .filter(Objects::nonNull) // null인 FreeBoard 필터링
+                .anyMatch(jobBoard -> findjobBoard.getJobBoardId().equals(jobBoard.getJobBoardId()));
+
+        if (isAlreadyLiked) {
+            throw new BusinessLogicException(ExceptionCode.LIKE_ALREADY_EXISTS);
+        }
+
+        // 게시물의 likeCount 증가
+        findjobBoard.setLikeCount(findjobBoard.getLikeCount() + 1);
+        jobBoardRepository.save(findjobBoard);
+
+        Like like = new Like();
+        like.setBoardType(Like.BoardType.JOBBOARD);
+        like.setMember(currentMember);
+        like.setJobBoard(findjobBoard);
+        likeRepository.save(like);
+
+        // 현재 사용자의 likes 컬렉션에 좋아요 추가
+        currentMember.getLikes().add(like);
+        memberRepository.save(currentMember);
+    }
+
+    public void unlikeJobBoard (Long jobBoardId) {
+
+        JobBoard findjobBoard = verifyJobBoard(jobBoardId);
+        Member currentMember = memberService.getLoggedinMember();
+
+        // 현재 로그인한 사용자가 해당 게시물을 좋아요 했는지 확인
+        Optional<Set<Like>> likes = Optional.ofNullable(currentMember.getLikes());
+
+        Set<Like> foundLikes = likes.orElse(Collections.emptySet())
+                .stream()
+                .filter(l -> l != null && l.getJobBoard() != null && l.getJobBoard().getJobBoardId().equals(findjobBoard.getJobBoardId()))
+                .collect(Collectors.toSet());
+
+        if (foundLikes.isEmpty()) {
+            throw new BusinessLogicException(ExceptionCode.LIKE_NOT_FOUND);
+        }
+
+        // 게시글의 likeCount 감소
+        if (findjobBoard.getLikeCount() > 0) {
+            findjobBoard.setLikeCount(findjobBoard.getLikeCount() - 1);
+            jobBoardRepository.save(findjobBoard);
+        }
+
+        // 현재 사용자의 likes 컬렉션에서 좋아요 삭제
+        for (Like foundLike : foundLikes) {
+            currentMember.getLikes().remove(foundLike);
+            likeRepository.delete(foundLike);
+        }
+
+        memberRepository.save(currentMember);
+    }
+
+    public void bookmarkJobBoard (Long jobBoardId) {
+
+        JobBoard findjobBoard = verifyJobBoard(jobBoardId);
+        Member currentMember = memberService.getLoggedinMember();
+
+        // 현재 로그인한 사용자가 해당 게시물을 북마크 했는지 확인
+        boolean isAlreadyBookMarked = currentMember.getBookmarks().stream()
+                .filter(Objects::nonNull) // null인 요소 필터링
+                .map(Bookmark::getJobBoard)
+                .filter(Objects::nonNull) // null인 FeedbackBoard 필터링
+                .anyMatch(jobBoard -> findjobBoard.getJobBoardId().equals(jobBoard.getJobBoardId()));
+
+        if (isAlreadyBookMarked) {
+            throw new BusinessLogicException(ExceptionCode.BOOKMARK_ALREADY_EXISTS);
+        }
+
+        Bookmark bookmark = new Bookmark();
+        bookmark.setBoardType(Bookmark.BoardType.JOBBOARD);
+        bookmark.setMember(currentMember);
+        bookmark.setJobBoard(findjobBoard);
+        bookmarkRepository.save(bookmark);
+
+        // 현재 사용자의 bookmark 컬렉션에 bookmark 추가
+        currentMember.getBookmarks().add(bookmark);
+        memberRepository.save(currentMember);
+    }
+
+    public void unbookmarkJobBoard (Long jobBoardId) {
+
+        JobBoard findjobBoard = verifyJobBoard(jobBoardId);
+        Member currentMember = memberService.getLoggedinMember();
+
+        // 현재 로그인한 사용자가 해당 게시물을 북마크 했는지 확인
+        Optional<Set<Bookmark>> bookmarks = Optional.ofNullable(currentMember.getBookmarks());
+
+        Set<Bookmark> foundBookmarks = bookmarks.orElse(Collections.emptySet())
+                .stream()
+                .filter(l -> l != null && l.getJobBoard() != null && l.getJobBoard().getJobBoardId().equals(findjobBoard.getJobBoardId()))
+                .collect(Collectors.toSet());
+
+        if (foundBookmarks.isEmpty()) {
+            throw new BusinessLogicException(ExceptionCode.BOOKMARK_NOT_FOUND);
+        }
+
+        // 현재 사용자의 bookmarks 컬렉션에서 북마크 삭제
+        for (Bookmark foundBookmark : foundBookmarks) {
+            currentMember.getBookmarks().remove(foundBookmark);
+            bookmarkRepository.delete(foundBookmark);
+        }
+        memberRepository.save(currentMember);
+    }
+
 }
