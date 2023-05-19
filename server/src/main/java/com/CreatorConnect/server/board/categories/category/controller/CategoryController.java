@@ -29,6 +29,7 @@ public class CategoryController {
     @Secured("ROLE_ADMIN")
     @PostMapping("/category/new")
     public ResponseEntity postCategory(@Valid @RequestBody CategoryDto.Post categoryPost) {
+
         Category category = mapper.categoryPostDtoToCategory(categoryPost);
         Category createdCategory = categoryService.createCategory(category);
 
@@ -39,26 +40,34 @@ public class CategoryController {
     @PatchMapping("/category/{categoryId}")
     public ResponseEntity<CategoryResponseDto.Patch> patchCategory(@PathVariable("categoryId") Long categoryId,
                                                                    @Valid @RequestBody CategoryDto.Patch patchDto){
+
         CategoryResponseDto.Patch response = categoryService.updateCategory(categoryId, patchDto);
+
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/category/{categoryId}")
     public ResponseEntity<CategoryResponseDto.Details> getCategory(@PathVariable("categoryId") @Positive Long categoryId){
+
         CategoryResponseDto.Details response = categoryService.responseCategory(categoryId);
+
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/categories")
     public ResponseEntity getCategorys() {
+
         List<CategoryResponseDto.Details> response = categoryService.responseCategorys();
+
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @Secured("ROLE_ADMIN")
     @DeleteMapping("/category/{categoryId}")
     public ResponseEntity<HttpStatus> deleteCategory(@PathVariable("categoryId") @Positive Long categoryId) {
+
         categoryService.deleteCategory(categoryId);
+
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
