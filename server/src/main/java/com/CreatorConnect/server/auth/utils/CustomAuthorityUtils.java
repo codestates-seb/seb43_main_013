@@ -49,5 +49,4 @@ public class CustomAuthorityUtils {
         }
         return USER_ROLES_STRING;
     }
-
 }
