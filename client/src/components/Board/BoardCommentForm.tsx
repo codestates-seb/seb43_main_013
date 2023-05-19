@@ -54,7 +54,7 @@ const BoardCommentForm: React.FC<Props> = ({ type, boardId }) => {
       const { commentId } = await apiCreateComment(type, { boardId, content, memberId: member.memberId });
 
       queryClient.setQueryData<InfiniteData<ApiFetchCommentsResponse> | undefined>(
-        [QUERY_KEYS.comment, type],
+        [QUERY_KEYS.comment, type, boardId],
         (prev) =>
           prev && {
             ...prev,

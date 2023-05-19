@@ -54,7 +54,7 @@ export interface ApiFetchJobCategoriesRequest {
 /** 2023/05/17 - 구인구직 카테고리들 요청 수신 타입 - by leekoby */
 export type ApiFetchJobCategoriesResponse = ResponseJobCategoriesType[];
 
-/** 2023/05/17 - 구인구직 카테고리들 요청 핸들러 - by leekoby */
+/** 2023/05/18 - 구인구직 카테고리들 요청 핸들러 - by leekoby */
 export interface ApiFetchJobCategoriesHandler {
   (body: ApiFetchJobCategoriesRequest): Promise<ApiFetchJobCategoriesResponse>;
 }

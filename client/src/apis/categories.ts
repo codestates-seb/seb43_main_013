@@ -39,6 +39,7 @@ export const apiFetchPromotionCategories: ApiFetchPromotionCategoriesHandler = a
 };
 
 /** 2023/05/13 - 구인구직 게시판 카테고리 패치요청 - by leekoby */
+/** 2023/05/18 - 구인구직 게시판 카테고리 패치요청 - by leekoby */
 export const apiFetchJobCategories: ApiFetchJobCategoriesHandler = async (body) => {
   const { data } = await serverInstance.get<ApiFetchJobCategoriesResponse>("/jobcategories", {
     params: body,

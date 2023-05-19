@@ -6,7 +6,7 @@ import Board from "./Board";
 import type { Metadata } from "next";
 interface Props {
   params: {
-    boardId: number;
+    boardId: string;
   };
 }
 
@@ -23,7 +23,7 @@ const Page = ({ params: { boardId } }: Props) => {
       <Navigation />
 
       {/* 게시글 상세 내용 */}
-      <Board boardId={boardId} />
+      <Board boardId={+boardId} />
 
       {/* 추천/관련 게시글 */}
       <article></article>

@@ -102,9 +102,9 @@ const BoardHeader: React.FC<Props> = ({
           break;
       }
 
-      toast({ title: "게시판을 삭제했습니다.\n메인 페이지로 이동됩니다!", status: "success" });
+      toast({ title: "게시판을 삭제했습니다. 페이지가 이동됩니다!", status: "success" });
 
-      router.replace("/");
+      router.replace(`/${type}`);
     } catch (error) {
       console.error(error);
 

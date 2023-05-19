@@ -70,7 +70,7 @@ const Form = () => {
 
       toast({ title: "게시글 생성했습니다.\n생성된 게시글 페이지로 이동됩니다.", status: "success" });
 
-      router.push(`/free/${freeBoardId}`);
+      router.replace(`/free/${freeBoardId}`);
     } catch (error) {
       console.error(error);
 

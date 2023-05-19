@@ -18,8 +18,8 @@ import useCustomToast from "@/hooks/useCustomToast";
 // component
 import Input from "@/components/Board/Form/Input";
 import Editor from "@/components/Editor";
-import NormalCategory from "@/components/Board/Form/NormalCategory";
 import Skeleton from "@/components/Skeleton";
+import JobCategory from "@/components/Board/Form/JobCategory";
 
 // type
 interface Props {
@@ -75,18 +75,18 @@ const Form: React.FC<Props> = ({ boardId }) => {
     try {
       loading.start();
 
-      apiUpdateJobBoard({
+      await apiUpdateJobBoard({
         jobBoardId: boardId,
         title,
         content,
         jobCategoryName: selectedJobCategory,
       });
 
-      queryClient.invalidateQueries(["jobBoard", boardId + ""]);
+      queryClient.invalidateQueries(["jobBoard", boardId]);
 
       toast({ title: "게시글 수정했습니다.\n수정된 게시글 페이지로 이동됩니다.", status: "success" });
 
-      router.push(`/job/${boardId}`);
+      router.replace(`/job/${boardId}`);
     } catch (error) {
       console.error(error);
 
@@ -106,7 +106,7 @@ const Form: React.FC<Props> = ({ boardId }) => {
         <div className="w-full md:w-0 md:flex-1 space-y-2 z-[1]">
           <Input name="제목" type="text" placeholder="제목을 입력해주세요!" defaultValue={data?.title} />
           <div className="flex flex-col md:flex-row space-y-4 md:space-x-4 md:space-y-0">
-            <NormalCategory selectedCategory={selectedJobCategory} setSelectedCategory={setSelectedJobCategory} />
+            <JobCategory selectedCategory={selectedJobCategory} setSelectedCategory={setSelectedJobCategory} />
           </div>
         </div>
       </section>

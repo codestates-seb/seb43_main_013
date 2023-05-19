@@ -14,7 +14,7 @@ import useCustomToast from "@/hooks/useCustomToast";
 // component
 import Input from "@/components/Board/Form/Input";
 import Editor from "@/components/Editor";
-import NormalCategory from "@/components/Board/Form/NormalCategory";
+import JobCategory from "@/components/Board/Form/JobCategory";
 
 /** 2023/05/09 - 구인구직 게시글 작성 form 컴포넌트 - by 1-blue */
 const Form = () => {
@@ -54,7 +54,7 @@ const Form = () => {
       loading.start();
 
       const { jobBoardId } = await apiCreateJobBoard({
-        memberId: 1,
+        memberId: member.memberId,
         title,
         content,
         jobCategoryName: selectedJobCategory,
@@ -62,7 +62,7 @@ const Form = () => {
 
       toast({ title: "게시글 생성했습니다.\n생성된 게시글 페이지로 이동됩니다.", status: "success" });
 
-      router.push(`/job/${jobBoardId}`);
+      router.replace(`/job/${jobBoardId}`);
     } catch (error) {
       console.error(error);
 
@@ -80,7 +80,7 @@ const Form = () => {
         <div className="w-full md:w-0 md:flex-1 space-y-2 z-[1]">
           <Input name="제목" type="text" placeholder="제목을 입력해주세요!" />
           <div className="flex flex-col md:flex-row space-y-4 md:space-x-4 md:space-y-0">
-            <NormalCategory selectedCategory={selectedJobCategory} setSelectedCategory={setSelectedJobCategory} />
+            <JobCategory selectedCategory={selectedJobCategory} setSelectedCategory={setSelectedJobCategory} />
           </div>
         </div>
       </section>

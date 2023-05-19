@@ -68,7 +68,7 @@ const BoardComment: React.FC<Props> = ({ type, boardId, comment }) => {
       await apiUpdateComment(type, { boardId, commentId: comment.commentId, content, memberId: member.memberId });
 
       queryClient.setQueryData<InfiniteData<ApiFetchCommentsResponse> | undefined>(
-        [QUERY_KEYS.comment, type],
+        [QUERY_KEYS.comment, type, boardId],
         (prev) =>
           prev && {
             ...prev,
@@ -104,7 +104,7 @@ const BoardComment: React.FC<Props> = ({ type, boardId, comment }) => {
         await apiDeleteRecomment(type, { boardId, commentId: comment.commentId, recommentId });
 
         queryClient.setQueryData<InfiniteData<ApiFetchCommentsResponse> | undefined>(
-          [QUERY_KEYS.comment, type],
+          [QUERY_KEYS.comment, type, boardId],
           (prev) =>
             prev && {
               ...prev,

@@ -58,7 +58,7 @@ const BoardRecommentForm: React.FC<Props> = ({ type, boardId, commentId }) => {
       });
 
       queryClient.setQueryData<InfiniteData<ApiFetchCommentsResponse> | undefined>(
-        [QUERY_KEYS.comment, type],
+        [QUERY_KEYS.comment, type, boardId],
         (prev) =>
           prev && {
             ...prev,
