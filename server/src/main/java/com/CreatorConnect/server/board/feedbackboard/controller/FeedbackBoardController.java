@@ -1,30 +1,15 @@
 package com.CreatorConnect.server.board.feedbackboard.controller;
 
-import com.CreatorConnect.server.board.feedbackboard.repository.FeedbackBoardRepository;
 import com.CreatorConnect.server.board.feedbackboard.service.FeedbackBoardService;
 import com.CreatorConnect.server.board.feedbackboard.dto.FeedbackBoardDto;
 import com.CreatorConnect.server.board.feedbackboard.dto.FeedbackBoardResponseDto;
-import com.CreatorConnect.server.board.feedbackboard.entity.FeedbackBoard;
-import com.CreatorConnect.server.board.tag.entity.Tag;
-import com.CreatorConnect.server.board.tag.mapper.TagMapper;
-import com.CreatorConnect.server.member.bookmark.entity.Bookmark;
-import com.CreatorConnect.server.member.bookmark.repository.BookmarkRepository;
-import com.CreatorConnect.server.member.entity.Member;
-import com.CreatorConnect.server.member.like.entity.Like;
-import com.CreatorConnect.server.member.like.repository.LikeRepository;
-import com.CreatorConnect.server.member.repository.MemberRepository;
-import com.CreatorConnect.server.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
-import java.util.*;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")

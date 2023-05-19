@@ -25,8 +25,9 @@ public class JobReCommentController {
                                                                    @PathVariable("commentId") @Positive Long commentId,
                                                                    @Valid @RequestBody ReCommentDto.Post postDto,
                                                                    @RequestHeader(value = "Authorization") String authorizationToken) {
-        String token = authorizationToken.substring(7);
+
         ReCommentResponseDto.Post response = jobReCommentService.createReComment(jobBoardId, commentId, postDto);
+
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
@@ -37,8 +38,8 @@ public class JobReCommentController {
                                                    @Valid @RequestBody CommentDto.Patch patchDto,
                                                    @RequestHeader(value = "Authorization") String authorizationToken){
 
-        String token = authorizationToken.substring(7);
         jobReCommentService.updateReComment(jobBoardId, commentId, reCommentId, patchDto);
+
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -46,7 +47,9 @@ public class JobReCommentController {
     public ResponseEntity<ReCommentResponseDto.Details> getComment(@PathVariable("jobBoardId") @Positive Long jobBoardId,
                                                                    @PathVariable("commentId") @Positive Long commentId,
                                                                    @PathVariable("reCommentId") @Positive Long reCommentId){
+
         ReCommentResponseDto.Details response = jobReCommentService.responseReComment(jobBoardId, commentId, reCommentId);
+
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
     @DeleteMapping("/jobboard/{jobBoardId}/comment/{commentId}/recomment/{reCommentId}")
@@ -55,8 +58,9 @@ public class JobReCommentController {
                                                     @PathVariable("reCommentId") @Positive Long reCommentId,
                                                     @RequestHeader(value = "Authorization") String authorizationToken) {
 
-        String token = authorizationToken.substring(7);
         jobReCommentService.deleteReComment(jobBoardId, commentId, reCommentId);
+
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
 }

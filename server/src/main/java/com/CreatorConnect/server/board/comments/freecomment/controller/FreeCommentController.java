@@ -23,8 +23,9 @@ public class FreeCommentController {
     public ResponseEntity<CommentResponseDto.Post> postComment(@PathVariable("freeBoardId") @Positive Long freeBoardId,
                                                                @Valid @RequestBody CommentDto.Post postDto,
                                                                @RequestHeader(value = "Authorization") String authorizationToken) {
-        String token = authorizationToken.substring(7);
+
         CommentResponseDto.Post response = freeCommentService.createComment(freeBoardId, postDto);
+
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
@@ -33,15 +34,18 @@ public class FreeCommentController {
                                                    @PathVariable("commentId") @Positive Long commentId,
                                                    @Valid @RequestBody CommentDto.Patch patchDto,
                                                    @RequestHeader(value = "Authorization") String authorizationToken) {
-        String token = authorizationToken.substring(7);
+
         freeCommentService.updateComment(freeBoardId, commentId, patchDto);
+
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/freeboard/{freeBoardId}/comment/{commentId}")
     public ResponseEntity<CommentResponseDto.Details> getComment(@PathVariable("freeBoardId") @Positive Long freeBoardId,
                                                                  @PathVariable("commentId") @Positive Long commentId){
+
         CommentResponseDto.Details response = freeCommentService.responseComment(freeBoardId, commentId);
+
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -49,7 +53,9 @@ public class FreeCommentController {
     public ResponseEntity getComments(@PathVariable("freeBoardId") @Positive Long freeBoardId,
                                       @RequestParam("page") @Positive int page,
                                       @RequestParam("size") @Positive int size) {
+
         CommentResponseDto.Multi response = freeCommentService.responseComments(freeBoardId, page, size);
+
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -57,8 +63,10 @@ public class FreeCommentController {
     public ResponseEntity<HttpStatus> deleteComment(@PathVariable("freeBoardId") @Positive Long freeBoardId,
                                                     @PathVariable("commentId") @Positive Long commentId,
                                                     @RequestHeader(value = "Authorization") String authorizationToken) {
-        String token = authorizationToken.substring(7);
+
         freeCommentService.deleteComment(freeBoardId, commentId);
+
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
 }
