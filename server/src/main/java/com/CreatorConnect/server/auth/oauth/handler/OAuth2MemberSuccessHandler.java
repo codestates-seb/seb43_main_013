@@ -40,7 +40,7 @@ public class OAuth2MemberSuccessHandler extends SimpleUrlAuthenticationSuccessHa
 
         oAuth2MemberService.saveOauthMember(oAuth2User);
 
-        redirect(request, response, email, authorities);
+        sendTokenResponse(response, email, authorities);
     }
 
     private void redirect(HttpServletRequest request, HttpServletResponse response, String username, List<String> authorities) throws IOException {
@@ -49,6 +49,15 @@ public class OAuth2MemberSuccessHandler extends SimpleUrlAuthenticationSuccessHa
 
         String uri = createURI(accessToken, refreshToken).toString();
         getRedirectStrategy().sendRedirect(request, response, uri);
+    }
+
+    private void sendTokenResponse(HttpServletResponse response, String username, List<String> authorities) throws IOException {
+        String accessToken = delegateAccessToken(username, authorities);
+        String refreshToken = delegateRefreshToken(username);
+
+        response.setHeader("Authorization", "Bearer " + accessToken);
+        response.setHeader("Refresh-token", refreshToken);
+        response.setStatus(HttpServletResponse.SC_OK);
     }
 
     private String delegateAccessToken(String username, List<String> authorities) {
