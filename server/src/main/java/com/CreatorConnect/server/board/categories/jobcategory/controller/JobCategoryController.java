@@ -30,7 +30,6 @@ public class JobCategoryController {
     @PostMapping("/jobcategory/new")
     public ResponseEntity postJobCategory(@Valid @RequestBody JobCategoryDto.Post post,
                                           @RequestHeader("Authorization") String authorizationToken) {
-        String token = authorizationToken.substring(7);
 
         JobCategory jobCategory = mapper.jobCategoryPostDtoToJobCategory(post);
         JobCategory createdJobCategory = jobCategoryService.createJobCategory(jobCategory);
@@ -44,7 +43,6 @@ public class JobCategoryController {
     public ResponseEntity patchJobCategory(@PathVariable("jobCategoryId") @Positive Long jobCategoryId,
                                            @Valid @RequestBody JobCategoryDto.Patch patch,
                                            @RequestHeader("Authorization") String authorizationToken) {
-        String token = authorizationToken.substring(7);
 
         JobCategory jobCategory = mapper.jobCategoryPatchDtoToJobCategory(patch);
         jobCategory.setJobCategoryId(jobCategoryId);
@@ -56,6 +54,7 @@ public class JobCategoryController {
     // 구인구직 카테고리 조회
     @GetMapping("/jobcategory/{jobCategoryId}")
     public ResponseEntity getJobCategory(@PathVariable("jobCategoryId") @Positive Long jobCategoryId) {
+
         JobCategoryDto.Response response = jobCategoryService.getJobCategory(jobCategoryId);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -64,6 +63,7 @@ public class JobCategoryController {
     // 구인구직 카테고리 목록 조회
     @GetMapping("/jobcategories")
     public ResponseEntity getJobCategories() {
+
         List<JobCategoryDto.Response> responses = jobCategoryService.getJobCategories();
 
         return new ResponseEntity<>(responses, HttpStatus.OK);
@@ -74,7 +74,6 @@ public class JobCategoryController {
     @DeleteMapping("/jobcategory/{jobCategoryId}")
     public ResponseEntity deleteJobCategory(@PathVariable("jobCategoryId") @Positive Long categoryId,
                                             @RequestHeader("Authorization") String authorizationToken) {
-        String token = authorizationToken.substring(7);
 
         jobCategoryService.removeJobCategory(categoryId);
 
