@@ -24,7 +24,6 @@ public class OauthController {
         this.memberService = memberService;
     }
 
-
     // google
     // http://localhost:8080/oauth2/authorization/google
     // kakao
@@ -33,13 +32,9 @@ public class OauthController {
     // https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=JAnr85GxwFcBiBMCvdpL&state=vninaeonfd&redirect_uri=http://localhost:8080/auth/naver/callback
 
     @GetMapping("/api/login/oauth2")
-    public ResponseEntity oauthSuccessController(Authentication authentication) {
+    public ResponseEntity oauthSuccessController(@RequestParam("access_token") String token) {
 
-        OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken) authentication;
-        OAuth2User oAuth2User = oauthToken.getPrincipal();
-        String email = (String) oAuth2User.getAttributes().get("email");
-
-        Member member = memberService.findVerifiedMember(email);
+        Member member = memberService.jwtTokenToMember(token);
         MemberResponseDto response = mapper.memberToMemberResponseDto(member);
 
         return new ResponseEntity(response, HttpStatus.OK);

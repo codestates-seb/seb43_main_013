@@ -160,17 +160,16 @@ public class MemberService {
         return findMember;
     }
 
-    public boolean checkPassword(String token, Long memberId, String password) {
+    public boolean checkPassword(Long memberId, String password) {
 
         Member findMember = findVerifiedMember(memberId);
-        verifiedAuthenticatedMember(token, findMember);
+        verifiedAuthenticatedMember(findMember.getMemberId());
 
         return passwordEncoder.matches(password, findMember.getPassword());
     }
 
-    public void verifiedAuthenticatedMember(String jwtToken, Member findMember) {
+    public Member jwtTokenToMember (String jwtToken) {
 
-        // jwt token 인증 검증 방식
         try {
             String encodeKey = encode(secretKey);
 
@@ -178,13 +177,14 @@ public class MemberService {
             Claims tokenClaims = claims.getBody();
             String userEmail = tokenClaims.getSubject();
 
-            if (!userEmail.equals(findMember.getEmail())) {
-                throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_ALLOWED);
-            }
+            Member findMember = findVerifiedMember(userEmail);
+
+            return findMember;
 
         } catch (JwtException e) {
             throw new BusinessLogicException(ExceptionCode.INVALID_TOKEN);
         }
+
     }
 
     public void verifiedAuthenticatedMember(Long memberId) {
