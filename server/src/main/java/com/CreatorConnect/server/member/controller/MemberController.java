@@ -139,10 +139,8 @@ public class MemberController {
                                         @Valid @RequestBody MemberDto.CheckPassword checkPasswordDto,
                                         @RequestHeader(value = "Authorization") String authorizationToken) {
 
-        String token = authorizationToken.substring(7);
-
         boolean checkPassword =
-                memberService.checkPassword(token, memberId, checkPasswordDto.getPassword());
+                memberService.checkPassword(memberId, checkPasswordDto.getPassword());
 
         if (checkPassword) {
             return new ResponseEntity<>(HttpStatus.OK);

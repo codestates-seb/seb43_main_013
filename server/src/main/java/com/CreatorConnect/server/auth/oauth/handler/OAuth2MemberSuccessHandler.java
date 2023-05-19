@@ -40,7 +40,8 @@ public class OAuth2MemberSuccessHandler extends SimpleUrlAuthenticationSuccessHa
 
         oAuth2MemberService.saveOauthMember(oAuth2User);
 
-        sendTokenResponse(response, email, authorities);
+//        sendTokenResponse(response, email, authorities);
+        redirect(request, response, email, authorities);
     }
 
     private void redirect(HttpServletRequest request, HttpServletResponse response, String username, List<String> authorities) throws IOException {
@@ -56,8 +57,9 @@ public class OAuth2MemberSuccessHandler extends SimpleUrlAuthenticationSuccessHa
         String refreshToken = delegateRefreshToken(username);
 
         response.setHeader("Authorization", "Bearer " + accessToken);
-        response.setHeader("Refresh-token", refreshToken);
+        response.setHeader("Refresh-Token", refreshToken);
         response.setStatus(HttpServletResponse.SC_OK);
+
     }
 
     private String delegateAccessToken(String username, List<String> authorities) {
