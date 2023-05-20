@@ -26,7 +26,7 @@ const PopularPosts = () => {
             <TagItem tag="먹고싶다" />
           </div>
           {/* leftside footer */}
-          <ContentFooter position="side" nickName={"이름이올시다"} viewCount={999} likeCount={999} commentCount={999} />
+          {/* <ContentFooter position="side"  /> */}
         </div>
       </div>
     </div>

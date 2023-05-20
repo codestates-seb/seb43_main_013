@@ -4,7 +4,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { useFetchFeedbackBoardList } from "@/hooks/query/useFetchFeedbackBoardList";
 import Link from "next/link";
-import ContentItem from "@/app/feedback/FeedbackContentItem";
+import FeedbackContentItem from "@/app/feedback/FeedbackContentItem";
 import FullSpinner from "@/components/Spinner/FullSpinner";
 import { ReactNode, useEffect, useState } from "react";
 import SlideWrapper from "./SlideWrapper";
@@ -102,16 +102,14 @@ const FeedbackPostsSlide = () => {
         </Link>
       </div>
       <div>
-        <Slider {...settings}>
+        <Slider {...settings} className="max-h-[550px]">
           {data.pages.map((page) =>
             page.data.map((innerData) => {
               return (
-                <SlideWrapper className="h-full hover:cursor-pointer" key={innerData.feedbackBoardId}>
-                  <Link href={`/feedback/${innerData.feedbackBoardId}`}>
-                    <div className="h-full mx-3">
-                      <ContentItem props={innerData} />
-                    </div>
-                  </Link>
+                <SlideWrapper className="h-full" key={innerData.feedbackBoardId}>
+                  <div className="h-full mx-3">
+                    <FeedbackContentItem props={innerData} />
+                  </div>
                 </SlideWrapper>
               );
             }),

@@ -1,5 +1,4 @@
 "use client";
-import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useFetchCategories, useFetchJobCategories } from "@/hooks/query";
 import SortPosts from "@/components/BoardMain/SortPosts";
@@ -10,6 +9,7 @@ import RightSideButton from "@/components/RightSideButton";
 import { useCategoriesStore, usePageStore, useSortStore } from "@/store";
 import { useFetchJobBoardList } from "@/hooks/query/useFetchJobBoardList";
 import JobCategories from "./JobCategories";
+
 /** 2023/05/18 - 자유게시판 메인 화면 - by leekoby */
 const JobMain = () => {
   /** 2023/05/18 - 게시판 page 상태관리 - by leekoby */
@@ -40,7 +40,6 @@ const JobMain = () => {
 
   /** 2023/05/18 - 구인구직 카테고리 초기값 요청 - by leekoby */
   const { jobCategories, jobCategoryIsLoading } = useFetchJobCategories({ type: "job" });
-  console.log(jobCategories, selectedCategory, selected);
 
   if (!data) return <FullSpinner />;
   if (data.pages.length < 1) return <FullSpinner />;
@@ -58,29 +57,30 @@ const JobMain = () => {
           {/* rightside freeboard post list */}
           <section className="flex flex-col md:w-0 ml-5  grow-[8]">
             {/* freeboard list header */}
-            <div className="flex justify-end">
+            <div className="flex justify-end mb-4">
               <SortPosts />
             </div>
             {/* post item */}
-            {/* TODO: //*게시글 북마크 좋아요 클릭되게 하는 방법 생각해보기  */}
-            {data.pages.map((item) =>
-              item.data.map((innerData) => (
-                <Link key={innerData.jobBoardId} href={`/job/${innerData.jobBoardId}`}>
-                  <JobContentItem props={innerData} />
-                </Link>
-              )),
-            )}
-            {/* postslist bottom */}
-            <div className="flex justify-center items-center">
-              {/* TODO React Query를 이용한 PreFetch 방식으로 변경하기 */}
-              <Pagination
-                page={data?.pages[0].pageInfo.page}
-                totalPages={data?.pages[0].pageInfo.totalPages}
-                onPageChange={setCurrentPage}
-              />
+            <div className="space-y-5">
+              {data.pages.map((item) =>
+                item.data.map((innerData) => (
+                  <div className="" key={innerData.jobBoardId}>
+                    <JobContentItem props={innerData} />
+                  </div>
+                )),
+              )}
+              {/* postslist bottom */}
+              <div className="flex justify-center items-center">
+                {/* TODO React Query를 이용한 PreFetch 방식으로 변경하기 */}
+                <Pagination
+                  page={data?.pages[0].pageInfo.page}
+                  totalPages={data?.pages[0].pageInfo.totalPages}
+                  onPageChange={setCurrentPage}
+                />
+              </div>
             </div>
           </section>
-          <div className="flex flex-col items-center justify-center ml-2">
+          <div className="opacity-50 lg:opacity-100 fixed right-0 lg:top-1/2 transform -translate-y-1/2 ml-2">
             <RightSideButton destination={`/job/write`} />
           </div>
         </div>
