@@ -52,6 +52,15 @@ html {
   .scrollbar::-webkit-scrollbar-thumb:hover {
     @apply bg-sub-600;
   }
+  /* 3줄 제한 */
+  .truncate-3 {
+    white-space: normal;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+  }
 }
 
 /* react-quill 높이 지정 */
