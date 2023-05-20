@@ -10,7 +10,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { apiUpdateFeedbackBoard } from "@/apis";
 
 // util
-import { validateYoutubeURL } from "@/libs";
+import validate from "@/libs/validate";
 
 // store
 import { useLoadingStore } from "@/store";
@@ -120,7 +120,7 @@ const Form: React.FC<Props> = ({ boardId }) => {
       return toast({ title: "썸네일이나 링크중 하나는 입력해주세요!", status: "error" });
     }
     // 유효한 URL인지 확인
-    if (!validateYoutubeURL(link)) {
+    if (!validate.youtubeURL(link)) {
       return toast({ title: "유효한 링크를 입력해주세요!", status: "error" });
     }
     if (content.trim().length <= 100) {
