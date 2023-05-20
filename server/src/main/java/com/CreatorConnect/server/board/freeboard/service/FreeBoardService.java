@@ -143,8 +143,28 @@ public class FreeBoardService {
         // 1. 페이지네이션 적용 - 최신순 / 등록순 / 인기순
         Page<FreeBoard> freeBoards = freeBoardRepository.findAll(sortedBy(page, size, sort));
 
-        // 2. Response에 각 게시글의 태그 정보 적용
-        List<FreeBoardDto.Response> responses = getResponseList(freeBoards);
+        // 2. 로그인한 멤버 조회 후 게시글 목록
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        List<FreeBoardDto.Response> responses = new ArrayList<>();
+
+        if (authentication != null && authentication.isAuthenticated() && !"anonymousUser".equals(authentication.getName())) {
+            Member loggedinMember = memberService.findVerifiedMember(authentication.getName());
+
+            for (FreeBoard freeBoard : freeBoards.getContent()) {
+                boolean bookmarked = loggedinMember.getBookmarks().stream()
+                        .anyMatch(bookmark -> freeBoard.equals(bookmark.getFreeBoard()));
+
+                boolean liked = loggedinMember.getLikes().stream()
+                        .anyMatch(like -> freeBoard.equals(like.getFreeBoard()));
+
+                FreeBoardDto.Response freeBoardResponse = mapper.freeBoardToFreeBoardResponseDto(freeBoard);
+                freeBoardResponse.setBookmarked(bookmarked);
+                freeBoardResponse.setLiked(liked);
+                responses.add(freeBoardResponse);
+            }
+        } else {
+            responses = getResponseList(freeBoards);
+        }
 
         return new FreeBoardDto.MultiResponseDto<>(responses, freeBoards);
     }
@@ -159,8 +179,28 @@ public class FreeBoardService {
         // 1. 페이지네이션 적용
         Page<FreeBoard> freeBoards = freeBoardRepository.findFreeBoardsByCategoryId(categoryId, sortedBy(page, size, sort));
 
-        // 2. Response에 각 게시글의 태그 정보 적용
-        List<FreeBoardDto.Response> responses = getResponseList(freeBoards);
+        // 2. 로그인한 멤버 조회 후 게시글 목록
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        List<FreeBoardDto.Response> responses = new ArrayList<>();
+
+        if (authentication != null && authentication.isAuthenticated() && !"anonymousUser".equals(authentication.getName())) {
+            Member loggedinMember = memberService.findVerifiedMember(authentication.getName());
+
+            for (FreeBoard freeBoard : freeBoards.getContent()) {
+                boolean bookmarked = loggedinMember.getBookmarks().stream()
+                        .anyMatch(bookmark -> freeBoard.equals(bookmark.getFreeBoard()));
+
+                boolean liked = loggedinMember.getLikes().stream()
+                        .anyMatch(like -> freeBoard.equals(like.getFreeBoard()));
+
+                FreeBoardDto.Response freeBoardResponse = mapper.freeBoardToFreeBoardResponseDto(freeBoard);
+                freeBoardResponse.setBookmarked(bookmarked);
+                freeBoardResponse.setLiked(liked);
+                responses.add(freeBoardResponse);
+            }
+        } else {
+            responses = getResponseList(freeBoards);
+        }
 
         return new FreeBoardDto.MultiResponseDto<>(responses, freeBoards);
     }

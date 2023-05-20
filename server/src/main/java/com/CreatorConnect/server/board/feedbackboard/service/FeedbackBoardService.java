@@ -176,8 +176,28 @@ public class FeedbackBoardService {
         // pageInfo 가져오기
         FeedbackBoardResponseDto.PageInfo pageInfo = new FeedbackBoardResponseDto.PageInfo(feedbackBoardsPage.getNumber() + 1, feedbackBoardsPage.getSize(), feedbackBoardsPage.getTotalElements(), feedbackBoardsPage.getTotalPages());
 
-        // 태그 정보 적용
-        List<FeedbackBoardResponseDto.Details> responses = getResponseList(feedbackBoardsPage);
+        // 로그인한 멤버
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        List<FeedbackBoardResponseDto.Details> responses = new ArrayList<>();
+
+        if (authentication != null && authentication.isAuthenticated() && !"anonymousUser".equals(authentication.getName())) {
+            Member loggedinMember = memberService.findVerifiedMember(authentication.getName());
+
+            for (FeedbackBoard feedbackBoard : feedbackBoardsPage.getContent()) {
+                boolean bookmarked = loggedinMember.getBookmarks().stream()
+                        .anyMatch(bookmark -> feedbackBoard.equals(bookmark.getFeedbackBoard()));
+
+                boolean liked = loggedinMember.getLikes().stream()
+                        .anyMatch(like -> feedbackBoard.equals(like.getFeedbackBoard()));
+
+                FeedbackBoardResponseDto.Details feedbackResponse = mapper.feedbackBoardToFeedbackBoardDetailsResponse(feedbackBoard);
+                feedbackResponse.setBookmarked(bookmarked);
+                feedbackResponse.setLiked(liked);
+                responses.add(feedbackResponse);
+            }
+        } else {
+            responses = getResponseList(feedbackBoardsPage);
+        }
 
         return new FeedbackBoardResponseDto.Multi<>(responses, pageInfo);
     }
@@ -190,8 +210,28 @@ public class FeedbackBoardService {
         // pageInfo 가져오기
         FeedbackBoardResponseDto.PageInfo pageInfo = new FeedbackBoardResponseDto.PageInfo(feedbackBoardsPage.getNumber() + 1, feedbackBoardsPage.getSize(), feedbackBoardsPage.getTotalElements(), feedbackBoardsPage.getTotalPages());
 
-        // 태그 정보 적용
-        List<FeedbackBoardResponseDto.Details> responses = getResponseList(feedbackBoardsPage);
+        // 로그인한 멤버 후 게시글 목록
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        List<FeedbackBoardResponseDto.Details> responses = new ArrayList<>();
+
+        if (authentication != null && authentication.isAuthenticated() && !"anonymousUser".equals(authentication.getName())) {
+            Member loggedinMember = memberService.findVerifiedMember(authentication.getName());
+
+            for (FeedbackBoard feedbackBoard : feedbackBoardsPage.getContent()) {
+                boolean bookmarked = loggedinMember.getBookmarks().stream()
+                        .anyMatch(bookmark -> feedbackBoard.equals(bookmark.getFeedbackBoard()));
+
+                boolean liked = loggedinMember.getLikes().stream()
+                        .anyMatch(like -> feedbackBoard.equals(like.getFeedbackBoard()));
+
+                FeedbackBoardResponseDto.Details feedbackResponse = mapper.feedbackBoardToFeedbackBoardDetailsResponse(feedbackBoard);
+                feedbackResponse.setBookmarked(bookmarked);
+                feedbackResponse.setLiked(liked);
+                responses.add(feedbackResponse);
+            }
+        } else {
+            responses = getResponseList(feedbackBoardsPage);
+        }
 
         return new FeedbackBoardResponseDto.Multi<>(responses, pageInfo);
     }
@@ -204,8 +244,28 @@ public class FeedbackBoardService {
         // pageInfo 가져오기
         FeedbackBoardResponseDto.PageInfo pageInfo = new FeedbackBoardResponseDto.PageInfo(feedbackBoardsPage.getNumber() + 1, feedbackBoardsPage.getSize(), feedbackBoardsPage.getTotalElements(), feedbackBoardsPage.getTotalPages());
 
-        // 태그 정보 적용
-        List<FeedbackBoardResponseDto.Details> responses = getResponseList(feedbackBoardsPage);
+        // 로그인한 멤버 조회 후 게시글 목록
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        List<FeedbackBoardResponseDto.Details> responses = new ArrayList<>();
+
+        if (authentication != null && authentication.isAuthenticated() && !"anonymousUser".equals(authentication.getName())) {
+            Member loggedinMember = memberService.findVerifiedMember(authentication.getName());
+
+            for (FeedbackBoard feedbackBoard : feedbackBoardsPage.getContent()) {
+                boolean bookmarked = loggedinMember.getBookmarks().stream()
+                        .anyMatch(bookmark -> feedbackBoard.equals(bookmark.getFeedbackBoard()));
+
+                boolean liked = loggedinMember.getLikes().stream()
+                        .anyMatch(like -> feedbackBoard.equals(like.getFeedbackBoard()));
+
+                FeedbackBoardResponseDto.Details feedbackResponse = mapper.feedbackBoardToFeedbackBoardDetailsResponse(feedbackBoard);
+                feedbackResponse.setBookmarked(bookmarked);
+                feedbackResponse.setLiked(liked);
+                responses.add(feedbackResponse);
+            }
+        } else {
+            responses = getResponseList(feedbackBoardsPage);
+        }
 
         return new FeedbackBoardResponseDto.Multi<>(responses, pageInfo);
     }
