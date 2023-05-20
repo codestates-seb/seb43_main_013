@@ -2,12 +2,38 @@
 @tailwind components;
 @tailwind utilities;
 
+/* 폰트 메인 ( https://noonnu.cc/font_page/53 ) */
+@font-face {
+  font-family: 'BMJUA';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_one@1.0/BMJUA.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+/* 폰트 서브 ( https://noonnu.cc/font_page/394 ) */
+@font-face {
+  font-family: 'KOTRA_BOLD-Bold';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-10-21@1.1/KOTRA_BOLD-Bold.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+/* 폰트 특수 ( https://noonnu.cc/font_page/1132 ) */
+@font-face {
+  font-family: 'GoryeongStrawberry';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2304-01@1.0/GoryeongStrawberry.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+
 html {
   @apply text-[14px] md:text-[16px];
 }
 
 * {
-  @apply text-base;
+  @apply text-base font-main text-fg tracking-wide;
+}
+
+.chakra-toast * {
+  @apply text-white tracking-wider;
 }
 
 @layer utilities {
