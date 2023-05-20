@@ -29,7 +29,7 @@ html {
 }
 
 * {
-  @apply text-base font-main;
+  @apply text-base font-main text-fg;
 }
 
 @layer utilities {

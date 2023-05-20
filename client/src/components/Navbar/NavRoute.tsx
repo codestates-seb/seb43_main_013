@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { useCategoriesStore, usePageStore, useSortStore, useFeedbackCategoriesStore } from "@/store";
 import { usePathname } from "next/navigation";
+import { motion } from "framer-motion";
+import { twMerge } from "tailwind-merge";
 
 const link = [
   {
@@ -42,18 +44,21 @@ const NavRoute = () => {
   const pathname = usePathname();
 
   return (
-    // <ul className="max-w-[300px] w-80 flex justify-between text-xl ">
-    <ul className="w-80 flex justify-between text-xl ">
+    <ul className="flex space-x-8 tracking-widest">
       {link.map((item) => {
         const { name, link } = item;
-        const actStyle = pathname === link ? "text-main-400 border-b-2 border-b-main-400" : "";
 
         return (
-          <Link href={link} key={link}>
-            {/* <li className="cursor-pointer text-black hover:text-rose-400">{name}</li> */}
-            <li onClick={handleResetClick} className={`cursor-pointer text-black hover:text-rose-400 ${actStyle}`}>
+          <Link key={link} href={link} className="relative py-4 first:pl-0">
+            <li
+              onClick={handleResetClick}
+              className={twMerge("text-xl font-sub", link === pathname && "text-main-300")}
+            >
               {name}
             </li>
+            {link === pathname && (
+              <motion.div className="absolute bottom-0 w-full h-1 bg-main-200 rounded-sm" layoutId="nav" />
+            )}
           </Link>
         );
       })}
