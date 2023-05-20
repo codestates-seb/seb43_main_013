@@ -68,6 +68,7 @@ const FreePostsSlide = () => {
 
   /**2023-05-17 - 슬라이드 설정 옵션 - leekoby */
   const settings = {
+    touchThreshold: 100,
     afterChange: handleAfterChange,
     className: "center",
     centerMode: true,
@@ -79,7 +80,7 @@ const FreePostsSlide = () => {
     autoplay: true,
     // autoplaySpeed: 4000,
     speed: 500,
-    dots: true,
+    dots: false,
     arrow: true,
     appendDots: appendDots,
     customPaging: customPaging,

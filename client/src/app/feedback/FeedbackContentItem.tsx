@@ -1,6 +1,5 @@
 import Image from "next/image";
 import { BookmarkIcon as BookmarkIconUnchecked } from "@heroicons/react/24/outline";
-import defaultThumnail from "@/public/images/default-thumnail.jpg";
 import sample_thumnail1 from "@/public/images/sample_thumnail1.png";
 import ContentFooter from "../../components/BoardMain/ContentFooter";
 import TagItem from "../../components/BoardMain/TagItem";

@@ -13,7 +13,7 @@ serverInstance.interceptors.request.use(function (config) {
   const refreshToken = localStorage.getItem("refreshToken");
 
   if (accessToken) {
-    config.headers.Authorization = `Bearer ${accessToken}`;
+    config.headers.Authorization = `${accessToken}`;
   }
   if (refreshToken) {
     // config.headers.refresh = refreshToken;
@@ -28,3 +28,8 @@ export * from "./comment";
 export * from "./recomment";
 export * from "./bookmark";
 export * from "./like";
+export * from "./member";
+export * from "./follow";
+export * from "./followers";
+export * from "./followings";
+export * from "./auth";

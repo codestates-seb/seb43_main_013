@@ -36,7 +36,7 @@ const FreeMain = () => {
 
   useEffect(() => {
     refetch();
-  }, [selectedCategory, sortSelectedOption]);
+  }, [selectedCategory, sortSelectedOption, currentPage]);
 
   /** 2023/05/13 - 공통 카테고리 초기값 - by leekoby */
   const { categories, isLoading } = useFetchCategories({ type: "normal" });
@@ -68,8 +68,8 @@ const FreeMain = () => {
           {/* TODO: //*게시글 북마크 좋아요 클릭되게 하는 방법 생각해보기  */}
           {data.pages.map((item) =>
             item.data.map((innerData) => (
-              <Link key={innerData.freeBoardId} href={`/free/${innerData.freeBoardId}`}>
-                <ContentItem props={innerData} />
+              <Link href={`/free/${innerData.freeBoardId}`}>
+                <ContentItem props={innerData} key={innerData.freeBoardId} />
               </Link>
             )),
           )}
