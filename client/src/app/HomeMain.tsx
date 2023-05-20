@@ -8,7 +8,7 @@ import React from "react";
 const HomeMain = () => {
   return (
     /** 2023/05/16 - 홈화면 구성 - by leekoby */
-    <section className="flex flex-col space-y-20">
+    <section className="flex flex-col space-y-24">
       <div className="">
         <BannerSlide />
       </div>

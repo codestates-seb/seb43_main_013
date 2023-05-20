@@ -44,10 +44,7 @@ const PromotionMain = () => {
   /** 2023/05/17 - 공통 사이드 카테고리  - by leekoby */
   const { categories, isLoading } = useFetchCategories({ type: "normal" });
   /** 2023/05/17 - 홍보 게시판 카테고리  - by leekoby */
-
   // const { promotionCategories, promotionCategoryIsLoading } = useFetchPromotionCategories({ type: "promotion" });
-
-
 
   /** 2023/05/17 - 무한스크롤 불러오기를 위해 사용 - by leekoby */
   const observerRef = useRef<IntersectionObserver | null>(null);

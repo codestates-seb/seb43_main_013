@@ -1,10 +1,11 @@
 import Image from "next/image";
 import { BookmarkIcon as BookmarkIconUnchecked } from "@heroicons/react/24/outline";
+import { BookmarkIcon as BookmarkIconChecked } from "@heroicons/react/24/solid";
+
 import sample_thumnail2 from "@/public/images/sample_thumnail2.png";
 import ContentFooter from "../../components/BoardMain/ContentFooter";
 import TagItem from "../../components/BoardMain/TagItem";
 import { forwardRef } from "react";
-import { getYoutubeThumbnail } from "@/libs";
 import { PromotionBoard } from "@/types/api";
 
 interface ContentItemProps {
@@ -32,24 +33,26 @@ const PromotionContentItem = forwardRef<HTMLDivElement, ContentItemProps>(({ pro
               {/* content header */}
               <div className="flex items-center justify-between">
                 {/* rightside title */}
-                <h1 className="text-xl font-bold text-left ">{props.title}</h1>
-                <BookmarkIconUnchecked className="w-5 h-5 text-black cursor-pointer " />
+                <h1
+                  className="text-xl font-bold text-left hover:underline hover:underline-offset-4 hover:text-blue-600 truncate-1 text-ellipsis overflow-hidden
+                    line-clamp-1"
+                >
+                  {props.title}
+                </h1>
+                {props.bookmarked ? (
+                  <BookmarkIconChecked className="w-5 h-5 flex-shrink-0 text-black cursor-pointer " />
+                ) : (
+                  <BookmarkIconUnchecked className="w-5 h-5 flex-shrink-0 text-black cursor-pointer " />
+                )}
               </div>
               {/* content body */}
-              <p className="flex-1 w-full text-left break-all line-clamp-3">{props.content}</p>
+              <p className="truncate-3 flex-1 w-full text-left ">{props.content.replace(/<[^>]*>?/g, "")}</p>
               {/* rightside tag */}
               <div className="flex gap-x-2">
                 {props.tags && props.tags.map((item) => <TagItem tag={item.tagName} />)}
               </div>
             </div>
-            <ContentFooter
-              position="main"
-              nickName={props.nickname}
-              viewCount={props.viewCount}
-              likeCount={props.likeCount}
-              commentCount={props.commentCount}
-              createdAt={props.createdAt}
-            />
+            {/* <ContentFooter position="main" type="promotion" footerData={props}  /> */}
           </div>
         </div>
       </div>

@@ -5,6 +5,7 @@ export * from "./job";
 export * from "./written";
 export * from "./bookmarked";
 export * from "./liked";
+export * from "./notice";
 
 /** 2023/05/11 - 보드 공통 타입 - by 1-blue */
 export interface Board {

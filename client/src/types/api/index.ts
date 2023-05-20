@@ -31,7 +31,7 @@ export interface PageInfo {
 }
 
 /** 2023/05/11 - 게시판 타입 - by 1-blue */
-export type BoardType = "free" | "feedback" | "promotion" | "job";
+export type BoardType = "free" | "feedback" | "promotion" | "job" | "notice";
 
 export * from "./categories";
 export * from "./board";

@@ -13,6 +13,7 @@ export const QUERY_KEYS = {
   feedbackBoardList: "feedbackBoardList",
   promotionBoardList: "promotionBoardList",
   jobBoardList: "jobBoardList",
+  noticeBoardList: "noticeBoardList",
   feedbackCategories: "feedbackCategories",
   promotionCategories: "promotionCategories",
   jobCategories: "jobCategories",
