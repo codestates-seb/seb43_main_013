@@ -5,12 +5,13 @@ module.exports = {
     extend: {
       /** 폰트 */
       fontFamily: {
-        main: ["Pretendard-Regular"],
-        sub: ["SBAggroB"],
+        main: ["BMJUA"],
+        sub: ["KOTRA_BOLD-Bold"],
         sp: ["GoryeongStrawberry"],
       },
       colors: {
         bg: "#121212",
+        "thick-bg": "#080808",
         fg: "#bbb",
         main: {
           50: "#eef2ff",
@@ -60,12 +61,17 @@ module.exports = {
           "0%": { opacity: "0.01", transform: "translateY(-10%)" },
           "100%": { opacity: "1", transform: "translateY(0%)" },
         },
+        "fade-up": {
+          "0%": { opacity: "0.01", transform: "translateY(10%)" },
+          "100%": { opacity: "1", transform: "translateY(0%)" },
+        },
       },
       animation: {
         "skeleton-gradient": "skeleton-gradient 0.8s linear infinite alternate",
         swing: "swing 2s ease infinite",
         "fade-in": "fade-in 0.6s ease",
         "fade-down": "fade-down 0.6s ease",
+        "fade-up": "fade-up 0.8s ease",
       },
     },
   },

@@ -52,7 +52,7 @@ const NavRoute = () => {
           <Link key={link} href={link} className="relative py-4 first:pl-0">
             <li
               onClick={handleResetClick}
-              className={twMerge("text-xl font-sub", link === pathname && "text-main-300")}
+              className={twMerge("text-xl font-main", link === pathname && "text-main-300")}
             >
               {name}
             </li>

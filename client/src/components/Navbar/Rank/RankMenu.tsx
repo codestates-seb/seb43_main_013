@@ -6,7 +6,7 @@ import Ticker from "@/components/Ticker";
 import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 
-/** https://newmainproject.gitbook.io/main-project/undefined-2/undefined-1 */
+/** FIXME: https://newmainproject.gitbook.io/main-project/undefined-2/undefined-1 */
 const rankData = {
   data: ["랍스터", "맨유", "민재", "MSI", "뷰티", "음악", "대충", "인기", "검색어"],
   pageInfo: {

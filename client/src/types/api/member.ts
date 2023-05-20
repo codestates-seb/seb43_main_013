@@ -1,5 +1,5 @@
-/** 2023/05/17 - 멤버 타입 - by 1-blue */
-export interface Member {
+/** 2023/05/17 - 내 정보 페이지 멤버 타입 - by 1-blue */
+export interface LoggedInMember {
   memberId: number;
   email: string;
   name: string;
@@ -23,7 +23,7 @@ export interface ApiFetchMemberRequest {
   memberId: number;
 }
 /** 2023/05/17 - 특정 멤버 조회 수신 타입 - by leekoby */
-export interface ApiFetchMemberResponse extends Member {}
+export interface ApiFetchMemberResponse extends LoggedInMember {}
 /** 2023/05/17 - 특정 멤버 조회 핸들러 - by leekoby */
 export interface ApiFetchMemberHandler {
   (body: ApiFetchMemberRequest): Promise<ApiFetchMemberResponse>;
@@ -41,7 +41,7 @@ export interface ApiUpdateMemberRequest {
   profileImageUrl: string;
 }
 /** 2023/05/18 - 로그인한 멤버 정보 수정 수신 타입 - by leekoby */
-export interface ApiUpdateMemberResponse extends Member {
+export interface ApiUpdateMemberResponse extends LoggedInMember {
   createdAt: Date;
   modifiedAt: Date;
   memberId: number;

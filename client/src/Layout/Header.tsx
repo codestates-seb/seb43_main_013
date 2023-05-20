@@ -1,20 +1,28 @@
 "use client";
 
 import { useState } from "react";
-import { useModalActions } from "@/components/Login/contextAPI/useModal";
-
-import SearchDiv from "@/components/Header/SearchDiv";
-import IsLoginSide from "@/components/Header/LoginSide";
-// import InputModal from "@/components/Header/InputModal";
 import HeaderLogo from "@/components/Header/HeaderLogo";
-import SearchSide from "@/components/Header/SearchSide";
-import headerArr from "@/components/Header/HeaderArr";
 import { useMemberStore } from "@/store/useMemberStore";
 import Link from "next/link";
-import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import {
+  MagnifyingGlassIcon,
+  ChevronDownIcon,
+  UserCircleIcon as OUserCircleIcon,
+  PencilIcon as OPencilIcon,
+  ArrowLeftOnRectangleIcon as OArrowLeftOnRectangleIcon,
+} from "@heroicons/react/24/outline";
+import {
+  UserCircleIcon as SUserCircleIcon,
+  PencilIcon as SPencilIcon,
+  ArrowLeftOnRectangleIcon as SArrowLeftOnRectangleIcon,
+} from "@heroicons/react/24/solid";
 import { twMerge } from "tailwind-merge";
 import { motion } from "framer-motion";
 import { usePathname } from "next/navigation";
+import useLogInModal from "@/store/useLogInStore";
+import useSignUpStore from "@/store/useSignUpStore";
+import Avatar from "@/components/Avatar";
+import InfoDropdown from "@/components/InfoDropdown";
 
 const inCommunity = ["free", "feedback", "job", "promotion"];
 
@@ -22,13 +30,18 @@ const inCommunity = ["free", "feedback", "job", "promotion"];
 const Header: React.FC = () => {
   const pathname = usePathname();
   const { member } = useMemberStore();
-  const { leftArr, rightArr } = headerArr();
+
+  /** 2023/05/20 - 로그인 모달 상태 - by 1-blue */
+  const { openLogInModal } = useLogInModal();
+
+  /** 2023/05/20 - 회원가입 모달 상태 - by 1-blue */
+  const { openSignUpModal } = useSignUpStore();
 
   /** 2023/05/20 - 검색창 포커스 여부 - by 1-blue */
   const [isFocus, setIsFocus] = useState(false);
 
   return (
-    <header className="bg-bg h-[96px] border-b border-sub-400 flex justify-center tracking-widest z-10 px-8">
+    <header className="bg-bg h-[96px] border-b border-sub-400 flex justify-center tracking-widest z-10 px-8 font-main">
       <div className="flex w-full max-w-[1440px] items-center">
         <HeaderLogo />
         {/* <SearchSide array={leftArr} /> */}
@@ -36,7 +49,7 @@ const Header: React.FC = () => {
           <Link href="/" className="relative flex">
             <span
               className={twMerge(
-                "text-2xl font-sub transition-colors",
+                "text-2xl transition-colors",
                 (pathname === "/" || inCommunity.some((v) => pathname.includes(v))) && "text-main-400",
               )}
             >
@@ -50,12 +63,7 @@ const Header: React.FC = () => {
             )}
           </Link>
           <Link href="/notice" className="relative flex">
-            <span
-              className={twMerge(
-                "text-2xl font-sub transition-colors",
-                pathname.includes("/notice") && "text-main-400",
-              )}
-            >
+            <span className={twMerge("text-2xl transition-colors", pathname.includes("/notice") && "text-main-400")}>
               공지사항
             </span>
             {pathname.includes("/notice") && (
@@ -70,32 +78,37 @@ const Header: React.FC = () => {
         <div className="ml-auto" />
 
         <section
-          className={twMerge("mr-8 border p-2 rounded-md flex space-x-2 transition-all", isFocus && "border-main-400")}
+          className={twMerge(
+            "mr-8 border p-2 rounded-md flex items-center space-x-2 transition-all",
+            isFocus && "border-main-400",
+          )}
         >
-          <MagnifyingGlassIcon className={twMerge("w-7 h-7 transition-all", isFocus && "stroke-main-500")} />
+          <MagnifyingGlassIcon className={twMerge("w-5 h-5 transition-all", isFocus && "stroke-main-500")} />
           <input
             type="search"
             className="bg-transparent outline-none placeholder:text-sm"
             onFocus={() => setIsFocus(true)}
             onBlur={() => setIsFocus(false)}
-            placeholder="유저 or 게시글 검색"
+            placeholder="ex) 먹방"
           />
         </section>
 
         {member ? (
-          <section className="flex space-x-3">
-            <Link href="/login" className="text-xl font-sub">
-              로그인
-            </Link>
-            <div className="border border-sub-400" />
-            <Link href="/singup" className="text-xl font-sub">
-              회원가입
-            </Link>
+          <section className="relative flex items-center space-x-3">
+            <InfoDropdown nickname={member.nickname} memberId={member.memberId} />
+            <Avatar src={member.profileImageUrl} className="w-12 h-12" />
           </section>
         ) : (
-          <></>
+          <section className="flex space-x-3">
+            <button type="button" onClick={openLogInModal} className="text-xl">
+              로그인
+            </button>
+            <div className="border border-sub-400" />
+            <button type="button" onClick={openSignUpModal} className="text-xl">
+              회원가입
+            </button>
+          </section>
         )}
-        {/* {isLogin ? <IsLoginSide nickState={nickState} /> : <SearchSide array={rightArr} />} */}
       </div>
     </header>
   );

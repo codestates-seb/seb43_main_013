@@ -2,17 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 
-/* 폰트 메인 ( https://noonnu.cc/index#google_vignette ) */
+/* 폰트 메인 ( https://noonnu.cc/font_page/53 ) */
 @font-face {
-  font-family: 'Pretendard-Regular';
-  src: url('https://cdn.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
-  font-weight: 400;
+  font-family: 'BMJUA';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_one@1.0/BMJUA.woff') format('woff');
+  font-weight: normal;
   font-style: normal;
 }
-/* 폰트 서브 ( https://noonnu.cc/font_page/738 ) */
+/* 폰트 서브 ( https://noonnu.cc/font_page/394 ) */
 @font-face {
-  font-family: 'SBAggroB';
-  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2108@1.1/SBAggroB.woff') format('woff');
+  font-family: 'KOTRA_BOLD-Bold';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-10-21@1.1/KOTRA_BOLD-Bold.woff') format('woff');
   font-weight: normal;
   font-style: normal;
 }
@@ -29,7 +29,11 @@ html {
 }
 
 * {
-  @apply text-base font-main text-fg;
+  @apply text-base font-main text-fg tracking-wide;
+}
+
+.chakra-toast * {
+  @apply text-white tracking-wider;
 }
 
 @layer utilities {
