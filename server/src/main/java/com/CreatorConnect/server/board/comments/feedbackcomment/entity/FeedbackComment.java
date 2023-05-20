@@ -56,7 +56,6 @@ public class FeedbackComment extends Auditable {
     @ManyToOne
     @JoinColumn(name = "feedback_board_id")
     private FeedbackBoard feedbackBoard;
-    public long getFeedBoardId() {return feedbackBoard.getFeedbackBoardId();}
 
     public void setFeedbackBoard(FeedbackBoard feedbackBoard) {
         this.feedbackBoard = feedbackBoard;
@@ -66,21 +65,4 @@ public class FeedbackComment extends Auditable {
     }
     @OneToMany(mappedBy = "feedbackComment", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<FeedbackReComment> feedbackReComments = new ArrayList<>();
-//
-//    @OneToMany(mappedBy = "comment", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-//    private List<CommentBoard> commentBoardList = new ArrayList<>();
-
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "parent_id")
-//    private Comment parent;
-//
-//    @Builder.Default
-//    @OneToMany(mappedBy = "parent", orphanRemoval = true)
-//    private List<Comment> children = new ArrayList<>();
-//
-//    // 부모 댓글 수정
-//    public void updateParent(Comment parent){
-//        this.parent = parent;
-//    }
-
 }

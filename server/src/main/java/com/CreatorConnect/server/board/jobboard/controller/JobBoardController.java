@@ -19,13 +19,15 @@ import javax.validation.constraints.Positive;
 @RequiredArgsConstructor
 @Validated
 public class JobBoardController {
-    private final JobBoardService jobBoardService;
     private final JobBoardMapper mapper;
+    private final JobBoardService jobBoardService;
 
     // 구인구직 게시판 게시글 등록
     @PostMapping("/jobboard/new")
     @Secured("ROLE_USER")
-    public ResponseEntity postJobBoard(@Valid @RequestBody JobBoardDto.Post post) {
+    public ResponseEntity postJobBoard(@Valid @RequestBody JobBoardDto.Post post,
+                                       @RequestHeader("Authorization") String authorizationToken) {
+
         JobBoard createdJobBoard = jobBoardService.createJobBoard(post);
 
         return new ResponseEntity<>(mapper.jobBoardToJobBoardPostResposneDto(createdJobBoard), HttpStatus.CREATED);
@@ -35,7 +37,9 @@ public class JobBoardController {
     @PatchMapping("/jobboard/{jobBoardId}")
     @Secured("ROLE_USER")
     public ResponseEntity patchJobBoard(@PathVariable("jobBoardId") @Positive Long jobBoardId,
-                                        @Valid @RequestBody JobBoardDto.Patch patch) {
+                                        @Valid @RequestBody JobBoardDto.Patch patch,
+                                        @RequestHeader("Authorization") String authorizationToken) {
+
         JobBoard updatedJobBoard = jobBoardService.updateJobBoard(patch, jobBoardId);
 
         return new ResponseEntity<>(mapper.jobBoardToJobBoardResponseDto(updatedJobBoard), HttpStatus.OK);
@@ -46,6 +50,7 @@ public class JobBoardController {
     public ResponseEntity getJobBoards(@RequestParam String sort,
                                        @RequestParam @Positive int page,
                                        @RequestParam @Positive int size) {
+
         JobBoardDto.MultiResponseDto<JobBoardDto.Response> pageJobBoards = jobBoardService.getAllJobBoards(page, size, sort);
 
         return new ResponseEntity<>(pageJobBoards, HttpStatus.OK);
@@ -57,6 +62,7 @@ public class JobBoardController {
                                                  @RequestParam String sort,
                                                  @RequestParam @Positive int page,
                                                  @RequestParam @Positive int size) {
+
         JobBoardDto.MultiResponseDto<JobBoardDto.Response> pageJobBoards =
                 jobBoardService.getAllJobBoardsByCategory(categoryId, page, size, sort);
 
@@ -66,17 +72,54 @@ public class JobBoardController {
     // 구인구직 게시판 게시글 상세조회
     @GetMapping("/jobboard/{jobBoardId}")
     public ResponseEntity getJobBoardDetail(@PathVariable("jobBoardId") @Positive Long jobBoardId) {
-        JobBoard jobBoard = jobBoardService.getJobBoardDetail(jobBoardId);
-        JobBoardDto.Response response = mapper.jobBoardToJobBoardResponseDto(jobBoard);
 
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return new ResponseEntity<>(jobBoardService.getJobBoardDetail(jobBoardId), HttpStatus.OK);
     }
 
     // 구인구직 게시판 삭제
     @DeleteMapping("/jobboard/{jobBoardId}")
-    public ResponseEntity deleteJobBoard(@PathVariable("jobBoardId") @Positive Long jobBoardId) {
+    public ResponseEntity deleteJobBoard(@PathVariable("jobBoardId") @Positive Long jobBoardId,
+                                         @RequestHeader("Authorization") String authorizationToken) {
+
         jobBoardService.removeJobBoard(jobBoardId);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+    @PostMapping("/jobboard/{jobBoardId}/like")
+    public ResponseEntity likeFreeBoard (@PathVariable("jobBoardId") @Positive Long jobBoardId,
+                                         @RequestHeader(value = "Authorization") String authorizationToken) {
+
+        jobBoardService.likeJobBoard(jobBoardId);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @DeleteMapping("/jobboard/{jobBoardId}/like")
+    public ResponseEntity unlikeFreeBoard (@PathVariable("jobBoardId") @Positive Long jobBoardId,
+                                           @RequestHeader(value = "Authorization") String authorizationToken) {
+
+        jobBoardService.unlikeJobBoard(jobBoardId);
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @PostMapping("/jobboard/{jobBoardId}/bookmark")
+    public ResponseEntity bookmarkFeedbackBoard (@PathVariable("jobBoardId") @Positive Long jobBoardId,
+                                                 @RequestHeader(value = "Authorization") String authorizationToken) {
+
+        jobBoardService.bookmarkJobBoard(jobBoardId);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @DeleteMapping("/jobboard/{jobBoardId}/bookmark")
+    public ResponseEntity unbookmarkFeedbackBoard (@PathVariable("jobBoardId") @Positive Long jobBoardId,
+                                                   @RequestHeader(value = "Authorization") String authorizationToken) {
+
+        jobBoardService.unbookmarkJobBoard(jobBoardId);
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
 }

@@ -51,6 +51,16 @@ public class OAuth2MemberSuccessHandler extends SimpleUrlAuthenticationSuccessHa
         getRedirectStrategy().sendRedirect(request, response, uri);
     }
 
+    private void sendTokenResponse(HttpServletResponse response, String username, List<String> authorities) throws IOException {
+        String accessToken = delegateAccessToken(username, authorities);
+        String refreshToken = delegateRefreshToken(username);
+
+        response.setHeader("Authorization", "Bearer " + accessToken);
+        response.setHeader("Refresh-Token", refreshToken);
+        response.setStatus(HttpServletResponse.SC_OK);
+
+    }
+
     private String delegateAccessToken(String username, List<String> authorities) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("username", username);
@@ -61,7 +71,7 @@ public class OAuth2MemberSuccessHandler extends SimpleUrlAuthenticationSuccessHa
 
         String base64EncodedSecretKey = jwtTokenizer.encodeBase64SecretKey(jwtTokenizer.getSecretKey());
 
-        String accessToken = jwtTokenizer.generateAccessToken(claims, subject, expiration, base64EncodedSecretKey);
+        String accessToken = "Bearer " + jwtTokenizer.generateAccessToken(claims, subject, expiration, base64EncodedSecretKey);
 
         return accessToken;
     }

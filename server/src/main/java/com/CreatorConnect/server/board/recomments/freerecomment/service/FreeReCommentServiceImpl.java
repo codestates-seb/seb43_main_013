@@ -32,6 +32,9 @@ public class FreeReCommentServiceImpl implements ReCommentService{
 
     @Override
     public ReCommentResponseDto.Post createReComment(Long freeBoardId, Long commentId, ReCommentDto.Post postdto) {
+        // 멤버 검증
+        memberService.verifiedAuthenticatedMember(postdto.getMemberId());
+
         // 댓글 찾기
         Optional<FreeComment> freeComment = freeCommentRepository.findById(new CommentPK(freeBoardId,commentId));
         FreeComment foundFreeComment = freeComment.orElseThrow(() -> new BusinessLogicException(ExceptionCode.COMMENT_NOT_FOUND));
@@ -46,14 +49,13 @@ public class FreeReCommentServiceImpl implements ReCommentService{
         return  post;
     }
     @Override
-    public void updateReComment(String token, Long freeBoardId, Long commentId, Long reCommentId, CommentDto.Patch patchDto){
+    public void updateReComment(Long freeBoardId, Long commentId, Long reCommentId, CommentDto.Patch patchDto){
 
         // Dto의 Id값으로 Entity찾기
         FreeReComment foundFreeReComment = findVerifiedFreeReComment(freeBoardId, commentId, reCommentId);
 
         // 멤버 검증
-        Member findMember = memberService.findVerifiedMember(foundFreeReComment.getMemberId());
-        memberService.verifiedAuthenticatedMember(token, findMember);
+        memberService.verifiedAuthenticatedMember(patchDto.getMemberId());
 
         //찾은 Entity의 값 변경
         Optional.ofNullable(patchDto.getContent())
@@ -71,14 +73,14 @@ public class FreeReCommentServiceImpl implements ReCommentService{
         //entity -> dto 매핑, 리턴
         return mapper.freeReCommentToReCommentDetailsResponse(foundFreeReComment);
     }
+
     @Override
-    public void deleteReComment(String token, Long freeBoardId, Long commentId, Long reCommentId){
+    public void deleteReComment(Long freeBoardId, Long commentId, Long reCommentId){
         // 대댓글 찾기
         FreeReComment foundReComment = findVerifiedFreeReComment(freeBoardId, commentId, reCommentId);
 
         // 멤버 검증
-        Member findMember = memberService.findVerifiedMember(foundReComment.getMemberId());
-        memberService.verifiedAuthenticatedMember(token, findMember);
+        memberService.verifiedAuthenticatedMember(foundReComment.getMemberId());
 
         // 대댓글 수 -1
         Long reCommentCount = foundReComment.getFreeComment().getReCommentCount();

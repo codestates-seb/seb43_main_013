@@ -1,7 +1,6 @@
 package com.CreatorConnect.server.member.service;
 
 import com.CreatorConnect.server.auth.event.MemberRegistrationApplicationEvent;
-import com.CreatorConnect.server.auth.jwt.JwtAuthenticationToken;
 import com.CreatorConnect.server.auth.jwt.JwtTokenizer;
 import com.CreatorConnect.server.auth.utils.CustomAuthorityUtils;
 import com.CreatorConnect.server.exception.BusinessLogicException;
@@ -18,20 +17,13 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestTemplate;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
@@ -82,11 +74,10 @@ public class MemberService {
     }
 
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE)
-    public Member updateMember(String jwtToken, Long memberId, Member member) {
+    public Member updateMember(Long memberId, Member member) {
 
         Member findMember = findVerifiedMember(memberId);
-
-        verifiedAuthenticatedMember(jwtToken, findMember);
+        verifiedAuthenticatedMember(findMember.getMemberId());
 
         if (member.getPassword() != null) {
             findMember.setPassword(passwordEncoder.encode(member.getPassword()));
@@ -123,10 +114,12 @@ public class MemberService {
                 Sort.by("memberId").descending()));
     }
 
-    public void deleteMember(String token, Long memberId) {
+    public void deleteMember(Long memberId) {
 
         Member findMember = findVerifiedMember(memberId);
-        verifiedAuthenticatedMember(token, findMember);
+
+        // 로그인 유저, 작성한 유저 검증 로직
+        verifiedAuthenticatedMember(findMember.getMemberId());
 
         String delEmail = "del_" + findMember.getEmail();
 
@@ -167,15 +160,15 @@ public class MemberService {
         return findMember;
     }
 
-    public boolean checkPassword(String token, Long memberId, String password) {
+    public boolean checkPassword(Long memberId, String password) {
 
         Member findMember = findVerifiedMember(memberId);
-        verifiedAuthenticatedMember(token, findMember);
+        verifiedAuthenticatedMember(findMember.getMemberId());
 
         return passwordEncoder.matches(password, findMember.getPassword());
     }
 
-    public void verifiedAuthenticatedMember(String jwtToken, Member findMember) {
+    public Member jwtTokenToMember (String jwtToken) {
 
         try {
             String encodeKey = encode(secretKey);
@@ -184,17 +177,19 @@ public class MemberService {
             Claims tokenClaims = claims.getBody();
             String userEmail = tokenClaims.getSubject();
 
-            if (!userEmail.equals(findMember.getEmail())) {
-                throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_ALLOWED);
-            }
+            Member findMember = findVerifiedMember(userEmail);
+
+            return findMember;
 
         } catch (JwtException e) {
             throw new BusinessLogicException(ExceptionCode.INVALID_TOKEN);
         }
+
     }
 
     public void verifiedAuthenticatedMember(Long memberId) {
 
+        // securitycontextholder 인증 검증 방식
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Member findMember = findVerifiedMember(memberId);
 
@@ -202,6 +197,12 @@ public class MemberService {
             throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_ALLOWED);
         }
 
+    }
+
+    // 현재 로그인한 사용자 정보
+    public Member getLoggedinMember() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return findVerifiedMember(authentication.getName());
     }
 
     public void verifyActivatedMember (Member member){

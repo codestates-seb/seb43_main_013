@@ -22,8 +22,11 @@ public class FreeReCommentController {
     @PostMapping("/freeboard/{freeBoardId}/comment/{commentId}/recomment/new")
     public ResponseEntity<ReCommentResponseDto.Post> postReComment(@PathVariable("freeBoardId") @Positive Long freeBoardId,
                                                                    @PathVariable("commentId") @Positive Long commentId,
-                                                                   @Valid @RequestBody ReCommentDto.Post postDto) {
+                                                                   @Valid @RequestBody ReCommentDto.Post postDto,
+                                                                   @RequestHeader(value = "Authorization") String authorizationToken) {
+
         ReCommentResponseDto.Post response = freeReCommentService.createReComment(freeBoardId, commentId, postDto);
+
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
@@ -34,8 +37,8 @@ public class FreeReCommentController {
                                                    @Valid @RequestBody CommentDto.Patch patchDto,
                                                    @RequestHeader(value = "Authorization") String authorizationToken){
 
-        String token = authorizationToken.substring(7);
-        freeReCommentService.updateReComment(token, freeBoardId, commentId, reCommentId, patchDto);
+        freeReCommentService.updateReComment(freeBoardId, commentId, reCommentId, patchDto);
+
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -43,7 +46,9 @@ public class FreeReCommentController {
     public ResponseEntity<ReCommentResponseDto.Details> getComment(@PathVariable("freeBoardId") @Positive Long freeBoardId,
                                                                    @PathVariable("commentId") @Positive Long commentId,
                                                                    @PathVariable("reCommentId") @Positive Long reCommentId){
+
         ReCommentResponseDto.Details response = freeReCommentService.responseReComment(freeBoardId, commentId, reCommentId);
+
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
     @DeleteMapping("/freeboard/{freeBoardId}/comment/{commentId}/recomment/{reCommentId}")
@@ -52,8 +57,9 @@ public class FreeReCommentController {
                                                     @PathVariable("reCommentId") @Positive Long reCommentId,
                                                     @RequestHeader(value = "Authorization") String authorizationToken) {
 
-        String token = authorizationToken.substring(7);
-        freeReCommentService.deleteReComment(token, freeBoardId, commentId, reCommentId);
+        freeReCommentService.deleteReComment(freeBoardId, commentId, reCommentId);
+
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
 }

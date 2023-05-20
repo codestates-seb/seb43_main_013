@@ -44,8 +44,6 @@ public class FeedbackBoard extends Auditable implements Board {
     private Long likeCount;
     @Column
     private Long viewCount;
-    @Column
-    private String tag;
 
     @PrePersist
     public void prePersist() {
@@ -112,11 +110,11 @@ public class FeedbackBoard extends Auditable implements Board {
     private List<TagToFeedbackBoard> tagBoards = new ArrayList<>();
 
     // FeedbackBoard - Bookmark 일대다 매핑
-    @OneToMany(mappedBy = "freeBoard", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "feedbackBoard", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<Bookmark> bookmarks = new HashSet<>();
 
     // FeedbackBoard - Like 일대다 매핑
-    @OneToMany(mappedBy = "freeBoard", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "feedbackBoard", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<Like> likes = new HashSet<>();
 
 }

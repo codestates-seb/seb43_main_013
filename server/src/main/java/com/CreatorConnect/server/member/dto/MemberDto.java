@@ -50,9 +50,9 @@ public class MemberDto {
     @Setter
     @NoArgsConstructor
     public static class Patch extends Auditable {
+
         private Long memberId;
 
-        @NotNull
         private String password;
 
         private String nickname;

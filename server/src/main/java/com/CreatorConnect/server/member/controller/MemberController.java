@@ -2,6 +2,7 @@ package com.CreatorConnect.server.member.controller;
 
 import com.CreatorConnect.server.board.feedbackboard.entity.FeedbackBoard;
 import com.CreatorConnect.server.board.freeboard.entity.FreeBoard;
+import com.CreatorConnect.server.board.jobboard.entity.JobBoard;
 import com.CreatorConnect.server.exception.BusinessLogicException;
 import com.CreatorConnect.server.exception.ExceptionCode;
 import com.CreatorConnect.server.member.bookmark.entity.Bookmark;
@@ -54,9 +55,7 @@ public class MemberController {
     }
 
     @GetMapping("/")
-    public ResponseEntity home(){
-        return new ResponseEntity("home", HttpStatus.OK);
-    }
+    public ResponseEntity home(){return new ResponseEntity(HttpStatus.OK);}
 
     @PostMapping("/api/signup")
     public ResponseEntity postMember(@Valid @RequestBody MemberDto.Post memberDtoPost) {
@@ -72,11 +71,9 @@ public class MemberController {
                                       @Valid @RequestBody MemberDto.Patch memberDtoPatch,
                                       @RequestHeader(value = "Authorization") String authorizationToken) {
 
-        String token = authorizationToken.substring(7);
-
         memberDtoPatch.setMemberId(memberId);
         Member member = mapper.memberPatchDtoToMember(memberDtoPatch);
-        Member updateMember = memberService.updateMember(token, memberId, member);
+        Member updateMember = memberService.updateMember(memberId, member);
 
         MemberResponseDto responseDto = mapper.memberToMemberResponseDto(updateMember);
 
@@ -87,6 +84,7 @@ public class MemberController {
     public ResponseEntity getMember(@PathVariable("member-id") @Positive Long memberId) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
         final Member loginUser;
         if (authentication != null && authentication.isAuthenticated() && !"anonymousUser".equals(authentication.getName())) {
             loginUser = memberService.findVerifiedMember(authentication.getName());
@@ -131,9 +129,7 @@ public class MemberController {
     public ResponseEntity deleteMember(@PathVariable("member-id") @Positive Long memberId,
                                        @RequestHeader(value = "Authorization") String authorizationToken) {
 
-        String token = authorizationToken.substring(7);
-
-        memberService.deleteMember(token, memberId);
+        memberService.deleteMember(memberId);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -143,10 +139,8 @@ public class MemberController {
                                         @Valid @RequestBody MemberDto.CheckPassword checkPasswordDto,
                                         @RequestHeader(value = "Authorization") String authorizationToken) {
 
-        String token = authorizationToken.substring(7);
-
         boolean checkPassword =
-                memberService.checkPassword(token, memberId, checkPasswordDto.getPassword());
+                memberService.checkPassword(memberId, checkPasswordDto.getPassword());
 
         if (checkPassword) {
             return new ResponseEntity<>(HttpStatus.OK);
@@ -159,20 +153,12 @@ public class MemberController {
     public ResponseEntity followMember(@PathVariable("member-id") @Positive Long memberId,
                                        @RequestHeader(value = "Authorization") String authorizationToken) {
 
-        String token = authorizationToken.substring(7);
-
-        // 현재 로그인한 사용자 정보
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Member loginUser = memberService.findVerifiedMember(authentication.getName());
-
-        // 팔로우할 사용자 정보 가져오기
+        Member loginUser = memberService.getLoggedinMember();
         Member memberToFollow = memberService.findVerifiedMember(memberId);
 
         if (loginUser.getMemberId() == memberToFollow.getMemberId()){
             return new ResponseEntity(
-                    new BusinessLogicException(ExceptionCode.INVALID_MEMBER).getExceptionCode().getMessage(),
-                    HttpStatus.CONFLICT
-            );
+                    new BusinessLogicException(ExceptionCode.INVALID_MEMBER), HttpStatus.CONFLICT);
         }
 
         // 현재 로그인한 사용자가 이미 해당 사용자를 팔로우하고 있는지 확인
@@ -187,21 +173,14 @@ public class MemberController {
             return new ResponseEntity<>(HttpStatus.OK);
 
         } else return new ResponseEntity(
-                new BusinessLogicException(ExceptionCode.FOLLOWING_ALREADY_EXISTS).getExceptionCode().getMessage(),
-                HttpStatus.CONFLICT);
+                new BusinessLogicException(ExceptionCode.FOLLOWING_ALREADY_EXISTS), HttpStatus.CONFLICT);
     }
 
     @DeleteMapping("/api/member/{member-id}/follow")
     public ResponseEntity unfollowMember(@PathVariable("member-id") @Positive Long memberId,
                                          @RequestHeader(value = "Authorization") String authorizationToken) {
 
-        String token = authorizationToken.substring(7);
-
-        // 현재 로그인한 사용자 정보
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Member loginUser = memberService.findVerifiedMember(authentication.getName());
-
-        // 언팔로우할 사용자 정보
+        Member loginUser = memberService.getLoggedinMember();
         Member memberToUnFollow = memberService.findVerifiedMember(memberId);
 
         // 현재 로그인한 사용자가 이미 해당 사용자를 팔로우하고 있는지 확인
@@ -214,8 +193,7 @@ public class MemberController {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 
         } else return new ResponseEntity(
-                new BusinessLogicException(ExceptionCode.FOLLOWING_ALREADY_DELETED).getExceptionCode().getMessage(),
-                HttpStatus.CONFLICT);
+                new BusinessLogicException(ExceptionCode.FOLLOWING_ALREADY_DELETED), HttpStatus.CONFLICT);
     }
 
     @GetMapping("/api/member/{member-id}/followings")
@@ -334,13 +312,30 @@ public class MemberController {
                                 like.getFeedbackBoard().getCommentCount(),
                                 like.getFeedbackBoard().getLikeCount(),
                                 like.getFeedbackBoard().getViewCount(),
-                                like.getFeedbackBoard().getCategoryName(),
+                                like.getFeedbackBoard().getFeedbackCategoryName(),
                                 like.getFeedbackBoard().getMember().getMemberId(),
                                 like.getFeedbackBoard().getMember().getEmail(),
                                 like.getFeedbackBoard().getMember().getNickname(),
                                 like.getFeedbackBoard().getMember().getProfileImageUrl(),
                                 like.getFeedbackBoard().getCreatedAt(),
                                 like.getFeedbackBoard().getModifiedAt()
+                        );
+                    } else if (like.getBoardType() == Like.BoardType.JOBBOARD) {
+                        return new MemberBoardResponseDto(
+                                like.getBoardType().toString(),
+                                like.getJobBoard().getJobBoardId(),
+                                like.getJobBoard().getTitle(),
+                                like.getJobBoard().getContent(),
+                                like.getJobBoard().getCommentCount(),
+                                like.getJobBoard().getLikeCount(),
+                                like.getJobBoard().getViewCount(),
+                                like.getJobBoard().getJobCategoryName(),
+                                like.getJobBoard().getMember().getMemberId(),
+                                like.getJobBoard().getMember().getEmail(),
+                                like.getJobBoard().getMember().getNickname(),
+                                like.getJobBoard().getMember().getProfileImageUrl(),
+                                like.getJobBoard().getCreatedAt(),
+                                like.getJobBoard().getModifiedAt()
                         );
                     }
                     return null;
@@ -354,7 +349,6 @@ public class MemberController {
                 new PageImpl<>(response, PageRequest.of(page - 1, size), totalElements);
 
         return new ResponseEntity( new MultiResponseDto<>(pageResponse.getContent(), pageResponse), HttpStatus.OK);
-
     }
 
     @GetMapping("/api/member/{member-id}/bookmarked")
@@ -369,7 +363,7 @@ public class MemberController {
 
         List<MemberBoardResponseDto> response = bookmarked.stream()
                 .map(bookmark -> {
-                    if (bookmark.getBoardType() == Like.BoardType.FREEBOARD) {
+                    if (bookmark.getBoardType() == Bookmark.BoardType.FREEBOARD) {
                         return new MemberBoardResponseDto(
                                 bookmark.getBoardType().toString(),
                                 bookmark.getFreeBoard().getFreeBoardId(),
@@ -386,7 +380,7 @@ public class MemberController {
                                 bookmark.getFreeBoard().getCreatedAt(),
                                 bookmark.getFreeBoard().getModifiedAt()
                         );
-                    } else if (bookmark.getBoardType() == Like.BoardType.FEEDBACKBOARD) {
+                    } else if (bookmark.getBoardType() == Bookmark.BoardType.FEEDBACKBOARD) {
                         return new MemberBoardResponseDto(
                                 bookmark.getBoardType().toString(),
                                 bookmark.getFeedbackBoard().getFeedbackBoardId(),
@@ -395,14 +389,30 @@ public class MemberController {
                                 bookmark.getFeedbackBoard().getCommentCount(),
                                 bookmark.getFeedbackBoard().getLikeCount(),
                                 bookmark.getFeedbackBoard().getViewCount(),
-                                bookmark.getFeedbackBoard().getCategoryName(),
+                                bookmark.getFeedbackBoard().getFeedbackCategoryName(),
                                 bookmark.getFeedbackBoard().getMember().getMemberId(),
                                 bookmark.getFeedbackBoard().getMember().getEmail(),
                                 bookmark.getFeedbackBoard().getMember().getNickname(),
                                 bookmark.getFeedbackBoard().getMember().getProfileImageUrl(),
                                 bookmark.getFeedbackBoard().getCreatedAt(),
                                 bookmark.getFeedbackBoard().getModifiedAt()
-
+                        );
+                    } else if (bookmark.getBoardType() == Bookmark.BoardType.JOBBOARD) {
+                        return new MemberBoardResponseDto(
+                                bookmark.getBoardType().toString(),
+                                bookmark.getJobBoard().getJobBoardId(),
+                                bookmark.getJobBoard().getTitle(),
+                                bookmark.getJobBoard().getContent(),
+                                bookmark.getJobBoard().getCommentCount(),
+                                bookmark.getJobBoard().getLikeCount(),
+                                bookmark.getJobBoard().getViewCount(),
+                                bookmark.getJobBoard().getJobCategoryName(),
+                                bookmark.getJobBoard().getMember().getMemberId(),
+                                bookmark.getJobBoard().getMember().getEmail(),
+                                bookmark.getJobBoard().getMember().getNickname(),
+                                bookmark.getJobBoard().getMember().getProfileImageUrl(),
+                                bookmark.getJobBoard().getCreatedAt(),
+                                bookmark.getJobBoard().getModifiedAt()
                         );
                     }
                     return null;
@@ -420,47 +430,67 @@ public class MemberController {
 
     @GetMapping("/api/member/{member-id}/written")
     public ResponseEntity getwritten(@PathVariable("member-id") @Positive Long memberId,
-                                        @RequestParam(defaultValue = "1") int page,
-                                        @RequestParam(defaultValue = "10") int size) {
+                                     @RequestParam(defaultValue = "1") int page,
+                                     @RequestParam(defaultValue = "10") int size) {
 
         Member member = memberService.findVerifiedMember(memberId);
 
         List<FreeBoard> freeBoards = member.getFreeBoards();
         List<FeedbackBoard> feedbackBoards = member.getFeedbackBoards();
+        List<JobBoard> jobBoards = member.getJobBoards();
 
         List<MemberBoardResponseDto> response = Stream.concat(
-                        freeBoards.stream().map(freeBoard -> new MemberBoardResponseDto(
-                                "FREEBOARD",
-                                freeBoard.getFreeBoardId(),
-                                freeBoard.getTitle(),
-                                freeBoard.getContent(),
-                                freeBoard.getCommentCount(),
-                                freeBoard.getLikeCount(),
-                                freeBoard.getViewCount(),
-                                freeBoard.getCategoryName(),
-                                freeBoard.getMember().getMemberId(),
-                                freeBoard.getMember().getEmail(),
-                                freeBoard.getMember().getNickname(),
-                                freeBoard.getMember().getProfileImageUrl(),
-                                freeBoard.getCreatedAt(),
-                                freeBoard.getModifiedAt()
-                        )),
-                        feedbackBoards.stream().map(feedbackBoard -> new MemberBoardResponseDto(
-                                "FEEDBACKBOARD",
-                                feedbackBoard.getFeedbackBoardId(),
-                                feedbackBoard.getTitle(),
-                                feedbackBoard.getContent(),
-                                feedbackBoard.getCommentCount(),
-                                feedbackBoard.getLikeCount(),
-                                feedbackBoard.getViewCount(),
-                                feedbackBoard.getCategoryName(),
-                                feedbackBoard.getMember().getMemberId(),
-                                feedbackBoard.getMember().getEmail(),
-                                feedbackBoard.getMember().getNickname(),
-                                feedbackBoard.getMember().getProfileImageUrl(),
-                                feedbackBoard.getCreatedAt(),
-                                feedbackBoard.getModifiedAt()
-                        )))
+                        Stream.concat(
+                                freeBoards.stream().map(freeBoard -> new MemberBoardResponseDto(
+                                        "FREEBOARD",
+                                        freeBoard.getFreeBoardId(),
+                                        freeBoard.getTitle(),
+                                        freeBoard.getContent(),
+                                        freeBoard.getCommentCount(),
+                                        freeBoard.getLikeCount(),
+                                        freeBoard.getViewCount(),
+                                        freeBoard.getCategoryName(),
+                                        freeBoard.getMember().getMemberId(),
+                                        freeBoard.getMember().getEmail(),
+                                        freeBoard.getMember().getNickname(),
+                                        freeBoard.getMember().getProfileImageUrl(),
+                                        freeBoard.getCreatedAt(),
+                                        freeBoard.getModifiedAt()
+                                )),
+                                feedbackBoards.stream().map(feedbackBoard -> new MemberBoardResponseDto(
+                                        "FEEDBACKBOARD",
+                                        feedbackBoard.getFeedbackBoardId(),
+                                        feedbackBoard.getTitle(),
+                                        feedbackBoard.getContent(),
+                                        feedbackBoard.getCommentCount(),
+                                        feedbackBoard.getLikeCount(),
+                                        feedbackBoard.getViewCount(),
+                                        feedbackBoard.getFeedbackCategoryName(),
+                                        feedbackBoard.getMember().getMemberId(),
+                                        feedbackBoard.getMember().getEmail(),
+                                        feedbackBoard.getMember().getNickname(),
+                                        feedbackBoard.getMember().getProfileImageUrl(),
+                                        feedbackBoard.getCreatedAt(),
+                                        feedbackBoard.getModifiedAt()
+                                ))
+                        ),
+                        jobBoards.stream().map(jobBoard -> new MemberBoardResponseDto(
+                                "JOBBOARD",
+                                jobBoard.getJobBoardId(),
+                                jobBoard.getTitle(),
+                                jobBoard.getContent(),
+                                jobBoard.getCommentCount(),
+                                jobBoard.getLikeCount(),
+                                jobBoard.getViewCount(),
+                                jobBoard.getJobCategoryName(),
+                                jobBoard.getMember().getMemberId(),
+                                jobBoard.getMember().getEmail(),
+                                jobBoard.getMember().getNickname(),
+                                jobBoard.getMember().getProfileImageUrl(),
+                                jobBoard.getCreatedAt(),
+                                jobBoard.getModifiedAt()
+                        ))
+                )
                 .sorted(Comparator.comparing(MemberBoardResponseDto::getCreatedAt).reversed())
                 .skip((page - 1) * size)
                 .limit(size)

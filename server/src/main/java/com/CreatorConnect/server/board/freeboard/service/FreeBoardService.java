@@ -3,14 +3,17 @@ package com.CreatorConnect.server.board.freeboard.service;
 import com.CreatorConnect.server.board.categories.category.entity.Category;
 import com.CreatorConnect.server.board.categories.category.repository.CategoryRepository;
 import com.CreatorConnect.server.board.categories.category.service.CategoryService;
-import com.CreatorConnect.server.board.feedbackboard.dto.FeedbackBoardResponseDto;
 import com.CreatorConnect.server.board.freeboard.mapper.FreeBoardMapper;
 import com.CreatorConnect.server.board.freeboard.repository.FreeBoardRepository;
 import com.CreatorConnect.server.exception.BusinessLogicException;
 import com.CreatorConnect.server.exception.ExceptionCode;
 import com.CreatorConnect.server.board.freeboard.dto.FreeBoardDto;
 import com.CreatorConnect.server.board.freeboard.entity.FreeBoard;
+import com.CreatorConnect.server.member.bookmark.entity.Bookmark;
+import com.CreatorConnect.server.member.bookmark.repository.BookmarkRepository;
 import com.CreatorConnect.server.member.entity.Member;
+import com.CreatorConnect.server.member.like.entity.Like;
+import com.CreatorConnect.server.member.like.repository.LikeRepository;
 import com.CreatorConnect.server.member.repository.MemberRepository;
 import com.CreatorConnect.server.member.service.MemberService;
 import com.CreatorConnect.server.board.tag.dto.TagDto;
@@ -26,39 +29,35 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 @Transactional
 @Slf4j
 public class FreeBoardService {
-    private final FreeBoardRepository freeBoardRepository;
-    private final MemberService memberService;
-    private final CategoryRepository categoryRepository;
     private final FreeBoardMapper mapper;
-    private final MemberRepository memberRepository;
-    private final CategoryService categoryService;
     private final FreeBoardTagService freeBoardTagService;
+    private final FreeBoardRepository freeBoardRepository;
     private final TagMapper tagMapper;
+    private final CategoryService categoryService;
+    private final CategoryRepository categoryRepository;
+    private final MemberService memberService;
+    private final MemberRepository memberRepository;
+    private final LikeRepository likeRepository;
+    private final BookmarkRepository bookmarkRepository;
 
-    public FreeBoardService(FreeBoardRepository freeBoardRepository,
-                            MemberService memberService,
-                            CategoryRepository categoryRepository,
-                            FreeBoardMapper mapper,
-                            MemberRepository memberRepository,
-                            CategoryService categoryService,
-                            FreeBoardTagService freeBoardTagService,
-                            TagMapper tagMapper) {
-        this.freeBoardRepository = freeBoardRepository;
-        this.memberService = memberService;
-        this.categoryRepository = categoryRepository;
+    public FreeBoardService(FreeBoardMapper mapper, FreeBoardTagService freeBoardTagService, FreeBoardRepository freeBoardRepository, TagMapper tagMapper, CategoryService categoryService, CategoryRepository categoryRepository, MemberService memberService, MemberRepository memberRepository, LikeRepository likeRepository, BookmarkRepository bookmarkRepository) {
         this.mapper = mapper;
-        this.memberRepository = memberRepository;
-        this.categoryService = categoryService;
         this.freeBoardTagService = freeBoardTagService;
+        this.freeBoardRepository = freeBoardRepository;
         this.tagMapper = tagMapper;
+        this.categoryService = categoryService;
+        this.categoryRepository = categoryRepository;
+        this.memberService = memberService;
+        this.memberRepository = memberRepository;
+        this.likeRepository = likeRepository;
+        this.bookmarkRepository = bookmarkRepository;
     }
 
     /**
@@ -69,6 +68,7 @@ public class FreeBoardService {
      * 4. 태그 저장
      */
     public FreeBoard createFreeBoard(FreeBoardDto.Post post) {
+
         FreeBoard freeBoard = mapper.freeBoardPostDtoToFreeBoard(post);
 
         // post dto 의 memberId 와 로그인 한 유저 비교
@@ -102,6 +102,7 @@ public class FreeBoardService {
      * 4. 수정된 데이터 저장
      */
     public FreeBoard updateFreeBoard(FreeBoardDto.Patch patch, long freeboardId) {
+
         // 1. 게시글 존재 여부 확인
         patch.setFreeBoardId(freeboardId);
         FreeBoard freeBoard = mapper.freeBoardPatchDtoToFreeBoard(patch);
@@ -119,7 +120,6 @@ public class FreeBoardService {
                     new BusinessLogicException(ExceptionCode.CATEGORY_NOT_FOUND)));
         }
 
-
         // 4. 수정
         Optional.ofNullable(freeBoard.getTitle())
                 .ifPresent(title -> checkedFreeBoard.setTitle(title)); // 게시글 제목 수정
@@ -131,7 +131,6 @@ public class FreeBoardService {
 
         // 5. 수정된 데이터 저장
         return freeBoardRepository.save(checkedFreeBoard);
-
     }
 
     /**
@@ -140,6 +139,7 @@ public class FreeBoardService {
      * 2. Response에 각 게시글의 태그 정보 적용
      */
     public FreeBoardDto.MultiResponseDto<FreeBoardDto.Response> getAllFreeBoards(int page, int size, String sort) {
+
         // 1. 페이지네이션 적용 - 최신순 / 등록순 / 인기순
         Page<FreeBoard> freeBoards = freeBoardRepository.findAll(sortedBy(page, size, sort));
 
@@ -148,9 +148,6 @@ public class FreeBoardService {
 
         return new FreeBoardDto.MultiResponseDto<>(responses, freeBoards);
     }
-//    public Page<FreeBoard> getFreeBoards(int page, int size) {
-//        return freeBoardRepository.findAll(PageRequest.of(page, size, Sort.by("freeBoardId").descending()));
-//    }
 
     /**
      * <자유 게시판 카테고리 별 목록>
@@ -158,6 +155,7 @@ public class FreeBoardService {
      * 2. Response에 각 게시글의 태그 정보 적용
      */
     public FreeBoardDto.MultiResponseDto<FreeBoardDto.Response> getAllFreeBoardsByCategory(long categoryId, int page, int size, String sort) {
+
         // 1. 페이지네이션 적용
         Page<FreeBoard> freeBoards = freeBoardRepository.findFreeBoardsByCategoryId(categoryId, sortedBy(page, size, sort));
 
@@ -185,6 +183,7 @@ public class FreeBoardService {
      * 4. 리턴
      */
     public FreeBoardDto.Response getFreeBoardDetail(long freeboardId) {
+
         // 1. 게시글 존재 여부 확인
         FreeBoard freeBoard = verifyFreeBoard(freeboardId);
 
@@ -207,11 +206,11 @@ public class FreeBoardService {
 
             // 게시물을 북마크한 경우
             bookmarked = loggedinMember.getBookmarks().stream()
-                    .anyMatch(bookmark -> bookmark.getFreeBoard().equals(freeBoard));
+                    .anyMatch(bookmark -> freeBoard.equals(bookmark.getFreeBoard()));
 
             // 게시물을 좋아요한 경우
             liked = loggedinMember.getLikes().stream()
-                    .anyMatch(like -> like.getFreeBoard().equals(freeBoard));
+                    .anyMatch(like -> freeBoard.equals(like.getFreeBoard()));
         }
 
         // 4. 매핑
@@ -223,13 +222,13 @@ public class FreeBoardService {
         return response;
     }
 
-
     /**
      * <자유 게시판 게시글 삭제>
      * 1. 게시글 존재 여부 확인
      * 2. 삭제
      */
     public void removeFreeBoard(long freeboardId) {
+
         // 1. 게시글 존재 여부 획인
         FreeBoard freeBoard = verifyFreeBoard(freeboardId);
 
@@ -242,20 +241,23 @@ public class FreeBoardService {
 
     // 게시글이 존재 여부 검증 메서드
     public FreeBoard verifyFreeBoard(long freeboardId) {
+
         Optional<FreeBoard> optionalFreeBoard = freeBoardRepository.findById(freeboardId);
+
         return optionalFreeBoard.orElseThrow(() ->
                 new BusinessLogicException(ExceptionCode.FREEBOARD_NOT_FOUND));
     }
 
-
     // 조회수 증가 메서드
     private void addViews(FreeBoard freeBoard) {
+
         freeBoard.setViewCount(freeBoard.getViewCount() + 1);
         freeBoardRepository.save(freeBoard);
     }
 
     // 페이지네이션 정렬 기준 선택 메서드
     private PageRequest sortedBy(int page, int size, String sort) {
+
         if (sort.equals("최신순")) {
             return PageRequest.of(page - 1, size, Sort.by("freeBoardId").descending());
         } else if (sort.equals("등록순")) {
@@ -267,5 +269,120 @@ public class FreeBoardService {
         }
     }
 
+    public void likeFreeBoard(Long freeBoardId) {
+
+        FreeBoard findfreeBoard = verifyFreeBoard(freeBoardId);
+        Member currentMember = memberService.getLoggedinMember();
+
+        // 현재 로그인한 사용자가 해당 게시물을 좋아요 했는지 확인
+        boolean isAlreadyLiked = currentMember.getLikes().stream()
+                .filter(Objects::nonNull) // null인 요소 필터링
+                .map(Like::getFreeBoard)
+                .filter(Objects::nonNull) // null인 FreeBoard 필터링
+                .anyMatch(freeBoard -> findfreeBoard.getFreeBoardId().equals(freeBoard.getFreeBoardId()));
+
+        if (isAlreadyLiked) {
+            throw new BusinessLogicException(ExceptionCode.LIKE_ALREADY_EXISTS);
+        }
+
+        // 게시물의 likeCount 증가
+        findfreeBoard.setLikeCount(findfreeBoard.getLikeCount() + 1);
+        freeBoardRepository.save(findfreeBoard);
+
+        Like like = new Like();
+        like.setBoardType(Like.BoardType.FREEBOARD);
+        like.setMember(currentMember);
+        like.setFreeBoard(findfreeBoard);
+        likeRepository.save(like);
+
+        // 현재 사용자의 likes 컬렉션에 좋아요 추가
+        currentMember.getLikes().add(like);
+        memberRepository.save(currentMember);
+    }
+
+    public void unlikeFreeBoard(Long freeBoardId) {
+
+        FreeBoard findfreeBoard = verifyFreeBoard(freeBoardId);
+        Member currentMember = memberService.getLoggedinMember();
+
+        // 현재 로그인한 사용자가 해당 게시물을 좋아요 했는지 확인
+        Optional<Set<Like>> likes = Optional.ofNullable(currentMember.getLikes());
+
+        Set<Like> foundLikes = likes.orElse(Collections.emptySet())
+                .stream()
+                .filter(l -> l != null && l.getFreeBoard() != null && l.getFreeBoard().getFreeBoardId().equals(findfreeBoard.getFreeBoardId()))
+                .collect(Collectors.toSet());
+
+        if (foundLikes.isEmpty()) {
+            throw new BusinessLogicException(ExceptionCode.LIKE_NOT_FOUND);
+        }
+
+        // 게시글의 likeCount 감소
+        if (findfreeBoard.getLikeCount() > 0) {
+            findfreeBoard.setLikeCount(findfreeBoard.getLikeCount() - 1);
+            freeBoardRepository.save(findfreeBoard);
+        }
+
+        // 현재 사용자의 likes 컬렉션에서 좋아요 삭제
+        for (Like foundLike : foundLikes) {
+            currentMember.getLikes().remove(foundLike);
+            likeRepository.delete(foundLike);
+        }
+
+        memberRepository.save(currentMember);
+    }
+
+    public void bookmarkFreeBoard(Long freeBoardId) {
+
+        FreeBoard findfreeBoard = verifyFreeBoard(freeBoardId);
+        Member currentMember = memberService.getLoggedinMember();
+
+        // 현재 로그인한 사용자가 해당 게시물을 북마크 했는지 확인
+        boolean isAlreadyBookMarked = currentMember.getBookmarks().stream()
+                .filter(Objects::nonNull) // null인 요소 필터링
+                .map(Bookmark::getFreeBoard)
+                .filter(Objects::nonNull) // null인 FeedbackBoard 필터링
+                .anyMatch(freeBoard -> findfreeBoard.getFreeBoardId().equals(freeBoard.getFreeBoardId()));
+
+        if (isAlreadyBookMarked) {
+            throw new BusinessLogicException(ExceptionCode.BOOKMARK_ALREADY_EXISTS);
+        }
+
+        Bookmark bookmark = new Bookmark();
+        bookmark.setBoardType(Bookmark.BoardType.FREEBOARD);
+        bookmark.setMember(currentMember);
+        bookmark.setFreeBoard(findfreeBoard);
+        bookmarkRepository.save(bookmark);
+
+        // 현재 사용자의 bookmark 컬렉션에 bookmark 추가
+        currentMember.getBookmarks().add(bookmark);
+        memberRepository.save(currentMember);
+    }
+
+    public void unbookmarkFreeBoard(Long freeBoardId) {
+
+        FreeBoard findfreeBoard = verifyFreeBoard(freeBoardId);
+        Member currentMember = memberService.getLoggedinMember();
+
+        // 현재 로그인한 사용자가 해당 게시물을 북마크 했는지 확인
+        Optional<Set<Bookmark>> bookmarks = Optional.ofNullable(currentMember.getBookmarks());
+
+        Set<Bookmark> foundBookmarks = bookmarks.orElse(Collections.emptySet())
+                .stream()
+                .filter(l -> l != null && l.getFreeBoard() != null && l.getFreeBoard().getFreeBoardId().equals(findfreeBoard.getFreeBoardId()))
+                .collect(Collectors.toSet());
+
+        if (foundBookmarks.isEmpty()) {
+            throw new BusinessLogicException(ExceptionCode.BOOKMARK_NOT_FOUND);
+        }
+
+        // 현재 사용자의 bookmarks 컬렉션에서 북마크 삭제
+        for (Bookmark foundBookmark : foundBookmarks) {
+            currentMember.getBookmarks().remove(foundBookmark);
+            bookmarkRepository.delete(foundBookmark);
+        }
+
+        memberRepository.save(currentMember);
+    }
 
 }

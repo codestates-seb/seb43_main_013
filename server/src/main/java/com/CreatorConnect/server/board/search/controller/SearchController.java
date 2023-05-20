@@ -1,9 +1,15 @@
 package com.CreatorConnect.server.board.search.controller;
 
-import com.CreatorConnect.server.board.search.dto.SearchResponseDTO;
+import com.CreatorConnect.server.board.search.dto.SearchBoardResponseDto;
+import com.CreatorConnect.server.board.search.dto.SearchMemberResponseDto;
+import com.CreatorConnect.server.board.search.dto.SearchResponseDto;
+import com.CreatorConnect.server.board.search.entity.PopularSearch;
 import com.CreatorConnect.server.board.search.service.SearchService;
+import com.CreatorConnect.server.member.dto.MemberFollowResponseDto;
+import com.CreatorConnect.server.response.MultiResponseDto;
 import org.springframework.data.domain.Page;
 
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -25,27 +31,24 @@ public class SearchController {
         this.searchService = searchService;
     }
 
-    // GET /search?keyword=example&page=0&size=20&sort=createdAt,desc
+    // GET /api/search?keyword=example&page=0&size=10
     @GetMapping
-    public ResponseEntity search (
-            @RequestParam(required = false) String keyword,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+    public ResponseEntity search (@RequestParam(required = false) String keyword,
+                                  @RequestParam(defaultValue = "0") int page,
+                                  @RequestParam(defaultValue = "10") int size) {
 
-        Pageable pageable = PageRequest.of(page, size);
+        Page<SearchResponseDto> pageResponse = searchService.searchPosts(keyword, PageRequest.of(page, size));
 
-        Page<SearchResponseDTO> searchResults = searchService.searchPosts(keyword, pageable);
-        List<SearchResponseDTO> response = searchResults.getContent().stream()
-                .map(searchResult -> {
-                    SearchResponseDTO dto = new SearchResponseDTO();
-                    dto.setBoardType(searchResult.getBoardType());
-                    dto.setId(searchResult.getId());
-                    dto.setTitle(searchResult.getTitle());
-                    dto.setContent(searchResult.getContent());
-                    return dto;
-                })
-                .collect(Collectors.toList());
+        return new ResponseEntity(new MultiResponseDto<>(pageResponse.getContent(), pageResponse), HttpStatus.OK);
+    }
 
-        return new ResponseEntity<>(response, HttpStatus.OK);
+    @GetMapping("/popularkeywords")
+    public ResponseEntity getPopularSearchKeywords(@RequestParam(defaultValue = "0") int page,
+                                                   @RequestParam(defaultValue = "10") int size) {
+
+
+        Page<String> pageResponse = searchService.getPopularSearchKeywords(PageRequest.of(page, size));
+
+        return new ResponseEntity(new MultiResponseDto<>(pageResponse.getContent(), pageResponse), HttpStatus.OK);
     }
 }
