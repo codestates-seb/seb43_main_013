@@ -46,6 +46,10 @@ dependencies {
 	testImplementation 'org.springframework.security:spring-security-test'
 
 	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
 }
 
 tasks.named('test') {

@@ -1,4 +1,4 @@
-package com.CreatorConnect.server.auth.event;
+package com.CreatorConnect.server.helper.event;
 
 import com.CreatorConnect.server.member.entity.Member;
 import lombok.Getter;

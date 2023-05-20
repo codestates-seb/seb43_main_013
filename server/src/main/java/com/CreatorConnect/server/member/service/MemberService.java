@@ -1,6 +1,6 @@
 package com.CreatorConnect.server.member.service;
 
-import com.CreatorConnect.server.auth.event.MemberRegistrationApplicationEvent;
+import com.CreatorConnect.server.helper.event.MemberRegistrationApplicationEvent;
 import com.CreatorConnect.server.auth.jwt.JwtTokenizer;
 import com.CreatorConnect.server.auth.utils.CustomAuthorityUtils;
 import com.CreatorConnect.server.exception.BusinessLogicException;
