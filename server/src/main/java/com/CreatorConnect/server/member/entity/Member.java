@@ -48,7 +48,7 @@ public class Member extends Auditable {
     @Column(length = 30, nullable = false, updatable = false)
     private String name;
 
-    @Column(length = 30, nullable = false)
+    @Column(length = 30, nullable = false, unique = true)
     private String nickname;
 
     @Pattern(regexp = "^01(?:0|1|[6-9])-(\\d{3,4})-(\\d{4})$")

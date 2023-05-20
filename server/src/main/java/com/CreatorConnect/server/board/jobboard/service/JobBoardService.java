@@ -119,8 +119,28 @@ public class JobBoardService {
         // 1. 페이지네이션 적용 - 최신순 / 등록순 / 인기순
         Page<JobBoard> jobBoards = jobBoardRepository.findAll(sortedBy(page, size, sort));
 
-        // 2. 게시글 목록 가져오기
-        List<JobBoardDto.Response> response = mapper.jobBoardsToJobBoardResponseDtos(jobBoards.getContent());
+        // 2. 로그인한 멤버확인하고 게시글 목록 가져오기
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        List<JobBoardDto.Response> response = new ArrayList<>();
+
+        if (authentication != null && authentication.isAuthenticated() && !"anonymousUser".equals(authentication.getName())) {
+            Member loggedinMember = memberService.findVerifiedMember(authentication.getName());
+
+            for (JobBoard jobBoard : jobBoards.getContent()) {
+                boolean bookmarked = loggedinMember.getBookmarks().stream()
+                        .anyMatch(bookmark -> jobBoard.equals(bookmark.getJobBoard()));
+
+                boolean liked = loggedinMember.getLikes().stream()
+                        .anyMatch(like -> jobBoard.equals(like.getJobBoard()));
+
+                JobBoardDto.Response jobBoardResponse = mapper.jobBoardToJobBoardResponseDto(jobBoard);
+                jobBoardResponse.setBookmarked(bookmarked);
+                jobBoardResponse.setLiked(liked);
+                response.add(jobBoardResponse);
+            }
+        } else {
+            response = mapper.jobBoardsToJobBoardResponseDtos(jobBoards.getContent());
+        }
 
         return new JobBoardDto.MultiResponseDto<>(response, jobBoards);
     }
@@ -136,8 +156,28 @@ public class JobBoardService {
         Page<JobBoard> jobBoards =
                 jobBoardRepository.findJobBoardsByCategoryId(jobCategoryId, sortedBy(page, size, sort));
 
-        // 2. 게시글 목록 가져오기
-        List<JobBoardDto.Response> response = mapper.jobBoardsToJobBoardResponseDtos(jobBoards.getContent());
+        // 2. 로그인한 멤버확인하고 게시글 목록 가져오기
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        List<JobBoardDto.Response> response = new ArrayList<>();
+
+        if (authentication != null && authentication.isAuthenticated() && !"anonymousUser".equals(authentication.getName())) {
+            Member loggedinMember = memberService.findVerifiedMember(authentication.getName());
+
+            for (JobBoard jobBoard : jobBoards.getContent()) {
+                boolean bookmarked = loggedinMember.getBookmarks().stream()
+                        .anyMatch(bookmark -> jobBoard.equals(bookmark.getJobBoard()));
+
+                boolean liked = loggedinMember.getLikes().stream()
+                        .anyMatch(like -> jobBoard.equals(like.getJobBoard()));
+
+                JobBoardDto.Response jobBoardResponse = mapper.jobBoardToJobBoardResponseDto(jobBoard);
+                jobBoardResponse.setBookmarked(bookmarked);
+                jobBoardResponse.setLiked(liked);
+                response.add(jobBoardResponse);
+            }
+        } else {
+            response = mapper.jobBoardsToJobBoardResponseDtos(jobBoards.getContent());
+        }
 
         return new JobBoardDto.MultiResponseDto<>(response, jobBoards);
     }

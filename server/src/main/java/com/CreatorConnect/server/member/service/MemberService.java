@@ -56,6 +56,8 @@ public class MemberService {
     public Member createMember(Member member) {
 
         verifyExistsEmail(member.getEmail());
+        verifyExistsNickname(member.getNickname());
+        verifyExistsPhone(member.getPhone());
 
         String encryptPassword = passwordEncoder.encode(member.getPassword());
         member.setPassword(encryptPassword);
@@ -78,6 +80,9 @@ public class MemberService {
 
         Member findMember = findVerifiedMember(memberId);
         verifiedAuthenticatedMember(findMember.getMemberId());
+
+        verifyExistsNickname(member.getNickname());
+        verifyExistsPhone(member.getPhone());
 
         if (member.getPassword() != null) {
             findMember.setPassword(passwordEncoder.encode(member.getPassword()));
@@ -133,8 +138,27 @@ public class MemberService {
 
         Optional<Member> member = memberRepository.findByEmail(email);
 
-        if (member.isPresent())
-            throw new BusinessLogicException(ExceptionCode.MEMBER_EXISTS, String.format(" %s : 이미 등록된 이메일입니다. 다른 이메일을 사용해주세요. ", email));
+        if (member.isPresent()) {
+            throw new BusinessLogicException(ExceptionCode.EMAIL_EXISTS);
+        }
+    }
+
+    private void verifyExistsNickname(String nickname) {
+
+        Optional<Member> member = memberRepository.findByNickname(nickname);
+
+        if (member.isPresent()) {
+            throw new BusinessLogicException(ExceptionCode.NICKNAME_EXISTS);
+        }
+    }
+
+    private void verifyExistsPhone(String phone) {
+
+        Optional<Member> member = memberRepository.findByPhone(phone);
+
+        if (member.isPresent()) {
+            throw new BusinessLogicException(ExceptionCode.PHONE_EXISTS);
+        }
     }
 
     public Member findVerifiedMember(Long memberId) {
@@ -148,7 +172,6 @@ public class MemberService {
         return findMember;
     }
 
-    // todo 코드 중복
     public Member findVerifiedMember(String email) {
 
         Optional<Member> optionalMember = memberRepository.findByEmail(email);
