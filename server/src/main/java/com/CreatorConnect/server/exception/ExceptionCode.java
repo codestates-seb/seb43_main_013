@@ -4,10 +4,13 @@ import lombok.Getter;
 
 public enum ExceptionCode {
     INVALID_MEMBER(400, "Invalid member object. Please provide a valid member object."),
+    CATEGORY_ID_NOT_FOUND(400, "Requested categoryId is not supported. provided categoryId List > https://silicon-hip-dc5.notion.site/ID-9b3125d98d05462cb157dd38a4949c7c"),
     MEMBER_NOT_ALLOWED(403, "Access denied. Please authenticate as a member."),
+    LIMIT_EXCESS(403, "The request cannot be completed because you have exceeded your quota."),
     MEMBER_NOT_FOUND(404, "Member not found. Please check the member ID and try again."),
     CATEGORY_NOT_FOUND(404, "Category not found. Please check the Category and try again."),
     FEEDBACK_NOT_FOUND(404, "Feedback not found. Please check the Feedback ID and try again."),
+    VIDEO_NOT_FOUND(404, "VideoEntity not found. Please check the VideoEntity ID and try again."),
     FREEBOARD_NOT_FOUND(404, "FreeBoard not found, Please check the FreeBoard ID and try again."),
     FEEDBACK_CATEGORY_NOT_FOUND(404, "FeedbackCategory not found. Please check the FeedbackCategory and try again."),
     COMMENT_NOT_FOUND(404, "Comment not found. Please check the CommentId and try again."),
