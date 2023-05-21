@@ -10,7 +10,6 @@ const Login = () => {
 export default Login;
 
 import LoginBtn from "@/components/Login/Button/LoginBtn";
-import OAuthCon from "@/components/Login/Container/OAuthCon";
 import LoginInput from "@/components/Login/LoginInput";
 import { useState } from "react";
 import axios from "axios";
@@ -78,7 +77,6 @@ const LoginWindow = () => {
         <LoginInput label="이메일" value={emailData} setValue={setEmailData} submitCnt={submitCnt} />
         <LoginInput label="비밀번호" value={password} setValue={setPassword} submitCnt={submitCnt} />
         <LoginBtn text="로그인" />
-        <OAuthCon />
       </form>
     </div>
   );

@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import SearchDiv from "../components/Header/SearchDiv";
 import IsLoginSide from "../components/Header/LoginSide";
@@ -9,22 +9,11 @@ import IsLoginSide from "../components/Header/LoginSide";
 import HeaderLogo from "../components/Header/HeaderLogo";
 import SearchSide from "../components/Header/SearchSide";
 import headerArr from "../components/Header/HeaderArr";
+import { useMemberStore } from "@/store/useMemberStore";
 
 /** 2023/05/04 - 헤더 컴포넌트 - by Kadesti */
 const Header: React.FC = () => {
-  const [isLogin, setIsLogin] = useState(false);
-
-  // TODO: zustand로 수정
-  useEffect(() => {
-    const access_token = localStorage.getItem("accessToken");
-    const refresh_token = localStorage.getItem("refreshToken");
-
-    if (access_token) {
-      setIsLogin(true);
-    } else {
-      setIsLogin(false);
-    }
-  }, []);
+  const { member } = useMemberStore();
 
   const nickState = useState(false);
   const { leftArr, rightArr } = headerArr();
@@ -35,7 +24,7 @@ const Header: React.FC = () => {
         <HeaderLogo />
         <SearchSide array={leftArr} />
         <SearchDiv />
-        {isLogin ? <IsLoginSide nickState={nickState} /> : <SearchSide array={rightArr} />}
+        {member ? <IsLoginSide nickState={nickState} /> : <SearchSide array={rightArr} />}
       </div>
     </header>
   );

@@ -34,7 +34,7 @@ const LoginInput = ({ label, value, setValue, submitCnt }: login) => {
       <input
         placeholder={`${label}`}
         type={label === "비밀번호" ? "password" : ""}
-        className="w-full h-12 border-2 border-black rounded-lg p-3 text-xl"
+        className="w-full h-12 border-2 border-main-500 rounded-lg p-3 text-xl placeholder-main-300 outline-none"
         value={value}
         onChange={(e) => setValue(e.target.value)}
       />

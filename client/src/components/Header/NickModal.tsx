@@ -1,5 +1,3 @@
-// import useOutsideClick from "./useOutsideClick";
-
 import React from "react";
 import axios from "axios";
 import Link from "next/link";
@@ -11,14 +9,15 @@ const NickModal = ({ setNickModal }: { setNickModal: React.Dispatch<boolean> }) 
     const data = { Authorization };
     axios.post("/api/logout", data);
     localStorage.removeItem("accessToken");
+    localStorage.removeItem("member");
   };
 
   return (
-    <ul className="w-full p-3 bg-slate-400 text-white absolute mt-10 z-10 rounded-xl flex flex-col">
-      <Link href="/member" className="cursor-pointer hover:text-slate-200 text-xl mb-2">
+    <ul className="w-full p-3 bg-main-400 text-white absolute mt-48 z-10 rounded-xl flex flex-col">
+      <Link href="/member" className="cursor-pointer hover:text-black text-xl mb-2">
         내 정보
       </Link>
-      <Link href="/free/write" className="cursor-pointer hover:text-slate-200 text-xl mb-2">
+      <Link href="/free/write" className="cursor-pointer hover:text-black text-xl mb-2">
         글쓰기
       </Link>
       <li
@@ -26,7 +25,7 @@ const NickModal = ({ setNickModal }: { setNickModal: React.Dispatch<boolean> }) 
           e.preventDefault();
           logoutEvent();
         }}
-        className="cursor-pointer hover:text-slate-200 text-xl mb-2"
+        className="cursor-pointer hover:text-black text-xl mb-2"
       >
         로그아웃
       </li>

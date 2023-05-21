@@ -1,10 +1,9 @@
 "use client";
 import { MustInput, OptionalInput } from "./SignupInput";
-// import ProfileInput from "./ProfileInput";
 import SignupBind from "./SignupBind";
 
 const SignupForm = () => {
-  const { mustBind, optionBind, profileImageUrl, setProfileImageUrl, onsubmit, isSubmit } = SignupBind();
+  const { mustBind, optionBind, onsubmit, isSubmit } = SignupBind();
   const disabled = mustBind.findIndex((el) => el.valid === false) !== -1;
 
   return (
@@ -12,7 +11,6 @@ const SignupForm = () => {
       className="w-full flex flex-col items-center"
       onSubmit={(e) => {
         e.preventDefault();
-
         onsubmit();
       }}
     >
