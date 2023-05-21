@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { type InfiniteData, useQueryClient } from "@tanstack/react-query";
-import moment from "moment";
 
 import { QUERY_KEYS } from "@/hooks/query";
 
 // store
 import { useLoadingStore } from "@/store";
+
+// lib
+import { getTimeDiff } from "@/libs/time";
 
 // api
 import { apiUpdateRecomment } from "@/apis";
@@ -70,7 +72,7 @@ const BoardRecomment: React.FC<Props> = ({ type, boardId, commentId, recomment }
       });
 
       queryClient.setQueryData<InfiniteData<ApiFetchCommentsResponse> | undefined>(
-        [QUERY_KEYS.comment, type],
+        [QUERY_KEYS.comment, type, boardId],
         (prev) =>
           prev && {
             ...prev,
@@ -103,11 +105,15 @@ const BoardRecomment: React.FC<Props> = ({ type, boardId, commentId, recomment }
 
   return (
     <li className="flex space-x-3">
-      <Avatar src={recomment.profileImageUrl} className="w-10 h-10 flex-shrink-0" />
+      <Avatar
+        src={recomment.profileImageUrl}
+        className="w-10 h-10 flex-shrink-0"
+        href={`/profile/${recomment.memberId}`}
+      />
       <div className="flex-1 flex flex-col space-y-1">
         <div className="space-x-2">
           <span className="text-xs font-bold">{recomment.nickname}</span>
-          <time className="text-xs text-gray-400">{moment(recomment.createdAt).endOf("day").fromNow()}</time>
+          <time className="text-xs text-gray-400">{getTimeDiff(recomment.createdAt)}</time>
           {disabled ? (
             <>
               <button

@@ -16,6 +16,7 @@ import useCustomToast from "@/hooks/useCustomToast";
 // component
 import Form from "@/components/Board/Form";
 import { validateYoutubeURL } from "@/libs";
+import { isAxiosError } from "axios";
 
 // type
 interface Props {
@@ -66,22 +67,55 @@ const ProfileEditForm: React.FC<Props> = ({ memberId }) => {
       values.push(value);
     }
 
-    const [pw, nickname, phone, link, introduction] = values;
+    let pw = "";
+    let nickname = "";
+    let phone = "";
+    let link = "";
+    let introduction = "";
 
-    if (pw.trim().length === 0) {
-      return toast({ title: "비밀번호를 입력해주세요!", status: "warning" });
+    // OAuth 로그인 유저인 경우
+    if (member.oauth) {
+      nickname = values[0];
+      phone = values[1];
+      link = values[2];
+      introduction = values[3];
+
+      if (nickname.trim().length === 0) {
+        return toast({ title: "수정할 이름을 입력해주세요!", status: "warning" });
+      }
+      if (!phone) {
+        return toast({ title: "휴대폰 번호를 입력해주세요!", status: "warning" });
+      }
+      if (!/^01([0|1|6|7|8|9])-?([0-9]{3,4})-?([0-9]{4})$/.test(phone)) {
+        return toast({ title: "휴대폰 번호 형식에 맞게 입력해주세요!", status: "warning" });
+      }
+      if (!validateYoutubeURL(link)) {
+        return toast({ title: "유튜브 링크를 입력해주세요!", status: "warning" });
+      }
     }
-    if (nickname.trim().length === 0) {
-      return toast({ title: "수정할 이름을 입력해주세요!", status: "warning" });
-    }
-    if (!phone) {
-      return toast({ title: "휴대폰 번호를 입력해주세요!", status: "warning" });
-    }
-    if (!/^01([0|1|6|7|8|9])-?([0-9]{3,4})-?([0-9]{4})$/.test(phone)) {
-      return toast({ title: "휴대폰 번호 형식에 맞게 입력해주세요!", status: "warning" });
-    }
-    if (!validateYoutubeURL(link)) {
-      return toast({ title: "유튜브 링크를 입력해주세요!", status: "warning" });
+    // 일반 로그인 유저인 경우
+    else {
+      pw = values[0];
+      nickname = values[1];
+      phone = values[2];
+      link = values[3];
+      introduction = values[4];
+
+      if (pw.trim().length === 0) {
+        return toast({ title: "비밀번호를 입력해주세요!", status: "warning" });
+      }
+      if (nickname.trim().length === 0) {
+        return toast({ title: "수정할 이름을 입력해주세요!", status: "warning" });
+      }
+      if (!phone) {
+        return toast({ title: "휴대폰 번호를 입력해주세요!", status: "warning" });
+      }
+      if (!/^01([0|1|6|7|8|9])-?([0-9]{3,4})-?([0-9]{4})$/.test(phone)) {
+        return toast({ title: "휴대폰 번호 형식에 맞게 입력해주세요!", status: "warning" });
+      }
+      if (!validateYoutubeURL(link)) {
+        return toast({ title: "유튜브 링크를 입력해주세요!", status: "warning" });
+      }
     }
 
     try {
@@ -89,7 +123,7 @@ const ProfileEditForm: React.FC<Props> = ({ memberId }) => {
       await apiUpdateMember({
         password: pw,
         nickname,
-        phone,
+        phone: member.phone === phone ? null : phone,
         link,
         introduction,
         memberId,
@@ -108,7 +142,11 @@ const ProfileEditForm: React.FC<Props> = ({ memberId }) => {
     } catch (error) {
       console.error(error);
 
-      toast({ title: "정보 수정에 실패했습니다.", status: "error" });
+      if (isAxiosError(error)) {
+        toast({ title: error.response?.data.message || "정보 수정에 실패했습니다.", status: "error" });
+      } else {
+        toast({ title: "정보 수정에 실패했습니다.", status: "error" });
+      }
     }
   };
 
@@ -117,7 +155,7 @@ const ProfileEditForm: React.FC<Props> = ({ memberId }) => {
   return (
     <form
       onSubmit={onSumbit}
-      className="flex-1 flex flex-col border-r px-8 pt-4 pb-8 space-y-2 bg-white shadow-2xl m-4 rounded-lg"
+      className="flex-1 flex flex-col border-r px-8 pt-4 pb-8 space-y-2 bg-white shadow-black/40 shadow-sm m-4 rounded-lg"
     >
       <Form.Photo
         setThumbnail={setThumbnail}

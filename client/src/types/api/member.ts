@@ -35,7 +35,7 @@ export interface ApiUpdateMemberRequest {
   memberId: number;
   password?: string;
   nickname: string;
-  phone: string;
+  phone: string | null;
   introduction: string;
   link: string;
   profileImageUrl: string;

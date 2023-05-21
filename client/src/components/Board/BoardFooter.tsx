@@ -60,7 +60,7 @@ const BoardFooter: React.FC<Props> = ({ type, boardId, commentCount, likeCount, 
         </div>
       ) : null}
 
-      {likeCount ? (
+      {likeCount === undefined ? null : (
         <div className="flex space-x-1">
           <button type="button" onClick={onClickLike}>
             {liked ? (
@@ -71,7 +71,7 @@ const BoardFooter: React.FC<Props> = ({ type, boardId, commentCount, likeCount, 
           </button>
           <span className="text-sm">( {likeCount.toLocaleString()} )</span>
         </div>
-      ) : null}
+      )}
     </section>
   );
 };

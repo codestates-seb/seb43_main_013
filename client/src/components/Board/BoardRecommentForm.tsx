@@ -58,13 +58,15 @@ const BoardRecommentForm: React.FC<Props> = ({ type, boardId, commentId }) => {
       });
 
       queryClient.setQueryData<InfiniteData<ApiFetchCommentsResponse> | undefined>(
-        [QUERY_KEYS.comment, type],
+        [QUERY_KEYS.comment, type, boardId],
         (prev) =>
           prev && {
             ...prev,
             pages: prev.pages.map((page) => ({
               ...page,
               data: page.data.map((comment) => {
+                console.log(comment.commentId, commentId);
+
                 if (comment.commentId !== commentId) return comment;
 
                 return {
@@ -76,7 +78,7 @@ const BoardRecommentForm: React.FC<Props> = ({ type, boardId, commentId }) => {
                       content,
                       createdAt: new Date(),
                       modifiedAt: new Date(),
-                      email: "",
+                      email: member.email,
                       memberId: member.memberId,
                       nickname: member.nickname,
                       profileImageUrl: member.profileImageUrl,
