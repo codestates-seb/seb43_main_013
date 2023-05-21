@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { apiCreatePromotionBoard } from "@/apis";
 
 // util
-import validate from "@/libs/validate";
+import { validateYoutubeURL } from "@/libs";
 
 // store
 import { useLoadingStore } from "@/store";
@@ -59,7 +59,7 @@ const Form = () => {
     // 제목 유효성 검사
     if (title.trim().length <= 1) return toast({ title: "제목을 두 글자 이상 입력해주세요!", status: "error" });
     // 유효한 URL인지 확인
-    if (!validate.youtubeURL(link)) return toast({ title: "유효한 링크를 입력해주세요!", status: "error" });
+    if (!validateYoutubeURL(link)) return toast({ title: "유효한 링크를 입력해주세요!", status: "error" });
     // 채널명 유효성 검사
     if (channelName.trim().length <= 0) return toast({ title: "채널명을 한 글자 이상 입력해주세요!", status: "error" });
     if (+subscriberCount <= 0) return toast({ title: "구독자 수를 0명 이상으로 입력해주세요!", status: "error" });

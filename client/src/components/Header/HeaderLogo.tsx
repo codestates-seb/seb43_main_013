@@ -4,7 +4,7 @@ import Link from "next/link";
 const HeaderLogo = () => {
   return (
     <Link href="/">
-      <h1 className="text-5xl mr-10 cursor-pointer font-sp">CC</h1>
+      <h1 className="text-6xl mr-10 cursor-pointer">CC</h1>
     </Link>
   );
 };
