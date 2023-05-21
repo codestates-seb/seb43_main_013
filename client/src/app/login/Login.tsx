@@ -1,7 +1,7 @@
 "use client";
 const Login = () => {
   return (
-    <div className="w-full h-screen flex justify-center items-center">
+    <div className="w-full flex justify-center mt-12">
       <LoginWindow />
     </div>
   );
@@ -9,9 +9,7 @@ const Login = () => {
 
 export default Login;
 
-import SmallBtn from "@/components/Login/Button/SmallBtn";
 import LoginBtn from "@/components/Login/Button/LoginBtn";
-import OAuthCon from "@/components/Login/Container/OAuthCon";
 import LoginInput from "@/components/Login/LoginInput";
 import { useState } from "react";
 import axios from "axios";
@@ -34,10 +32,12 @@ const LoginWindow = () => {
   const { setAccessToken, setRefreshToken } = useTokenStore();
   const { setMember } = useMemberStore();
 
+  const [submitCnt, setsubmitCnt] = useState(0);
   const onsubmit = async () => {
     try {
       loading.start();
 
+      setsubmitCnt((prev: number) => prev + 1);
       const data = { username: emailData, password };
       const response = await axios.post(`${baseUrl}/api/login`, data);
 
@@ -65,8 +65,8 @@ const LoginWindow = () => {
   };
 
   return (
-    <div className=" bg-white w-2/5 flex flex-col items-center p-6 rounded-xl drop-shadow-xl">
-      <h1 className="text-5xl mb-6">로그인</h1>
+    <div className="bg-white w-2/5 min-w-[450px] max-w-[600px] flex flex-col items-center p-6 rounded-xl drop-shadow-xl">
+      <h1 className="text-4xl mb-6">로그인</h1>
       <form
         className="w-full"
         onSubmit={(e) => {
@@ -74,11 +74,9 @@ const LoginWindow = () => {
           onsubmit();
         }}
       >
-        <LoginInput label="이메일" value={emailData} setValue={setEmailData} />
-        <LoginInput label="비밀번호" value={password} setValue={setPassword} />
-        <SmallBtn />
+        <LoginInput label="이메일" value={emailData} setValue={setEmailData} submitCnt={submitCnt} />
+        <LoginInput label="비밀번호" value={password} setValue={setPassword} submitCnt={submitCnt} />
         <LoginBtn text="로그인" />
-        <OAuthCon />
       </form>
     </div>
   );

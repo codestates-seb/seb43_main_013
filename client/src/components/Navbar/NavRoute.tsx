@@ -42,16 +42,17 @@ const NavRoute = () => {
   const pathname = usePathname();
 
   return (
-    // <ul className="max-w-[300px] w-80 flex justify-between text-xl ">
-    <ul className="w-80 flex justify-between text-xl ">
+    <ul className="w-80 flex justify-between ">
       {link.map((item) => {
         const { name, link } = item;
         const actStyle = pathname === link ? "text-main-400 border-b-2 border-b-main-400" : "";
 
         return (
           <Link href={link} key={link}>
-            {/* <li className="cursor-pointer text-black hover:text-rose-400">{name}</li> */}
-            <li onClick={handleResetClick} className={`cursor-pointer text-black hover:text-rose-400 ${actStyle}`}>
+            <li
+              onClick={handleResetClick}
+              className={`cursor-pointer text-xl text-black hover:text-rose-400 h-8 ${actStyle}`}
+            >
               {name}
             </li>
           </Link>
