@@ -3,28 +3,20 @@ module.exports = {
   content: ["./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
-      /** 폰트 */
-      fontFamily: {
-        main: ["BMJUA"],
-        sub: ["KOTRA_BOLD-Bold"],
-        sp: ["GoryeongStrawberry"],
-      },
       colors: {
-        bg: "#121212",
-        "thick-bg": "#080808",
-        fg: "#bbb",
+        bg: "#FBFBFB",
         main: {
-          50: "#eef2ff",
-          100: "#e0e7ff",
-          200: "#c7d2fe",
-          300: "#a5b4fc",
-          400: "#818cf8",
-          500: "#6366f1",
-          600: "#4f46e5",
-          700: "#4338ca",
-          800: "#3730a3",
-          900: "#312e81",
-          950: "#1e1b4b",
+          50: "#fff1f2",
+          100: "#ffe4e6",
+          200: "#fecdd3",
+          300: "#fda4af",
+          400: "#fb7185",
+          500: "#f43f5e",
+          600: "#e11d48",
+          700: "#be123c",
+          800: "#9f1239",
+          900: "#881337",
+          950: "#4c0519",
         },
         sub: {
           50: "#f9fafb",
@@ -57,21 +49,11 @@ module.exports = {
           "0%": { opacity: "0.01" },
           "100%": { opacity: "1" },
         },
-        "fade-down": {
-          "0%": { opacity: "0.01", transform: "translateY(-10%)" },
-          "100%": { opacity: "1", transform: "translateY(0%)" },
-        },
-        "fade-up": {
-          "0%": { opacity: "0.01", transform: "translateY(10%)" },
-          "100%": { opacity: "1", transform: "translateY(0%)" },
-        },
       },
       animation: {
         "skeleton-gradient": "skeleton-gradient 0.8s linear infinite alternate",
         swing: "swing 2s ease infinite",
         "fade-in": "fade-in 0.6s ease",
-        "fade-down": "fade-down 0.6s ease",
-        "fade-up": "fade-up 0.8s ease",
       },
     },
   },

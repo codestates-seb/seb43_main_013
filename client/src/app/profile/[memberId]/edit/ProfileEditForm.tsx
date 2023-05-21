@@ -9,14 +9,13 @@ import { useQueryClient } from "@tanstack/react-query";
 import { apiConfirmPassword } from "@/apis/password";
 import { apiLogOut, apiUpdateMember } from "@/apis";
 
-import validate from "@/libs/validate";
-
 // hook
 import { useMemberStore } from "@/store/useMemberStore";
 import useCustomToast from "@/hooks/useCustomToast";
 
 // component
 import Form from "@/components/Board/Form";
+import { validateYoutubeURL } from "@/libs";
 
 // type
 interface Props {
@@ -81,7 +80,7 @@ const ProfileEditForm: React.FC<Props> = ({ memberId }) => {
     if (!/^01([0|1|6|7|8|9])-?([0-9]{3,4})-?([0-9]{4})$/.test(phone)) {
       return toast({ title: "휴대폰 번호 형식에 맞게 입력해주세요!", status: "warning" });
     }
-    if (!validate.youtubeURL(link)) {
+    if (!validateYoutubeURL(link)) {
       return toast({ title: "유튜브 링크를 입력해주세요!", status: "warning" });
     }
 

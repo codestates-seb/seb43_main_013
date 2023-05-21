@@ -1,6 +1,19 @@
 import { create } from "zustand";
 
-import type { Member } from "@/types/api";
+interface Member {
+  memberId: number;
+  email: string;
+  name: string;
+  nickname: string;
+  phone?: string;
+  oauth: boolean;
+  introduction?: string;
+  link?: string;
+  profileImageUrl: string;
+  createdAt: string;
+  modifiedAt: string;
+  rename: string;
+}
 
 interface MemberInfo {
   member?: Member | null;
