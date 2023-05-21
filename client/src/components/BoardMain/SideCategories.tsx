@@ -27,12 +27,12 @@ const SideCategories: React.FC<SideCategoriesProps> = ({ categories, selectedCat
   };
 
   return (
-    <div className="flex flex-col shadow-md my-2.5 rounded-xl w-[50%] md:w-full ">
+    <div className="flex flex-col shadow-md my-5 md:my-0 mx-5 rounded-xl w-full ">
       {/* category header */}
       <h2 className="flex ml-5 text-xl font-bold text-black mt-7">카테고리 🦝</h2>
 
       {/* category Item  */}
-      <div className="m-5  ">
+      <div className="m-5 flex space-x-2 md:space-x-0 md:space-y-2 md:flex-col">
         {categories?.map((category) => (
           <li className="list-none" key={category.categoryId}>
             <button
@@ -41,7 +41,7 @@ const SideCategories: React.FC<SideCategoriesProps> = ({ categories, selectedCat
                 ${
                   selectedCategory?.categoryId === category.categoryId
                     ? "bg-main-500 text-white shadow-lg shadow-sub-500/50"
-                    : "bg-sub-100 "
+                    : "bg-sub-200 "
                 }`}
               onClick={() => {
                 categoryClickHandler(category);

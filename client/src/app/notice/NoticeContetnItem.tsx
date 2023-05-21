@@ -24,8 +24,7 @@ const NoticeContentItem: React.FC<ContentItemProps> = ({ props }) => {
                 {/* 게시글 제목 */}
                 <Link href={`/notice/${props.noticeId}`}>
                   <h1
-                    className={`text-xl font-bold text-left hover:underline hover:underline-offset-4 hover:text-blue-600 truncate-1 text-ellipsis overflow-hidden
-                line-clamp-1`}
+                    className={`text-xl font-bold text-left hover:underline hover:underline-offset-4 hover:text-blue-600 truncate `}
                   >
                     {props.title}
                   </h1>

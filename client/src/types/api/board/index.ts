@@ -20,8 +20,8 @@ export interface Board {
   email: string; // 작성자 이메일
   nickname: string; // 작성자 닉네임
   profileImageUrl: string; // 작성자 프로필 이미지
-  bookmarked: boolean;
-  liked: boolean;
+  bookmarked?: boolean;
+  liked?: boolean;
 }
 
 /** 2023/05/17 - 프로필 페이지에서 사용하는 보드 타입 - by 1-blue */

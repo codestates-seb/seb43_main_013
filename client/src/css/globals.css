@@ -8,6 +8,7 @@ html {
 
 * {
   @apply text-base;
+  @apply font-main;
 }
 
 @layer utilities {
@@ -96,4 +97,11 @@ html {
   40% {
     box-shadow: 0 2.5em 0 0;
   }
+}
+
+@font-face {
+  font-family: "BMJUA";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_one@1.0/BMJUA.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
 }

@@ -5,6 +5,7 @@ export const QUERY_KEYS = {
   feedbackBoard: "feedbackBoard",
   promotionBoard: "promotionBoard",
   jobBoard: "jobBoard",
+  noticeBoard: "noticeBoard",
   comment: "comment",
   member: "member",
 
@@ -24,6 +25,7 @@ export * from "./useFetchFreeBoard";
 export * from "./useFetchFeedbackBoard";
 export * from "./useFetchPromotionBoard";
 export * from "./useFetchJobBoard";
+export * from "./useFetchNoticeBoard";
 export * from "./useFetchMemeber";
 export * from "./useFetchWrittenBoardList";
 export * from "./useFetchBookmarkedBoardList";

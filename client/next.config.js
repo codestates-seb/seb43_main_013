@@ -12,7 +12,13 @@ const nextConfig = {
       "img.youtube.com",
 
       // default avatar image
-      "ibb.co"
+      "ibb.co",
+      // 카카오
+      "k.kakaocdn.net",
+      // 구글
+      "lh3.googleusercontent.com",
+      // 네이버
+      "ssl.pstatic.net",
     ],
   },
 };

@@ -4,14 +4,16 @@ import { useFetchCategories, useFetchJobCategories } from "@/hooks/query";
 import SortPosts from "@/components/BoardMain/SortPosts";
 import Pagination from "@/components/Pagination";
 import JobContentItem from "./JobContentItem";
-import FullSpinner from "@/components/Spinner/FullSpinner";
+
 import RightSideButton from "@/components/RightSideButton";
 import { useCategoriesStore, usePageStore, useSortStore } from "@/store";
 import { useFetchJobBoardList } from "@/hooks/query/useFetchJobBoardList";
 import JobCategories from "./JobCategories";
+import { useMemberStore } from "@/store/useMemberStore";
 
 /** 2023/05/18 - 자유게시판 메인 화면 - by leekoby */
 const JobMain = () => {
+  const member = useMemberStore((state) => state.member);
   /** 2023/05/18 - 게시판 page 상태관리 - by leekoby */
   const currentPage = usePageStore((state) => state.currentPage);
   const setCurrentPage = usePageStore((state) => state.setCurrentPage);
@@ -41,8 +43,6 @@ const JobMain = () => {
   /** 2023/05/18 - 구인구직 카테고리 초기값 요청 - by leekoby */
   const { jobCategories, jobCategoryIsLoading } = useFetchJobCategories({ type: "job" });
 
-  if (!data) return <FullSpinner />;
-  if (data.pages.length < 1) return <FullSpinner />;
   return (
     <>
       <div className="mx-auto mt-6 min-w-min">
@@ -62,27 +62,32 @@ const JobMain = () => {
             </div>
             {/* post item */}
             <div className="space-y-5">
-              {data.pages.map((item) =>
-                item.data.map((innerData) => (
-                  <div className="" key={innerData.jobBoardId}>
-                    <JobContentItem props={innerData} />
-                  </div>
-                )),
-              )}
+              {data &&
+                data.pages.map((item) =>
+                  item.data.map((innerData) => (
+                    <div className="" key={innerData.jobBoardId}>
+                      <JobContentItem props={innerData} />
+                    </div>
+                  )),
+                )}
               {/* postslist bottom */}
-              <div className="flex justify-center items-center">
-                {/* TODO React Query를 이용한 PreFetch 방식으로 변경하기 */}
-                <Pagination
-                  page={data?.pages[0].pageInfo.page}
-                  totalPages={data?.pages[0].pageInfo.totalPages}
-                  onPageChange={setCurrentPage}
-                />
-              </div>
+              {data && (
+                <div className="flex justify-center items-center">
+                  {/* TODO: React Query를 이용한 PreFetch 방식으로 변경하기 */}
+                  <Pagination
+                    page={data?.pages[0].pageInfo.page}
+                    totalPages={data?.pages[0].pageInfo.totalPages}
+                    onPageChange={setCurrentPage}
+                  />
+                </div>
+              )}
             </div>
           </section>
-          <div className="opacity-50 lg:opacity-100 fixed right-0 lg:top-1/2 transform -translate-y-1/2 ml-2">
-            <RightSideButton destination={`/job/write`} />
-          </div>
+          {member && (
+            <div className="opacity-50 lg:opacity-100 fixed right-0 lg:top-1/2 transform -translate-y-1/2 ml-2">
+              <RightSideButton destination={`/job/write`} />
+            </div>
+          )}
         </div>
       </div>
     </>

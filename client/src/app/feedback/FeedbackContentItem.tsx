@@ -41,7 +41,7 @@ const FeedbackContentItem = forwardRef<HTMLDivElement, ContentItemProps>(({ prop
       }
 
       // TODO: 캐싱 무효화 어떻게 사용하는건지 알아보기
-      queryClient.invalidateQueries([`${type}Board`, currentPage]);
+      queryClient.invalidateQueries([`${type}BoardList`]);
     } catch (error) {
       console.error(error);
 

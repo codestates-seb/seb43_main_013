@@ -41,7 +41,7 @@ const JobContentItem: React.FC<JobContentItemProps> = ({ props }) => {
       }
 
       // FIXME: 시간 남으면 캐싱 무효화에서 수정하기
-      queryClient.invalidateQueries([`${type}Board`, currentPage]);
+      queryClient.invalidateQueries([`${type}BoardList`]);
     } catch (error) {
       console.error(error);
 
