@@ -43,7 +43,7 @@ const ContentItem: React.FC<ContentItemProps> = ({ props }) => {
       }
 
       // FIXME: 시간 남으면 캐싱 무효화에서 수정하기
-      queryClient.invalidateQueries([`${type}Board`, currentPage]);
+      queryClient.invalidateQueries([`${type}BoardList`, currentPage]);
     } catch (error) {
       console.error(error);
 
@@ -57,24 +57,24 @@ const ContentItem: React.FC<ContentItemProps> = ({ props }) => {
   return (
     <>
       {/*  list container */}
-      <div className="flex flex-col items-center justify-center p-2 bg-white rounded-md shadow-md md:flex-row ">
+      <div className="flex flex-col items-center justify-center p-2 bg-white rounded-md shadow-main md:flex-row ">
         {/* List Item * */}
-        <div className="flex flex-col items-center w-full h-full p-5 bg-sub-100 rounded-md ">
+        <div className="items-center p-5 bg-sub-100 rounded-md w-full">
           {/* Thumnail */}
           {/* <Image src={defaultThumnail} className="h-auto mx-1 my-1 border rounded-lg w-80 md:w-40" alt="" /> */}
           {/* right content */}
           <div className="flex justify-between w-full h-full">
             {/* content header */}
             <div className="flex flex-col justify-between w-full h-full gap-2 p-2 md:p-3">
-              <div className="flex items-center justify-between ">
+              <div className="flex items-center justify-between w-full space-x-2">
                 {/* 게시글 제목 */}
-                <Link href={`/free/${props.freeBoardId}`}>
-                  <h1
-                    className={`text-xl font-bold text-left hover:underline hover:underline-offset-4 hover:text-blue-600 truncate-1 text-ellipsis overflow-hidden
-                    line-clamp-1`}
+                <Link href={`/free/${props.freeBoardId}`} className="contents">
+                  <h3
+                    className={`text-xl font-bold text-left hover:underline hover:underline-offset-4 hover:text-blue-600 truncate `}
                   >
-                    {props.title}
-                  </h1>
+                    {/* {props.title} */}
+                    aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+                  </h3>
                 </Link>
                 {props.bookmarked ? (
                   <BookmarkIconChecked

@@ -3,7 +3,6 @@
 import SideCategories from "@/components/BoardMain/SideCategories";
 import SortPosts from "@/components/BoardMain/SortPosts";
 import RightSideButton from "@/components/RightSideButton";
-import FullSpinner from "@/components/Spinner/FullSpinner";
 import { useFetchCategories, useFetchFeedbackCategories } from "@/hooks/query";
 import { useFetchFeedbackBoardList } from "@/hooks/query/useFetchFeedbackBoardList";
 import { useCategoriesStore, useSortStore } from "@/store";
@@ -11,9 +10,12 @@ import { useFeedbackCategoriesStore } from "@/store/useFeedbackCategoriesStore";
 import { useRef, useEffect, useCallback } from "react";
 import FeedbackContentItem from "./FeedbackContentItem";
 import FeedbackCategories from "./FeedbackCategories";
+import { useMemberStore } from "@/store/useMemberStore";
 
 /** 2023/05/08 - 피드백 게시판 메인 화면 - by leekoby */
 const FeedbackMain = () => {
+  const member = useMemberStore((state) => state.member);
+
   /** 2023/05/14 - 사이드 카테고리 상태 - by leekoby */
   const selectedCategory = useCategoriesStore((state) => state.selectedCategory);
   const selected =
@@ -58,9 +60,6 @@ const FeedbackMain = () => {
     [fetchNextPage, hasNextPage, isFetching],
   );
 
-  if (!data) return <FullSpinner />;
-  if (data.pages.length < 1) return <FullSpinner />;
-
   //* 북마크 좋아요 확인용 콘솔로그
   // console.log(data.pages);
   return (
@@ -86,22 +85,25 @@ const FeedbackMain = () => {
           {/* post item */}
           {/*  2023/05/14 - 무한스크롤 피드백 게시글 목록 - by leekoby  */}
           <div className="flex flex-col flex-wrap gap-5 md:flex-row">
-            {data.pages.map((page, pageIndex) =>
-              page.data.map((innerData, itemIndex) => {
-                const isLastItem = pageIndex === data.pages.length - 1 && itemIndex === page.data.length - 1;
-                return (
-                  <div key={innerData.feedbackBoardId} className="w-full lg:w-[48%]">
-                    <FeedbackContentItem props={innerData} ref={isLastItem ? loader : undefined} />
-                  </div>
-                );
-              }),
-            )}
+            {data &&
+              data.pages.map((page, pageIndex) =>
+                page.data.map((innerData, itemIndex) => {
+                  const isLastItem = pageIndex === data.pages.length - 1 && itemIndex === page.data.length - 1;
+                  return (
+                    <div key={innerData.feedbackBoardId} className="w-full lg:w-[48%]">
+                      <FeedbackContentItem props={innerData} ref={isLastItem ? loader : undefined} />
+                    </div>
+                  );
+                }),
+              )}
           </div>
         </section>
         {/* 오른쪽 사이드 영역 */}
-        <div className="opacity-50 lg:opacity-100 fixed right-0 lg:top-1/2 transform -translate-y-1/2 ml-2">
-          <RightSideButton destination={`/feedback/write`} />
-        </div>
+        {member && (
+          <div className="opacity-50 lg:opacity-100 fixed right-0 lg:top-1/2 transform -translate-y-1/2 ml-2">
+            <RightSideButton destination={`/feedback/write`} />
+          </div>
+        )}
       </div>
     </div>
   );

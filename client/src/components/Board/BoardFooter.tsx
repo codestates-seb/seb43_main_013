@@ -17,7 +17,7 @@ import type { BoardType, FreeBoard } from "@/types/api";
 interface Props extends Pick<FreeBoard, "commentCount" | "likeCount"> {
   type: BoardType;
   boardId: number;
-  liked: boolean;
+  liked?: boolean;
 }
 
 /** 2023/05/11 - 게시판 하단 컴포넌트 - by 1-blue */
@@ -51,23 +51,27 @@ const BoardFooter: React.FC<Props> = ({ type, boardId, commentCount, likeCount, 
 
   return (
     <section className="flex justify-between items-center">
-      <div className="flex space-x-1">
-        <button type="button">
-          <OCommentIcon className="text-sub-700 w-5 h-5" />
-        </button>
-        <span className="text-sm">( {commentCount.toLocaleString()} )</span>
-      </div>
+      {commentCount ? (
+        <div className="flex space-x-1">
+          <button type="button">
+            <OCommentIcon className="text-sub-700 w-5 h-5" />
+          </button>
+          <span className="text-sm">( {commentCount.toLocaleString()} )</span>
+        </div>
+      ) : null}
 
-      <div className="flex space-x-1">
-        <button type="button" onClick={onClickLike}>
-          {liked ? (
-            <SLikeIcon className="w-5 h-5 text-sub-700 hover:text-main-400 active:text-main-500 hover:stroke-2" />
-          ) : (
-            <OLikeIcon className="w-5 h-5 text-sub-700 hover:text-main-400 active:text-main-500 hover:stroke-2" />
-          )}
-        </button>
-        <span className="text-sm">( {likeCount.toLocaleString()} )</span>
-      </div>
+      {likeCount ? (
+        <div className="flex space-x-1">
+          <button type="button" onClick={onClickLike}>
+            {liked ? (
+              <SLikeIcon className="w-5 h-5 text-sub-700 hover:text-main-400 active:text-main-500 hover:stroke-2" />
+            ) : (
+              <OLikeIcon className="w-5 h-5 text-sub-700 hover:text-main-400 active:text-main-500 hover:stroke-2" />
+            )}
+          </button>
+          <span className="text-sm">( {likeCount.toLocaleString()} )</span>
+        </div>
+      ) : null}
     </section>
   );
 };

@@ -3,9 +3,9 @@
 import SortPosts from "@/components/BoardMain/SortPosts";
 import Pagination from "@/components/Pagination";
 import RightSideButton from "@/components/RightSideButton";
-import FullSpinner from "@/components/Spinner/FullSpinner";
 import { useFetchNoticeBoardList } from "@/hooks/query/useFetchNoticeBoardList";
 import { usePageStore, useSortStore } from "@/store";
+import { useMemberStore } from "@/store/useMemberStore";
 import NoticeContentItem from "./NoticeContetnItem";
 
 /** 2023/05/20 - 공지사항 메인 화면 - by leekoby */
@@ -13,21 +13,16 @@ const NoticeMain = () => {
   /** 2023/05/20 - 게시판 page 상태관리 - by leekoby */
   const currentPage = usePageStore((state) => state.currentPage);
   const setCurrentPage = usePageStore((state) => state.setCurrentPage);
-
+  const member = useMemberStore((state) => state.member);
   /** 2023/05/20 - 정렬 전역 상태 - by leekoby */
   const sortSelectedOption = useSortStore((state) => state.selectedOption);
 
-  /** 2023/05/11 자유게시판 목록 get 요청 - by leekoby */
+  /** 2023/05/11  공지사항 목록 get 요청 - by leekoby */
   const { data, refetch } = useFetchNoticeBoardList({
     sorted: sortSelectedOption?.optionName,
     page: currentPage,
     size: 10,
   });
-
-  if (!data) return <FullSpinner />;
-  if (data.pages.length < 1) return <FullSpinner />;
-
-  console.log("notice main  >>> ", data);
 
   return (
     // 전체 컨테이너
@@ -46,29 +41,34 @@ const NoticeMain = () => {
 
           {/* post item */}
           <div className="space-y-5">
-            {data.pages.map((item) =>
-              item.data.map((innerData) => (
-                <div className="" key={innerData.noticeId}>
-                  <NoticeContentItem props={innerData} />
-                </div>
-              )),
-            )}
+            {data &&
+              data.pages.map((item) =>
+                item.data.map((innerData) => (
+                  <div className="" key={innerData.noticeId}>
+                    <NoticeContentItem props={innerData} />
+                  </div>
+                )),
+              )}
 
             {/* postslist bottom */}
-            <div className="flex justify-center items-center">
-              {/* TODO: React Query를 이용한 PreFetch 방식으로 변경하기 */}
-              <Pagination
-                page={data?.pages[0].pageInfo.page}
-                totalPages={data?.pages[0].pageInfo.totalPages}
-                onPageChange={setCurrentPage}
-              />
-            </div>
+            {data && (
+              <div className="flex justify-center items-center">
+                {/* TODO: React Query를 이용한 PreFetch 방식으로 변경하기 */}
+                <Pagination
+                  page={data?.pages[0].pageInfo.page}
+                  totalPages={data?.pages[0].pageInfo.totalPages}
+                  onPageChange={setCurrentPage}
+                />
+              </div>
+            )}
           </div>
         </section>
         {/* 오른쪽 사이드 영역 */}
-        <div className="opacity-50 lg:opacity-100 fixed right-0 lg:top-1/2 transform -translate-y-1/2 ml-2">
-          <RightSideButton destination={`/notice/write`} />
-        </div>
+        {member?.email === process.env.NEXT_PUBLIC_ADMIN && (
+          <div className="opacity-50 lg:opacity-100 fixed right-0 lg:top-1/2 transform -translate-y-1/2 ml-2">
+            <RightSideButton destination={`/notice/write`} />
+          </div>
+        )}
       </div>
     </div>
   );

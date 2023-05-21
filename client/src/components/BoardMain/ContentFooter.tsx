@@ -46,7 +46,8 @@ const ContentFooter: React.FC<ContentFooterProps> = ({ type, position, footerDat
       }
 
       // FIXME: 시간 남으면 캐싱 무효화에서 수정하기
-      queryClient.invalidateQueries([`${type}Board`, currentPage]);
+      if (type === "free") queryClient.invalidateQueries([`${type}BoardList`, currentPage]);
+      else queryClient.invalidateQueries([`${type}BoardList`]);
     } catch (error) {
       console.error(error);
 

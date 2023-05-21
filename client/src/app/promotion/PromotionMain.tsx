@@ -3,7 +3,7 @@
 import SideCategories from "@/components/BoardMain/SideCategories";
 import SortPosts from "@/components/BoardMain/SortPosts";
 import RightSideButton from "@/components/RightSideButton";
-import FullSpinner from "@/components/Spinner/FullSpinner";
+
 import { useFetchCategories, useFetchPromotionCategories } from "@/hooks/query";
 import useFetchPromotionBoardList from "@/hooks/query/useFetctPromotionBoardList";
 import { useCategoriesStore, useSortStore } from "@/store";
@@ -61,8 +61,8 @@ const PromotionMain = () => {
     [fetchNextPage, hasNextPage, isFetching],
   );
 
-  if (!data) return <FullSpinner />;
-  if (data.pages.length < 1) return <FullSpinner />;
+  if (!data) return <></>;
+  if (data.pages.length < 1) return <></>;
 
   return (
     //  전체 컨테이너

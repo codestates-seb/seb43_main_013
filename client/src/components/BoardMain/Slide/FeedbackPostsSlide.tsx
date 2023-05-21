@@ -5,7 +5,7 @@ import "slick-carousel/slick/slick-theme.css";
 import { useFetchFeedbackBoardList } from "@/hooks/query/useFetchFeedbackBoardList";
 import Link from "next/link";
 import FeedbackContentItem from "@/app/feedback/FeedbackContentItem";
-import FullSpinner from "@/components/Spinner/FullSpinner";
+
 import { ReactNode, useEffect, useState } from "react";
 import SlideWrapper from "./SlideWrapper";
 
@@ -91,7 +91,7 @@ const FeedbackPostsSlide = () => {
     size: 10,
   });
 
-  if (!data) return <FullSpinner />;
+  if (!data) return <></>;
 
   return (
     <div>

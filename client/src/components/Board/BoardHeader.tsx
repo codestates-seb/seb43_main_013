@@ -21,6 +21,7 @@ import {
   apiDeleteFeedbackBoard,
   apiDeleteFreeBoard,
   apiDeleteJobBoard,
+  apiDeleteNoticeBoard,
   apiDeletePromotionBoard,
 } from "@/apis";
 
@@ -100,6 +101,9 @@ const BoardHeader: React.FC<Props> = ({
         case "promotion":
           await apiDeletePromotionBoard({ promotionBoardId: boardId });
           break;
+        case "notice":
+          await apiDeleteNoticeBoard({ noticeId: boardId });
+          break;
       }
 
       toast({ title: "게시판을 삭제했습니다.\n메인 페이지로 이동됩니다!", status: "success" });
@@ -151,19 +155,22 @@ const BoardHeader: React.FC<Props> = ({
         <button type="button" className="ml-auto" onClick={copyLink}>
           <OLinkIcon className="text-sub-700 w-6 h-6 hover:text-main-400 hover:stroke-2 active:text-main-500" />
         </button>
-        <button type="button" className="ml-4">
-          {bookmarked ? (
-            <SBookmarkIcon
-              className="text-sub-700 w-6 h-6 hover:text-main-400 hover:stroke-2 active:text-main-500"
-              onClick={onClickBookmark}
-            />
-          ) : (
-            <OBookmarkIcon
-              className="text-sub-700 w-6 h-6 hover:text-main-400 hover:stroke-2 active:text-main-500"
-              onClick={onClickBookmark}
-            />
-          )}
-        </button>
+
+        {bookmarked !== undefined && (
+          <button type="button" className="ml-4">
+            {bookmarked ? (
+              <SBookmarkIcon
+                className="text-sub-700 w-6 h-6 hover:text-main-400 hover:stroke-2 active:text-main-500"
+                onClick={onClickBookmark}
+              />
+            ) : (
+              <OBookmarkIcon
+                className="text-sub-700 w-6 h-6 hover:text-main-400 hover:stroke-2 active:text-main-500"
+                onClick={onClickBookmark}
+              />
+            )}
+          </button>
+        )}
 
         {member?.memberId === memberId && (
           <>
