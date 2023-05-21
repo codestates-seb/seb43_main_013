@@ -38,6 +38,15 @@ public class MemberDto {
 
         private String profileImageUrl;
     }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    public static class ConfirmEmail {
+        @NotNull
+        private String email;
+    }
+
     @Getter
     @Setter
     @NoArgsConstructor

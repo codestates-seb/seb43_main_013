@@ -71,7 +71,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(authorize -> authorize
                         .antMatchers("/h2/**").permitAll()
                         .antMatchers(HttpMethod.OPTIONS).permitAll()
-                        .antMatchers(HttpMethod.POST, "/api/signup", "/api/login").permitAll()
+                        .antMatchers(HttpMethod.POST, "/api/signup/**", "/api/login").permitAll()
                         .antMatchers(HttpMethod.GET, "/", "/api/search/**").permitAll()
                         .antMatchers(HttpMethod.GET, "/api/login/**", "/auth/**", "/api/member/**").permitAll()
                         .antMatchers(HttpMethod.GET, "/api/freeboard/**", "/api/freeboards/**").permitAll()
@@ -82,7 +82,6 @@ public class SecurityConfiguration {
                         .antMatchers(HttpMethod.GET, "/api/jobcategory/**","/api/jobcategories").permitAll()
                         .antMatchers(HttpMethod.GET, "/api/feedbackcategory/**","/api/feedbackcategories").permitAll()
                         .antMatchers(HttpMethod.GET, "/api/category/**","/api/categories").permitAll()
-                        .antMatchers(HttpMethod.GET, "/api/notice/**","/api/notices").permitAll()
                         .antMatchers(HttpMethod.GET, "/api/youtubevideos/**").permitAll()
                         .anyRequest().authenticated()
                         )

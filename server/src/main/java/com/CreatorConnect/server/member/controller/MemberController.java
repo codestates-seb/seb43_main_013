@@ -63,7 +63,20 @@ public class MemberController {
         Member member = mapper.memberPostDtoToMember(memberDtoPost);
         Member createdMember = memberService.createMember(member);
 
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        MemberResponseDto response = mapper.memberToMemberResponseDto(createdMember);
+
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/api/signup/confirm")
+    public ResponseEntity confirmEmail (@Valid @RequestBody MemberDto.ConfirmEmail confirmEmail) {
+
+        memberService.confirmEmail(confirmEmail.getEmail());
+        Member member = memberRepository.findByEmail(confirmEmail.getEmail()).get();
+
+        MemberResponseDto response = mapper.memberToMemberResponseDto(member);
+
+        return new ResponseEntity(response, HttpStatus.OK);
     }
 
     @PatchMapping(MEMBER_DEFAULT_URL + "/{member-id}")
