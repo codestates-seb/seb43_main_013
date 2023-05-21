@@ -69,9 +69,14 @@ public class MemberController {
     }
 
     @PostMapping("/api/signup/confirm")
-    public void confirmEmail (@RequestBody MemberDto.ConfirmEmail confirmEmail) {
+    public ResponseEntity confirmEmail (@Valid @RequestBody MemberDto.ConfirmEmail confirmEmail) {
 
         memberService.confirmEmail(confirmEmail.getEmail());
+        Member member = memberRepository.findByEmail(confirmEmail.getEmail()).get();
+
+        MemberResponseDto response = mapper.memberToMemberResponseDto(member);
+
+        return new ResponseEntity(response, HttpStatus.OK);
     }
 
     @PatchMapping(MEMBER_DEFAULT_URL + "/{member-id}")

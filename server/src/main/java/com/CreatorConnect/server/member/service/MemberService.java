@@ -73,7 +73,8 @@ public class MemberService {
 
         Member savedMember = memberRepository.save(member);
 
-        publisher.publishEvent(new MemberRegistrationApplicationEvent(savedMember.getEmail()));
+        // todo 이메일 전송 로직 주석 해제
+//        publisher.publishEvent(new MemberRegistrationApplicationEvent(savedMember.getEmail()));
 
         return savedMember;
     }
