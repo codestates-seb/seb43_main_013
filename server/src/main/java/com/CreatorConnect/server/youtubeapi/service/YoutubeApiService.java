@@ -73,12 +73,13 @@ public class YoutubeApiService {
                 */
                 Thumbnail thumbnail = (Thumbnail) singleVideo.getSnippet().getThumbnails().get("medium");
 
-                //데이터 정보 entity에 저장
+                // entity에 저장
                 VideoPK videoPK = new VideoPK(categoryId,id);
                 VideoEntity video = new VideoEntity();
                 video.setVideoPK(videoPK);
                 video.setYoutubeUrl("https://youtu.be/" + singleVideo.getId());
                 video.setThumbnailUrl(thumbnail.getUrl());
+                // 타이틀 database에 넣을 때 이모지 제거
                 video.setTitle(mysqlUtf8Safe(singleVideo.getSnippet().getTitle()));
                 youtubeApiRepository.save(video);
 
@@ -193,7 +194,7 @@ public class YoutubeApiService {
 
     /**
      * <4byte 문자 제거 메서드>
-     * mysql 인코딩 설정이 utf8일때 DB에 이모지가 안들어가서..
+     * mysql 인코딩 설정이 utf8일때 DB에 이모지가 안들어가서..(에러남)
      */
     public static String mysqlUtf8Safe(String input) {
         if (input == null) return null;

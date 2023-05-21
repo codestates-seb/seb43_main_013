@@ -17,19 +17,12 @@ import javax.validation.constraints.Positive;
 public class YoutubeApiController {
     private final YoutubeApiService youtubeService;
 
-    // 전체 카테고리에서 유튜브 인기 급상승 영상 10개 조회
-    @GetMapping("/youtubeVideos")
-    public ResponseEntity getYoutubeVideos() {
-        YoutubeApiDto.Multi response = youtubeService.get("3");
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
     /**
-     * <특정 카테고리에서 유튜브 인기 급상승 영상 10개 조회>
+     * <카테고리별 유튜브 인기 급상승 영상 10개 조회>
      * youtubeCategoryId 값에 따른 카테고리 종류
      * 1 = Film & Animation
      * 2 = Autos & Vehicles
-     * 3 = 전체(entity ID 저장을 위해 임의 추가. 유튜브에서 제공하지 않음)
+     * 3 = 전체 카테고리(entity ID 저장을 위해 임의 추가)
      * 10 = Music
      * 15 = Pets & Animals
      * 17 = Sports
