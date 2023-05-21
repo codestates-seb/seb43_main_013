@@ -40,7 +40,7 @@ public class Member extends Auditable {
     private String email;
 
     @Column
-    private boolean oauth = false;
+    private boolean oauth;
 
     @Column(length = 300, nullable = false)
     private String password;
