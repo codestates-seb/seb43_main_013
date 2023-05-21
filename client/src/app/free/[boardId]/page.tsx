@@ -20,7 +20,7 @@ const Page = ({ params: { boardId } }: Props) => {
   return (
     <>
       {/* 목록 */}
-      <Navigation />
+      {/* <Navigation /> */}
 
       {/* 게시글 상세 내용 */}
       <Board boardId={boardId} />

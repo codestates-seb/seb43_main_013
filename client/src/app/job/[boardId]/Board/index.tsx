@@ -12,6 +12,7 @@ import BoardFooter from "@/components/Board/BoardFooter";
 import BoardComments from "@/components/Board/BoardComments";
 import BoardCommentForm from "@/components/Board/BoardCommentForm";
 import Skeleton from "@/components/Skeleton";
+import BoardASide from "@/components/Board/BoardASide";
 
 // type
 interface Props {
@@ -29,7 +30,7 @@ const Board: React.FC<Props> = ({ boardId }) => {
   if (!data && !isLoading) return notFound();
 
   return (
-    <article className="p-8 space-y-2 bg-white shadow-lg m-4 rounded-md">
+    <article className="p-8 space-y-2 bg-white shadow-black/40 shadow-sm my-12 mx-4 rounded-md relative">
       {/* 작성자 정보 / 클립보드/북마크  */}
       {/* 제목 */}
       {/* 이름/작성일 */}
@@ -48,10 +49,10 @@ const Board: React.FC<Props> = ({ boardId }) => {
       {/* 댓글 정보 / 좋아요 정보 */}
       <BoardFooter
         type="job"
-        boardId={boardId}
-        commentCount={data.commentCount}
-        likeCount={data.likeCount}
         liked={data.liked}
+        boardId={boardId}
+        likeCount={data.likeCount}
+        commentCount={data.commentCount}
       />
 
       {/* 라인 */}
@@ -64,6 +65,16 @@ const Board: React.FC<Props> = ({ boardId }) => {
 
       {/* 댓글폼 */}
       <BoardCommentForm type="free" boardId={boardId} />
+
+      {/* 북마크 사이드 버튼 */}
+      <BoardASide
+        type="job"
+        boardId={boardId}
+        bookmarked={data.bookmarked}
+        commentCount={data.commentCount}
+        likeCount={data.likeCount}
+        liked={data.liked}
+      />
     </article>
   );
 };

@@ -23,7 +23,7 @@ const Page = ({ params: { memberId }, searchParams: { type = "written", page = "
       </section>
 
       {/* 내 게시글들 / 북마크 누른 게시글들 / 좋아요 누른 게시글들 */}
-      <section className="flex-1 p-8 space-y-4 bg-white shadow-2xl m-4 rounded-lg flex flex-col items-center lg:self-start">
+      <section className="flex-1 p-8 space-y-4 bg-white shadow-black/40 shadow-sm m-4 rounded-lg flex flex-col items-center lg:self-start">
         {type === "written" && <ProfileWrittenBoardList memberId={+memberId} page={+page} />}
         {type === "bookmarked" && <ProfileBookmarkedBoardList memberId={+memberId} page={+page} />}
         {type === "liked" && <ProfileLikedBoardList memberId={+memberId} page={+page} />}
