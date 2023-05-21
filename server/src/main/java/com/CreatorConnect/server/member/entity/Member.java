@@ -64,6 +64,9 @@ public class Member extends Auditable {
     @Column
     private String profileImageUrl;
 
+    @Column
+    private boolean verified;
+
     @ManyToMany(cascade = CascadeType.MERGE)
     @JoinTable(name = "FOLLOW_FOLLOWING",
             joinColumns = @JoinColumn(name = "FOLLOWING_ID"),

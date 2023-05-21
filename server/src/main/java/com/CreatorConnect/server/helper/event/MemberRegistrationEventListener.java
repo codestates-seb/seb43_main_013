@@ -35,13 +35,13 @@ public class MemberRegistrationEventListener {
     @EventListener
     public void listen(MemberRegistrationApplicationEvent event) throws Exception {
         try {
-            String[] to = new String[]{event.getMember().getEmail()};
-            String message = event.getMember().getEmail() + "님, 회원 가입이 성공적으로 완료되었습니다.";
+            String[] to = new String[]{event.getEmail()};
+            String message = event.getEmail() + "님, 회원 가입이 성공적으로 완료되었습니다.";
             emailSender.sendEmail(to, subject, message, templateName);
         } catch (MailSendException e) {
             e.printStackTrace();
             log.error("MailSendException: rollback for Member Registration:");
-            Member member = event.getMember();
+            Member member = memberService.findVerifiedMember(event.getEmail());
             memberService.deleteMember(member.getMemberId());
         }
     }

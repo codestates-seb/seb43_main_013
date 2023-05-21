@@ -69,8 +69,11 @@ public class MemberService {
             member.setProfileImageUrl("https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/754.jpg");
         }
 
+        member.setVerified(false);
+
         Member savedMember = memberRepository.save(member);
-        publisher.publishEvent(new MemberRegistrationApplicationEvent(savedMember));
+
+        publisher.publishEvent(new MemberRegistrationApplicationEvent(savedMember.getEmail()));
 
         return savedMember;
     }
@@ -134,15 +137,6 @@ public class MemberService {
         memberRepository.save(findMember);
     }
 
-    public void verifyExistsEmail(String email) {
-
-        Optional<Member> member = memberRepository.findByEmail(email);
-
-        if (member.isPresent()) {
-            throw new BusinessLogicException(ExceptionCode.EMAIL_EXISTS);
-        }
-    }
-
     private void verifyExistsNickname(String nickname) {
 
         Optional<Member> member = memberRepository.findByNickname(nickname);
@@ -158,6 +152,28 @@ public class MemberService {
 
         if (member.isPresent()) {
             throw new BusinessLogicException(ExceptionCode.PHONE_EXISTS);
+        }
+    }
+
+    public void verifyExistsEmail(String email) {
+
+        Optional<Member> member = memberRepository.findByEmail(email);
+
+        if (member.isPresent()) {
+            throw new BusinessLogicException(ExceptionCode.EMAIL_EXISTS);
+        }
+    }
+
+    public void confirmEmail(String email) {
+
+        Optional<Member> findMember = memberRepository.findByEmail(email);
+
+        if (findMember.isPresent()) {
+            Member member = findMember.get();
+            if (!member.isVerified()) {
+                member.setVerified(true);
+                memberRepository.save(member);
+            }
         }
     }
 

@@ -5,8 +5,9 @@ import lombok.Getter;
 
 @Getter
 public class MemberRegistrationApplicationEvent {
-    private final Member member;
-    public MemberRegistrationApplicationEvent(Member member) {
-        this.member = member;
+    private final String email;
+
+    public MemberRegistrationApplicationEvent(String email) {
+        this.email = email;
     }
 }
