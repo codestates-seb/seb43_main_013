@@ -97,8 +97,8 @@ public class YoutubeApiService {
 
     /**
      * <youtube API 메서드>
-     * 1. entity 확인 메서드 실행
-     * 2. 메서드 리턴값 true면
+     * 1. 서비스 가능한 categoryId값인지 체크
+     * 2. entity 확인 메서드 실행
      * 3. youtube api 정보 지정 (인기 급상승 목록, 10개, 한국), (전체 or 카테고리별 조회)
      * 4. api 조회
      * 5. entity 저장 or 업데이트
@@ -106,6 +106,10 @@ public class YoutubeApiService {
      */
     public YoutubeApiDto.Multi get(String categoryId) {
 
+        // 카테고리 id 체크해서 불필요한 api 호출 차단
+        if(!check(categoryId)){
+            throw new BusinessLogicException(ExceptionCode.CATEGORY_ID_NOT_FOUND);
+        }
         List<YoutubeApiDto.Details> responses = new ArrayList<>();
         VideoPK videoPK = new VideoPK(categoryId,1L);
 
@@ -141,11 +145,11 @@ public class YoutubeApiService {
                 }
 
             } catch (GoogleJsonResponseException e) {
-                // 에러처리 - 유튜브에서 제공하지 않는 카테고리ID 입력시
-                new BusinessLogicException(ExceptionCode.CATEGORY_ID_NOT_FOUND);
+                // 에러처리 더블체크 - 유튜브에서 제공하지 않는 카테고리ID 입력시
+                throw new BusinessLogicException(ExceptionCode.CATEGORY_ID_NOT_FOUND);
             } catch (IOException e) {
                 // 에러처리 - 할당량 초과
-                new BusinessLogicException(ExceptionCode.LIMIT_EXCESS);
+                throw new BusinessLogicException(ExceptionCode.LIMIT_EXCESS);
             } catch (Throwable t) {
                 // 에러처리 - 복구할 수 없는 예외상황 (프로그램 오류로 종료되는 상황) 발생시 원인 출력
                 t.printStackTrace();
@@ -167,7 +171,7 @@ public class YoutubeApiService {
      * 1. 데이터베이스에 존재하는지 확인 (없으면 생성 )
      * 2. 존재하면 entity 수정 시간과 현재 시간 비교 (1일 이상 차이나면 업데이트)
      */
-    public Boolean entityExistCheck(VideoPK videoPK) {
+    public boolean entityExistCheck(VideoPK videoPK) {
         Optional<VideoEntity> optionalVideoEntity = youtubeApiRepository.findById(videoPK);
 
         // 데이터베이스에 존재하지 않으면 true
@@ -180,6 +184,21 @@ public class YoutubeApiService {
             // 현재 시간과 1일 이상 차이나면 true 아니면 false
             return compareDay(date1, date2) >= 1;
         }
+    }
+
+    // 서비스 가능한 카테고리ID 인지 확인하는 메서드
+    public boolean check(String categoryId) {
+        return hasYoutubeCategoryId(categoryId, "1","2","3","10","15","17","20","22","23","24","25","26","28");
+    }
+
+    //여러 개의 문자열에 equals 비교하는 메서드
+    public static boolean hasYoutubeCategoryId(String value, String... categoryIds) {
+        for (String categoryId : categoryIds) {
+            if (categoryId.equals(value)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     // 시간 비교 메서드 - 일 단위

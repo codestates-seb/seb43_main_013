@@ -83,7 +83,7 @@ public class SecurityConfiguration {
                         .antMatchers(HttpMethod.GET, "/api/feedbackcategory/**","/api/feedbackcategories").permitAll()
                         .antMatchers(HttpMethod.GET, "/api/category/**","/api/categories").permitAll()
                         .antMatchers(HttpMethod.GET, "/api/notice/**","/api/notices").permitAll()
-                        .antMatchers(HttpMethod.GET, "/api/youtubeVideos/**").permitAll()
+                        .antMatchers(HttpMethod.GET, "/api/youtubevideos/**").permitAll()
                         .anyRequest().authenticated()
                         )
                 .oauth2Login()
