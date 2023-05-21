@@ -35,7 +35,7 @@ public class YoutubeApiController {
      * 28 = Science & Technology
      * 이외 카테고리는 한국 인기 급상승 영상 api 에서 제공하지 않음
      */
-    @GetMapping("/youtubeVideos/categories/{youtubeCategoryId}")
+    @GetMapping("/youtubevideos/categories/{youtubeCategoryId}")
     public ResponseEntity getFeedbacksByFeedbackCategory(@PathVariable("youtubeCategoryId") @Positive String youtubeCategoryId) {
 
         YoutubeApiDto.Multi response = youtubeService.get(youtubeCategoryId);
