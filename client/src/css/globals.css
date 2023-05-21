@@ -36,6 +36,15 @@ html {
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 3;
   }
+  /* 1줄 제한 */
+  .truncate-1 {
+    white-space: normal;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+  }
 }
 
 /* react-quill 높이 지정 */

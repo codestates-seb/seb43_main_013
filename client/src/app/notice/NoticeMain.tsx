@@ -3,6 +3,7 @@
 import SortPosts from "@/components/BoardMain/SortPosts";
 import Pagination from "@/components/Pagination";
 import RightSideButton from "@/components/RightSideButton";
+import NoDataExists from "@/components/Svg/NoDataExists";
 import { useFetchNoticeBoardList } from "@/hooks/query/useFetchNoticeBoardList";
 import { usePageStore, useSortStore } from "@/store";
 import { useMemberStore } from "@/store/useMemberStore";
@@ -26,8 +27,11 @@ const NoticeMain = () => {
 
   return (
     // 전체 컨테이너
-    <div className="mx-auto mt-6 min-w-min">
-      <h1 className="text-3xl font-bold text-left"> 공지사항 </h1>
+    <div className="mx-auto mt-6">
+      <h2 className="text-2xl font-bold text-left"> 공지사항 </h2>
+      <div className="flex justify-end  mb-4">
+        <SortPosts />
+      </div>
       <div className="flex flex-col md:flex-row ">
         {/* 카테고리 영역 추가 시  */}
         {/* <aside className=" flex flex-row md:flex-col items-center justify-center md:justify-start  md:w-0 md:grow-[2]  ">
@@ -35,21 +39,16 @@ const NoticeMain = () => {
       </aside> */}
         <section className="flex flex-col md:w-0 ml-5 grow-[8]">
           {/* freeboard list header */}
-          <div className="flex justify-end  mb-4">
-            <SortPosts />
-          </div>
 
           {/* post item */}
           <div className="space-y-5">
-            {data &&
-              data.pages.map((item) =>
-                item.data.map((innerData) => (
-                  <div className="" key={innerData.noticeId}>
-                    <NoticeContentItem props={innerData} />
-                  </div>
-                )),
-              )}
-
+            {data?.pages[0].data.length === 0 ? (
+              <NoDataExists />
+            ) : (
+              data?.pages.map((page) =>
+                page.data.map((innerData) => <NoticeContentItem props={innerData} key={innerData.noticeId} />),
+              )
+            )}
             {/* postslist bottom */}
             {data && (
               <div className="flex justify-center items-center">
@@ -65,7 +64,7 @@ const NoticeMain = () => {
         </section>
         {/* 오른쪽 사이드 영역 */}
         {member?.email === process.env.NEXT_PUBLIC_ADMIN && (
-          <div className="opacity-50 lg:opacity-100 fixed right-0 lg:top-1/2 transform -translate-y-1/2 ml-2">
+          <div className="fixed right-0 bottom-0 transform -translate-y-1/2 ml-2">
             <RightSideButton destination={`/notice/write`} />
           </div>
         )}

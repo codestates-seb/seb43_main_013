@@ -32,6 +32,7 @@ const ContentFooter: React.FC<ContentFooterProps> = ({ type, position, footerDat
 
   if (!footerData) return <></>;
 
+  console.log(footerData.commentCount);
   /** 2023/05/19 - 게시글 좋아요 - by leekoby */
   const onClickLike = async () => {
     if (!member) return toast({ title: "로그인후에 접근해주세요!", status: "error" });
@@ -86,29 +87,37 @@ const ContentFooter: React.FC<ContentFooterProps> = ({ type, position, footerDat
             {footerData.viewCount}
           </span>
         </button>
-        <button type="button" onClick={onClickLike} className={`flex text-sub-600 gap-x-1`}>
-          {footerData.liked ? (
-            <TrueLikeIcon
-              className={` ${position === "side" ? "text-sub-500 w-3 h-3" : "text-black w-4 h-4 ml-2"} cursor-pointer `}
-            />
-          ) : (
-            <FalseLikeIcon
-              className={` ${position === "side" ? "text-sub-500 w-3 h-3" : "text-black w-4 h-4 ml-2"} cursor-pointer `}
-            />
-          )}
-          <span className={`${position === "side" ? "text-[10px] text-sub-500" : "text-xs text-black"} `}>
-            {footerData.likeCount}
-          </span>
-        </button>
+        {footerData.liked !== undefined && (
+          <button type="button" onClick={onClickLike} className={`flex text-sub-600 gap-x-1`}>
+            {footerData.liked ? (
+              <TrueLikeIcon
+                className={` ${
+                  position === "side" ? "text-sub-500 w-3 h-3" : "text-black w-4 h-4 ml-2"
+                } cursor-pointer `}
+              />
+            ) : (
+              <FalseLikeIcon
+                className={` ${
+                  position === "side" ? "text-sub-500 w-3 h-3" : "text-black w-4 h-4 ml-2"
+                } cursor-pointer `}
+              />
+            )}
+            <span className={`${position === "side" ? "text-[10px] text-sub-500" : "text-xs text-black"} `}>
+              {footerData.likeCount}
+            </span>
+          </button>
+        )}
 
-        <div className="flex items-center justify-center text-sub-600 gap-x-1">
-          <CommentsIcon
-            className={` ${position === "side" ? "text-sub-500 w-3 h-3" : "text-black w-4 h-4 ml-2"} cursor-pointer `}
-          />
-          <div className={`${position === "side" ? "text-[10px] text-sub-500" : "text-xs text-black"} `}>
-            {footerData.commentCount}
+        {footerData.commentCount !== undefined && (
+          <div className="flex items-center justify-center text-sub-600 gap-x-1">
+            <CommentsIcon
+              className={` ${position === "side" ? "text-sub-500 w-3 h-3" : "text-black w-4 h-4 ml-2"} cursor-pointer `}
+            />
+            <div className={`${position === "side" ? "text-[10px] text-sub-500" : "text-xs text-black"} `}>
+              {footerData.commentCount}
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

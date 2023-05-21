@@ -70,10 +70,9 @@ const ContentItem: React.FC<ContentItemProps> = ({ props }) => {
                 {/* 게시글 제목 */}
                 <Link href={`/free/${props.freeBoardId}`} className="contents">
                   <h3
-                    className={`text-xl font-bold text-left hover:underline hover:underline-offset-4 hover:text-blue-600 truncate `}
+                    className={`text-xl font-bold text-left hover:underline hover:underline-offset-4 hover:text-blue-600 truncate-1 `}
                   >
-                    {/* {props.title} */}
-                    aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+                    {props.title}
                   </h3>
                 </Link>
                 {props.bookmarked ? (

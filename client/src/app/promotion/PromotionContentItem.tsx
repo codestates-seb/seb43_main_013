@@ -33,12 +33,9 @@ const PromotionContentItem = forwardRef<HTMLDivElement, ContentItemProps>(({ pro
               {/* content header */}
               <div className="flex items-center justify-between">
                 {/* rightside title */}
-                <h1
-                  className="text-xl font-bold text-left hover:underline hover:underline-offset-4 hover:text-blue-600 truncate-1 text-ellipsis overflow-hidden
-                    line-clamp-1"
-                >
+                <h3 className="text-xl font-bold text-left hover:underline hover:underline-offset-4 hover:text-blue-600 truncate-1 ">
                   {props.title}
-                </h1>
+                </h3>
                 {props.bookmarked ? (
                   <BookmarkIconChecked className="w-5 h-5 flex-shrink-0 text-black cursor-pointer " />
                 ) : (

@@ -11,6 +11,7 @@ import { useRef, useEffect, useCallback } from "react";
 import FeedbackContentItem from "./FeedbackContentItem";
 import FeedbackCategories from "./FeedbackCategories";
 import { useMemberStore } from "@/store/useMemberStore";
+import NoDataExists from "@/components/Svg/NoDataExists";
 
 /** 2023/05/08 - 피드백 게시판 메인 화면 - by leekoby */
 const FeedbackMain = () => {
@@ -64,11 +65,11 @@ const FeedbackMain = () => {
   // console.log(data.pages);
   return (
     //  전체 컨테이너
-    <div className="mx-auto mt-6 min-w-min">
-      <h1 className="text-3xl font-bold text-left">🔥 피드백 게시판 🔥</h1>
+    <div className="mx-auto mt-6">
+      <h1 className="text-2xl font-bold text-left">🔥 피드백 게시판 🔥</h1>
       <div className="flex flex-col md:flex-row ">
         {/* Left Side */}
-        <aside className="flex flex-row md:flex-col items-center justify-center md:justify-start  md:w-0 md:grow-[2]  ">
+        <aside className="flex flex-row md:flex-col items-center justify-center md:justify-start  md:w-0 md:grow-[2] md:mt-14 ">
           {/* side category  */}
           {categories && <SideCategories selectedCategory={selectedCategory} categories={categories} />}
         </aside>
@@ -85,8 +86,10 @@ const FeedbackMain = () => {
           {/* post item */}
           {/*  2023/05/14 - 무한스크롤 피드백 게시글 목록 - by leekoby  */}
           <div className="flex flex-col flex-wrap gap-5 md:flex-row">
-            {data &&
-              data.pages.map((page, pageIndex) =>
+            {data?.pages[0].data.length === 0 ? (
+              <NoDataExists />
+            ) : (
+              data?.pages.map((page, pageIndex) =>
                 page.data.map((innerData, itemIndex) => {
                   const isLastItem = pageIndex === data.pages.length - 1 && itemIndex === page.data.length - 1;
                   return (
@@ -95,12 +98,13 @@ const FeedbackMain = () => {
                     </div>
                   );
                 }),
-              )}
+              )
+            )}
           </div>
         </section>
         {/* 오른쪽 사이드 영역 */}
         {member && (
-          <div className="opacity-50 lg:opacity-100 fixed right-0 lg:top-1/2 transform -translate-y-1/2 ml-2">
+          <div className="fixed right-0 bottom-0 transform -translate-y-1/2 ml-2">
             <RightSideButton destination={`/feedback/write`} />
           </div>
         )}
