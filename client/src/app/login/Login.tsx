@@ -18,6 +18,7 @@ import { useMemberStore } from "@/store/useMemberStore";
 import { useRouter } from "next/navigation";
 import { useLoadingStore } from "@/store";
 import useCustomToast from "@/hooks/useCustomToast";
+import OAuthContainer from "@/components/Login/OAuthContainer";
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
@@ -77,6 +78,7 @@ const LoginWindow = () => {
         <LoginInput label="이메일" value={emailData} setValue={setEmailData} submitCnt={submitCnt} />
         <LoginInput label="비밀번호" value={password} setValue={setPassword} submitCnt={submitCnt} />
         <LoginBtn text="로그인" />
+        <OAuthContainer />
       </form>
     </div>
   );

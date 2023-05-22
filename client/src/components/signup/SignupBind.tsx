@@ -59,8 +59,11 @@ const SignupBind = () => {
       router.replace("/login");
     } catch (error) {
       console.error(error);
+      console.log("error: ", error);
 
-      toast({ title: "회원가입에 실패했습니다.", status: "error" });
+      // if(error.status === 409) toast({ title: "email 또는 닉네임 또는 전화번호가 이미 존재합니다.", status: "error" });
+      // if(error.status === 500) toast({ title: "서버가 불안정합니다.", status: "error" });
+      // else toast({ title: "회원가입에 실패했습니다.", status: "error" });
     } finally {
       loading.end();
     }

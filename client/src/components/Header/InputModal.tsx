@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import currentRank from "../Navbar/currentRank";
+// import currentRank from "../Navbar/currentRank";
 import { MagnifyingGlassIcon } from "../HeaderIcon";
 import axios from "axios";
 import ListComp from "./ListComp";
@@ -11,7 +11,7 @@ const InputModal = ({ setInputModal }: { setInputModal: React.Dispatch<boolean> 
   const modalRef = useRef<HTMLDivElement>(null);
   const [value, setValue] = useState("");
 
-  const curRank = currentRank();
+  // const curRank = currentRank();
 
   useEffect(() => {
     const modalCloseHandler = (e: MouseEvent) => {
@@ -64,7 +64,7 @@ const InputModal = ({ setInputModal }: { setInputModal: React.Dispatch<boolean> 
           </form>
           <div className="w-full h-full flex pt-6">
             <ListComp label="최근 검색어" data={[""]} />
-            <ListComp label="인기 검색어" data={curRank} />
+            {/* <ListComp label="인기 검색어" data={curRank} /> */}
           </div>
         </div>
       </div>
