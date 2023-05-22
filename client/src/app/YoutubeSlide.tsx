@@ -92,7 +92,7 @@ const YoutubeSlide = () => {
     speed: 500,
     arrows: false,
     draggable: true,
-    // autoplay: true,
+    autoplay: true,
     dots: false,
     swipeToSlide: true,
     afterChange: handleAfterChange,
@@ -119,7 +119,7 @@ const YoutubeSlide = () => {
           </Slider>
           {isOpen && (
             <div
-              className="fixed top-0 left-0 w-screen h-screen bg-black bg-opacity-70 flex justify-center items-center z-40"
+              className="fixed top-0 left-0 w-screen h-screen bg-black bg-opacity-80 flex justify-center items-center z-40"
               onClick={handleClose}
             >
               <div className="w-[500px] h-[300px] md:h-[450px] md:w-[750px] lg:h-[600px] lg:w-[1100px] ">
