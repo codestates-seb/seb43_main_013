@@ -18,6 +18,8 @@ const OAuthLogin = () => {
   const { setMember } = useMemberStore();
   const router = useRouter();
   const propsBind = { setAccessToken, setRefreshToken, setMember, router };
+
+  return <></>;
 };
 export default OAuthLogin;
 
