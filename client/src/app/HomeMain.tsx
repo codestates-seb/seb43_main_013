@@ -20,10 +20,6 @@ const HomeMain = () => {
         <FreePostsSlide />
       </div>
       <div className="flex flex-col">
-        홍보게시판 자리
-        <FeedbackPostsSlide />
-      </div>
-      <div className="flex flex-col">
         인기동영상 자리
         <FeedbackPostsSlide />
       </div>

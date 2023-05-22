@@ -69,18 +69,14 @@ const FeedbackContentItem = forwardRef<HTMLDivElement, ContentItemProps>(({ prop
             className="max-w-[640px] max-h-[360px] min-h[240px] flex-shrink-0"
           />
           {/* right content */}
-
           <div className="flex flex-col w-full flex-1 gap-2 p-2">
             {/* content header */}
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between space-x-2">
               {/* 게시글 제목 */}
-              <Link href={`/feedback/${props.feedbackBoardId}`}>
-                <h1
-                  className="text-xl font-bold text-left hover:underline hover:underline-offset-4 hover:text-blue-600 truncate-1 text-ellipsis overflow-hidden
-                    line-clamp-1"
-                >
+              <Link href={`/feedback/${props.feedbackBoardId} `} className="contents">
+                <h3 className="text-xl font-bold text-left hover:underline hover:underline-offset-4 hover:text-blue-600 truncate-1">
                   {props.title}
-                </h1>
+                </h3>
               </Link>
               {props.bookmarked ? (
                 <BookmarkIconChecked

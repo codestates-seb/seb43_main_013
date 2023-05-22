@@ -9,6 +9,8 @@ import ContentItem from "./ContentItem";
 import RightSideButton from "@/components/RightSideButton";
 import { useCategoriesStore, usePageStore, useSortStore } from "@/store";
 import { useMemberStore } from "@/store/useMemberStore";
+import NotSearch from "@/components/Svg/NotSearch";
+import NoDataExists from "@/components/Svg/NoDataExists";
 
 /** 2023/05/08 - 자유게시판 메인 화면 - by leekoby */
 // TODO: 렌더링 3번씩 되는 문제 있음
@@ -42,9 +44,6 @@ const FreeMain = () => {
   /** 2023/05/13 - 공통 카테고리 초기값 - by leekoby */
   const { categories, isLoading } = useFetchCategories({ type: "normal" });
 
-  // 북마크 좋아요 확인용 콘솔로그
-  // console.log(data.pages);
-
   return (
     //  전체 컨테이너
     <div className="mx-auto mt-6">
@@ -62,15 +61,18 @@ const FreeMain = () => {
           {/* TODO: //* 인기게시글 생기면 완성하기 */}
           {/* <PopularPosts /> */}
         </aside>
-        <section className="flex flex-col ml-5 md:w-0 grow-[8]">
+        <section className="flex flex-col ml-5 w-0 grow-[8]">
           {/* freeboard list header */}
 
           {/* post item */}
           <div className="space-y-5">
-            {data &&
-              data.pages.map((item) =>
-                item.data.map((innerData) => <ContentItem props={innerData} key={innerData.freeBoardId} />),
-              )}
+            {data?.pages[0].data.length === 0 ? (
+              <NoDataExists />
+            ) : (
+              data?.pages.map((page) =>
+                page.data.map((innerData) => <ContentItem props={innerData} key={innerData.freeBoardId} />),
+              )
+            )}
 
             {/* postslist bottom */}
 

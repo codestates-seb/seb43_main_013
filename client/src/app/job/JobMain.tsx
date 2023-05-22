@@ -10,6 +10,7 @@ import { useCategoriesStore, usePageStore, useSortStore } from "@/store";
 import { useFetchJobBoardList } from "@/hooks/query/useFetchJobBoardList";
 import JobCategories from "./JobCategories";
 import { useMemberStore } from "@/store/useMemberStore";
+import NoDataExists from "@/components/Svg/NoDataExists";
 
 /** 2023/05/18 - 자유게시판 메인 화면 - by leekoby */
 const JobMain = () => {
@@ -45,8 +46,12 @@ const JobMain = () => {
 
   return (
     <>
-      <div className="mx-auto mt-6 min-w-min">
-        <h1 className="text-3xl font-bold text-left">🔥 구인/구직 게시판 🔥</h1>
+      <div className="mx-auto mt-6">
+        <h1 className="text-2xl font-bold text-left">🔥 구인/구직 게시판 🔥</h1>
+        {/* freeboard list header */}
+        <div className="flex justify-end mb-4">
+          <SortPosts />
+        </div>
         <div className="flex flex-col md:flex-row ">
           {/* Left Side */}
           <aside className=" flex flex-row md:flex-col items-center justify-center md:justify-start  md:w-0 md:grow-[2]  ">
@@ -56,20 +61,16 @@ const JobMain = () => {
           </aside>
           {/* rightside freeboard post list */}
           <section className="flex flex-col md:w-0 ml-5  grow-[8]">
-            {/* freeboard list header */}
-            <div className="flex justify-end mb-4">
-              <SortPosts />
-            </div>
             {/* post item */}
             <div className="space-y-5">
-              {data &&
-                data.pages.map((item) =>
-                  item.data.map((innerData) => (
-                    <div className="" key={innerData.jobBoardId}>
-                      <JobContentItem props={innerData} />
-                    </div>
-                  )),
-                )}
+              {data?.pages[0].data.length === 0 ? (
+                <NoDataExists />
+              ) : (
+                data?.pages.map((page) =>
+                  page.data.map((innerData) => <JobContentItem props={innerData} key={innerData.jobBoardId} />),
+                )
+              )}
+
               {/* postslist bottom */}
               {data && (
                 <div className="flex justify-center items-center">
@@ -84,7 +85,7 @@ const JobMain = () => {
             </div>
           </section>
           {member && (
-            <div className="opacity-50 lg:opacity-100 fixed right-0 lg:top-1/2 transform -translate-y-1/2 ml-2">
+            <div className="fixed right-0 bottom-0 transform -translate-y-1/2 ml-2">
               <RightSideButton destination={`/job/write`} />
             </div>
           )}

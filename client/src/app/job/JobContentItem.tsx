@@ -58,22 +58,19 @@ const JobContentItem: React.FC<JobContentItemProps> = ({ props }) => {
       {/*  list container */}
       <div className="flex flex-col items-center justify-center mt-2 bg-white rounded-md shadow-md md:flex-row ">
         {/* List Item * */}
-        <div className="flex flex-col items-center w-full h-full p-5 bg-sub-100 rounded-md ">
-          {/* Thumnail */}
-          {/* <Image src={defaultThumnail} className="h-auto mx-1 my-1 border rounded-lg w-80 md:w-40" alt="" /> */}
+        <div className="items-center p-5 bg-sub-100 rounded-md w-full">
           {/* right content */}
           <div className="flex justify-between w-full h-full">
             {/* content header */}
             <div className="flex flex-col justify-between w-full h-full gap-2 p-2 md:p-3">
-              <div className="flex items-center justify-between ">
+              <div className="flex items-center justify-between space-x-2">
                 {/* rightside title */}
-                <Link href={`/job/${props.jobBoardId}`}>
-                  <h1
-                    className={`text-xl font-bold text-left hover:underline hover:underline-offset-4 hover:text-blue-600 truncate-1 text-ellipsis overflow-hidden
-                    line-clamp-1`}
+                <Link href={`/job/${props.jobBoardId}`} className="contents">
+                  <h3
+                    className={`text-xl font-bold text-left hover:underline hover:underline-offset-4 hover:text-blue-600 truncate-1`}
                   >
                     {props.title}
-                  </h1>
+                  </h3>
                 </Link>
 
                 {props.bookmarked ? (
