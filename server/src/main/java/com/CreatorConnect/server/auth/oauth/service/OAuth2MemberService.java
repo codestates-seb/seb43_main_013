@@ -81,6 +81,7 @@ public class OAuth2MemberService implements OAuth2UserService<OAuth2UserRequest,
             member.setNickname(tempNickname);
             member.setProfileImageUrl(profileImageUrl);
             member.setOauth(true);
+            member.setVerified(true);
 
             memberRepository.save(member);
         }

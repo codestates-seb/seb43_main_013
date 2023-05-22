@@ -55,6 +55,7 @@ public class MemberAuthenticationSuccessHandler implements AuthenticationSuccess
         resultMap.put("introduction", member.getIntroduction());
         resultMap.put("link", member.getLink());
         resultMap.put("profileImageUrl", member.getProfileImageUrl());
+        resultMap.put("verified", member.isVerified());
         resultMap.put("createdAt", member.getCreatedAt());
         resultMap.put("modifiedAt", member.getModifiedAt());
 

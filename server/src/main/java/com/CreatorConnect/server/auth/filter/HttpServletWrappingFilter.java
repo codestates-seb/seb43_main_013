@@ -19,7 +19,7 @@ public class HttpServletWrappingFilter extends OncePerRequestFilter {
         response.setHeader("Access-Control-Allow-Origin", "https://www.hard-coding.com");
         response.setHeader("Access-Control-Allow-Methods","POST, GET, DELETE, PATCH, OPTIONS");
         response.setHeader("Access-Control-Max-Age","3600");
-        response.setHeader("Access-Control-Allow-Headers","Content-Type,x-requested-with,Authorization,Access-Control-Allow-Origin");
+        response.setHeader("Access-Control-Allow-Headers","Content-Type, x-requested-with, Authorization, Access-Control-Allow-Origin");
         response.setHeader("Access-Control-Allow-Credentials","true");
         response.setHeader("Access-Control-Expose-Headers", "Content-Length");
         ContentCachingRequestWrapper wrappingRequest = new ContentCachingRequestWrapper(request);

@@ -40,7 +40,7 @@ public class Member extends Auditable {
     private String email;
 
     @Column
-    private boolean oauth = false;
+    private boolean oauth;
 
     @Column(length = 300, nullable = false)
     private String password;
@@ -63,6 +63,9 @@ public class Member extends Auditable {
 
     @Column
     private String profileImageUrl;
+
+    @Column
+    private boolean verified;
 
     @ManyToMany(cascade = CascadeType.MERGE)
     @JoinTable(name = "FOLLOW_FOLLOWING",
