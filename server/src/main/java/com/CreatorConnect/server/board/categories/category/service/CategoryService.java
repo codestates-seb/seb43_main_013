@@ -59,7 +59,7 @@ public class CategoryService {
 
     //목록 조회
     public  List<CategoryResponseDto.Details> responseCategorys(){
-        PageRequest pageRequest = PageRequest.of(0, 100, Sort.by("categoryId").descending());
+        PageRequest pageRequest = PageRequest.of(0, 100, Sort.by("categoryId").ascending());
         Page<Category> categorysPage = categoryRepository.findAll(pageRequest);
         List<CategoryResponseDto.Details> responses = mapper.categorysToCategoryDetailsResponses(categorysPage.getContent());
         return responses;
