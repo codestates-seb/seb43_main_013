@@ -10,6 +10,8 @@ const nextConfig = {
       "cloudflare-ipfs.com",
       // 유튜브 썸네일 링크
       "img.youtube.com",
+      // 유튜브 동영상 썸네일 링크 
+      "i.ytimg.com",
 
       // default avatar image
       "ibb.co",
