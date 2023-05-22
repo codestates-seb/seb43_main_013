@@ -77,6 +77,7 @@ public class YoutubeApiService {
                 VideoPK videoPK = new VideoPK(categoryId,id);
                 VideoEntity video = new VideoEntity();
                 video.setVideoPK(videoPK);
+                video.setYoutubeId(singleVideo.getId());
                 video.setYoutubeUrl("https://youtu.be/" + singleVideo.getId());
                 video.setThumbnailUrl(thumbnail.getUrl());
                 // 타이틀 database에 넣을 때 이모지 제거
