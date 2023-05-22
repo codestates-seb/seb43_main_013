@@ -1,6 +1,5 @@
 package com.CreatorConnect.server.member.service;
 
-import com.CreatorConnect.server.helper.event.MemberRegistrationApplicationEvent;
 import com.CreatorConnect.server.auth.jwt.JwtTokenizer;
 import com.CreatorConnect.server.auth.utils.CustomAuthorityUtils;
 import com.CreatorConnect.server.exception.BusinessLogicException;
@@ -24,10 +23,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
@@ -227,16 +230,44 @@ public class MemberService {
 
     }
 
+//    public void verifiedAuthenticatedMember(Long memberId) {
+//
+//        // securitycontextholder 인증 검증 방식
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        Member findMember = findVerifiedMember(memberId);
+//
+//        if (!authentication.getName().equals(findMember.getEmail())) {
+//            throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_ALLOWED);
+//        }
+//
+//    }
+
+
     public void verifiedAuthenticatedMember(Long memberId) {
-
-        // securitycontextholder 인증 검증 방식
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Member findMember = findVerifiedMember(memberId);
-
-        if (!authentication.getName().equals(findMember.getEmail())) {
+        if(getHeader("Authorization") == null){
             throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_ALLOWED);
         }
+        String jws = getHeader("Authorization").substring(7);
+        long memberIdFromJws = getMemberIdFromJws(jws);
+        long memberIdFromRequest = memberId;
+        if (memberIdFromJws != memberIdFromRequest) {
+            throw new BusinessLogicException(ExceptionCode.INVALID_TOKEN);
+        }
+    }
 
+    //헤더 얻는 메서드
+    protected String getHeader(String headerName) {
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+
+        return request.getHeader(headerName);
+    }
+
+    // jws에서 memberId 추출하는 메서드
+    protected long getMemberIdFromJws(String jws) {
+        String base64EncodedSecretKey = jwtTokenizer.encodeBase64SecretKey(jwtTokenizer.getSecretKey());
+        Map<String, Object> claims = jwtTokenizer.getClaims(jws, base64EncodedSecretKey).getBody();
+
+        return Long.parseLong(claims.get("memberId").toString());
     }
 
     // 현재 로그인한 사용자 정보

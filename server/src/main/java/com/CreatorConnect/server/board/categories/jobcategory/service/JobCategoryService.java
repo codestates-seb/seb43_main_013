@@ -72,7 +72,7 @@ public class JobCategoryService {
      */
     public List<JobCategoryDto.Response> getJobCategories() {
         // 1. 카테고리 목록 정렬
-        PageRequest pageRequest = PageRequest.of(0, 20, Sort.by("jobCategoryId").descending());
+        PageRequest pageRequest = PageRequest.of(0, 20, Sort.by("jobCategoryId").ascending());
         Page<JobCategory> jobCategories = jobCategoryRepository.findAll(pageRequest);
         return mapper.jobCategoryToJobCategoryResponseDtos(jobCategories.getContent());
     }

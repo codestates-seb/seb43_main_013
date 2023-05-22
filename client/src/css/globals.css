@@ -2,10 +2,124 @@
 @tailwind components;
 @tailwind utilities;
 
-html {
-  font-size: 16px;
+/* 폰트 메인 ( https://noonnu.cc/font_page/53 ) */
+@font-face {
+  font-family: 'BMJUA';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_one@1.0/BMJUA.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+/* 폰트 서브 ( https://noonnu.cc/font_page/394 ) */
+@font-face {
+  font-family: 'KOTRA_BOLD-Bold';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-10-21@1.1/KOTRA_BOLD-Bold.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+/* 폰트 특수 ( https://noonnu.cc/font_page/1132 ) */
+@font-face {
+  font-family: 'GoryeongStrawberry';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2304-01@1.0/GoryeongStrawberry.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
 
-  @media screen and (max-width: 768px) {
-    font-size: 14px;
+html {
+  @apply text-[14px] md:text-[16px];
+}
+
+* {
+  @apply text-base font-main text-fg tracking-wide;
+}
+
+.chakra-toast * {
+  @apply text-white tracking-wider;
+}
+
+@layer utilities {
+  .scrollbar::-webkit-scrollbar {
+    @apply w-2 transition-colors;
+  }
+
+  .scrollbar::-webkit-scrollbar-track {
+    @apply bg-sub-50;
+  }
+
+  .scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-sub-500 rounded-sm border-2 border-sub-200;
+  }
+
+  .scrollbar::-webkit-scrollbar-thumb:hover {
+    @apply bg-sub-600;
+  }
+  /* 3줄 제한 */
+  .truncate-3 {
+    white-space: normal;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+  }
+}
+
+/* react-quill 높이 지정 */
+.ql-editor {
+  @apply min-h-[50vh] max-h-[80vh] overflow-y-auto;
+}
+
+/* spinner ( https://projects.lukehaas.me/css-loaders/ ) */
+.full-spinner {
+  @apply relative text-main-300;
+
+  -webkit-transform: translateZ(0);
+  -ms-transform: translateZ(0);
+  transform: translateZ(0);
+  -webkit-animation-delay: -0.16s;
+  animation-delay: -0.16s;
+}
+.full-spinner,
+.full-spinner:before,
+.full-spinner:after {
+  border-radius: 50%;
+  width: 2.5em;
+  height: 2.5em;
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both;
+  -webkit-animation: load7 1.8s infinite ease-in-out;
+  animation: load7 1.8s infinite ease-in-out;
+}
+.full-spinner:before,
+.full-spinner:after {
+  content: "";
+  position: absolute;
+  top: 0;
+}
+.full-spinner:before {
+  left: -3.5em;
+  -webkit-animation-delay: -0.32s;
+  animation-delay: -0.32s;
+}
+.full-spinner:after {
+  left: 3.5em;
+}
+@-webkit-keyframes load7 {
+  0%,
+  80%,
+  100% {
+    box-shadow: 0 2.5em 0 -1.3em;
+  }
+  40% {
+    box-shadow: 0 2.5em 0 0;
+  }
+}
+@keyframes load7 {
+  0%,
+  80%,
+  100% {
+    box-shadow: 0 2.5em 0 -1.3em;
+  }
+  40% {
+    box-shadow: 0 2.5em 0 0;
   }
 }

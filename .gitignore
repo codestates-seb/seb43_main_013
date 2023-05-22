@@ -183,9 +183,11 @@ Temporary Items
 */node_modules
 /.pnp
 .pnp.js
+*/package-lock.json
 
 # testing
 /coverage
+server-0.0.1-SNAPSHOT
 
 # next.js
 */.next/*

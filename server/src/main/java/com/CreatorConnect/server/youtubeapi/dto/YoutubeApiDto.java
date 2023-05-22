@@ -15,6 +15,7 @@ public class YoutubeApiDto {
         private String youtubeUrl;
         private String thumbnailUrl;
         private String title;
+        private String youtubeId;
     }
 
     @Getter

@@ -19,11 +19,14 @@ public class VideoEntity extends Auditable {
     @EmbeddedId
     private VideoPK videoPK;
     @Column
+    private String youtubeId;
+    @Column
     private String youtubeUrl;
     @Column
     private String thumbnailUrl;
     @Column(columnDefinition = "TEXT")
     private String title;
+
 
 }
 

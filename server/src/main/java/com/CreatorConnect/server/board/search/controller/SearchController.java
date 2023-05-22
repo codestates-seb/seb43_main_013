@@ -14,15 +14,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
+//@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping("/api/search")
 public class SearchController {
     private final SearchService searchService;
@@ -33,9 +31,9 @@ public class SearchController {
 
     // GET /api/search?keyword=example&page=0&size=10
     @GetMapping
-    public ResponseEntity search (@RequestParam(required = false) String keyword,
-                                  @RequestParam(defaultValue = "0") int page,
-                                  @RequestParam(defaultValue = "10") int size) {
+    public ResponseEntity search(@RequestParam(required = false) String keyword,
+                                 @RequestParam(defaultValue = "0") int page,
+                                 @RequestParam(defaultValue = "10") int size) {
 
         Page<SearchResponseDto> pageResponse = searchService.searchPosts(keyword, PageRequest.of(page, size));
 

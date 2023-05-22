@@ -1,0 +1,61 @@
+/* viewer */
+.viewer h1 {
+  @apply text-6xl;
+}
+.viewer h2 {
+  @apply text-5xl;
+}
+.viewer h3 {
+  @apply text-4xl;
+}
+.viewer h4 {
+  @apply text-3xl;
+}
+.viewer h5 {
+  @apply text-2xl;
+}
+.viewer h6 {
+  @apply text-xl;
+}
+.viewer blockquote {
+  @apply px-3 py-4 border-l-[6px] border-l-main-400 bg-main-100;
+}
+.viewer pre {
+  @apply px-4 py-3 border-4 border-main-400 bg-main-100 rounded-sm;
+}
+.viewer ol {
+  @apply list-decimal ml-5;
+}
+.viewer ul {
+  @apply list-disc ml-6;
+}
+.viewer a {
+  @apply underline underline-offset-2 transition-colors hover:text-main-400;
+}
+.viewer span {
+  @apply p-1 rounded-md;
+}
+.viewer iframe {
+  width: 100%;
+  height: 50vw;
+  max-height: 600px;
+}
+.viewer .ql-indent-1 {
+  @apply ml-4
+}
+.viewer .ql-indent-2 {
+  @apply ml-8
+}
+.viewer .ql-indent-3 {
+  @apply ml-12
+}
+.viewer .ql-indent-4 {
+  @apply ml-16
+}
+
+/* Editor */
+.editor iframe {
+  width: 100%;
+  height: 50vw;
+  max-height: 600px;
+}
