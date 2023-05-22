@@ -18,7 +18,7 @@ import BoardComment from "./BoardComment";
 import Skeleton from "@/components/Skeleton";
 
 // type
-import type { ApiFetchCommentsResponse, BoardType } from "@/types/api";
+import type { ApiFetchCommentsResponse, ApiFetchFreeBoardResponse, BoardType } from "@/types/api";
 interface Props {
   type: BoardType;
   boardId: number;
@@ -53,7 +53,7 @@ const BoardComments: React.FC<Props> = ({ type, boardId }) => {
         await apiDeleteComment(type, { boardId, commentId });
 
         queryClient.setQueryData<InfiniteData<ApiFetchCommentsResponse> | undefined>(
-          [QUERY_KEYS.comment, type],
+          [QUERY_KEYS.comment, type, boardId],
           (prev) =>
             prev && {
               ...prev,
@@ -61,6 +61,15 @@ const BoardComments: React.FC<Props> = ({ type, boardId }) => {
                 ...page,
                 data: page.data.filter((comment) => comment.commentId !== commentId),
               })),
+            },
+        );
+
+        queryClient.setQueryData<ApiFetchFreeBoardResponse>(
+          [type + "Board", boardId],
+          (prev) =>
+            prev && {
+              ...prev,
+              commentCount: prev.commentCount - 1,
             },
         );
 

@@ -8,7 +8,6 @@ import {
 import { HandThumbUpIcon as TrueLikeIcon } from "@heroicons/react/24/solid";
 
 import Avatar from "../Avatar";
-import moment from "moment";
 import { Board, BoardType } from "@/types/api";
 import Link from "next/link";
 import useCustomToast from "@/hooks/useCustomToast";
@@ -16,6 +15,7 @@ import { useMemberStore } from "@/store/useMemberStore";
 import { useQueryClient } from "@tanstack/react-query";
 import { apiCreateLikeOfPost, apiDeleteLikeOfPost } from "@/apis";
 import { usePageStore } from "@/store";
+import { getTimeDiff } from "@/libs/time";
 
 interface ContentFooterProps {
   type: BoardType;
@@ -65,6 +65,7 @@ const ContentFooter: React.FC<ContentFooterProps> = ({ type, position, footerDat
           <Avatar
             src={footerData.profileImageUrl}
             className={`${position === "side" ? " w-5 h-5 text-sub-500" : "w-7 h-7"} `}
+            href={`/profile/${footerData.memberId}`}
           />
         </Link>
         {/* 닉네임 */}
@@ -73,9 +74,7 @@ const ContentFooter: React.FC<ContentFooterProps> = ({ type, position, footerDat
             {footerData.nickname}
           </span>
           {/* 작성일 */}
-          {footerData.createdAt && (
-            <time className={`text-xs  text-sub-500`}>{moment(footerData.createdAt).endOf("day").fromNow()}</time>
-          )}
+          {footerData.createdAt && <time className={`text-xs  text-sub-500`}>{getTimeDiff(footerData.createdAt)}</time>}
         </div>
       </div>
       <div className={`flex gap-x-1 ${position === "main" && "self-end"}`}>

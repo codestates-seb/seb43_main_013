@@ -37,7 +37,7 @@ const Photo: React.FC<Props> = ({ className, setThumbnail, name, defaultPhoto = 
       <label>
         <span className="text-base font-bold text-gray-800 mb-1">{name}</span>
       </label>
-      <figure className="group pt-[60%] md:pt-0 flex-1 relative border-2 border-dotted border-black rounded-md p-2">
+      <figure className="group max-w-[400px] flex-1 relative border-2 border-dotted border-black rounded-md p-2">
         <input type="file" hidden ref={ThumbnailRef} onChange={onUploadPreview} />
 
         <button

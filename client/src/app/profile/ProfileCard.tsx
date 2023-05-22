@@ -76,8 +76,13 @@ const ProfileCard: React.FC<Props> = ({ memberId }) => {
 
   return (
     <>
-      <div className="p-8 space-y-4 bg-white shadow-2xl m-4 rounded-lg flex flex-col items-center lg:w-[320px]">
-        <Avatar src={data.profileImageUrl} alt="유저의 프로필 이미지" className="w-24 h-24 rounded-full shadow-md" />
+      <div className="p-8 space-y-4 bg-white shadow-black/40 shadow-sm m-4 rounded-lg flex flex-col items-center lg:w-[320px]">
+        <Avatar
+          src={data.profileImageUrl}
+          alt="유저의 프로필 이미지"
+          className="w-24 h-24 rounded-full shadow-md"
+          href={`/profile/${data.memberId}`}
+        />
 
         <div className="flex flex-col items-center space-y-1">
           {/* 이름 */}
@@ -139,12 +144,12 @@ const ProfileCard: React.FC<Props> = ({ memberId }) => {
           <div className="flex w-full items-center">
             {data.link && (
               <Link href={data.link} target="_blank" referrerPolicy="no-referrer">
-                <OFilmIcon className="w-6 h-6 hover:stroke-2 transition-all" />
+                <OFilmIcon className="w-6 h-6 hover:text-main-500 hover:stroke-2 transition-all" />
               </Link>
             )}
             {data.memberId === member?.memberId && (
               <Link href={`/profile/${memberId}/edit`} className="ml-auto hover:underline-offset-4 hover:underline">
-                <OPencilSquareIcon className="w-6 h-6 hover:stroke-2 transition-all" />
+                <OPencilSquareIcon className="w-6 h-6 hover:text-main-500 hover:stroke-2 transition-all" />
               </Link>
             )}
           </div>

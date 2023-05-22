@@ -46,7 +46,7 @@ const ProfileWrittenBoardList: React.FC<Props> = ({ memberId, page }) => {
       {data.data.length === 0 ? (
         <NotSearch />
       ) : (
-        <ul className="w-full space-y-4">
+        <ul className="w-full space-y-8">
           {data.data.map((board) => (
             <ProfileBoard key={board.id} board={board} />
           ))}

@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
-import moment from "moment";
 import { type InfiniteData, useQueryClient } from "@tanstack/react-query";
 
 import { QUERY_KEYS } from "@/hooks/query";
+
+// util
+import { getTimeDiff } from "@/libs/time";
 
 // api
 import { apiDeleteRecomment, apiUpdateComment } from "@/apis";
@@ -18,10 +20,10 @@ import useCustomToast from "@/hooks/useCustomToast";
 // component
 import Avatar from "@/components/Avatar";
 import BoardRecommentForm from "./BoardRecommentForm";
+import BoardRecomment from "./BoardRecomment";
 
 // type
 import type { ApiFetchCommentsResponse, BoardType, Comment } from "@/types/api";
-import BoardRecomment from "./BoardRecomment";
 interface Props {
   type: BoardType;
   boardId: number;
@@ -104,7 +106,7 @@ const BoardComment: React.FC<Props> = ({ type, boardId, comment }) => {
         await apiDeleteRecomment(type, { boardId, commentId: comment.commentId, recommentId });
 
         queryClient.setQueryData<InfiniteData<ApiFetchCommentsResponse> | undefined>(
-          [QUERY_KEYS.comment, type],
+          [QUERY_KEYS.comment, type, boardId],
           (prev) =>
             prev && {
               ...prev,
@@ -139,11 +141,11 @@ const BoardComment: React.FC<Props> = ({ type, boardId, comment }) => {
 
   return (
     <li className="flex space-x-3">
-      <Avatar src={comment.profileImageUrl} className="w-12 h-12 flex-shrink-0" />
+      <Avatar src={comment.profileImageUrl} className="w-12 h-12 flex-shrink-0" href={`/profile/${comment.memberId}`} />
       <div className="flex-1 flex flex-col">
         <div className="space-x-2">
           <span className="font-bold">{comment.nickname}</span>
-          <time className="text-sm text-sub-400">{moment(comment.createdAt).endOf("day").fromNow()}</time>
+          <time className="text-sm text-sub-400">{getTimeDiff(comment.createdAt)}</time>
           {disabled ? (
             <>
               <button
@@ -217,7 +219,7 @@ const BoardComment: React.FC<Props> = ({ type, boardId, comment }) => {
         </div>
 
         {isShow && !!comment.recomments?.length && (
-          <ul onClick={onDeleteRecomment} className="space-y-2">
+          <ul onClick={onDeleteRecomment} className="space-y-2 py-2">
             {comment.recomments.map((recomment) => (
               <BoardRecomment
                 key={recomment.recommentId}

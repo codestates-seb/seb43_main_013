@@ -78,42 +78,42 @@ const FollowingModal: React.FC<Props> = ({ memberId, nickname, onCloseModal }) =
   };
 
   return (
-    <section className="fixed inset-0 bg-black/70 flex justify-center items-center flex-col">
-      <h5>{nickname}님의 팔로잉들</h5>
-
+    <section className="fixed inset-0 bg-black/70 animate-fade-in">
       <ul
-        className="w-[280px] max-h-[60vh] overflow-y-auto flex flex-col bg-sub-200 rounded-md scrollbar"
+        className="w-[280px] max-h-[60vh] mx-auto mt-[16vh] overflow-y-auto flex flex-col bg-sub-200 rounded-md scrollbar"
         ref={modalRef}
       >
-        <li className="py-4 bg-blue-200 text-center font-bold">
-          <div className="border-[3px] border-dotted inline-block rounded-full p-2 border-blue-600">
-            <BellAlertIcon className="w-14 h-14 text-blue-600" />
+        <li className="py-4 bg-main-200 text-center font-bold space-y-2">
+          <h5 className="text-xl">{nickname}님의 팔로잉들</h5>
+          <div className="border-[3px] border-dotted inline-block rounded-full p-2 border-main-600">
+            <BellAlertIcon className="w-10 h-10 text-main-600" />
           </div>
         </li>
         <InfiniteScrollContainer fetchMore={fetchNextPage} hasMore={hasNextPage}>
           {data?.pages.map((page) =>
-            page.data.map((follower) => (
+            page.data.map((following) => (
               <li
-                key={follower.memberId}
-                className="px-4 py-2 flex items-center border-b border-sub-400 last-of-type:border-b-0 odd:bg-blue-100"
+                key={following.memberId}
+                className="px-4 py-2 flex items-center border-b border-sub-400 last-of-type:border-b-0 odd:bg-main-100"
               >
                 <Avatar
-                  src={follower.profileImageUrl}
-                  alt={`${follower.nickname}님의 프로필 이미지`}
+                  src={following.profileImageUrl}
+                  alt={`${following.nickname}님의 프로필 이미지`}
                   className="w-10 h-10"
+                  href={`/profile/${following.memberId}`}
                 />
                 <div>
-                  <Link href={`/profile/${follower.memberId}`} className="ml-2 font-bold text-sm">
-                    {follower.nickname}
+                  <Link href={`/profile/${following.memberId}`} className="ml-2 font-bold text-sm">
+                    {following.nickname}
                   </Link>
                 </div>
-                {member && member.memberId !== follower.memberId && (
+                {member && member.memberId !== following.memberId && (
                   <button
                     type="button"
                     className="ml-auto px-3 py-1.5 rounded-md text-xs bg-main-400 text-white transition-colors hover:bg-main-500"
-                    onClick={() => onClickFollowOrUnfollow(follower.followed, follower.memberId, follower.nickname)}
+                    onClick={() => onClickFollowOrUnfollow(following.followed, following.memberId, following.nickname)}
                   >
-                    {follower.followed ? "언팔로우" : "팔로우"}
+                    {following.followed ? "언팔로우" : "팔로우"}
                   </button>
                 )}
               </li>
