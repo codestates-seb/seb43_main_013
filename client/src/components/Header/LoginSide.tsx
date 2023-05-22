@@ -19,7 +19,7 @@ const IsLoginSide = ({ nickState }: { nickState: [boolean, React.Dispatch<boolea
 
   useEffect(() => {
     const memberState = localStorage.getItem("member");
-    const name = memberState ? JSON.parse(memberState).nickname : "비회원";
+    const name = memberState ? JSON.parse(memberState).name : "비회원";
     const profile = memberState ? JSON.parse(memberState).profileImageUrl : false;
     setNickName(name);
     setProfileSrc(profile);

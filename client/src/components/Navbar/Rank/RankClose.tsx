@@ -1,4 +1,4 @@
-import currentRank from "../currentRank";
+// import currentRank from "../currentRank";
 
 /** 2023/05/11 - 실시간 검색어 닫힌 상태 - by Kadesti */
 const RankClose = ({ rankBind }: { rankBind: [boolean, React.Dispatch<boolean>] }) => {
