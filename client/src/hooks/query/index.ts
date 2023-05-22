@@ -18,6 +18,7 @@ export const QUERY_KEYS = {
   feedbackCategories: "feedbackCategories",
   promotionCategories: "promotionCategories",
   jobCategories: "jobCategories",
+  youtubeList: "youtubeList",
 };
 
 export * from "./useFetchCategories";
