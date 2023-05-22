@@ -27,6 +27,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import java.util.Comparator;
@@ -39,6 +40,7 @@ import java.util.stream.Stream;
 @Slf4j
 @Validated
 @RestController
+//@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class MemberController {
 
     private static final String MEMBER_DEFAULT_URL = "/api/member";
@@ -55,7 +57,9 @@ public class MemberController {
     }
 
     @GetMapping("/")
-    public ResponseEntity home(){return new ResponseEntity(HttpStatus.OK);}
+    public ResponseEntity home() {
+        return new ResponseEntity(HttpStatus.OK);
+    }
 
     @PostMapping("/api/signup")
     public ResponseEntity postMember(@Valid @RequestBody MemberDto.Post memberDtoPost) {
@@ -156,7 +160,7 @@ public class MemberController {
         Member loginUser = memberService.getLoggedinMember();
         Member memberToFollow = memberService.findVerifiedMember(memberId);
 
-        if (loginUser.getMemberId() == memberToFollow.getMemberId()){
+        if (loginUser.getMemberId() == memberToFollow.getMemberId()) {
             return new ResponseEntity(
                     new BusinessLogicException(ExceptionCode.INVALID_MEMBER), HttpStatus.CONFLICT);
         }
@@ -186,7 +190,7 @@ public class MemberController {
         // 현재 로그인한 사용자가 이미 해당 사용자를 팔로우하고 있는지 확인
         boolean isAlreadyFollowing = loginUser.getFollowings().contains(memberToUnFollow);
 
-        if (isAlreadyFollowing){
+        if (isAlreadyFollowing) {
             memberToUnFollow.unfollow(loginUser);
             memberRepository.save(memberToUnFollow);
             memberRepository.save(loginUser);
@@ -348,7 +352,7 @@ public class MemberController {
         Page<MemberBoardResponseDto> pageResponse =
                 new PageImpl<>(response, PageRequest.of(page - 1, size), totalElements);
 
-        return new ResponseEntity( new MultiResponseDto<>(pageResponse.getContent(), pageResponse), HttpStatus.OK);
+        return new ResponseEntity(new MultiResponseDto<>(pageResponse.getContent(), pageResponse), HttpStatus.OK);
     }
 
     @GetMapping("/api/member/{member-id}/bookmarked")
@@ -425,7 +429,7 @@ public class MemberController {
         Page<MemberBoardResponseDto> pageResponse =
                 new PageImpl<>(response, PageRequest.of(page - 1, size), totalElements);
 
-        return new ResponseEntity( new MultiResponseDto<>(pageResponse.getContent(), pageResponse), HttpStatus.OK);
+        return new ResponseEntity(new MultiResponseDto<>(pageResponse.getContent(), pageResponse), HttpStatus.OK);
     }
 
     @GetMapping("/api/member/{member-id}/written")

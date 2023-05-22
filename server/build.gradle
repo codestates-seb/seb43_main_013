@@ -51,3 +51,7 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+jar {  // SNAPSHOT-plain.jar 생성 방지
+	enabled = false
+}

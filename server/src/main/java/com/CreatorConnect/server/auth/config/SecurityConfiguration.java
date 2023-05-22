@@ -47,11 +47,12 @@ public class SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http.cors().configurationSource(corsConfigurationSource()); // cors 종영
         http
                 .headers().frameOptions().sameOrigin()
                 .and()
-                .csrf().disable()
                 .cors(Customizer.withDefaults()) // CORS 설정 추가 (corsConfigurationSource Bean)
+                .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.NEVER)
                 .and()
                 .formLogin().disable()
@@ -99,10 +100,11 @@ public class SecurityConfiguration {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowCredentials(true);
+        configuration.setAllowedOrigins(Collections.singletonList("*")); // cors 종영
         configuration.addAllowedOriginPattern("*");
         configuration.setAllowedHeaders(Collections.singletonList("*"));
         configuration.setExposedHeaders(Collections.singletonList("*"));
+        configuration.setAllowCredentials(true);
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PATCH", "DELETE", "HEAD", "OPTIONS"));
         configuration.addExposedHeader("Authorization");
         configuration.setMaxAge(3600L);
