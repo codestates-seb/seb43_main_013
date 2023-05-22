@@ -43,37 +43,37 @@ public class SearchController {
     }
 
     @GetMapping("/api/keyword/all") // 전체 인기 검색어
-    public ResponseEntity getPopularSearchKeywords(@RequestParam(defaultValue = "0") int page,
+    public ResponseEntity getPopularSearchKeywords(@RequestParam(defaultValue = "1") int page,
                                                    @RequestParam(defaultValue = "10") int size) {
 
-        Page<String> pageResponse = searchService.getPopularSearchKeywords(PageRequest.of(page, size));
+        Page<String> pageResponse = searchService.getPopularSearchKeywords(PageRequest.of(page - 1, size));
 
         return new ResponseEntity(new MultiResponseDto<>(pageResponse.getContent(), pageResponse), HttpStatus.OK);
     }
 
     @GetMapping("/api/keyword/daily")
-    public ResponseEntity<Page<String>> getDailyPopularSearchKeywords(@RequestParam(defaultValue = "0") int page,
-                                                                      @RequestParam(defaultValue = "10") int size) {
+    public ResponseEntity<Page<String>> getDailyPopularSearchKeywords(@RequestParam(defaultValue = "1") int page,
+                                                                      @RequestParam(defaultValue = "20") int size) {
 
-        Page<String> dailyKeywords = searchService.getDailyPopularSearchKeywords(PageRequest.of(page, size));
+        Page<String> dailyKeywords = searchService.getDailyPopularSearchKeywords(PageRequest.of(page - 1, size));
 
         return new ResponseEntity(new MultiResponseDto<>(dailyKeywords.getContent(), dailyKeywords), HttpStatus.OK);
     }
 
     @GetMapping("/api/keyword/weekly")
-    public ResponseEntity<Page<String>> getWeeklyPopularSearchKeywords(@RequestParam(defaultValue = "0") int page,
-                                                                       @RequestParam(defaultValue = "10") int size) {
+    public ResponseEntity<Page<String>> getWeeklyPopularSearchKeywords(@RequestParam(defaultValue = "1") int page,
+                                                                       @RequestParam(defaultValue = "20") int size) {
 
-        Page<String> weeklyKeywords = searchService.getWeeklyPopularSearchKeywords(PageRequest.of(page, size));
+        Page<String> weeklyKeywords = searchService.getWeeklyPopularSearchKeywords(PageRequest.of(page - 1, size));
 
         return new ResponseEntity(new MultiResponseDto<>(weeklyKeywords.getContent(), weeklyKeywords), HttpStatus.OK);
     }
 
     @GetMapping("/api/keyword/monthly")
-    public ResponseEntity<Page<String>> getMonthlyPopularSearchKeywords(@RequestParam(defaultValue = "0") int page,
-                                                                        @RequestParam(defaultValue = "10") int size) {
+    public ResponseEntity<Page<String>> getMonthlyPopularSearchKeywords(@RequestParam(defaultValue = "1") int page,
+                                                                        @RequestParam(defaultValue = "20") int size) {
 
-        Page<String> monthlyKeywords = searchService.getMonthlyPopularSearchKeywords(PageRequest.of(page, size));
+        Page<String> monthlyKeywords = searchService.getMonthlyPopularSearchKeywords(PageRequest.of(page - 1, size));
 
         return new ResponseEntity(new MultiResponseDto<>(monthlyKeywords.getContent(), monthlyKeywords), HttpStatus.OK);
     }
