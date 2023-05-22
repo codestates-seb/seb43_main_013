@@ -93,7 +93,10 @@ const Form = () => {
   };
 
   return (
-    <form className="flex flex-col space-y-4 px-4 p-8 bg-white shadow-lg m-4 mt-0 rounded-md" onSubmit={onSubmit}>
+    <form
+      className="flex flex-col space-y-4 px-4 p-8 bg-white shadow-black/40 shadow-sm my-12 mx-4 m-4 mt-0 rounded-md"
+      onSubmit={onSubmit}
+    >
       {/* title, link, tag, category, thumbnail */}
       <section className="flex space-y-4 md:space-y-0 md:space-x-4 z-[1] flex-col md:flex-row flex-1">
         {/* title, link, tag, category */}

@@ -14,7 +14,7 @@ import useCustomToast from "@/hooks/useCustomToast";
 // component
 import Input from "@/components/Board/Form/Input";
 import Editor from "@/components/Editor";
-import NormalCategory from "@/components/Board/Form/NormalCategory";
+import JobCategory from "@/components/Board/Form/JobCategory";
 
 /** 2023/05/09 - 구인구직 게시글 작성 form 컴포넌트 - by 1-blue */
 const Form = () => {
@@ -73,14 +73,17 @@ const Form = () => {
   };
 
   return (
-    <form className="flex flex-col space-y-4 px-4 p-8 bg-white shadow-lg m-4 mt-0 rounded-md" onSubmit={onSubmit}>
+    <form
+      className="flex flex-col space-y-4 px-4 p-8 bg-white shadow-black/40 shadow-sm my-12 mx-4 m-4 mt-0 rounded-md"
+      onSubmit={onSubmit}
+    >
       {/* title, link, tag, category, thumbnail */}
       <section className="flex space-y-4 md:space-y-0 md:space-x-4 z-[1] flex-col md:flex-row flex-1">
         {/* title, link, tag, category */}
         <div className="w-full md:w-0 md:flex-1 space-y-2 z-[1]">
           <Input name="제목" type="text" placeholder="제목을 입력해주세요!" />
           <div className="flex flex-col md:flex-row space-y-4 md:space-x-4 md:space-y-0">
-            <NormalCategory selectedCategory={selectedJobCategory} setSelectedCategory={setSelectedJobCategory} />
+            <JobCategory selectedCategory={selectedJobCategory} setSelectedCategory={setSelectedJobCategory} />
           </div>
         </div>
       </section>
