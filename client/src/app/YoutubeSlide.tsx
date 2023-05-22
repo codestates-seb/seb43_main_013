@@ -12,26 +12,32 @@ import YoutubeItem from "./YoutubeItem";
 import YouTube from "react-youtube";
 
 /** 2023/05/22- 메인화면 인기 급상승 슬라이드 컴포넌트 - by leekoby */
-
 const youtubeCategories = [
-  { 3: "전체" },
-  { 1: "영화" },
-  { 2: "Autos & Vehicles" },
-  { 10: "음악" },
-  { 15: "동물" },
-  { 17: "스포츠" },
-  { 20: "게임" },
-  { 22: "People" },
-  { 23: "Comedy" },
-  { 24: "Entertainment" },
-  { 25: "News" },
-  { 26: "Howto&Style" },
-  { 28: "Science&Technology" },
+  { id: 3, categoryName: "전체" },
+  { id: 1, categoryName: "영화" },
+  { id: 2, categoryName: "자동차" },
+  { id: 10, categoryName: "음악" },
+  { id: 15, categoryName: "동물" },
+  { id: 17, categoryName: "스포츠" },
+  { id: 20, categoryName: "게임" },
+  { id: 22, categoryName: "일상" },
+  { id: 23, categoryName: "코미디" },
+  { id: 24, categoryName: "엔터테인먼트" },
+  { id: 25, categoryName: "뉴스" },
+  { id: 26, categoryName: "방법&스타일" },
+  { id: 28, categoryName: "과학" },
 ];
 const YoutubeSlide = () => {
+  // 카테고리키
+  const [youtubeCategoriesKey, setYoutubeCategoriesKey] = useState(3);
+  // 카테고리 키 변경 함수
+  const handleCategoryClick = (id: number) => {
+    setYoutubeCategoriesKey(id);
+  };
+
   // 유튜브 데이터 패칭
   const { data } = useFetchYoutubeList({
-    youtubeCategoryId: 3,
+    youtubeCategoryId: youtubeCategoriesKey,
   });
 
   const [isOpen, setIsOpen] = useState(false);
@@ -100,8 +106,28 @@ const YoutubeSlide = () => {
 
   return (
     <>
-      <div className="flex justify-between">
-        <h1 className="font-bold text-xl">인기 급상승📈동영상</h1>
+      <div className="flex justify-between my-4">
+        <div className="space-y-4">
+          <h1 className="font-bold text-xl">인기 급상승📈동영상</h1>
+          <div className="flex flex-wrap gap-x-2 gap-y-2">
+            {youtubeCategories.map((category) => (
+              <li key={category.id} className="list-none">
+                <button
+                  type="button"
+                  onClick={() => handleCategoryClick(category.id)}
+                  className={`w-full px-5 text-sm leading-8 duration-200 rounded hover:bg-main-400 active:bg-main-500 hover:text-white hover:scale-105 transtition hover:shadow-md hover:shadow-sub-500/50
+                ${
+                  youtubeCategoriesKey === category.id
+                    ? "bg-main-500 text-white shadow-lg shadow-sub-500/50"
+                    : "bg-sub-100 "
+                }`}
+                >
+                  {category.categoryName}
+                </button>
+              </li>
+            ))}
+          </div>
+        </div>
       </div>
 
       {data?.data.length === 0 ? (
