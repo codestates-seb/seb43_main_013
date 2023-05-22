@@ -63,7 +63,7 @@ public class FeedbackCategoryService {
 
     //목록 조회
     public List<FeedbackCategoryResponseDto.Details> responseFeedbackCategorys(){
-        PageRequest pageRequest = PageRequest.of(0, 100, Sort.by("feedbackCategoryId").descending());
+        PageRequest pageRequest = PageRequest.of(0, 100, Sort.by("feedbackCategoryId").ascending());
         Page<FeedbackCategory> feedbackCategorysPage = feedbackCategoryRepository.findAll(pageRequest);
         List<FeedbackCategoryResponseDto.Details> responses = mapper.feedbackCategorysToFeedbackCategoryDetailsResponses(feedbackCategorysPage.getContent());
         return responses;
