@@ -18,6 +18,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api")
 @Validated
+//@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class FeedbackCategoryController {
     private final FeedbackCategoryService feedbackCategoryService;
     private final FeedbackCategoryMapper mapper;

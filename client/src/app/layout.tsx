@@ -1,5 +1,6 @@
 // css
 import "@/css/globals.css";
+import "@/css/viewer.css";
 
 // provider
 import Provider from "@/provider";
@@ -23,7 +24,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta httpEquiv="Content-Type" content="text/html; charset=utf-8" />
       </head>
-      <body className="text-[16px] md:text-[14px]">
+      <body className="text-[16px] md:text-[14px] bg-bg">
         <Provider>
           <Layout>{children}</Layout>
         </Provider>

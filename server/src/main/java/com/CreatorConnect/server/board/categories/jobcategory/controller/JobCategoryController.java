@@ -21,6 +21,7 @@ import java.util.List;
 @RequestMapping("/api")
 @RequiredArgsConstructor
 @Validated
+//@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class JobCategoryController {
     private final JobCategoryService jobCategoryService;
     private final JobCategoryMapper mapper;

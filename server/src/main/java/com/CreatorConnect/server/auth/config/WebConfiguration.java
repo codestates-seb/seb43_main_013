@@ -14,5 +14,6 @@ public class WebConfiguration {
         registrationBean.setOrder(Integer.MIN_VALUE);
 
         return registrationBean;
+
     }
 }
