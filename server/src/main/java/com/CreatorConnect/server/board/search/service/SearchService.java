@@ -132,6 +132,9 @@ public class SearchService {
         dto.setName(member.getName());
         dto.setNickname(member.getNickname());
         dto.setProfileImageUrl(member.getProfileImageUrl());
+        dto.setIntroduction(member.getIntroduction());
+        dto.setFollowers(member.getFollowers().size());
+        dto.setFollowings(member.getFollowings().size());
         dto.setCreatedAt(member.getCreatedAt());
         dto.setModifiedAt(member.getModifiedAt());
 
