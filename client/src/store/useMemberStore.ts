@@ -13,6 +13,10 @@ interface Member {
   createdAt: string;
   modifiedAt: string;
   rename: string;
+  followerCount?: number;
+  followingCount?: number;
+  followed?: boolean;
+  myPage?: boolean;
 }
 
 interface MemberInfo {

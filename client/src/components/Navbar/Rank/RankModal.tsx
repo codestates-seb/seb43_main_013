@@ -1,4 +1,4 @@
-import currentRank from "../currentRank";
+// import currentRank from "../currentRank";
 
 /** 2023/05/11 - 실시간 검색어 모달창 - by Kadesti */
 const RankModal = ({ rankBind }: { rankBind: [boolean, React.Dispatch<boolean>] }) => {
