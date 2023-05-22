@@ -4,10 +4,11 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { useFetchFeedbackBoardList } from "@/hooks/query/useFetchFeedbackBoardList";
 import Link from "next/link";
-import ContentItem from "@/app/feedback/FeedbackContentItem";
-import FullSpinner from "@/components/Spinner/FullSpinner";
+import FeedbackContentItem from "@/app/feedback/FeedbackContentItem";
+
 import { ReactNode, useEffect, useState } from "react";
 import SlideWrapper from "./SlideWrapper";
+import NotSearch from "@/components/Svg/NotSearch";
 
 const FeedbackPostsSlide = () => {
   //포커스된 슬라이드 인덱스
@@ -91,8 +92,6 @@ const FeedbackPostsSlide = () => {
     size: 10,
   });
 
-  if (!data) return <FullSpinner />;
-
   return (
     <div>
       <div className="flex justify-between">
@@ -101,23 +100,25 @@ const FeedbackPostsSlide = () => {
           <button className="text-3xl focus:outline-none">+</button>
         </Link>
       </div>
-      <div>
-        <Slider {...settings}>
-          {data.pages.map((page) =>
-            page.data.map((innerData) => {
-              return (
-                <SlideWrapper className="h-full hover:cursor-pointer" key={innerData.feedbackBoardId}>
-                  <Link href={`/feedback/${innerData.feedbackBoardId}`}>
+      {data?.pages[0].data.length === 0 ? (
+        <NotSearch />
+      ) : (
+        <div>
+          <Slider {...settings} className="max-h-[550px]">
+            {data?.pages.map((page) =>
+              page.data.map((innerData) => {
+                return (
+                  <SlideWrapper className="h-full" key={innerData.feedbackBoardId}>
                     <div className="h-full mx-3">
-                      <ContentItem props={innerData} />
+                      <FeedbackContentItem props={innerData} />
                     </div>
-                  </Link>
-                </SlideWrapper>
-              );
-            }),
-          )}
-        </Slider>
-      </div>
+                  </SlideWrapper>
+                );
+              }),
+            )}
+          </Slider>
+        </div>
+      )}
     </div>
   );
 };

@@ -15,7 +15,7 @@ import useCustomToast from "@/hooks/useCustomToast";
 import { useLoadingStore } from "@/store";
 
 // type
-import type { ApiFetchCommentsResponse, BoardType } from "@/types/api";
+import type { ApiFetchCommentsResponse, ApiFetchFreeBoardResponse, BoardType } from "@/types/api";
 interface Props {
   type: BoardType;
   boardId: number;
@@ -54,7 +54,7 @@ const BoardCommentForm: React.FC<Props> = ({ type, boardId }) => {
       const { commentId } = await apiCreateComment(type, { boardId, content, memberId: member.memberId });
 
       queryClient.setQueryData<InfiniteData<ApiFetchCommentsResponse> | undefined>(
-        [QUERY_KEYS.comment, type],
+        [QUERY_KEYS.comment, type, boardId],
         (prev) =>
           prev && {
             ...prev,
@@ -76,6 +76,14 @@ const BoardCommentForm: React.FC<Props> = ({ type, boardId }) => {
                 },
               ],
             })),
+          },
+      );
+      queryClient.setQueryData<ApiFetchFreeBoardResponse>(
+        [type + "Board", boardId],
+        (prev) =>
+          prev && {
+            ...prev,
+            commentCount: prev.commentCount + 1,
           },
       );
 

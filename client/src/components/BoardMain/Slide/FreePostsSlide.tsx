@@ -3,11 +3,12 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Link from "next/link";
-import FullSpinner from "@/components/Spinner/FullSpinner";
+
 import { ReactNode, useEffect, useState } from "react";
 import SlideWrapper from "./SlideWrapper";
 import { useFetchFreeBoardList } from "@/hooks/query/useFetchFreeBoardList";
 import ContentItem from "@/app/free/ContentItem";
+import NotSearch from "@/components/Svg/NotSearch";
 
 const FreePostsSlide = () => {
   //포커스된 슬라이드 인덱스
@@ -94,7 +95,7 @@ const FreePostsSlide = () => {
     size: 10,
   });
 
-  if (!data) return <FullSpinner />;
+  if (!data) return <></>;
 
   return (
     <div>
@@ -104,23 +105,28 @@ const FreePostsSlide = () => {
           <button className="text-3xl focus:outline-none">+</button>
         </Link>
       </div>
-      <div className="">
-        <Slider {...settings}>
-          {data.pages.map((page) =>
-            page.data.map((innerData) => {
-              return (
-                <SlideWrapper className="hover:cursor-pointer" key={innerData.freeBoardId}>
-                  <Link href={`/free/${innerData.freeBoardId}`}>
-                    <div className="h-full mx-3">
-                      <ContentItem props={innerData} />
-                    </div>
-                  </Link>
-                </SlideWrapper>
-              );
-            }),
-          )}
-        </Slider>
-      </div>
+
+      {data?.pages[0].data.length === 0 ? (
+        <NotSearch />
+      ) : (
+        <div className="">
+          <Slider {...settings}>
+            {data.pages.map((page) =>
+              page.data.map((innerData) => {
+                return (
+                  <SlideWrapper className="hover:cursor-pointer" key={innerData.freeBoardId}>
+                    <Link href={`/free/${innerData.freeBoardId}`}>
+                      <div className="h-full mx-3">
+                        <ContentItem props={innerData} />
+                      </div>
+                    </Link>
+                  </SlideWrapper>
+                );
+              }),
+            )}
+          </Slider>
+        </div>
+      )}
     </div>
   );
 };

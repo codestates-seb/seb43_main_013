@@ -6,25 +6,63 @@ html {
   @apply text-[14px] md:text-[16px];
 }
 
+html::-webkit-scrollbar {
+  @apply w-2 transition-colors;
+}
+html::-webkit-scrollbar-track {
+  @apply bg-main-50;
+}
+html::-webkit-scrollbar-thumb {
+  @apply bg-main-400 rounded-full border-2 border-main-200 transition-colors;
+}
+html::-webkit-scrollbar-thumb:hover {
+  @apply bg-main-500;
+}
+
 * {
-  @apply text-base;
+  @apply text-base tracking-wide;
+  @apply font-main;
 }
 
 @layer utilities {
   .scrollbar::-webkit-scrollbar {
     @apply w-2 transition-colors;
   }
-
   .scrollbar::-webkit-scrollbar-track {
     @apply bg-sub-50;
   }
-
   .scrollbar::-webkit-scrollbar-thumb {
     @apply bg-sub-500 rounded-sm border-2 border-sub-200;
   }
-
   .scrollbar::-webkit-scrollbar-thumb:hover {
     @apply bg-sub-600;
+  }
+
+  /* 3줄 제한 */
+  .truncate-1 {
+    white-space: normal;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+  }
+  .truncate-3 {
+    white-space: normal;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+  }
+  /* 1줄 제한 */
+  .truncate-1 {
+    white-space: normal;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
   }
 }
 
@@ -87,4 +125,11 @@ html {
   40% {
     box-shadow: 0 2.5em 0 0;
   }
+}
+
+@font-face {
+  font-family: "BMJUA";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_one@1.0/BMJUA.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
 }

@@ -8,7 +8,7 @@ import React from "react";
 const HomeMain = () => {
   return (
     /** 2023/05/16 - 홈화면 구성 - by leekoby */
-    <section className="flex flex-col space-y-20">
+    <section className="flex flex-col space-y-24">
       <div className="">
         <BannerSlide />
       </div>
@@ -18,10 +18,6 @@ const HomeMain = () => {
       </div>
       <div className="flex flex-col">
         <FreePostsSlide />
-      </div>
-      <div className="flex flex-col">
-        홍보게시판 자리
-        <FeedbackPostsSlide />
       </div>
       <div className="flex flex-col">
         인기동영상 자리

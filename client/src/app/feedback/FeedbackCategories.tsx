@@ -16,7 +16,6 @@ const FeedbackCategories: React.FC<feedbackCategoriesProps> = ({ feedbackCategor
 
   const categoryClickHandler = (feedbackCategory: ResponseFeedbackCategoriesType) => {
     setFeedbackSelectedCategory(feedbackCategory.feedbackCategoryName, feedbackCategory.feedbackCategoryId);
-    console.log(selectedFeedbackCategory);
   };
 
   // 작은 사이즈용

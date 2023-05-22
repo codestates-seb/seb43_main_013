@@ -32,9 +32,10 @@ const SortPosts: React.FC = () => {
               sortClickHandler(option);
             }}
           >
-            {selectedOption?.optionId === option.optionId && (
+            {/* 이거 넣으면 에러가 있다없다 함 */}
+            {/* {selectedOption?.optionId === option.optionId && (
               <CheckIcon className="inline-block w-4 h-4 ml-1 bg-sub-100 rounded-full text-main-400 mr-2" />
-            )}
+            )} */}
             {option.optionName}
           </button>
         </li>

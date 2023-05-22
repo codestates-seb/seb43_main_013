@@ -17,7 +17,7 @@ const Pagination = ({ totalPages, page, onPageChange }: PagenationProps) => {
       <ReactPaginate
         breakLabel={<span>...</span>}
         nextLabel={
-          <span className="w-6 h-6 flex items-center justify-center duration-200 bg-sub-100 rounded-md  active:bg-main-500 hover:bg-main-400 hover:text-white hover:scale-105 transtition hover:shadow-md hover:shadow-sub-500/50">
+          <span className="w-7 h-7 p-1 flex items-center justify-center duration-200 bg-sub-100 rounded-md  active:bg-main-500 hover:bg-main-400 hover:text-white hover:scale-105 transtition hover:shadow-md hover:shadow-sub-500/50">
             <Right />
           </span>
         }
@@ -27,14 +27,14 @@ const Pagination = ({ totalPages, page, onPageChange }: PagenationProps) => {
         marginPagesDisplayed={1}
         pageCount={totalPages}
         previousLabel={
-          <span className="w-6 h-6 flex items-center justify-center duration-200 bg-sub-100 rounded-md active:bg-main-500 hover:bg-main-400 hover:text-white hover:scale-105 transtition hover:shadow-md hover:shadow-sub-500/50">
+          <span className="w-7 h-7 p-1 flex items-center justify-center duration-200 bg-sub-100 rounded-md active:bg-main-500 hover:bg-main-400 hover:text-white hover:scale-105 transtition hover:shadow-md hover:shadow-sub-500/50">
             <Left />
           </span>
         }
         renderOnZeroPageCount={null}
         containerClassName="flex items-center justify-center mt-8 mb-4 gap-x-4"
-        pageClassName="block border- border-solid border-sub-100  w-6 h-6 flex items-center justify-center  active:bg-main-500 hover:bg-main-400  hover:text-white transtition hover:shadow-md hover:shadow-sub-500/50  rounded-md"
-        activeClassName="bg-main-400 text-white"
+        pageClassName="block border-solid border-sub-100 p-1 w-7 h-7 flex items-center justify-center active:bg-main-500 hover:bg-main-400  hover:text-white transtition hover:shadow-md hover:shadow-sub-500/50  rounded-md"
+        activeClassName="bg-main-400 p-1 text-white"
       />
     </div>
   );
