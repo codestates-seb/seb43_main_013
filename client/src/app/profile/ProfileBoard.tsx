@@ -19,6 +19,13 @@ interface Props {
   board: BoardOfProfile;
 }
 
+const table: { [key: string]: string } = {
+  FREEBOARD: "free",
+  FEEDBACKBOARD: "feedback",
+  JOBBOARD: "job",
+  PROMOTIONBOARD: "promotion",
+};
+
 /** 2023/05/17 - 프로필 페이지에서 사용하는 게시글 - by 1-blue */
 const ProfileBoard: React.FC<Props> = ({ board }) => {
   return (
@@ -27,17 +34,19 @@ const ProfileBoard: React.FC<Props> = ({ board }) => {
       className="w-full p-6 bg-sub-100 rounded-lg space-y-4 flex flex-col transition-all shadow-black/20 shadow-sm hover:shadow-black/30 hover:shadow-lg"
     >
       <div className="flex flex-col space-y-2">
-        {/* TODO: 카테고리 */}
         <span className="self-start bg-main-400 text-white px-2 py-1 rounded-sm text-xs">{board.categoryName}</span>
 
         {/* 제목 */}
-        <Link href={`/free/${board.id}`} className="self-start hover:underline hover:underline-offset-4">
+        <Link
+          href={`/${table[board.boardType]}/${board.id}`}
+          className="self-start hover:underline hover:underline-offset-4"
+        >
           <h4 className="text-2xl font-bold truncate-1">{board.title}</h4>
         </Link>
       </div>
 
       {/* 컨텐츠 */}
-      <div className="truncate-3">{board.content.replace(/<[^>]*>?/g, "")}</div>
+      <p className="truncate-3" dangerouslySetInnerHTML={{ __html: board.content.replace(/<[^>]*>?/g, "") }} />
 
       <section className="flex">
         {/* 유저 정보/작성일 */}

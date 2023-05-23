@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { type InfiniteData, useQueryClient } from "@tanstack/react-query";
 
 import { QUERY_KEYS } from "@/hooks/query";
@@ -22,6 +22,7 @@ import Avatar from "@/components/Avatar";
 
 // type
 import type { ApiFetchCommentsResponse, BoardType, Recomment } from "@/types/api";
+import { twMerge } from "tailwind-merge";
 interface Props {
   type: BoardType;
   boardId: number;
@@ -103,6 +104,22 @@ const BoardRecomment: React.FC<Props> = ({ type, boardId, commentId, recomment }
     }
   };
 
+  /** 2023/05/23 - buttonRef - by 1-blue */
+  const buttonRef = useRef<HTMLButtonElement>(null);
+
+  /** 2023/05/23 - enter / shift + enter - by 1-blue */
+  const onEnter: React.KeyboardEventHandler<HTMLTextAreaElement> = (e) => {
+    // shift + enter
+    if (e.key === "Enter" && e.shiftKey) return;
+
+    // enter
+    if (e.key === "Enter") {
+      e.preventDefault();
+
+      buttonRef.current?.click();
+    }
+  };
+
   return (
     <li className="flex space-x-3">
       <Avatar
@@ -142,6 +159,7 @@ const BoardRecomment: React.FC<Props> = ({ type, boardId, commentId, recomment }
                     type="button"
                     className="text-xs text-gray-500 hover:font-bold hover:text-gray-600"
                     onClick={() => onClickUpdate()}
+                    ref={buttonRef}
                   >
                     수정 완료
                   </button>
@@ -161,7 +179,10 @@ const BoardRecomment: React.FC<Props> = ({ type, boardId, commentId, recomment }
           )}
         </div>
         <textarea
-          className="py-1 leading-5 resize-none overflow-hidden bg-transparent focus:outline-main-500 focus:font-semibold"
+          className={twMerge(
+            "py-1 leading-5 resize-none overflow-hidden bg-transparent focus:outline-main-500 focus:font-semibold",
+            !disabled && "p-2 border-[3px] rounded-sm border-main-200",
+          )}
           ref={textareaRef}
           disabled={disabled}
           value={content}
@@ -169,6 +190,7 @@ const BoardRecomment: React.FC<Props> = ({ type, boardId, commentId, recomment }
             setContent(e.target.value);
             handleResizeHeight();
           }}
+          onKeyDown={onEnter}
         />
       </div>
     </li>

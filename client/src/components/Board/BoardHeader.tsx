@@ -171,7 +171,7 @@ const BoardHeader: React.FC<Props> = ({
 
       {/* 제목 */}
       <section className="flex items-center">
-        <h1 className="text-4xl font-bold truncate-1">{title}</h1>
+        <h1 className="text-4xl font-bold truncate-1 w-3/4">{title}</h1>
 
         <button type="button" className="ml-auto" onClick={copyLink}>
           <OLinkIcon className="text-sub-700 w-6 h-6 hover:text-main-400 hover:stroke-2 active:text-main-500" />
