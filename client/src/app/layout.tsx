@@ -23,6 +23,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta httpEquiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <link rel="icon" href="/logo/favicon.ico" />
       </head>
       <body className="text-[16px] md:text-[14px] bg-bg">
         <Provider>

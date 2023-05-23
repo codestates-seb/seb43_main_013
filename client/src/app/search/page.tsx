@@ -2,12 +2,6 @@
 import type { Metadata } from "next";
 import SearchLists from "./SearchLists";
 
-// FIXME: SSR 적용하기
-export const metadata: Metadata = {
-  title: "CC | 검색",
-  description: "",
-};
-
 /** 2023/05/05 - 메타데이터 - by 1-blue */
 export const generateMetadata = async ({ searchParams: { keyword } }: Props): Promise<Metadata> => {
   const result = await fetch(process.env.NEXT_PUBLIC_BASE_URL + `/api/search?keyword=${keyword}`, {
