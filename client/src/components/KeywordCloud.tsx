@@ -39,7 +39,7 @@ const KeywordCloud: React.FC<Props> = ({ type }) => {
       fontWeight="bold"
       fontSize={(word) => Math.log2(word.value) * 6}
       spiral="archimedean"
-      rotate={(word) => word.value % 360}
+      // rotate={(word) => word.value % 360}
       padding={4}
       random={Math.random}
       onWordClick={(e, d) => {

@@ -7,6 +7,7 @@ import { twMerge } from "tailwind-merge";
 import KeywordCloud from "../KeywordCloud";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useFetchMonthlyKeywords, useFetchWeeklyKeywords } from "@/hooks/query";
 
 /** 2023/05/10 - 입력 모달창 - by Kadesti */
 const InputModal = ({ setInputModal }: { setInputModal: React.Dispatch<boolean> }) => {
@@ -15,6 +16,9 @@ const InputModal = ({ setInputModal }: { setInputModal: React.Dispatch<boolean> 
   const modalRef = useRef<HTMLDivElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
   const [value, setValue] = useState("");
+
+  const { weeklyKeywords } = useFetchWeeklyKeywords({ page: 1, size: 30 });
+  const { MonthlyKeywords } = useFetchMonthlyKeywords({ page: 1, size: 30 });
 
   const [isFocus, setIsFocus] = useState(false);
   useEffect(() => {
@@ -88,9 +92,25 @@ const InputModal = ({ setInputModal }: { setInputModal: React.Dispatch<boolean> 
 
   /** 2023/05/22 - 최근 검색어 필터링 - by 1-blue */
   const onFilterRecentWord = (searchWord: string) => {
-    const words = JSON.parse(localStorage.getItem("keywords")!) as string[];
+    const words = JSON.parse(localStorage.getItem("keywords") || "[]") as string[];
 
     setRecentWords(words.filter((word) => word.includes(searchWord)));
+  };
+
+  const [suggestedWords, setSuggestedWords] = useState<string[]>([]);
+  /** 2023/05/22 - 추천 검색어 필터링 - by 1-blue */
+  const onFilterSugestedWord = (searchWord: string) => {
+    setSuggestedWords([
+      ...new Set([
+        ...(weeklyKeywords ? weeklyKeywords.data.filter((v) => v.includes(searchWord)) : []),
+        ...(MonthlyKeywords ? MonthlyKeywords.data.filter((v) => v.includes(searchWord)) : []),
+      ]),
+    ]);
+  };
+
+  const clearRecentWord = () => {
+    localStorage.setItem("keywords", "[]");
+    setRecentWords([]);
   };
 
   return (
@@ -103,7 +123,7 @@ const InputModal = ({ setInputModal }: { setInputModal: React.Dispatch<boolean> 
           ref={formRef}
           onSubmit={onSearch}
           className={twMerge(
-            "relative w-[70%] min-w-[260px] px-2 py-1.5 md:px-3 md:py-2 text-lg font-semibold flex justify-center bg-white border-[3px] border-main-400 space-x-2 rounded-sm mx-auto transition-colors",
+            "relative w-[70%] min-w-[260px] px-2 py-1.5 md:px-3 md:py-2 text-lg font-semibold flex justify-center bg-white border-4 border-main-400 space-x-2 rounded-sm mx-auto transition-colors",
             isFocus && "border-main-500",
           )}
         >
@@ -113,6 +133,7 @@ const InputModal = ({ setInputModal }: { setInputModal: React.Dispatch<boolean> 
             onChange={(e) => {
               setValue(e.target.value);
               onFilterRecentWord(e.target.value);
+              onFilterSugestedWord(e.target.value);
             }}
             className="flex-1 outline-none text-lg"
             onFocus={() => {
@@ -120,7 +141,6 @@ const InputModal = ({ setInputModal }: { setInputModal: React.Dispatch<boolean> 
               setIsShow(true);
             }}
             onBlur={() => setIsFocus(false)}
-            autoFocus
           />
 
           <button type="submit">
@@ -149,6 +169,31 @@ const InputModal = ({ setInputModal }: { setInputModal: React.Dispatch<boolean> 
                     >
                       <XMarkIcon className="w-6 h-6 text-sub-400 stroke-2" />
                     </button>
+                  </Link>
+                </li>
+              ))}
+
+              {recentWords.length > 0 && (
+                <button
+                  type="button"
+                  className="py-2 w-full border-t transition-colors hover:text-main-500"
+                  onClick={clearRecentWord}
+                >
+                  최근 모두 검색어 지우기
+                </button>
+              )}
+            </ul>
+          )}
+
+          {value.trim().length !== 0 && isShow && (
+            <ul className="absolute top-[41px] md:top-[50px] right-0 w-full bg-white max-h-[40vh] overflow-y-auto rounded-b-md scrollbar">
+              {suggestedWords.map((suggestedWord) => (
+                <li key={suggestedWord}>
+                  <Link
+                    href={`/search?keyword=${suggestedWord}`}
+                    className="flex items-center justify-between text-left px-4 py-2 transition-colors hover:bg-main-100"
+                  >
+                    <span>{suggestedWord}</span>
                   </Link>
                 </li>
               ))}
