@@ -30,7 +30,7 @@ public class KakaoApiService {
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
         body.add("client_id", clientId);
-        body.add("redirect_uri", "http://localhost:8080/auth/kakao/callback");
+        body.add("redirect_uri", "https://api.hard-coding.com/auth/kakao/callback");
         body.add("code", code);
 
         //HttpHeader 와 HttpBody 담기
