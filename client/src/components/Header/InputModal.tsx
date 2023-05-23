@@ -11,8 +11,6 @@ const InputModal = ({ setInputModal }: { setInputModal: React.Dispatch<boolean> 
   const modalRef = useRef<HTMLDivElement>(null);
   const [value, setValue] = useState("");
 
-  // const curRank = currentRank();
-
   useEffect(() => {
     const modalCloseHandler = (e: MouseEvent) => {
       if (!(e.target instanceof HTMLElement)) return;

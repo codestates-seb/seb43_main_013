@@ -2,7 +2,7 @@
 const LoginBtn = ({ text }: { text: string }) => {
   return (
     <button
-      className="my-6 bg-main-500 text-white w-full h-16 flex justify-center items-center text-3xl rounded-2xl cursor-pointer hover:opacity-50"
+      className="bg-main-500 text-white w-full h-16 my-4 flex justify-center items-center text-3xl rounded-2xl cursor-pointer hover:opacity-50"
       type="submit"
     >
       {text}

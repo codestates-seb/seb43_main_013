@@ -1,25 +1,26 @@
 import { create } from "zustand";
 
-interface Member {
-  memberId: number;
-  email: string;
-  name: string;
-  nickname: string;
-  phone?: string;
-  oauth: boolean;
-  introduction?: string;
-  link?: string;
-  profileImageUrl: string;
-  createdAt: string;
-  modifiedAt: string;
-  rename: string;
-  followerCount?: number;
-  followingCount?: number;
-  followed?: boolean;
-  myPage?: boolean;
-}
+import { Member } from "@/types/api";
+// interface Member {
+//   memberId: number;
+//   email: string;
+//   name: string;
+//   nickname: string;
+//   phone?: string;
+//   oauth: boolean;
+//   introduction?: string;
+//   link?: string;
+//   profileImageUrl: string;
+//   createdAt: string;
+//   modifiedAt: string;
+//   rename: string;
+//   followerCount?: number;
+//   followingCount?: number;
+//   followed?: boolean;
+//   myPage?: boolean;
+// }
 
-interface MemberInfo {
+export interface MemberInfo {
   member?: Member | null;
 
   setMember: (member: Member | null) => void;
