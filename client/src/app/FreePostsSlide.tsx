@@ -18,10 +18,10 @@ const FreePostsSlide = () => {
   //현재 창의 width 길이
   const [width, setWidth] = useState<number>(typeof window !== "undefined" ? window.innerWidth : 0);
 
-  if (typeof window !== "undefined") {
-    window.addEventListener("resize", () => {
+  useEffect(() => {
+    const handleResize = () => {
       setWidth(window.innerWidth);
-      // 변화된 width 값을 이용하여 필요한 작업 수행
+
       if (width <= 768) {
         setSliderPage(1);
       } else if (width <= 1200) {
@@ -29,16 +29,16 @@ const FreePostsSlide = () => {
       } else {
         setSliderPage(3);
       }
-    });
-  }
-  /**2023-05-17 - 새로고침시 width에 따라 페이징 변환 - leekoby */
-  useEffect(() => {
-    if (width <= 768) {
-      setSliderPage(1);
-    } else {
-      setSliderPage(3);
-    }
-  }, []);
+    };
+    // 새로 고침 시 페이지 값을 설정
+    handleResize();
+    // 리사이즈 이벤트 핸들러 등록
+    window.addEventListener("resize", handleResize);
+    return () => {
+      // 컴포넌트가 언마운트될 때 리스너 해제
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [width]);
 
   /**2023-05-17 - 슬라이드 인덱스 - leekoby */
   const handleAfterChange = (index: number) => {
