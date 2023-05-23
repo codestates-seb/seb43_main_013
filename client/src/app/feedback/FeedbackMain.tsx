@@ -70,7 +70,7 @@ const FeedbackMain = () => {
   return (
     //  전체 컨테이너
     <div className="mx-auto mt-6">
-      <h1 className="text-2xl font-bold text-left">🔥 피드백 게시판 🔥</h1>
+      <h1 className="text-2xl font-bold text-left"> 피드백 게시판 </h1>
       <div className="flex flex-col md:flex-row ">
         {/* Left Side */}
         <aside className="flex flex-row md:flex-col items-center justify-center md:justify-start  md:w-0 md:grow-[2] md:mt-14 ">
@@ -98,20 +98,16 @@ const FeedbackMain = () => {
                   const isLastItem = pageIndex === data.pages.length - 1 && itemIndex === page.data.length - 1;
                   return (
                     <div key={innerData.feedbackBoardId} className="w-full lg:w-[48%]">
-                      <FeedbackContentItem props={innerData} ref={isLastItem ? loader : undefined} />
+                      <FeedbackContentItem props={innerData} ref={isLastItem ? loader : undefined} position="board" />
                     </div>
                   );
                 }),
               )
             )}
           </div>
+          {member && <RightSideButton destination={`/feedback/write`} />}
         </section>
         {/* 오른쪽 사이드 영역 */}
-        {member && (
-          <div className="fixed right-0 bottom-0 transform -translate-y-1/2 ml-2">
-            <RightSideButton destination={`/feedback/write`} />
-          </div>
-        )}
       </div>
     </div>
   );

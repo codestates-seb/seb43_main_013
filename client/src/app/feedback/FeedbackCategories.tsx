@@ -1,3 +1,4 @@
+"use client";
 import { useFeedbackCategoriesStore } from "@/store/useFeedbackCategoriesStore";
 import { ResponseFeedbackCategoriesType } from "@/types/api";
 import { useState } from "react";

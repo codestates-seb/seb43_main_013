@@ -45,28 +45,6 @@ const FeedbackPostsSlide = () => {
     setCurrentSlideIndex(index);
   };
 
-  /**2023-05-17 - 슬라이드 버튼 append  - leekoby */
-  const appendDots = (dots: ReactNode) => {
-    return (
-      <div style={{ height: "0px" }}>
-        <ul style={{ margin: "4px" }}> {dots} </ul>
-      </div>
-    );
-  };
-  /**2023-05-17 - 슬라이드 버튼 custom - leekoby */
-
-  const customPaging = (i: number) => {
-    return (
-      <div
-        className={`rounded-full w-6 h-6 flex items-center justify-center ml-1 mr-1 ${
-          i === currentSlideIndex ? "bg-main-400 text-white " : "bg-sub-200 text-black "
-        }`}
-      >
-        {i + 1}
-      </div>
-    );
-  };
-
   /**2023-05-17 - 슬라이드 설정 옵션 - leekoby */
   const settings = {
     afterChange: handleAfterChange,
@@ -77,9 +55,7 @@ const FeedbackPostsSlide = () => {
     autoplay: true,
     speed: 3000,
     dots: false,
-    arrow: true,
-    appendDots: appendDots,
-    customPaging: customPaging,
+    arrow: false,
     pauseOnHover: true,
   };
 
@@ -110,7 +86,7 @@ const FeedbackPostsSlide = () => {
                 return (
                   <SlideWrapper className="h-full" key={innerData.feedbackBoardId}>
                     <div className="h-full mx-3">
-                      <FeedbackContentItem props={innerData} />
+                      <FeedbackContentItem props={innerData} position="main" />
                     </div>
                   </SlideWrapper>
                 );

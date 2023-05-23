@@ -1,6 +1,5 @@
 import { BookmarkIcon as BookmarkIconUnchecked } from "@heroicons/react/24/outline";
 import { BookmarkIcon as BookmarkIconChecked } from "@heroicons/react/24/solid";
-import sample_thumnail1 from "@/public/images/sample_thumnail1.png";
 import ContentFooter from "../../components/BoardMain/ContentFooter";
 import TagItem from "../../components/BoardMain/TagItem";
 import { FeedbackBoard } from "@/types/api";
@@ -10,21 +9,21 @@ import BoardThumbnail from "@/components/Board/BoardThumbnail";
 import useCustomToast from "@/hooks/useCustomToast";
 import { useMemberStore } from "@/store/useMemberStore";
 import { useQueryClient } from "@tanstack/react-query";
-import { usePageStore } from "@/store";
 import { apiCreateBookmark, apiDeleteBookmark } from "@/apis";
 import { isAxiosError } from "axios";
 
 interface ContentItemProps {
   props: FeedbackBoard;
+  position: "main" | "board";
 }
 /** 2023/05/09 - 피드백 게시판 게시글 - by leekoby */
-const FeedbackContentItem = forwardRef<HTMLDivElement, ContentItemProps>(({ props }, ref) => {
+const FeedbackContentItem = forwardRef<HTMLDivElement, ContentItemProps>(({ props, position }, ref) => {
   const type = "feedback";
-  const boardId = Number(props[`${type}BoardId`]);
   const toast = useCustomToast();
   const { member } = useMemberStore();
   const queryClient = useQueryClient();
-  const currentPage = usePageStore((state) => state.currentPage);
+
+  const boardId = Number(props[`${type}BoardId`]);
   /** 2023/05/20 - 피드백 게시판 게시글 북마크 - by leekoby */
   const onClickBookmark = async () => {
     if (!member) {
@@ -58,22 +57,23 @@ const FeedbackContentItem = forwardRef<HTMLDivElement, ContentItemProps>(({ prop
       {/*  list container */}
       <div
         ref={ref}
-        className="w-[470px] lg:h-[570px] flex flex-col items-center p-2 bg-white rounded-md shadow-md md:flex-row md:w-full "
+        className=" flex flex-col items-center p-3 bg-white rounded-md shadow-md md:flex-row md:w-full shadow-black/20 hover:shadow-black/30 hover:shadow-lg"
       >
         {/* 게시글 영역* */}
         <div className="flex flex-col items-center w-full  h-full p-5  bg-sub-100 rounded-md ">
           {/* Thumnail */}
-          <Link href={`/feedback/${props.feedbackBoardId}  `} className="inline-block w-full">
+          <Link href={`/feedback/${props.feedbackBoardId}  `} className=" w-full flex items-center justify-center">
             <BoardThumbnail
               url={props.link}
               alt={props.title}
               className="max-w-[640px] max-h-[360px] min-h[240px] flex-shrink-0"
+              position={position}
             />
           </Link>
           {/* right content */}
           <div className="flex flex-col w-full flex-1 gap-2 p-2">
             {/* content header */}
-            <div className="flex items-center justify-between space-x-2">
+            <div className="flex items-center justify-between space-x-2 mt-2">
               {/* 게시글 제목 */}
               <Link href={`/feedback/${props.feedbackBoardId} `} className="contents">
                 <h3 className="text-xl font-bold text-left hover:underline hover:underline-offset-4 hover:text-blue-600 truncate-1">
@@ -93,7 +93,7 @@ const FeedbackContentItem = forwardRef<HTMLDivElement, ContentItemProps>(({ prop
               )}
             </div>
             {/* content body */}
-            <p className="flex-1 w-full text-left truncate-1 text-ellipsis overflow-hidden line-clamp-1">
+            <p className="text-md flex-1 w-full text-left truncate-1 text-ellipsis overflow-hidden line-clamp-1">
               {props.content.replace(/<[^>]*>?/g, "")}
             </p>
             {/* 오른쪽 사이드 영역 */}
