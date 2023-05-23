@@ -77,10 +77,8 @@ const ContentFooter: React.FC<ContentFooterProps> = ({ type, position, footerDat
         </div>
       </div>
       <div className={`flex gap-x-1 ${position === "main" && "self-end"}`}>
-        <button type="button" className={`flex items-center justify-center text-sub-600 gap-x-1`}>
-          <ViewIcon
-            className={` ${position === "side" ? "text-sub-500 w-3 h-3" : "text-black w-4 h-4 ml-2"} cursor-pointer `}
-          />
+        <button type="button" className={`flex items-center justify-center text-sub-600 gap-x-1 cursor-default`}>
+          <ViewIcon className={` ${position === "side" ? "text-sub-500 w-3 h-3" : "text-black w-4 h-4 ml-2"} `} />
           <span className={`${position === "side" ? "text-[10px] text-sub-500" : "text-xs text-black"} `}>
             {footerData.viewCount}
           </span>
@@ -107,10 +105,8 @@ const ContentFooter: React.FC<ContentFooterProps> = ({ type, position, footerDat
         )}
 
         {footerData.commentCount !== undefined && (
-          <div className="flex items-center justify-center text-sub-600 gap-x-1">
-            <CommentsIcon
-              className={` ${position === "side" ? "text-sub-500 w-3 h-3" : "text-black w-4 h-4 ml-2"} cursor-pointer `}
-            />
+          <div className="flex items-center justify-center text-sub-600 gap-x-1 cursor-default">
+            <CommentsIcon className={` ${position === "side" ? "text-sub-500 w-3 h-3" : "text-black w-4 h-4 ml-2"} `} />
             <div className={`${position === "side" ? "text-[10px] text-sub-500" : "text-xs text-black"} `}>
               {footerData.commentCount}
             </div>
