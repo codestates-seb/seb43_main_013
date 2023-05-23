@@ -62,6 +62,6 @@ public class JobComment extends Auditable {
             this.jobBoard.getJobComments().add(this);
         }
     }
-    @OneToMany(mappedBy = "jobComment", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "jobComment", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<JobReComment> jobReComments = new ArrayList<>();
 }

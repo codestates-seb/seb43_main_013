@@ -67,7 +67,7 @@ public class FreeComment extends Auditable {
         }
     }
 
-    @OneToMany(mappedBy = "freeComment", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "freeComment", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<FreeReComment> freeReComments = new ArrayList<>();
 
 }

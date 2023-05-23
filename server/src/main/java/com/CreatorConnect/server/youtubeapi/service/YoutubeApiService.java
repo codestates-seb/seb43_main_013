@@ -71,7 +71,7 @@ public class YoutubeApiService {
                  *  standard = 640  *  480
                  *  maxres   = 1280 *  720
                 */
-                Thumbnail thumbnail = (Thumbnail) singleVideo.getSnippet().getThumbnails().get("medium");
+                Thumbnail thumbnail = (Thumbnail) singleVideo.getSnippet().getThumbnails().get("standard");
 
                 // entity에 저장
                 VideoPK videoPK = new VideoPK(categoryId,id);

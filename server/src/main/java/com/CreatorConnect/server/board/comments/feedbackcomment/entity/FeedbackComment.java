@@ -63,6 +63,6 @@ public class FeedbackComment extends Auditable {
             this.feedbackBoard.getFeedbackComments().add(this);
         }
     }
-    @OneToMany(mappedBy = "feedbackComment", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "feedbackComment", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<FeedbackReComment> feedbackReComments = new ArrayList<>();
 }
