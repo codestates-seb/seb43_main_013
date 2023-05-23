@@ -56,11 +56,16 @@ module.exports = {
           "0%": { opacity: "0.01" },
           "100%": { opacity: "1" },
         },
+        "fade-down": {
+          "0%": { opacity: "0.01", transform: "translateY(-10%)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
       },
       animation: {
         "skeleton-gradient": "skeleton-gradient 0.8s linear infinite alternate",
         swing: "swing 2s ease infinite",
         "fade-in": "fade-in 0.6s ease",
+        "fade-down": "fade-down 0.8s ease",
       },
       screens: {
         xs: "486px",

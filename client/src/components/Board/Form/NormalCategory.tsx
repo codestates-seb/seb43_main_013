@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Combobox, Transition } from "@headlessui/react";
-import { CheckIcon } from "@heroicons/react/24/solid";
+import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/24/solid";
 import { twMerge } from "tailwind-merge";
 
 // hook
@@ -38,11 +38,23 @@ const NormalCategory: React.FC<Props> = ({ selectedCategory, setSelectedCategory
       <Combobox value={selectedCategory} onChange={setSelectedCategory}>
         {({ open }) => (
           <>
-            <Combobox.Input
-              onChange={(e) => setQuery(e.target.value)}
-              className="px-3 py-1 bg-transparent rounded-sm text-lg border-2 border-main-300 focus:outline-none focus:border-main-500 placeholder:text-sm placeholder:font-bold"
-              onClick={(e) => e.target instanceof HTMLInputElement && e.target.select()}
-            />
+            <div className="relative w-full cursor-default overflow-hidden text-left shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm">
+              <Combobox.Input
+                onChange={(e) => setQuery(e.target.value)}
+                className="px-3 py-1 w-full bg-transparent rounded-sm text-lg border-2 border-main-300 focus:outline-none focus:border-main-500 placeholder:text-sm placeholder:font-bold"
+                onClick={(e) => {
+                  if (!(e.target instanceof HTMLInputElement)) return;
+
+                  e.target.select();
+                }}
+              />
+              <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
+                <ChevronUpDownIcon
+                  className="h-8 w-8 text-sub-400 transition-colors hover:text-sub-600"
+                  aria-hidden="true"
+                />
+              </Combobox.Button>
+            </div>
             <Transition
               show={open}
               enter="transition duration-150 ease-out"

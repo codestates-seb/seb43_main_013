@@ -1,4 +1,4 @@
-import { FormEventHandler, useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { type InfiniteData, useQueryClient } from "@tanstack/react-query";
 
 import { QUERY_KEYS } from "@/hooks/query";
@@ -39,7 +39,7 @@ const BoardCommentForm: React.FC<Props> = ({ type, boardId }) => {
   const queryClient = useQueryClient();
 
   /** 2023/05/11 - 댓글 등록 핸들러 - by 1-blue */
-  const onSubmitComment: FormEventHandler<HTMLFormElement> = async (e) => {
+  const onSubmitComment: React.FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
 
     if (!member) {
@@ -99,6 +99,22 @@ const BoardCommentForm: React.FC<Props> = ({ type, boardId }) => {
     }
   };
 
+  /** 2023/05/23 - buttonRef - by 1-blue */
+  const buttonRef = useRef<HTMLButtonElement>(null);
+
+  /** 2023/05/23 - enter / shift + enter - by 1-blue */
+  const onEnter: React.KeyboardEventHandler<HTMLTextAreaElement> = (e) => {
+    // shift + enter
+    if (e.key === "Enter" && e.shiftKey) return;
+
+    // enter
+    if (e.key === "Enter") {
+      e.preventDefault();
+
+      buttonRef.current?.click();
+    }
+  };
+
   return (
     <form className="flex flex-col" onSubmit={onSubmitComment}>
       <textarea
@@ -108,11 +124,13 @@ const BoardCommentForm: React.FC<Props> = ({ type, boardId }) => {
           setContent(e.target.value);
           handleResizeHeight();
         }}
-        className="resize-none bg-sub-200 w-full min-h-[120px] focus:outline-main-300 rounded-md p-2 focus:bg-sub-100"
+        onKeyDown={onEnter}
+        className="resize-none bg-sub-200 w-full min-h-[120px] focus:outline-main-300 rounded-md p-2 focus:bg-sub-100 shadow-sm focus:shadow-md"
       />
       <button
         type="submit"
         className="ml-auto mt-3 px-3 py-2 bg-main-400 text-white font-bold rounded-sm transition-colors hover:bg-main-500 active:bg-main-600"
+        ref={buttonRef}
       >
         작성하기
       </button>

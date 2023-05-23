@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { type InfiniteData, useQueryClient } from "@tanstack/react-query";
 
 import { QUERY_KEYS } from "@/hooks/query";
@@ -24,6 +24,7 @@ import BoardRecomment from "./BoardRecomment";
 
 // type
 import type { ApiFetchCommentsResponse, BoardType, Comment } from "@/types/api";
+import { twMerge } from "tailwind-merge";
 interface Props {
   type: BoardType;
   boardId: number;
@@ -142,6 +143,22 @@ const BoardComment: React.FC<Props> = ({ type, boardId, comment }) => {
   /** 2023/05/22 - 답글 열기 핸들러 - by 1-blue */
   const onShowRecomment = () => setIsShow(true);
 
+  /** 2023/05/23 - buttonRef - by 1-blue */
+  const buttonRef = useRef<HTMLButtonElement>(null);
+
+  /** 2023/05/23 - enter / shift + enter - by 1-blue */
+  const onEnter: React.KeyboardEventHandler<HTMLTextAreaElement> = (e) => {
+    // shift + enter
+    if (e.key === "Enter" && e.shiftKey) return;
+
+    // enter
+    if (e.key === "Enter") {
+      e.preventDefault();
+
+      buttonRef.current?.click();
+    }
+  };
+
   return (
     <li className="flex space-x-3">
       <Avatar src={comment.profileImageUrl} className="w-12 h-12 flex-shrink-0" href={`/profile/${comment.memberId}`} />
@@ -177,6 +194,7 @@ const BoardComment: React.FC<Props> = ({ type, boardId, comment }) => {
                     type="button"
                     className="text-xs text-gray-500 hover:font-bold hover:text-gray-600"
                     onClick={() => onClickUpdate()}
+                    ref={buttonRef}
                   >
                     수정 완료
                   </button>
@@ -196,7 +214,10 @@ const BoardComment: React.FC<Props> = ({ type, boardId, comment }) => {
           )}
         </div>
         <textarea
-          className="py-2 leading-[22px] resize-none overflow-hidden bg-transparent focus:outline-main-400 focus:font-semibold focus:px-2"
+          className={twMerge(
+            "py-2 leading-[22px] resize-none overflow-hidden bg-transparent focus:outline-main-400 focus:font-semibold focus:px-2",
+            !disabled && "p-2 border-[3px] rounded-sm border-main-200",
+          )}
           ref={textareaRef}
           disabled={disabled}
           value={content}
@@ -204,6 +225,7 @@ const BoardComment: React.FC<Props> = ({ type, boardId, comment }) => {
             setContent(e.target.value);
             handleResizeHeight();
           }}
+          onKeyDown={onEnter}
         />
 
         <div className="space-x-2">

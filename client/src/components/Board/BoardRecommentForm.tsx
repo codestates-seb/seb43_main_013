@@ -1,4 +1,4 @@
-import { FormEventHandler, useEffect, useState } from "react";
+import { FormEventHandler, useEffect, useRef, useState } from "react";
 import { type InfiniteData, useQueryClient } from "@tanstack/react-query";
 
 // api
@@ -105,8 +105,24 @@ const BoardRecommentForm: React.FC<Props> = ({ type, boardId, commentId, onShowR
     }
   };
 
+  /** 2023/05/23 - buttonRef - by 1-blue */
+  const buttonRef = useRef<HTMLButtonElement>(null);
+
+  /** 2023/05/23 - enter / shift + enter - by 1-blue */
+  const onEnter: React.KeyboardEventHandler<HTMLTextAreaElement> = (e) => {
+    // shift + enter
+    if (e.key === "Enter" && e.shiftKey) return;
+
+    // enter
+    if (e.key === "Enter") {
+      e.preventDefault();
+
+      buttonRef.current?.click();
+    }
+  };
+
   return (
-    <form className="flex flex-col pt-4" onSubmit={onSubmitComment}>
+    <form className="flex flex-col pt-4 animate-fade-down" onSubmit={onSubmitComment}>
       <textarea
         ref={textareaRef}
         value={content}
@@ -114,11 +130,13 @@ const BoardRecommentForm: React.FC<Props> = ({ type, boardId, commentId, onShowR
           setContent(e.target.value);
           handleResizeHeight();
         }}
-        className="resize-none bg-gray-200 w-full min-h-[60px] focus:outline-main-300 rounded-md p-2 focus:bg-gray-100"
+        onKeyDown={onEnter}
+        className="resize-none bg-gray-200 w-full min-h-[60px] focus:outline-main-300 rounded-md p-2 focus:bg-gray-100 shadow-sm focus:shadow-md"
       />
       <button
         type="submit"
         className="ml-auto mt-3 px-3 py-2 text-sm bg-main-400 text-white font-bold rounded-sm transition-colors hover:bg-main-500 active:bg-main-600"
+        ref={buttonRef}
       >
         답글 작성
       </button>
