@@ -49,15 +49,13 @@ public class PromotionBoardDto {
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class Potct {
+    public static class Patch {
         private long memberId;
         private String title;
         private String link;
         private String channelName;
         private String subscriberCount;
-
         private String content;
-
         private String categoryName;
         private List<TagDto.TagInfo> tag;
 

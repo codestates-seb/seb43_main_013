@@ -73,7 +73,7 @@ public class MemberController {
     }
 
     @PostMapping("/api/signup/confirm")
-    public ResponseEntity confirmEmail (@Valid @RequestBody MemberDto.ConfirmEmail confirmEmail) {
+    public ResponseEntity confirmEmail(@Valid @RequestBody MemberDto.ConfirmEmail confirmEmail) {
 
         memberService.confirmEmail(confirmEmail.getEmail());
         Member member = memberRepository.findByEmail(confirmEmail.getEmail()).get();
@@ -337,188 +337,204 @@ public class MemberController {
                                 like.getFeedbackBoard().getCreatedAt(),
                                 like.getFeedbackBoard().getModifiedAt()
                         );
-                    } else if (like.getBoardType() == Like.BoardType.JOBBOARD) {
-                        return new MemberBoardResponseDto(
-                                like.getBoardType().toString(),
-                                like.getJobBoard().getJobBoardId(),
-                                like.getJobBoard().getTitle(),
-                                like.getJobBoard().getContent(),
-                                like.getJobBoard().getCommentCount(),
-                                like.getJobBoard().getLikeCount(),
-                                like.getJobBoard().getViewCount(),
-                                like.getJobBoard().getJobCategoryName(),
-                                like.getJobBoard().getMember().getMemberId(),
-                                like.getJobBoard().getMember().getEmail(),
-                                like.getJobBoard().getMember().getNickname(),
-                                like.getJobBoard().getMember().getProfileImageUrl(),
-                                like.getJobBoard().getCreatedAt(),
-                                like.getJobBoard().getModifiedAt()
-                        );
-                    }
-                    return null;
-                })
+                    }else if (like.getBoardType() == Like.BoardType.FEEDBACKBOARD) {
+                            return new MemberBoardResponseDto(
+                                    like.getBoardType().toString(),
+                                    like.getPromotionBoard().getPromotionBoardId(),
+                                    like.getPromotionBoard().getTitle(),
+                                    like.getPromotionBoard().getContent(),
+                                    like.getPromotionBoard().getCommentCount(),
+                                    like.getPromotionBoard().getLikeCount(),
+                                    like.getPromotionBoard().getViewCount(),
+                                    like.getPromotionBoard().getMember().getMemberId(),
+                                    like.getPromotionBoard().getMember().getEmail(),
+                                    like.getPromotionBoard().getMember().getNickname(),
+                                    like.getPromotionBoard().getMember().getProfileImageUrl(),
+                                    like.getPromotionBoard().getCreatedAt()
+                                    like.getPromotionBoard().getModifiedAt()
+                            );
+                        } else if (like.getBoardType() == Like.BoardType.JOBBOARD) {
+                            return new MemberBoardResponseDto(
+                                    like.getBoardType().toString(),
+                                    like.getJobBoard().getJobBoardId(),
+                                    like.getJobBoard().getTitle(),
+                                    like.getJobBoard().getContent(),
+                                    like.getJobBoard().getCommentCount(),
+                                    like.getJobBoard().getLikeCount(),
+                                    like.getJobBoard().getViewCount(),
+                                    like.getJobBoard().getJobCategoryName(),
+                                    like.getJobBoard().getMember().getMemberId(),
+                                    like.getJobBoard().getMember().getEmail(),
+                                    like.getJobBoard().getMember().getNickname(),
+                                    like.getJobBoard().getMember().getProfileImageUrl(),
+                                    like.getJobBoard().getCreatedAt(),
+                                    like.getJobBoard().getModifiedAt()
+                            );
+                        }
+                        return null;
+                    })
                 .filter(Objects::nonNull)
-                .skip((page - 1) * size) // 페이지네이션 처리
-                .limit(size)
-                .collect(Collectors.toList());
+                            .skip((page - 1) * size) // 페이지네이션 처리
+                            .limit(size)
+                            .collect(Collectors.toList());
 
-        Page<MemberBoardResponseDto> pageResponse =
-                new PageImpl<>(response, PageRequest.of(page - 1, size), totalElements);
+                    Page<MemberBoardResponseDto> pageResponse =
+                            new PageImpl<>(response, PageRequest.of(page - 1, size), totalElements);
 
-        return new ResponseEntity(new MultiResponseDto<>(pageResponse.getContent(), pageResponse), HttpStatus.OK);
+                    return new ResponseEntity(new MultiResponseDto<>(pageResponse.getContent(), pageResponse), HttpStatus.OK);
+                }
+
+        @GetMapping("/api/member/{member-id}/bookmarked")
+        public ResponseEntity getbookmarked (@PathVariable("member-id") @Positive Long memberId,
+        @RequestParam(defaultValue = "1") int page,
+        @RequestParam(defaultValue = "10") int size){
+
+            Member member = memberService.findVerifiedMember(memberId);
+
+            Set<Bookmark> bookmarked = member.getBookmarks();
+            int totalElements = bookmarked.size();
+
+            List<MemberBoardResponseDto> response = bookmarked.stream()
+                    .map(bookmark -> {
+                        if (bookmark.getBoardType() == Bookmark.BoardType.FREEBOARD) {
+                            return new MemberBoardResponseDto(
+                                    bookmark.getBoardType().toString(),
+                                    bookmark.getFreeBoard().getFreeBoardId(),
+                                    bookmark.getFreeBoard().getTitle(),
+                                    bookmark.getFreeBoard().getContent(),
+                                    bookmark.getFreeBoard().getCommentCount(),
+                                    bookmark.getFreeBoard().getLikeCount(),
+                                    bookmark.getFreeBoard().getViewCount(),
+                                    bookmark.getFreeBoard().getCategoryName(),
+                                    bookmark.getFreeBoard().getMember().getMemberId(),
+                                    bookmark.getFreeBoard().getMember().getEmail(),
+                                    bookmark.getFreeBoard().getMember().getNickname(),
+                                    bookmark.getFreeBoard().getMember().getProfileImageUrl(),
+                                    bookmark.getFreeBoard().getCreatedAt(),
+                                    bookmark.getFreeBoard().getModifiedAt()
+                            );
+                        } else if (bookmark.getBoardType() == Bookmark.BoardType.FEEDBACKBOARD) {
+                            return new MemberBoardResponseDto(
+                                    bookmark.getBoardType().toString(),
+                                    bookmark.getFeedbackBoard().getFeedbackBoardId(),
+                                    bookmark.getFeedbackBoard().getTitle(),
+                                    bookmark.getFeedbackBoard().getContent(),
+                                    bookmark.getFeedbackBoard().getCommentCount(),
+                                    bookmark.getFeedbackBoard().getLikeCount(),
+                                    bookmark.getFeedbackBoard().getViewCount(),
+                                    bookmark.getFeedbackBoard().getFeedbackCategoryName(),
+                                    bookmark.getFeedbackBoard().getMember().getMemberId(),
+                                    bookmark.getFeedbackBoard().getMember().getEmail(),
+                                    bookmark.getFeedbackBoard().getMember().getNickname(),
+                                    bookmark.getFeedbackBoard().getMember().getProfileImageUrl(),
+                                    bookmark.getFeedbackBoard().getCreatedAt(),
+                                    bookmark.getFeedbackBoard().getModifiedAt()
+                            );
+                        } else if (bookmark.getBoardType() == Bookmark.BoardType.JOBBOARD) {
+                            return new MemberBoardResponseDto(
+                                    bookmark.getBoardType().toString(),
+                                    bookmark.getJobBoard().getJobBoardId(),
+                                    bookmark.getJobBoard().getTitle(),
+                                    bookmark.getJobBoard().getContent(),
+                                    bookmark.getJobBoard().getCommentCount(),
+                                    bookmark.getJobBoard().getLikeCount(),
+                                    bookmark.getJobBoard().getViewCount(),
+                                    bookmark.getJobBoard().getJobCategoryName(),
+                                    bookmark.getJobBoard().getMember().getMemberId(),
+                                    bookmark.getJobBoard().getMember().getEmail(),
+                                    bookmark.getJobBoard().getMember().getNickname(),
+                                    bookmark.getJobBoard().getMember().getProfileImageUrl(),
+                                    bookmark.getJobBoard().getCreatedAt(),
+                                    bookmark.getJobBoard().getModifiedAt()
+                            );
+                        }
+                        return null;
+                    })
+                    .filter(Objects::nonNull)
+                    .skip((page - 1) * size) // 페이지네이션 처리
+                    .limit(size)
+                    .collect(Collectors.toList());
+
+            Page<MemberBoardResponseDto> pageResponse =
+                    new PageImpl<>(response, PageRequest.of(page - 1, size), totalElements);
+
+            return new ResponseEntity(new MultiResponseDto<>(pageResponse.getContent(), pageResponse), HttpStatus.OK);
+        }
+
+        @GetMapping("/api/member/{member-id}/written")
+        public ResponseEntity getwritten (@PathVariable("member-id") @Positive Long memberId,
+        @RequestParam(defaultValue = "1") int page,
+        @RequestParam(defaultValue = "10") int size){
+
+            Member member = memberService.findVerifiedMember(memberId);
+
+            List<FreeBoard> freeBoards = member.getFreeBoards();
+            List<FeedbackBoard> feedbackBoards = member.getFeedbackBoards();
+            List<JobBoard> jobBoards = member.getJobBoards();
+
+            List<MemberBoardResponseDto> response = Stream.concat(
+                            Stream.concat(
+                                    freeBoards.stream().map(freeBoard -> new MemberBoardResponseDto(
+                                            "FREEBOARD",
+                                            freeBoard.getFreeBoardId(),
+                                            freeBoard.getTitle(),
+                                            freeBoard.getContent(),
+                                            freeBoard.getCommentCount(),
+                                            freeBoard.getLikeCount(),
+                                            freeBoard.getViewCount(),
+                                            freeBoard.getCategoryName(),
+                                            freeBoard.getMember().getMemberId(),
+                                            freeBoard.getMember().getEmail(),
+                                            freeBoard.getMember().getNickname(),
+                                            freeBoard.getMember().getProfileImageUrl(),
+                                            freeBoard.getCreatedAt(),
+                                            freeBoard.getModifiedAt()
+                                    )),
+                                    feedbackBoards.stream().map(feedbackBoard -> new MemberBoardResponseDto(
+                                            "FEEDBACKBOARD",
+                                            feedbackBoard.getFeedbackBoardId(),
+                                            feedbackBoard.getTitle(),
+                                            feedbackBoard.getContent(),
+                                            feedbackBoard.getCommentCount(),
+                                            feedbackBoard.getLikeCount(),
+                                            feedbackBoard.getViewCount(),
+                                            feedbackBoard.getFeedbackCategoryName(),
+                                            feedbackBoard.getMember().getMemberId(),
+                                            feedbackBoard.getMember().getEmail(),
+                                            feedbackBoard.getMember().getNickname(),
+                                            feedbackBoard.getMember().getProfileImageUrl(),
+                                            feedbackBoard.getCreatedAt(),
+                                            feedbackBoard.getModifiedAt()
+                                    ))
+                            ),
+                            jobBoards.stream().map(jobBoard -> new MemberBoardResponseDto(
+                                    "JOBBOARD",
+                                    jobBoard.getJobBoardId(),
+                                    jobBoard.getTitle(),
+                                    jobBoard.getContent(),
+                                    jobBoard.getCommentCount(),
+                                    jobBoard.getLikeCount(),
+                                    jobBoard.getViewCount(),
+                                    jobBoard.getJobCategoryName(),
+                                    jobBoard.getMember().getMemberId(),
+                                    jobBoard.getMember().getEmail(),
+                                    jobBoard.getMember().getNickname(),
+                                    jobBoard.getMember().getProfileImageUrl(),
+                                    jobBoard.getCreatedAt(),
+                                    jobBoard.getModifiedAt()
+                            ))
+                    )
+                    .sorted(Comparator.comparing(MemberBoardResponseDto::getCreatedAt).reversed())
+                    .skip((page - 1) * size)
+                    .limit(size)
+                    .collect(Collectors.toList());
+
+            int totalElements = response.size();
+
+            Page<MemberBoardResponseDto> pageResponse = new PageImpl<>(response,
+                    PageRequest.of(page - 1, size), totalElements);
+
+            return new ResponseEntity<>(new MultiResponseDto<>(pageResponse.getContent(), pageResponse), HttpStatus.OK);
+        }
+
     }
-
-    @GetMapping("/api/member/{member-id}/bookmarked")
-    public ResponseEntity getbookmarked(@PathVariable("member-id") @Positive Long memberId,
-                                        @RequestParam(defaultValue = "1") int page,
-                                        @RequestParam(defaultValue = "10") int size) {
-
-        Member member = memberService.findVerifiedMember(memberId);
-
-        Set<Bookmark> bookmarked = member.getBookmarks();
-        int totalElements = bookmarked.size();
-
-        List<MemberBoardResponseDto> response = bookmarked.stream()
-                .map(bookmark -> {
-                    if (bookmark.getBoardType() == Bookmark.BoardType.FREEBOARD) {
-                        return new MemberBoardResponseDto(
-                                bookmark.getBoardType().toString(),
-                                bookmark.getFreeBoard().getFreeBoardId(),
-                                bookmark.getFreeBoard().getTitle(),
-                                bookmark.getFreeBoard().getContent(),
-                                bookmark.getFreeBoard().getCommentCount(),
-                                bookmark.getFreeBoard().getLikeCount(),
-                                bookmark.getFreeBoard().getViewCount(),
-                                bookmark.getFreeBoard().getCategoryName(),
-                                bookmark.getFreeBoard().getMember().getMemberId(),
-                                bookmark.getFreeBoard().getMember().getEmail(),
-                                bookmark.getFreeBoard().getMember().getNickname(),
-                                bookmark.getFreeBoard().getMember().getProfileImageUrl(),
-                                bookmark.getFreeBoard().getCreatedAt(),
-                                bookmark.getFreeBoard().getModifiedAt()
-                        );
-                    } else if (bookmark.getBoardType() == Bookmark.BoardType.FEEDBACKBOARD) {
-                        return new MemberBoardResponseDto(
-                                bookmark.getBoardType().toString(),
-                                bookmark.getFeedbackBoard().getFeedbackBoardId(),
-                                bookmark.getFeedbackBoard().getTitle(),
-                                bookmark.getFeedbackBoard().getContent(),
-                                bookmark.getFeedbackBoard().getCommentCount(),
-                                bookmark.getFeedbackBoard().getLikeCount(),
-                                bookmark.getFeedbackBoard().getViewCount(),
-                                bookmark.getFeedbackBoard().getFeedbackCategoryName(),
-                                bookmark.getFeedbackBoard().getMember().getMemberId(),
-                                bookmark.getFeedbackBoard().getMember().getEmail(),
-                                bookmark.getFeedbackBoard().getMember().getNickname(),
-                                bookmark.getFeedbackBoard().getMember().getProfileImageUrl(),
-                                bookmark.getFeedbackBoard().getCreatedAt(),
-                                bookmark.getFeedbackBoard().getModifiedAt()
-                        );
-                    } else if (bookmark.getBoardType() == Bookmark.BoardType.JOBBOARD) {
-                        return new MemberBoardResponseDto(
-                                bookmark.getBoardType().toString(),
-                                bookmark.getJobBoard().getJobBoardId(),
-                                bookmark.getJobBoard().getTitle(),
-                                bookmark.getJobBoard().getContent(),
-                                bookmark.getJobBoard().getCommentCount(),
-                                bookmark.getJobBoard().getLikeCount(),
-                                bookmark.getJobBoard().getViewCount(),
-                                bookmark.getJobBoard().getJobCategoryName(),
-                                bookmark.getJobBoard().getMember().getMemberId(),
-                                bookmark.getJobBoard().getMember().getEmail(),
-                                bookmark.getJobBoard().getMember().getNickname(),
-                                bookmark.getJobBoard().getMember().getProfileImageUrl(),
-                                bookmark.getJobBoard().getCreatedAt(),
-                                bookmark.getJobBoard().getModifiedAt()
-                        );
-                    }
-                    return null;
-                })
-                .filter(Objects::nonNull)
-                .skip((page - 1) * size) // 페이지네이션 처리
-                .limit(size)
-                .collect(Collectors.toList());
-
-        Page<MemberBoardResponseDto> pageResponse =
-                new PageImpl<>(response, PageRequest.of(page - 1, size), totalElements);
-
-        return new ResponseEntity(new MultiResponseDto<>(pageResponse.getContent(), pageResponse), HttpStatus.OK);
-    }
-
-    @GetMapping("/api/member/{member-id}/written")
-    public ResponseEntity getwritten(@PathVariable("member-id") @Positive Long memberId,
-                                     @RequestParam(defaultValue = "1") int page,
-                                     @RequestParam(defaultValue = "10") int size) {
-
-        Member member = memberService.findVerifiedMember(memberId);
-
-        List<FreeBoard> freeBoards = member.getFreeBoards();
-        List<FeedbackBoard> feedbackBoards = member.getFeedbackBoards();
-        List<JobBoard> jobBoards = member.getJobBoards();
-
-        List<MemberBoardResponseDto> response = Stream.concat(
-                        Stream.concat(
-                                freeBoards.stream().map(freeBoard -> new MemberBoardResponseDto(
-                                        "FREEBOARD",
-                                        freeBoard.getFreeBoardId(),
-                                        freeBoard.getTitle(),
-                                        freeBoard.getContent(),
-                                        freeBoard.getCommentCount(),
-                                        freeBoard.getLikeCount(),
-                                        freeBoard.getViewCount(),
-                                        freeBoard.getCategoryName(),
-                                        freeBoard.getMember().getMemberId(),
-                                        freeBoard.getMember().getEmail(),
-                                        freeBoard.getMember().getNickname(),
-                                        freeBoard.getMember().getProfileImageUrl(),
-                                        freeBoard.getCreatedAt(),
-                                        freeBoard.getModifiedAt()
-                                )),
-                                feedbackBoards.stream().map(feedbackBoard -> new MemberBoardResponseDto(
-                                        "FEEDBACKBOARD",
-                                        feedbackBoard.getFeedbackBoardId(),
-                                        feedbackBoard.getTitle(),
-                                        feedbackBoard.getContent(),
-                                        feedbackBoard.getCommentCount(),
-                                        feedbackBoard.getLikeCount(),
-                                        feedbackBoard.getViewCount(),
-                                        feedbackBoard.getFeedbackCategoryName(),
-                                        feedbackBoard.getMember().getMemberId(),
-                                        feedbackBoard.getMember().getEmail(),
-                                        feedbackBoard.getMember().getNickname(),
-                                        feedbackBoard.getMember().getProfileImageUrl(),
-                                        feedbackBoard.getCreatedAt(),
-                                        feedbackBoard.getModifiedAt()
-                                ))
-                        ),
-                        jobBoards.stream().map(jobBoard -> new MemberBoardResponseDto(
-                                "JOBBOARD",
-                                jobBoard.getJobBoardId(),
-                                jobBoard.getTitle(),
-                                jobBoard.getContent(),
-                                jobBoard.getCommentCount(),
-                                jobBoard.getLikeCount(),
-                                jobBoard.getViewCount(),
-                                jobBoard.getJobCategoryName(),
-                                jobBoard.getMember().getMemberId(),
-                                jobBoard.getMember().getEmail(),
-                                jobBoard.getMember().getNickname(),
-                                jobBoard.getMember().getProfileImageUrl(),
-                                jobBoard.getCreatedAt(),
-                                jobBoard.getModifiedAt()
-                        ))
-                )
-                .sorted(Comparator.comparing(MemberBoardResponseDto::getCreatedAt).reversed())
-                .skip((page - 1) * size)
-                .limit(size)
-                .collect(Collectors.toList());
-
-        int totalElements = response.size();
-
-        Page<MemberBoardResponseDto> pageResponse = new PageImpl<>(response,
-                PageRequest.of(page - 1, size), totalElements);
-
-        return new ResponseEntity<>(new MultiResponseDto<>(pageResponse.getContent(), pageResponse), HttpStatus.OK);
-    }
-
-}

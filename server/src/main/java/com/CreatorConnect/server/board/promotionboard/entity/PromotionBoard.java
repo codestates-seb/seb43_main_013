@@ -1,5 +1,7 @@
 package com.CreatorConnect.server.board.promotionboard.entity;
 
+import com.CreatorConnect.server.audit.Auditable;
+import com.CreatorConnect.server.board.Board;
 import com.CreatorConnect.server.board.categories.category.entity.Category;
 import com.CreatorConnect.server.board.tag.dto.TagDto;
 import com.CreatorConnect.server.member.entity.Member;
@@ -14,10 +16,11 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class PromotionBoard {
+public class PromotionBoard extends Auditable implements Board {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long promotionId;
+    @Column(name = "promotion_Board_id")
+    private long promotionBoardId;
     @Column(nullable = false)
     private String title;
     @Column(nullable = false)
@@ -29,7 +32,7 @@ public class PromotionBoard {
     @Column
     private String content;
     @Column
-    private Long commnetCount;
+    private Long commentCount;
     @Column
     private Long maxCommentCount;
     @Column
@@ -39,7 +42,7 @@ public class PromotionBoard {
 
     @PrePersist
     public void prePersist() {
-        this.commnetCount = this.commnetCount == null ? 0 : this.commnetCount;
+        this.commentCount = this.commentCount == null ? 0 : this.commentCount;
         this.maxCommentCount = this.maxCommentCount == null ? 0 : this.maxCommentCount;
         this.likeCount = this.likeCount == null ? 0 : this.likeCount;
         this.viewCount = this.viewCount == null ? 0 : this.viewCount;
