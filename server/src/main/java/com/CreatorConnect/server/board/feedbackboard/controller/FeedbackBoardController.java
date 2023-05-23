@@ -67,6 +67,18 @@ public class FeedbackBoardController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    // 목록조회 -> 피드백 카테고리(전체) - 카테고리(선택)
+    @GetMapping("/feedbackboards/categories/{categoryId}")
+    public ResponseEntity getFeedbacksByCategory(@PathVariable("categoryId") @Positive Long categoryId,
+                                                 @RequestParam("sort") String sort,
+                                                 @RequestParam("page") @Positive int page,
+                                                 @RequestParam("size") @Positive int size) {
+
+        FeedbackBoardResponseDto.Multi response = feedbackBoardService.responseFeedbacksByFeedbackCategory(categoryId, sort, page, size);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
     // 목록조회 -> 피드백 카테고리(선택) - 카테고리(선택)
     @GetMapping("/feedbackboards/feedbackcategories/{feedbackCategoryId}/categories/{categoryId}")
     public ResponseEntity getFeedbacksByFeedbackCategoryAndCategory(@PathVariable("feedbackCategoryId") @Positive Long feedbackCategoryId,

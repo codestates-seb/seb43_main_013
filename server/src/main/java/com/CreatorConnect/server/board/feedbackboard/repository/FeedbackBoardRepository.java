@@ -16,6 +16,9 @@ public interface FeedbackBoardRepository extends JpaRepository<FeedbackBoard, Lo
     @Query("select f from FeedbackBoard f where f.feedbackCategory.feedbackCategoryId = :feedbackCategoryId")
     Page<FeedbackBoard> findFeedbackBoardsByFeedbackCategoryId(@Param("feedbackCategoryId") long feedbackCategoryId, Pageable pageable);
 
+    @Query("select f from FeedbackBoard f where f.category.categoryId = :categoryId")
+    Page<FeedbackBoard> findFeedbackBoardsByCategoryId(@Param("categoryId") long categoryId, Pageable pageable);
+
     @Query("select f from FeedbackBoard f where f.feedbackCategory.feedbackCategoryId = :feedbackCategoryId And f.category.categoryId = :categoryId")
     Page<FeedbackBoard> findFeedbackBoardsByFeedbackCategoryIdAndCategoryId(@Param("feedbackCategoryId") long feedbackCategoryId, @Param("categoryId") long categoryId, Pageable pageable);
 
