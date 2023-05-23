@@ -11,9 +11,9 @@ interface Props {
 const KeywordCloud: React.FC<Props> = ({ type }) => {
   const router = useRouter();
 
-  const { dailyKeywords } = useFetchDailyKeywords();
-  const { weeklyKeywords } = useFetchWeeklyKeywords();
-  const { MonthlyKeywords } = useFetchMonthlyKeywords();
+  const { dailyKeywords } = useFetchDailyKeywords({ page: 1, size: 30 });
+  const { weeklyKeywords } = useFetchWeeklyKeywords({ page: 1, size: 30 });
+  const { MonthlyKeywords } = useFetchMonthlyKeywords({ page: 1, size: 30 });
 
   if (!dailyKeywords || !weeklyKeywords || !MonthlyKeywords) return <></>;
 
@@ -37,7 +37,7 @@ const KeywordCloud: React.FC<Props> = ({ type }) => {
       data={keywords}
       font="BMJUA"
       fontWeight="bold"
-      fontSize={(word) => Math.log2(word.value) * 5}
+      fontSize={(word) => Math.log2(word.value) * 6}
       spiral="archimedean"
       rotate={(word) => word.value % 360}
       padding={4}

@@ -70,14 +70,14 @@ const InputModal = ({ setInputModal }: { setInputModal: React.Dispatch<boolean> 
 
   /** 2023/05/22 - 최근 검색어들 가져오기 - by 1-blue */
   useEffect(() => {
-    const words = JSON.parse(localStorage.getItem("keywords")!) as string[];
+    const words = JSON.parse(localStorage.getItem("keywords") || "[]") as string[];
 
     setRecentWords(words);
   }, []);
 
   /** 2023/05/22 - 최근 검색어 제거 - by 1-blue */
   const onDeleteRecentWord = (targetWord: string) => {
-    const words = JSON.parse(localStorage.getItem("keywords")!) as string[];
+    const words = JSON.parse(localStorage.getItem("keywords") || "[]") as string[];
 
     localStorage.setItem("keywords", JSON.stringify(words.filter((word) => word !== targetWord)));
 
@@ -98,12 +98,12 @@ const InputModal = ({ setInputModal }: { setInputModal: React.Dispatch<boolean> 
       className="inset-0 fixed z-10 bg-black/80 backdrop-blur-sm w-screen h-screen flex flex-col justify-center items-center animate-fade-in"
       onClick={() => setInputModal(false)}
     >
-      <div ref={modalRef} className="space-y-16">
+      <div ref={modalRef} className="space-y-8 md:space-y-16 relative -top-[12%]">
         <form
           ref={formRef}
           onSubmit={onSearch}
           className={twMerge(
-            "relative w-[250px] px-2 py-1 flex justify-center bg-white border-[3px] border-main-400 space-x-2 rounded-sm mx-auto transition-colors",
+            "relative w-[70%] min-w-[260px] px-2 py-1.5 md:px-3 md:py-2 text-lg font-semibold flex justify-center bg-white border-[3px] border-main-400 space-x-2 rounded-sm mx-auto transition-colors",
             isFocus && "border-main-500",
           )}
         >
@@ -120,6 +120,7 @@ const InputModal = ({ setInputModal }: { setInputModal: React.Dispatch<boolean> 
               setIsShow(true);
             }}
             onBlur={() => setIsFocus(false)}
+            autoFocus
           />
 
           <button type="submit">
@@ -129,7 +130,7 @@ const InputModal = ({ setInputModal }: { setInputModal: React.Dispatch<boolean> 
           </button>
 
           {isShow && (
-            <ul className="absolute top-[41px] right-0 w-full bg-white max-h-[40vh] overflow-y-auto rounded-b-md scrollbar">
+            <ul className="absolute top-[41px] md:top-[50px] right-0 w-full bg-white max-h-[40vh] overflow-y-auto rounded-b-md scrollbar">
               {recentWords.map((recentWord) => (
                 <li key={recentWord}>
                   <Link
