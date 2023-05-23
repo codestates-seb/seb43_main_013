@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 const Page = () => {
   return (
     <>
-      <h1 className="p-4 text-2xl font-bold">✏️ 구인구직 게시글 작성 ✏️</h1>
+      <h1 className="px-4 pt-8 pb-4 text-2xl font-bold">✏️ 구인구직 게시글 작성 ✏️</h1>
 
       <Form />
     </>

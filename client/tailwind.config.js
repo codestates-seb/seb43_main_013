@@ -4,11 +4,11 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        "main": ["BMJUA"]
+        main: ["BMJUA"],
       },
       boxShadow: {
-        "main": "rgba(8, 60, 130, 0.06) 0px 0px 0px 0.05rem, rgba(30, 34, 40, 0.04) 0rem 0rem 1.25rem",
-        "hover": "rgba(20, 20, 20, 0.1) 0px 8px 30px"
+        main: "rgba(8, 60, 130, 0.06) 0px 0px 0px 0.05rem, rgba(30, 34, 40, 0.04) 0rem 0rem 1.25rem",
+        hover: "rgba(20, 20, 20, 0.1) 0px 8px 30px",
       },
       colors: {
         bg: "#FBFBFB",
@@ -61,6 +61,9 @@ module.exports = {
         "skeleton-gradient": "skeleton-gradient 0.8s linear infinite alternate",
         swing: "swing 2s ease infinite",
         "fade-in": "fade-in 0.6s ease",
+      },
+      screens: {
+        xs: "486px",
       },
     },
   },

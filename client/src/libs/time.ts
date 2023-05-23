@@ -1,3 +1,5 @@
+"use client";
+
 import dayjs from "dayjs";
 import duration, { Duration } from "dayjs/plugin/duration";
 dayjs.extend(duration);
