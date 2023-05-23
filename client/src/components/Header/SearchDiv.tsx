@@ -21,7 +21,7 @@ const SearchDiv = () => {
 
   return (
     <button
-      className="group ml-auto border-2 w-auto md:w-48 rounded-full mr-4 border-sub-500 md:rounded-sm px-2 py-2 md:py-1 transition-colors hover:border-main-400"
+      className="group ml-auto border-2 w-auto md:w-48 rounded-full mr-8 md:mr-16 border-sub-500 md:rounded-sm px-2 py-2 md:py-1 transition-colors hover:border-main-400"
       onClick={() => setInputModal(true)}
     >
       <MagnifyingGlassIcon className="w-6 h-6 text-sub-500 stroke-2 transition-colors group-hover:text-main-400" />

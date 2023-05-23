@@ -70,7 +70,10 @@ const Form: React.FC<Props> = ({ boardId }) => {
 
     // 제목 유효성 검사
     if (title.trim().length <= 1) return toast({ title: "제목을 두 글자 이상 입력해주세요!", status: "error" });
-    if (content.trim().length <= 100) return toast({ title: "내용이 너무 적습니다!", status: "error" });
+    const length = content.replace(/<[^>]*>?/g, "").length;
+    if (length <= 20) {
+      return toast({ title: `내용을 20자 이상 입력해주세요 ( ${length}/20 )`, status: "error" });
+    }
 
     try {
       loading.start();

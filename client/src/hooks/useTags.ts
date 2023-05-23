@@ -8,7 +8,7 @@ const useTags = (ininitalTags: string[] = []) => {
   /** 2023/05/09 - 선택한 태그들 - by 1-blue */
   const [selectedTags, setSelectedTags] = useState(ininitalTags);
 
-  /** 2023/05/09 - 태그 추가 - by 1-blue */
+  /** 2023/05/09 - 태그 추가 ( 엔터 ) - by 1-blue */
   const onSelectedTag: React.KeyboardEventHandler<HTMLInputElement> = useCallback(
     (e) => {
       // 엔터키 확인
