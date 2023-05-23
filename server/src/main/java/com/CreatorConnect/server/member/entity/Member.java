@@ -8,6 +8,7 @@ import com.CreatorConnect.server.board.freeboard.entity.FreeBoard;
 import com.CreatorConnect.server.board.feedbackboard.entity.FeedbackBoard;
 import com.CreatorConnect.server.board.jobboard.entity.JobBoard;
 import com.CreatorConnect.server.board.notice.entity.Notice;
+import com.CreatorConnect.server.board.promotionboard.entity.PromotionBoard;
 import com.CreatorConnect.server.board.recomments.feedbackrecomment.entity.FeedbackReComment;
 import com.CreatorConnect.server.board.recomments.freerecomment.entity.FreeReComment;
 import com.CreatorConnect.server.board.recomments.jobrecomment.entity.JobReComment;
@@ -17,6 +18,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Cascade;
+
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Pattern;
@@ -104,6 +107,9 @@ public class Member extends Auditable {
 
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<JobBoard> jobBoards = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<PromotionBoard> promotionBoards = new ArrayList<>();
 
 //    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 //    private List<PromotionBoard> promotionBoards = new ArrayList<>();
