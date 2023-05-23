@@ -56,7 +56,6 @@ const JobMain = () => {
           {/* Left Side */}
           <aside className=" flex flex-row md:flex-col items-center justify-center md:justify-start  md:w-0 md:grow-[2]  ">
             {/* category  */}
-            {/* TODO: 구인구직게시판 카테고리로 변경하기 */}
             {jobCategories && <JobCategories selectedCategory={selectedCategory} jobCategories={jobCategories} />}
           </aside>
           {/* rightside freeboard post list */}
