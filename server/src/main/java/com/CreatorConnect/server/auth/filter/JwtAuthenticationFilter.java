@@ -3,8 +3,11 @@ package com.CreatorConnect.server.auth.filter;
 import com.CreatorConnect.server.auth.jwt.JwtTokenizer;
 import com.CreatorConnect.server.member.dto.MemberLoginDto;
 import com.CreatorConnect.server.member.entity.Member;
+import com.CreatorConnect.server.redis.service.RedisService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -17,15 +20,15 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-
+@RequiredArgsConstructor
+@Slf4j
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private final AuthenticationManager authenticationManager;
+
     private final JwtTokenizer jwtTokenizer;
 
-    public JwtAuthenticationFilter(AuthenticationManager authenticationManager, JwtTokenizer jwtTokenizer) {
-        this.authenticationManager = authenticationManager;
-        this.jwtTokenizer = jwtTokenizer;
-    }
+    private final RedisService redisService;
+
 
     @SneakyThrows
     @Override
@@ -53,6 +56,12 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         response.setHeader("Authorization", "Bearer " + accessToken);
         response.setHeader("Refresh-Token", refreshToken);
         response.setHeader("Access-Control-Expose-Headers", "Content-Length, Authorization, Refresh-Token");
+
+        // refreshToken이 key인 데이터가 없으면 해당 refreshToken을 key로 하여 redis에 저장
+        if (redisService.getRefreshToken(refreshToken) == null) {
+            redisService.setRefreshToken(refreshToken, member.getEmail(), jwtTokenizer.getRefreshTokenExpirationMinutes());
+            log.info("Refresh Token saved in Redis");
+        }
 
         this.getSuccessHandler().onAuthenticationSuccess(request, response, authResult);
     }
