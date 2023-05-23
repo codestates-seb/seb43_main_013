@@ -149,45 +149,49 @@ const BoardComment: React.FC<Props> = ({ type, boardId, comment }) => {
         <div className="space-x-2">
           <span className="font-bold">{comment.nickname}</span>
           <time className="text-sm text-sub-400">{getTimeDiff(comment.createdAt)}</time>
-          {disabled ? (
+          {member?.memberId === comment.memberId && (
             <>
-              <button
-                type="button"
-                className="text-xs text-sub-500 hover:font-bold hover:text-sub-600"
-                onClick={() => {
-                  setDisabled(false);
-                  setTimeout(() => textareaRef.current?.focus(), 0);
-                }}
-              >
-                수정
-              </button>
-              <button
-                type="button"
-                data-comment-id={comment.commentId}
-                className="text-xs text-sub-500 hover:font-bold hover:text-sub-600"
-              >
-                삭제
-              </button>
-            </>
-          ) : (
-            <>
-              <button
-                type="button"
-                className="text-xs text-gray-500 hover:font-bold hover:text-gray-600"
-                onClick={() => onClickUpdate()}
-              >
-                수정 완료
-              </button>
-              <button
-                type="button"
-                className="text-xs text-sub-500 hover:font-bold hover:text-sub-600"
-                onClick={() => {
-                  setContent(comment.content);
-                  setDisabled(true);
-                }}
-              >
-                수정 취소
-              </button>
+              {disabled ? (
+                <>
+                  <button
+                    type="button"
+                    className="text-xs text-sub-500 hover:font-bold hover:text-sub-600"
+                    onClick={() => {
+                      setDisabled(false);
+                      setTimeout(() => textareaRef.current?.focus(), 0);
+                    }}
+                  >
+                    수정
+                  </button>
+                  <button
+                    type="button"
+                    data-comment-id={comment.commentId}
+                    className="text-xs text-sub-500 hover:font-bold hover:text-sub-600"
+                  >
+                    삭제
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    type="button"
+                    className="text-xs text-gray-500 hover:font-bold hover:text-gray-600"
+                    onClick={() => onClickUpdate()}
+                  >
+                    수정 완료
+                  </button>
+                  <button
+                    type="button"
+                    className="text-xs text-sub-500 hover:font-bold hover:text-sub-600"
+                    onClick={() => {
+                      setContent(comment.content);
+                      setDisabled(true);
+                    }}
+                  >
+                    수정 취소
+                  </button>
+                </>
+              )}
             </>
           )}
         </div>

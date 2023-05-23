@@ -17,6 +17,7 @@ import useCustomToast from "@/hooks/useCustomToast";
 import Form from "@/components/Board/Form";
 import { validateYoutubeURL } from "@/libs";
 import { isAxiosError } from "axios";
+import { twMerge } from "tailwind-merge";
 
 // type
 interface Props {
@@ -101,6 +102,9 @@ const ProfileEditForm: React.FC<Props> = ({ memberId }) => {
       link = values[3];
       introduction = values[4];
 
+      if (!isConfirm) {
+        return toast({ title: "비밀번호를 먼저 확인해주세요!", status: "warning" });
+      }
       if (pw.trim().length === 0) {
         return toast({ title: "비밀번호를 입력해주세요!", status: "warning" });
       }
@@ -122,12 +126,11 @@ const ProfileEditForm: React.FC<Props> = ({ memberId }) => {
       // FIXME: 프로필 이미지
       await apiUpdateMember({
         password: pw,
-        nickname,
+        nickname: member.nickname === nickname ? null : nickname,
         phone: member.phone === phone ? null : phone,
-        link,
-        introduction,
+        link: member.link === link ? null : link,
+        introduction: member.introduction === introduction ? null : introduction,
         memberId,
-        profileImageUrl: member.profileImageUrl,
       });
       await apiLogOut({});
 
@@ -169,17 +172,21 @@ const ProfileEditForm: React.FC<Props> = ({ memberId }) => {
           <label htmlFor="password" className="font-bold cursor-pointer">
             {isConfirm ? "수정할 비밀번호 입력" : "현재 비밀번호 입력"}
           </label>
-          <div className="flex">
+          <div className="flex flex-col space-y-1 relative">
             <input
               id="password"
               name="비밀번호"
               type="password"
               placeholder="ex) keyboard1cat-@"
-              className="flex-1 px-3 py-1 bg-transparent rounded-sm text-lg border-2 border-main-300 focus:outline-none focus:border-main-500 placeholder:text-sm placeholder:font-bold"
+              className={twMerge(
+                "flex-1 px-3 py-1 bg-transparent rounded-sm text-lg border-2 border-main-300 focus:outline-none focus:border-main-500 placeholder:text-sm placeholder:font-bold",
+                !isConfirm && "border-red-500",
+              )}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
-            <button type="button" className="ml-2">
+            {!isConfirm && <span className="text-red-500 text-xs">** 비밀번호를 먼저 확인해주세요! **</span>}
+            <button type="button" className="absolute right-2">
               {isConfirm ? (
                 <CheckBadgeIcon className="w-8 h-8 text-green-600" />
               ) : (

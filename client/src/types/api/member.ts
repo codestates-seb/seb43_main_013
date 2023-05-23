@@ -33,12 +33,12 @@ export interface ApiFetchMemberHandler {
 /** 2023/05/18 - 로그인한 멤버 정보 수정 송신 타입 - by leekoby */
 export interface ApiUpdateMemberRequest {
   memberId: number;
-  password?: string;
-  nickname: string;
-  phone: string | null;
-  introduction: string;
-  link: string;
-  profileImageUrl: string;
+  password?: string | null;
+  nickname?: string | null;
+  phone?: string | null;
+  introduction?: string | null;
+  link?: string | null;
+  profileImageUrl?: string | null;
 }
 /** 2023/05/18 - 로그인한 멤버 정보 수정 수신 타입 - by leekoby */
 export interface ApiUpdateMemberResponse extends Member {

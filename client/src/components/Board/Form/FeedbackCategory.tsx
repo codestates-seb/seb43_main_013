@@ -22,7 +22,7 @@ const FeedbackCategory: React.FC<Props> = ({ selectedCategory, setSelectedCatego
     if (selectedCategory) return;
     if (!feedbackCategories?.length) return;
 
-    setSelectedCategory(feedbackCategories[0].feedbackCategoryName);
+    setSelectedCategory("-- 카테고리 선택 --");
   }, [selectedCategory, feedbackCategories, setSelectedCategory]);
 
   const [query, setQuery] = useState("");
@@ -35,13 +35,14 @@ const FeedbackCategory: React.FC<Props> = ({ selectedCategory, setSelectedCatego
         );
 
   return (
-    <section className={"relative flex-1 flex flex-col min-w-0 z-[1]"}>
+    <section className={"relative flex-1 flex flex-col min-w-0 z-[11]"}>
       <span className="text-base font-bold text-sub-800 mb-1">피드백 카테고리</span>
       <Combobox value={selectedCategory} onChange={setSelectedCategory}>
         {({ open }) => (
           <>
             <Combobox.Input
               onChange={(e) => setQuery(e.target.value)}
+              onClick={(e) => e.target instanceof HTMLInputElement && e.target.select()}
               className="px-3 py-1 bg-transparent rounded-sm text-lg border-2 border-main-300 focus:outline-none focus:border-main-500 placeholder:text-sm placeholder:font-bold"
             />
             <Transition
@@ -54,30 +55,32 @@ const FeedbackCategory: React.FC<Props> = ({ selectedCategory, setSelectedCatego
               leaveTo="transform scale-90 opacity-0"
             >
               <Combobox.Options className="absolute bottom-0 w-full translate-y-full shadow-md rounded-b-md overflow-hidden">
-                {filteredCategories?.map((category) => (
-                  <Combobox.Option key={category.feedbackCategoryId} value={category.feedbackCategoryName}>
-                    {({ active, selected }) => (
-                      <li
-                        className={twMerge(
-                          "group flex p-2 space-x-0.5 cursor-pointer hover:bg-main-500 hover:text-white hover:font-bold focus:bg-main-500",
-                          active ? "bg-main-500 text-white font-bold" : "bg-white text-black",
-                        )}
-                      >
-                        {selected ? (
-                          <CheckIcon
-                            className={twMerge(
-                              "w-5 h-5 text-main-500 group-hover:text-white",
-                              active ? "text-white" : "",
-                            )}
-                          />
-                        ) : (
-                          <div className="w-5 h-5" />
-                        )}
-                        <span>{category.feedbackCategoryName}</span>
-                      </li>
-                    )}
-                  </Combobox.Option>
-                ))}
+                {filteredCategories
+                  ?.filter((category) => category.feedbackCategoryName !== "전체")
+                  .map((category) => (
+                    <Combobox.Option key={category.feedbackCategoryId} value={category.feedbackCategoryName}>
+                      {({ active, selected }) => (
+                        <li
+                          className={twMerge(
+                            "group flex p-2 space-x-2.5 cursor-pointer hover:bg-main-500 hover:text-white hover:font-bold focus:bg-main-500",
+                            active ? "bg-main-500 text-white font-bold" : "bg-white text-black",
+                          )}
+                        >
+                          {selected ? (
+                            <CheckIcon
+                              className={twMerge(
+                                "w-5 h-5 text-main-500 group-hover:text-white",
+                                active ? "text-white" : "",
+                              )}
+                            />
+                          ) : (
+                            <div className="w-5 h-5" />
+                          )}
+                          <span>{category.feedbackCategoryName}</span>
+                        </li>
+                      )}
+                    </Combobox.Option>
+                  ))}
               </Combobox.Options>
             </Transition>
           </>
