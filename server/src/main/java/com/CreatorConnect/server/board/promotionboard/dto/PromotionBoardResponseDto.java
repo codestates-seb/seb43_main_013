@@ -13,7 +13,7 @@ public class PromotionBoardResponseDto {
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class post {
+    public static class Post {
         private long promotionboardId;
     }
 
