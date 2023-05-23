@@ -1,8 +1,6 @@
 package com.CreatorConnect.server.auth.filter;
 
 import com.CreatorConnect.server.auth.jwt.JwtTokenizer;
-import com.CreatorConnect.server.auth.jwt.refreshToken.CustomHttpServletRequestWrapper;
-import com.CreatorConnect.server.auth.jwt.refreshToken.RefreshTokenService;
 import com.CreatorConnect.server.auth.utils.CustomAuthorityUtils;
 import com.CreatorConnect.server.member.entity.Member;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -18,22 +16,21 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.security.SignatureException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Slf4j
-public class JwtVerificationFilter extends OncePerRequestFilter {
+@Slf4j // jwt 검증 필터
+public class JwtVerificationFilter extends OncePerRequestFilter { // OncePerRequestFilter -request 마다 한번 수행
 
     private final JwtTokenizer jwtTokenizer;
     private final CustomAuthorityUtils authorityUtils;
-    private final RefreshTokenService refreshTokenService;
 
-    public JwtVerificationFilter(JwtTokenizer jwtTokenizer, CustomAuthorityUtils authorityUtils, RefreshTokenService refreshTokenService) {
+    public JwtVerificationFilter(JwtTokenizer jwtTokenizer, CustomAuthorityUtils authorityUtils) {
         this.jwtTokenizer = jwtTokenizer;
         this.authorityUtils = authorityUtils;
-        this.refreshTokenService = refreshTokenService;
     }
 
     @Override
@@ -42,65 +39,32 @@ public class JwtVerificationFilter extends OncePerRequestFilter {
 
         try {
             Map<String, Object> claims = verifyJws(request);
-            setAuthenticationToContext(claims);
+            setAuthenticationToContext(claims); // SecurityContext 에 검증 정보 저장
 
         } catch (ExpiredJwtException ee) {
             // 액세스 토큰이 만료된 경우
+            log.info("catch ExpiredJwtException");
 
-            String refreshToken = request.getHeader("Refresh-Token");
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Access-Token expired");
+            return;
 
-            if (refreshToken == null) {
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Refresh-Token expired");
-                return;
-            }
-
-            if (refreshTokenService.isValidRefreshToken(refreshToken)) {
-
-                Member member = refreshTokenService.findMemberByRefreshToken(refreshToken);
-                String newAccessToken = delegateAccessToken(member);
-                log.info("New access token generated.");
-
-                // 새로운 액세스 토큰을 요청의 헤더에 추가
-                HttpServletRequest wrappedRequest = new CustomHttpServletRequestWrapper(request, newAccessToken);
-                response.setHeader("Authorization", "Bearer " + newAccessToken);
-
-                filterChain.doFilter(wrappedRequest, response);
-
-            } else {
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid refresh token");
-                return;
-            }
         } catch (Exception e) {
             request.setAttribute("exception", e);
         }
 
-        filterChain.doFilter(request, response);
+        filterChain.doFilter(request, response); // 인증 성공 시 다음 필터 호출
     }
-
-    private String delegateAccessToken(Member member) {
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("memberId", member.getMemberId());
-        claims.put("username", member.getEmail());
-        claims.put("roles", member.getRoles());
-
-        String subject = member.getEmail();
-        Date expiration = jwtTokenizer.getTokenExpiration(jwtTokenizer.getAccessTokenExpirationMinutes());
-        String base64EncodedSecretKey = jwtTokenizer.encodeBase64SecretKey(jwtTokenizer.getSecretKey());
-
-        String accessToken = jwtTokenizer.generateAccessToken(claims, subject, expiration, base64EncodedSecretKey);
-
-        return accessToken;
-    }
-
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         String authorization = request.getHeader("Authorization");
 
         return authorization == null || !authorization.startsWith("Bearer");
+        // Authorization 의 값이 null 이거나 Bearer 로 시작하지 않을 때, 토큰 검증을 수행하지 않음
+        // JWT 자격증명이 필요하지 않은 요청이라고 판단, 다음 Filter 로 위임
     }
 
-    private Map<String, Object> verifyJws(HttpServletRequest request) {
+    private Map<String, Object> verifyJws(HttpServletRequest request) { // jwt 검증
         String jws = request.getHeader("Authorization").replace("Bearer ", "");
         String base64EncodedSecretKey = jwtTokenizer.encodeBase64SecretKey(jwtTokenizer.getSecretKey());
         Map<String, Object> claims = jwtTokenizer.getClaims(jws, base64EncodedSecretKey).getBody();
@@ -108,7 +72,7 @@ public class JwtVerificationFilter extends OncePerRequestFilter {
         return claims;
     }
 
-    private void setAuthenticationToContext(Map<String, Object> claims) {
+    private void setAuthenticationToContext(Map<String, Object> claims) { // Authentication 객체 SecurityContext 에 저장
 
         String email = (String) claims.get("username");
         List<GrantedAuthority> authorities = authorityUtils.createAuthorities((List) claims.get("roles"));

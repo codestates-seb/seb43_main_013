@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Component
+@Component // 사용자 권한 생성 (Authentication authority)
 public class CustomAuthorityUtils {
 
     @Value("${mail.address.admin}")

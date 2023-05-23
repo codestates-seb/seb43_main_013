@@ -1,33 +1,29 @@
 package com.CreatorConnect.server.auth.jwt.refreshToken;
 
-import com.CreatorConnect.server.member.entity.Member;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import javax.persistence.Id;
 
-import javax.persistence.*;
-import java.time.LocalDateTime;
-import java.util.Date;
-
-@NoArgsConstructor
-@Setter
-@Getter
-@Entity
+// @RedisHash(value = "refreshToken", timeToLive = 604800) // refresh token 유효기간 일주일
 public class RefreshToken {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String refreshToken;
 
-    @Column(unique = true)
-    private String token;
+    private Long memberId;
 
-    private String email;
+    public RefreshToken(String refreshToken, Long memberId) {
+        this.refreshToken = refreshToken;
+        this.memberId = memberId;
+    }
 
-    private Date IssuedAt;
+    public RefreshToken() {
 
-    private Date expiration;
+    }
 
-    private boolean used;
+    public String getRefreshToken() {
+        return refreshToken;
+    }
 
+    public Long getMemberId() {
+        return memberId;
+    }
 }

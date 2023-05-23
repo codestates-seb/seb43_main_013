@@ -4,12 +4,10 @@ import com.CreatorConnect.server.auth.filter.JwtAuthenticationFilter;
 import com.CreatorConnect.server.auth.filter.JwtVerificationFilter;
 import com.CreatorConnect.server.auth.handler.*;
 import com.CreatorConnect.server.auth.jwt.JwtTokenizer;
-import com.CreatorConnect.server.auth.jwt.refreshToken.RefreshTokenService;
+import com.CreatorConnect.server.auth.jwt.refreshToken.TokenService;
 import com.CreatorConnect.server.auth.oauth.handler.OAuth2MemberSuccessHandler;
-import com.CreatorConnect.server.auth.oauth.service.OAuth2MemberService;
 import com.CreatorConnect.server.auth.utils.CustomAuthorityUtils;
 import com.CreatorConnect.server.member.repository.MemberRepository;
-import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -39,14 +37,14 @@ public class SecurityConfiguration {
     private final CustomAuthorityUtils authorityUtils;
     private final OAuth2MemberSuccessHandler oAuth2MemberSuccessHandler;
     private final MemberRepository memberRepository;
-    private final RefreshTokenService refreshTokenService;
+    private final TokenService tokenService;
 
-    public SecurityConfiguration(JwtTokenizer jwtTokenizer, CustomAuthorityUtils authorityUtils, OAuth2MemberSuccessHandler oAuth2MemberSuccessHandler, MemberRepository memberRepository, RefreshTokenService refreshTokenService) {
+    public SecurityConfiguration(JwtTokenizer jwtTokenizer, CustomAuthorityUtils authorityUtils, OAuth2MemberSuccessHandler oAuth2MemberSuccessHandler, MemberRepository memberRepository, TokenService tokenService) {
         this.jwtTokenizer = jwtTokenizer;
         this.authorityUtils = authorityUtils;
         this.oAuth2MemberSuccessHandler = oAuth2MemberSuccessHandler;
         this.memberRepository = memberRepository;
-        this.refreshTokenService = refreshTokenService;
+        this.tokenService = tokenService;
     }
 
     @Bean
@@ -76,7 +74,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(authorize -> authorize
                         .antMatchers("/h2/**").permitAll()
                         .antMatchers(HttpMethod.OPTIONS).permitAll()
-                        .antMatchers(HttpMethod.POST, "/api/signup/**", "/api/login").permitAll()
+                        .antMatchers(HttpMethod.POST, "/api/signup/**", "/api/login", "/api/refresh-token").permitAll()
                         .antMatchers(HttpMethod.GET, "/", "/api/search/**", "/api/keyword/**").permitAll()
                         .antMatchers(HttpMethod.GET, "/api/login/**", "/auth/**", "/api/member/**").permitAll()
                         .antMatchers(HttpMethod.GET, "/api/freeboard/**", "/api/freeboards/**").permitAll()
@@ -124,18 +122,18 @@ public class SecurityConfiguration {
         public void configure(HttpSecurity builder) throws Exception {
             AuthenticationManager authenticationManager = builder.getSharedObject(AuthenticationManager.class);
 
-            JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(authenticationManager, jwtTokenizer);
+            JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(authenticationManager, tokenService);
             jwtAuthenticationFilter.setFilterProcessesUrl("/api/login");
             jwtAuthenticationFilter.setAuthenticationSuccessHandler(new MemberAuthenticationSuccessHandler(memberRepository));
             jwtAuthenticationFilter.setAuthenticationFailureHandler(new MemberAuthenticationFailureHandler());
 
-            JwtVerificationFilter jwtVerificationFilter = new JwtVerificationFilter(jwtTokenizer, authorityUtils, refreshTokenService);
+            JwtVerificationFilter jwtVerificationFilter = new JwtVerificationFilter(jwtTokenizer, authorityUtils);
 
             builder
                     .addFilter(jwtAuthenticationFilter)
                     .addFilterAfter(jwtVerificationFilter, JwtAuthenticationFilter.class)
+                    .addFilterAfter(new JwtVerificationFilter(jwtTokenizer, authorityUtils), JwtVerificationFilter.class)
                     .addFilterAfter(jwtVerificationFilter, OAuth2LoginAuthenticationFilter.class);
         }
-
     }
 }

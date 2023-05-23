@@ -21,7 +21,8 @@ public class MemberAuthenticationFailureHandler implements AuthenticationFailure
     public void onAuthenticationFailure(HttpServletRequest request,
                                         HttpServletResponse response,
                                         AuthenticationException exception) throws IOException {
-        // 인증 실패 시, 에러 로그를 기록하거나 error response 전송.
+
+        // 로그인 인증 실패 시, 에러 로그를 기록하거나 error response 전송.
         log.error("# Authentication failed: {}", exception.getMessage());
 
         sendErrorResponse(response, exception);

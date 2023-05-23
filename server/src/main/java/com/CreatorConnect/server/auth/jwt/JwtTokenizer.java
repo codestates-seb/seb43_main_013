@@ -1,10 +1,7 @@
 package com.CreatorConnect.server.auth.jwt;
 
-import com.CreatorConnect.server.auth.jwt.refreshToken.RefreshToken;
-import com.CreatorConnect.server.auth.jwt.refreshToken.RefreshTokenRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.io.Encoders;
@@ -19,13 +16,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-@Component
+@Component // jwt 생성 및 검증
 public class JwtTokenizer {
-    private final RefreshTokenRepository refreshTokenRepository;
-
-    public JwtTokenizer(RefreshTokenRepository refreshTokenRepository) {
-        this.refreshTokenRepository = refreshTokenRepository;
-    }
 
     @Getter
     @Value("${jwt.key}")
@@ -69,33 +61,23 @@ public class JwtTokenizer {
                 .signWith(key)
                 .compact();
 
-        // 리프레시 토큰 엔티티 생성 및 저장
-        RefreshToken refreshTokenEntity = new RefreshToken();
-        refreshTokenEntity.setToken(refreshToken);
-        refreshTokenEntity.setEmail(subject); // 사용자 이메일 설정
-        refreshTokenEntity.setIssuedAt(Calendar.getInstance().getTime()); // 생성 시간 설정
-        refreshTokenEntity.setExpiration(expiration); // 유효 기간 설정
-        refreshTokenEntity.setUsed(false); // 사용 여부 설정
-
-        refreshTokenRepository.save(refreshTokenEntity);
-
         return refreshToken;
     }
 
     public Jws<Claims> getClaims(String jws, String base64EncodedSecretKey) {
 
-        Key key = getKeyFromBase64EncodedKey(base64EncodedSecretKey);
+        Key key = getKeyFromBase64EncodedKey(base64EncodedSecretKey); // base64 인코딩된 Secret Key 를 디코딩
 
         // 검증 후, Claims 을 반환하는 용도
-        Jws<Claims> claims = Jwts.parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(jws);
+        Jws<Claims> claims = Jwts.parserBuilder() // JWT 토큰을 검증하고 클레임을 반환하기 위해 JwtParser 객체 생성
+                .setSigningKey(key) // JWT 토큰의 서명과 비교하여 검증에 사용하는 시크릿 키 설정
+                .build() // JwtParser 객체 생성
+                .parseClaimsJws(jws); // JWT 토큰 문자열(jws)을 파싱 후 디코딩된 시크릿 키와 비교하여 검증
 
-        return claims;
+        return claims; // 검증이 완료된 클레임(토큰 데이터)을 포함하는 Jws<Claims> 객체 반환
     }
 
-    // 단순히 검증만 하는 용도로 쓰일 경우
+    // 단순 검증 용도
     public void verifySignature(String jws, String base64EncodedSecretKey) {
         Key key = getKeyFromBase64EncodedKey(base64EncodedSecretKey);
 
