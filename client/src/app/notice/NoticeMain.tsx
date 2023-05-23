@@ -17,7 +17,7 @@ const NoticeMain = () => {
   const member = useMemberStore((state) => state.member);
   /** 2023/05/20 - 정렬 전역 상태 - by leekoby */
   const sortSelectedOption = useSortStore((state) => state.selectedOption);
-
+  console.log(sortSelectedOption);
   /** 2023/05/11  공지사항 목록 get 요청 - by leekoby */
   const { data, refetch } = useFetchNoticeBoardList({
     sorted: sortSelectedOption?.optionName,
