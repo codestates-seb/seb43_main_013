@@ -57,13 +57,13 @@ const ContentFooter: React.FC<ContentFooterProps> = ({ type, position, footerDat
 
   return (
     <div className="flex justify-between w-full px-3 py-1">
-      <div className={` gap-x-1 flex items-center justify-start w-full`}>
+      <div className={` gap-x-3 flex items-center justify-start w-full`}>
         {/* 아바타 프로필  */}
         {/* <DefaultAvatarIcon className={`${position === "side" ? " w-5 h-5 text-sub-500" : "w-7 h-7"} `} /> */}
         <Link href={`profile/${footerData.memberId}`}>
           <Avatar
             src={footerData.profileImageUrl}
-            className={`${position === "side" ? " w-5 h-5 text-sub-500" : "w-7 h-7"} `}
+            className={`${position === "side" ? " w-5 h-5 text-sub-500" : "w-10 h-10"} `}
             href={`/profile/${footerData.memberId}`}
           />
         </Link>
