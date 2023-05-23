@@ -177,13 +177,15 @@ const BoardHeader: React.FC<Props> = ({
           <OLinkIcon className="text-sub-700 w-6 h-6 hover:text-main-400 hover:stroke-2 active:text-main-500" />
         </button>
 
-        <button type="button" className="ml-4" onClick={onClickBookmark}>
-          {bookmarked ? (
-            <SBookmarkIcon className="text-sub-700 w-6 h-6 hover:text-main-400 hover:stroke-2 active:text-main-500" />
-          ) : (
-            <OBookmarkIcon className="text-sub-700 w-6 h-6 hover:text-main-400 hover:stroke-2 active:text-main-500" />
-          )}
-        </button>
+        {bookmarked === undefined ? null : (
+          <button type="button" className="ml-4" onClick={onClickBookmark}>
+            {bookmarked ? (
+              <SBookmarkIcon className="text-sub-700 w-6 h-6 hover:text-main-400 hover:stroke-2 active:text-main-500" />
+            ) : (
+              <OBookmarkIcon className="text-sub-700 w-6 h-6 hover:text-main-400 hover:stroke-2 active:text-main-500" />
+            )}
+          </button>
+        )}
 
         {member?.memberId === memberId && (
           <>
