@@ -19,20 +19,13 @@ const SideCategories: React.FC<SideCategoriesProps> = ({ categories, selectedCat
     setSelectedCategory(category.categoryName, category.categoryId);
   };
 
-  // 작은 사이즈용
-  const [isShown, setIsShown] = useState(true);
-  // 작은 사이즈용
-  const toggleSideCategories = () => {
-    setIsShown(!isShown);
-  };
-
   return (
     <div className="flex flex-col shadow-md my-5 md:my-0 mx-5 rounded-xl w-full ">
       {/* category header */}
-      <h2 className="flex ml-5 text-xl font-bold text-black mt-7">카테고리 🦝</h2>
+      <h2 className="flex ml-5 text-xl font-bold text-black mt-7">카테고리</h2>
 
       {/* category Item  */}
-      <div className="m-5 flex space-x-2 md:space-x-0 md:space-y-2 md:flex-col">
+      <div className="m-5 flex gap-2 md:flex-col flex-wrap">
         {categories?.map((category) => (
           <li className="list-none" key={category.categoryId}>
             <button
