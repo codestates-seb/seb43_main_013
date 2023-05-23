@@ -4,16 +4,16 @@ import React from "react";
 import { useState } from "react";
 
 import SearchDiv from "../components/Header/SearchDiv";
-import IsLoginSide from "../components/Header/LoginSide";
+import LoginSide from "../components/Header/LoginSide";
 
 import HeaderLogo from "../components/Header/HeaderLogo";
 import SearchSide from "../components/Header/SearchSide";
 import headerArr from "../components/Header/HeaderArr";
-import { useMemberStore } from "@/store/useMemberStore";
+import { useTokenStore } from "@/store/useTokenStore";
 
 /** 2023/05/04 - 헤더 컴포넌트 - by Kadesti */
 const Header: React.FC = () => {
-  const { member } = useMemberStore();
+  const { accessToken } = useTokenStore();
 
   const nickState = useState(false);
   const { leftArr, rightArr } = headerArr();
@@ -24,7 +24,7 @@ const Header: React.FC = () => {
         <HeaderLogo />
         <SearchSide array={leftArr} />
         <SearchDiv />
-        {member ? <IsLoginSide nickState={nickState} /> : <SearchSide array={rightArr} />}
+        {accessToken !== "" ? <LoginSide nickState={nickState} /> : <SearchSide array={rightArr} />}
       </div>
     </header>
   );

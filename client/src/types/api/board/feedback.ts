@@ -78,7 +78,7 @@ export interface ApiDeleteFeedbackBoardHandler {
 /** 2023/05/12- 피드백 게시판 게시글리스트 조회 요청 송신 타입 - by leekoby */
 export interface ApiFetchFeedbackBoardListRequest {
   selected: string;
-  selectedFeedback: number;
+  selectedFeedback: string;
   sorted: string;
   page: number;
   size: number;

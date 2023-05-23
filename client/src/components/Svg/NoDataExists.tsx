@@ -1,8 +1,8 @@
 /** 2023/05/21 - 게시글 없음 svg 컴포넌트 - by leekoby */
 const NoDataExists = () => {
   return (
-    <div className="bg-white shadow-black/40 shadow-sm py-10 rounded-md w-full">
-      <div className="flex-1 flex justify-center items-center ">
+    <div className="flex flex-col bg-white shadow-black/40 shadow-sm py-10 rounded-md w-full">
+      <div className="flex-1 flex justify-center items-center w-full">
         <div className="animate-swing ">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -11,8 +11,8 @@ const NoDataExists = () => {
             height="435"
             preserveAspectRatio="xMidYMid meet"
             style={{
-              width: "100%",
-              height: "100%",
+              width: "90%",
+              height: "90%",
               transform: "translate3d(0px, 0px, 0px)",
               contentVisibility: "visible",
             }}

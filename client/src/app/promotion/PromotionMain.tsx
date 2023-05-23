@@ -70,9 +70,12 @@ const PromotionMain = () => {
     //  전체 컨테이너
     <div className="mx-auto mt-6 ">
       <h1 className="text-2xl font-bold text-left">🔥 홍보 게시판 🔥</h1>
+      <div className="flex justify-end mb-4">
+        <SortPosts />
+      </div>
       <div className="flex flex-col md:flex-row ">
         {/* Left Side */}
-        <aside className="flex flex-row md:flex-col items-center justify-center md:justify-start  md:w-0 md:grow-[2] md:mt-14 ">
+        <aside className="flex flex-row md:flex-col items-center justify-center md:justify-start  md:w-0 md:grow-[2]  ">
           {/* side category  */}
           {categories && <SideCategories selectedCategory={selectedCategory} categories={categories} />}
         </aside>
@@ -80,9 +83,6 @@ const PromotionMain = () => {
         <section className="flex flex-col md:w-0 ml-5  grow-[8]">
           {/* freeboard list header */}
 
-          <div className="flex justify-end mb-4">
-            <SortPosts />
-          </div>
           {/* post item */}
           {/*  2023/05/17 - 무한스크롤 피드백 게시글 목록 - by leekoby  */}
           <div className="flex flex-col flex-wrap gap-5 md:flex-row">

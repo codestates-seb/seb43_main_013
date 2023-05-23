@@ -17,7 +17,6 @@ const NoticeMain = () => {
   const member = useMemberStore((state) => state.member);
   /** 2023/05/20 - 정렬 전역 상태 - by leekoby */
   const sortSelectedOption = useSortStore((state) => state.selectedOption);
-  console.log(sortSelectedOption);
   /** 2023/05/11  공지사항 목록 get 요청 - by leekoby */
   const { data, refetch } = useFetchNoticeBoardList({
     sorted: sortSelectedOption?.optionName,
@@ -28,9 +27,11 @@ const NoticeMain = () => {
   return (
     // 전체 컨테이너
     <div className="mx-auto mt-6">
-      <h2 className="text-2xl font-bold text-left"> 공지사항 </h2>
-      <div className="flex justify-end  mb-4">
-        <SortPosts />
+      <div className="flex justify-between ml-5 mb-4">
+        <h2 className="text-2xl font-bold text-left"> 공지사항 </h2>
+        <div className="flex justify-end  ">
+          <SortPosts />
+        </div>
       </div>
       <div className="flex flex-col md:flex-row ">
         {/* 카테고리 영역 추가 시  */}

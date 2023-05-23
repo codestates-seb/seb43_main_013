@@ -27,7 +27,7 @@ const FeedbackCategories: React.FC<feedbackCategoriesProps> = ({ feedbackCategor
 
   return (
     /* category Container */
-    <div className="flex rounded-xl gap-x-2">
+    <div className="flex rounded-xl gap-2">
       {/* category Item  */}
       {feedbackCategoryData?.map((feedbackCategory) => (
         <li className="list-none">
