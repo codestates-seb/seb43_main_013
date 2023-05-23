@@ -236,6 +236,40 @@ public class FeedbackBoardService {
         return new FeedbackBoardResponseDto.Multi<>(responses, pageInfo);
     }
 
+    public FeedbackBoardResponseDto.Multi<FeedbackBoardResponseDto.Details> responseFeedbacksByFeedbackCategory(Long categoryId, String sort, int page, int size){
+        // page생성 - 카테고리 ID로 검색 후 정렬 적용
+        Page<FeedbackBoard> feedbackBoardsPage = feedbackBoardRepository.findFeedbackBoardsByCategoryId(categoryId, sortedPageRequest(sort, page, size));
+
+        // pageInfo 가져오기
+        FeedbackBoardResponseDto.PageInfo pageInfo = new FeedbackBoardResponseDto.PageInfo(feedbackBoardsPage.getNumber() + 1, feedbackBoardsPage.getSize(), feedbackBoardsPage.getTotalElements(), feedbackBoardsPage.getTotalPages());
+
+        // 로그인한 멤버 후 게시글 목록
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        List<FeedbackBoardResponseDto.Details> responses = new ArrayList<>();
+
+        if (authentication != null && authentication.isAuthenticated() && !"anonymousUser".equals(authentication.getName())) {
+            Member loggedinMember = memberService.findVerifiedMember(authentication.getName());
+
+            for (FeedbackBoard feedbackBoard : feedbackBoardsPage.getContent()) {
+                boolean bookmarked = loggedinMember.getBookmarks().stream()
+                        .anyMatch(bookmark -> feedbackBoard.equals(bookmark.getFeedbackBoard()));
+
+                boolean liked = loggedinMember.getLikes().stream()
+                        .anyMatch(like -> feedbackBoard.equals(like.getFeedbackBoard()));
+
+                FeedbackBoardResponseDto.Details feedbackResponse = mapper.feedbackBoardToFeedbackBoardDetailsResponse(feedbackBoard);
+                feedbackResponse.setBookmarked(bookmarked);
+                feedbackResponse.setLiked(liked);
+                responses.add(feedbackResponse);
+            }
+        } else {
+            responses = getResponseList(feedbackBoardsPage);
+        }
+
+        return new FeedbackBoardResponseDto.Multi<>(responses, pageInfo);
+    }
+
+
     // 피드백 카테고리 - 카테고리별 목록 조회
     public FeedbackBoardResponseDto.Multi<FeedbackBoardResponseDto.Details> responseFeedbacksByCategory(Long feedbackCategoryId, Long categoryId, String sort, int page, int size){
         // page생성 - 피드백 카테고리 ID 와 카테고리 ID로 검색 후 정렬 적용
