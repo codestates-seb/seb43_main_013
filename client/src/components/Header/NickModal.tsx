@@ -14,7 +14,7 @@ const NickModal = ({ setNickModal }: { setNickModal: React.Dispatch<boolean> }) 
   const [memberLink, setMemberLink] = useState("");
 
   useEffect(() => {
-    if (member) setMemberLink(`/api/member/${member.memberId}`);
+    if (member) setMemberLink(`/profile/${member.memberId}`);
   }, [member]);
 
   const logoutEvent = async () => {
