@@ -1,4 +1,4 @@
-import Image from "next/image";
+"use client";
 import { BookmarkIcon as BookmarkIconUnchecked } from "@heroicons/react/24/outline";
 import { BookmarkIcon as BookmarkIconChecked } from "@heroicons/react/24/solid";
 
@@ -54,14 +54,13 @@ const ContentItem: React.FC<ContentItemProps> = ({ props }) => {
       }
     }
   };
+
   return (
     <>
       {/*  list container */}
-      <div className="flex flex-col items-center justify-center p-2 bg-white rounded-md shadow-main md:flex-row ">
+      <div className="flex flex-col items-center justify-center p-2 bg-white rounded-md shadow-main md:flex-row">
         {/* List Item * */}
         <div className="items-center p-5 bg-sub-100 rounded-md w-full">
-          {/* Thumnail */}
-          {/* <Image src={defaultThumnail} className="h-auto mx-1 my-1 border rounded-lg w-80 md:w-40" alt="" /> */}
           {/* right content */}
           <div className="flex justify-between w-full h-full">
             {/* content header */}
