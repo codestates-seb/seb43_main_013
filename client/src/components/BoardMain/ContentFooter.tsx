@@ -32,7 +32,6 @@ const ContentFooter: React.FC<ContentFooterProps> = ({ type, position, footerDat
 
   if (!footerData) return <></>;
 
-  console.log(footerData.commentCount);
   /** 2023/05/19 - 게시글 좋아요 - by leekoby */
   const onClickLike = async () => {
     if (!member) return toast({ title: "로그인후에 접근해주세요!", status: "error" });

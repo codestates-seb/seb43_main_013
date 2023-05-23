@@ -10,11 +10,12 @@ const HomeMain = () => {
   return (
     /** 2023/05/16 - 홈화면 구성 - by leekoby */
     <section className="flex flex-col space-y-24">
-      <div className="">
+      {/* 사진이 추가되지 않으면 없애는걸로 결정 */}
+      {/* <div className="">
         <BannerSlide />
-      </div>
+      </div> */}
 
-      <div className="flex flex-col">
+      <div className="flex flex-col mt-10">
         <YoutubeList />
       </div>
       <div className="flex flex-col">

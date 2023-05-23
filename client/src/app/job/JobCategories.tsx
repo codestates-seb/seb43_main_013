@@ -19,20 +19,13 @@ const JobCategories: React.FC<JobCategoriessProps> = ({ jobCategories, selectedC
     setSelectedCategory(jobCategories.jobCategoryName, jobCategories.jobCategoryId);
   };
 
-  // 작은 사이즈용
-  const [isShown, setIsShown] = useState(true);
-  // 작은 사이즈용
-  const toggleSideCategories = () => {
-    setIsShown(!isShown);
-  };
-
   return (
-    <div className="flex flex-col shadow-md my-2.5 rounded-xl w-[50%] md:w-full ">
+    <div className="flex flex-col shadow-md my-5 md:my-0 mx-5 rounded-xl w-full ">
       {/* category header */}
-      <h2 className="flex ml-5 text-xl font-bold text-black mt-7">카테고리 🦝</h2>
+      <h2 className="flex ml-5 text-xl font-bold text-black mt-7">카테고리</h2>
 
       {/* category Item  */}
-      <div className="m-5  ">
+      <div className="m-5 flex gap-2 md:flex-col flex-wrap">
         {jobCategories?.map((category) => (
           <li className="list-none" key={category.jobCategoryId}>
             <button
@@ -41,7 +34,7 @@ const JobCategories: React.FC<JobCategoriessProps> = ({ jobCategories, selectedC
                 ${
                   selectedCategory?.categoryId === category.jobCategoryId
                     ? "bg-main-500 text-white shadow-lg shadow-sub-500/50"
-                    : "bg-sub-100 "
+                    : "bg-sub-200 "
                 }`}
               onClick={() => {
                 categoryClickHandler(category);

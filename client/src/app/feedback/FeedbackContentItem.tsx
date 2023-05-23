@@ -63,11 +63,13 @@ const FeedbackContentItem = forwardRef<HTMLDivElement, ContentItemProps>(({ prop
         {/* 게시글 영역* */}
         <div className="flex flex-col items-center w-full  h-full p-5  bg-sub-100 rounded-md ">
           {/* Thumnail */}
-          <BoardThumbnail
-            url={props.link}
-            alt={props.title}
-            className="max-w-[640px] max-h-[360px] min-h[240px] flex-shrink-0"
-          />
+          <Link href={`/feedback/${props.feedbackBoardId}  `} className="inline-block w-full">
+            <BoardThumbnail
+              url={props.link}
+              alt={props.title}
+              className="max-w-[640px] max-h-[360px] min-h[240px] flex-shrink-0"
+            />
+          </Link>
           {/* right content */}
           <div className="flex flex-col w-full flex-1 gap-2 p-2">
             {/* content header */}

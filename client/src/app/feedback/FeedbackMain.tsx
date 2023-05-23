@@ -16,11 +16,10 @@ import NoDataExists from "@/components/Svg/NoDataExists";
 /** 2023/05/08 - 피드백 게시판 메인 화면 - by leekoby */
 const FeedbackMain = () => {
   const member = useMemberStore((state) => state.member);
-
+  //  TODO: 정렬기능 수정하기
   /** 2023/05/14 - 사이드 카테고리 상태 - by leekoby */
+
   const selectedCategory = useCategoriesStore((state) => state.selectedCategory);
-  const selected =
-    !selectedCategory || selectedCategory?.categoryName === "전체" ? "" : `/categories/${selectedCategory?.categoryId}`;
 
   /**  2023/05/15 - 피드백 카테고리 상태 - by leekoby */
   const selectedFeedbackCategory = useFeedbackCategoriesStore((state) => state.selectedFeedbackCategory);
@@ -28,10 +27,17 @@ const FeedbackMain = () => {
   /** 2023/05/15 - 정렬 전역 상태 - by leekoby */
   const sortSelectedOption = useSortStore((state) => state.selectedOption);
 
+  const selected = selectedCategory?.categoryName === "전체" ? "" : `/categories/${selectedCategory?.categoryId}`;
+
+  const selectFeedback =
+    selectedFeedbackCategory?.feedbackCategoryName === "전체"
+      ? ""
+      : `/feedbackcategories/${selectedFeedbackCategory?.feedbackCategoryId}`;
+
   /** 2023/05/11 피드백 목록 get 요청 - by leekoby */
   const { data, fetchNextPage, hasNextPage, isFetching, refetch } = useFetchFeedbackBoardList({
     selected,
-    selectedFeedback: selectedFeedbackCategory?.feedbackCategoryId,
+    selectedFeedback: selectFeedback,
     sorted: sortSelectedOption?.optionName,
     page: 1,
     size: 10,
@@ -61,8 +67,6 @@ const FeedbackMain = () => {
     [fetchNextPage, hasNextPage, isFetching],
   );
 
-  //* 북마크 좋아요 확인용 콘솔로그
-  // console.log(data.pages);
   return (
     //  전체 컨테이너
     <div className="mx-auto mt-6">
@@ -75,13 +79,13 @@ const FeedbackMain = () => {
         </aside>
         {/* rightside freeboard post list */}
         <section className="flex flex-col md:w-0 ml-5  grow-[8]">
-          {/* freeboard list header */}
           <div className="flex flex-col md:flex-row md:justify-between mb-4 ">
             {feedbackCategories && <FeedbackCategories feedbackCategoryData={feedbackCategories} />}
-            <div className="flex self-end">
+            <div className="flex self-end mt-2 md:mt-0">
               <SortPosts />
             </div>
           </div>
+          {/* freeboard list header */}
 
           {/* post item */}
           {/*  2023/05/14 - 무한스크롤 피드백 게시글 목록 - by leekoby  */}

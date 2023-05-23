@@ -9,11 +9,9 @@ import ContentItem from "./ContentItem";
 import RightSideButton from "@/components/RightSideButton";
 import { useCategoriesStore, usePageStore, useSortStore } from "@/store";
 import { useMemberStore } from "@/store/useMemberStore";
-import NotSearch from "@/components/Svg/NotSearch";
 import NoDataExists from "@/components/Svg/NoDataExists";
 
 /** 2023/05/08 - 자유게시판 메인 화면 - by leekoby */
-// TODO: 렌더링 3번씩 되는 문제 있음
 const FreeMain = () => {
   const member = useMemberStore((state) => state.member);
 
@@ -54,14 +52,11 @@ const FreeMain = () => {
       <div className="flex flex-col md:flex-row ">
         {/* Left Side */}
         {/* rightside freeboard post list */}
-        <aside className=" flex flex-row md:flex-col items-center justify-center md:justify-start md:w-0  md:grow-[2]  ">
+        <aside className=" flex flex-row md:flex-col items-center justify-center md:justify-start  md:w-0 md:grow-[2]  ">
           {/* category  */}
           {categories && <SideCategories selectedCategory={selectedCategory} categories={categories} />}
-
-          {/* TODO: //* 인기게시글 생기면 완성하기 */}
-          {/* <PopularPosts /> */}
         </aside>
-        <section className="flex flex-col ml-5 w-0 grow-[8]">
+        <section className="flex flex-col md:w-0 ml-5  grow-[8]">
           {/* freeboard list header */}
 
           {/* post item */}
