@@ -84,8 +84,10 @@ const Form: React.FC<Props> = ({ boardId }) => {
     // 채널명 유효성 검사
     if (channelName.trim().length <= 0) return toast({ title: "채널명을 한 글자 이상 입력해주세요!", status: "error" });
     if (+subscriberCount <= 0) return toast({ title: "구독자 수를 0명 이상으로 입력해주세요!", status: "error" });
-    if (content.trim().length <= 100)
-      return toast({ title: `${100 - content.trim().length}자 더 입력해주세요!`, status: "error" });
+    const length = content.replace(/<[^>]*>?/g, "").length;
+    if (length <= 20) {
+      return toast({ title: `내용을 20자 이상 입력해주세요 ( ${length}/20 )`, status: "error" });
+    }
 
     try {
       loading.start();
@@ -115,10 +117,15 @@ const Form: React.FC<Props> = ({ boardId }) => {
     }
   };
 
+  const [isFocus, setIsFocus] = useState(false);
+
   if (isLoading) return <Skeleton.BoardEdit />;
 
   return (
-    <form className="flex flex-col space-y-4 px-4 p-8 bg-white shadow-lg m-4 mt-0 rounded-md" onSubmit={onSubmit}>
+    <form
+      className="flex flex-col space-y-4 px-4 p-8 bg-white shadow-black/40 shadow-sm my-12 mx-4 m-4 mt-0 rounded-md"
+      onSubmit={onSubmit}
+    >
       {/* title, link, tag, category, thumbnail */}
       <section className="flex space-y-4 md:space-y-0 md:space-x-4 z-[1] flex-col md:flex-row flex-1">
         {/* title, link, tag, category */}
@@ -135,7 +142,22 @@ const Form: React.FC<Props> = ({ boardId }) => {
             />
           </div>
           <div className="flex flex-col md:flex-row space-y-4 md:space-x-4 md:space-y-0">
-            <Input name="태그" type="text" placeholder="태그를 입력해주세요!" noMessage onKeyDown={onSelectedTag} />
+            <div className="relative z-10 flex-1">
+              <Input
+                name="태그"
+                type="text"
+                placeholder="태그를 입력해주세요!"
+                noMessage
+                onKeyDown={onSelectedTag}
+                onFocus={() => setIsFocus(true)}
+                onBlur={() => setIsFocus(false)}
+              />
+              {isFocus && selectedTags.length === 0 && (
+                <p className="whitespace-pre text-sm bg-main-500 shadow-md text-white px-3 py-2 absolute -bottom-16 left-0 rounded-md animate-fade-in">
+                  {"엔터키를 이용하면 태그를 등록할 수 있습니다.\n그리고 태그를 클릭하면 태그가 제거됩니다."}
+                </p>
+              )}
+            </div>
             <NormalCategory selectedCategory={selectedNormalCategory} setSelectedCategory={setSelectedNormalCategory} />
           </div>
         </div>

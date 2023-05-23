@@ -139,6 +139,9 @@ const BoardComment: React.FC<Props> = ({ type, boardId, comment }) => {
   /** 2023/05/13 - 답글 폼 보기 - by 1-blue */
   const [isShowForm, setIsShowForm] = useState(false);
 
+  /** 2023/05/22 - 답글 열기 핸들러 - by 1-blue */
+  const onShowRecomment = () => setIsShow(true);
+
   return (
     <li className="flex space-x-3">
       <Avatar src={comment.profileImageUrl} className="w-12 h-12 flex-shrink-0" href={`/profile/${comment.memberId}`} />
@@ -232,7 +235,14 @@ const BoardComment: React.FC<Props> = ({ type, boardId, comment }) => {
           </ul>
         )}
 
-        {isShowForm && <BoardRecommentForm type={type} boardId={boardId} commentId={comment.commentId} />}
+        {isShowForm && (
+          <BoardRecommentForm
+            type={type}
+            boardId={boardId}
+            commentId={comment.commentId}
+            onShowRecomment={onShowRecomment}
+          />
+        )}
       </div>
     </li>
   );

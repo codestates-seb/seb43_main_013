@@ -29,13 +29,13 @@ html::-webkit-scrollbar-thumb:hover {
     @apply w-2 transition-colors;
   }
   .scrollbar::-webkit-scrollbar-track {
-    @apply bg-sub-50;
+    @apply bg-main-50;
   }
   .scrollbar::-webkit-scrollbar-thumb {
-    @apply bg-sub-500 rounded-sm border-2 border-sub-200;
+    @apply bg-main-400 rounded-sm border-2 border-main-200;
   }
   .scrollbar::-webkit-scrollbar-thumb:hover {
-    @apply bg-sub-600;
+    @apply bg-main-500;
   }
 
   /* 3줄 제한 */

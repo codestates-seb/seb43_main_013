@@ -16,6 +16,8 @@ import { getTimeDiff } from "@/libs/time";
 
 // api
 import {
+  apiCreateBookmark,
+  apiDeleteBookmark,
   apiDeleteFeedbackBoard,
   apiDeleteFreeBoard,
   apiDeleteJobBoard,
@@ -34,7 +36,9 @@ import useCustomToast from "@/hooks/useCustomToast";
 import Avatar from "@/components/Avatar";
 
 // type
-import type { Board, BoardType, DetailTag } from "@/types/api";
+import type { ApiFetchFeedbackBoardResponse, Board, BoardType, DetailTag } from "@/types/api";
+import { isAxiosError } from "axios";
+import { useQueryClient } from "@tanstack/react-query";
 interface Props extends Board {
   type: BoardType;
   boardId: number;
@@ -70,12 +74,44 @@ const BoardHeader: React.FC<Props> = ({
   const { loading } = useLoadingStore((state) => state);
   const { member } = useMemberStore();
 
+  const queryClient = useQueryClient();
+
   /** 2023/05/12 - copy clipboard - by 1-blue */
   const copyLink = useCallback(() => {
     navigator.clipboard
       .writeText(window.location.origin + pathname)
       .then(() => toast({ title: "링크를 복사했습니다.", status: "success" }));
   }, []);
+
+  /** 2023/05/21 - 게시글 북마크 - by 1-blue */
+  const onClickBookmark = async () => {
+    if (!member) {
+      return toast({ title: "로그인후에 접근해주세요!", status: "error" });
+    }
+
+    try {
+      if (bookmarked) {
+        await apiDeleteBookmark(type, { boardId });
+        toast({ title: "북마크를 제거했습니다.", status: "success" });
+      } else {
+        await apiCreateBookmark(type, { boardId });
+        toast({ title: "북마크를 눌렀습니다.", status: "success" });
+      }
+
+      queryClient.setQueryData<ApiFetchFeedbackBoardResponse>(
+        [`${type}Board`, boardId],
+        (prev) => prev && { ...prev, bookmarked: !bookmarked },
+      );
+    } catch (error) {
+      console.error(error);
+
+      if (isAxiosError(error)) {
+        toast({ title: error.response?.data, status: "error" });
+      } else {
+        toast({ title: "북마크 처리를 실패했습니다.", status: "error" });
+      }
+    }
+  };
 
   /** 2023/05/12 - 게시판 삭제 핸들러 - by 1-blue */
   const onDeleteBoard = useCallback(async () => {
@@ -141,6 +177,14 @@ const BoardHeader: React.FC<Props> = ({
           <OLinkIcon className="text-sub-700 w-6 h-6 hover:text-main-400 hover:stroke-2 active:text-main-500" />
         </button>
 
+        <button type="button" className="ml-4" onClick={onClickBookmark}>
+          {bookmarked ? (
+            <SBookmarkIcon className="text-sub-700 w-6 h-6 hover:text-main-400 hover:stroke-2 active:text-main-500" />
+          ) : (
+            <OBookmarkIcon className="text-sub-700 w-6 h-6 hover:text-main-400 hover:stroke-2 active:text-main-500" />
+          )}
+        </button>
+
         {member?.memberId === memberId && (
           <>
             <Link href={`/${type}/edit?boardId=${boardId}`} className="ml-4">
@@ -182,12 +226,14 @@ const BoardHeader: React.FC<Props> = ({
       {/* 태그 */}
       {tags && (
         <ul className="flex space-x-2 flex-wrap">
-          {tags.map((tag) => (
-            <li
-              key={tag.tagName}
-              className="px-2 py-1 mt-1 text-xs font-bold text-main-400 border-2 border-main-400 rounded-lg"
-            >
-              {tag.tagName}
+          {tags.map(({ tagName }) => (
+            <li key={tagName}>
+              <Link
+                href={`/search?keyword=${tagName}`}
+                className="px-2 py-1 mt-1 text-xs font-bold text-main-500 border-2 border-main-500 rounded-lg transition-colors hover:bg-main-500 hover:text-white"
+              >
+                {tagName}
+              </Link>
             </li>
           ))}
         </ul>

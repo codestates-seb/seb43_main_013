@@ -20,10 +20,11 @@ interface Props {
   type: BoardType;
   boardId: number;
   commentId: number;
+  onShowRecomment: () => void;
 }
 
 /** 2023/05/13 - 답글 폼 컴포넌트 - by 1-blue */
-const BoardRecommentForm: React.FC<Props> = ({ type, boardId, commentId }) => {
+const BoardRecommentForm: React.FC<Props> = ({ type, boardId, commentId, onShowRecomment }) => {
   const toast = useCustomToast();
   const { loading } = useLoadingStore((state) => state);
   const { member } = useMemberStore();
@@ -92,6 +93,7 @@ const BoardRecommentForm: React.FC<Props> = ({ type, boardId, commentId }) => {
       );
 
       setContent("");
+      onShowRecomment();
 
       return toast({ title: "답글을 등록했습니다.", status: "success" });
     } catch (error) {

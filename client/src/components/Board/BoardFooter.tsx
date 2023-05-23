@@ -13,7 +13,7 @@ import useCustomToast from "@/hooks/useCustomToast";
 import { useMemberStore } from "@/store/useMemberStore";
 
 // type
-import type { BoardType, FreeBoard } from "@/types/api";
+import type { ApiFetchFeedbackBoardResponse, BoardType, FreeBoard } from "@/types/api";
 interface Props extends Pick<FreeBoard, "commentCount" | "likeCount"> {
   type: BoardType;
   boardId: number;
@@ -40,8 +40,10 @@ const BoardFooter: React.FC<Props> = ({ type, boardId, commentCount, likeCount, 
         toast({ title: "좋아요를 눌렀습니다.", status: "success" });
       }
 
-      // FIXME: 시간 남으면 캐싱 무효화에서 수정하기
-      queryClient.invalidateQueries([`${type}Board`, boardId]);
+      queryClient.setQueryData<ApiFetchFeedbackBoardResponse>(
+        [`${type}Board`, boardId],
+        (prev) => prev && { ...prev, liked: !liked, likeCount: liked ? prev.likeCount - 1 : prev.likeCount + 1 },
+      );
     } catch (error) {
       console.error(error);
 
@@ -51,14 +53,14 @@ const BoardFooter: React.FC<Props> = ({ type, boardId, commentCount, likeCount, 
 
   return (
     <section className="flex justify-between items-center">
-      {commentCount ? (
+      {likeCount === undefined ? null : (
         <div className="flex space-x-1">
           <button type="button">
             <OCommentIcon className="text-sub-700 w-5 h-5" />
           </button>
           <span className="text-sm">( {commentCount.toLocaleString()} )</span>
         </div>
-      ) : null}
+      )}
 
       {likeCount === undefined ? null : (
         <div className="flex space-x-1">

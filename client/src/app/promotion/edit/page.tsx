@@ -17,7 +17,7 @@ interface Props {
 const Page = ({ searchParams: { boardId } }: Props) => {
   return (
     <>
-      <h1 className="p-4 text-2xl font-bold">✏️ 홍보 게시글 수정 ✏️</h1>
+      <h1 className="px-4 pt-8 pb-4 text-2xl font-bold">✏️ 홍보 게시글 수정 ✏️</h1>
 
       <Form boardId={+boardId} />
     </>

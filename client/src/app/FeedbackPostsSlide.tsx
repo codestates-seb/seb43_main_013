@@ -2,15 +2,15 @@
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import { useFetchFeedbackBoardList } from "@/hooks/query/useFetchFeedbackBoardList";
 import Link from "next/link";
+import FeedbackContentItem from "@/app/feedback/FeedbackContentItem";
 
 import { ReactNode, useEffect, useState } from "react";
-import SlideWrapper from "./SlideWrapper";
-import { useFetchFreeBoardList } from "@/hooks/query/useFetchFreeBoardList";
-import ContentItem from "@/app/free/ContentItem";
+import SlideWrapper from "../components/BoardMain/Slide/SlideWrapper";
 import NotSearch from "@/components/Svg/NotSearch";
 
-const FreePostsSlide = () => {
+const FeedbackPostsSlide = () => {
   //포커스된 슬라이드 인덱스
   const [currentSlideIndex, setCurrentSlideIndex] = useState<number>(0);
   //슬라이더 페이지 갯수
@@ -22,21 +22,21 @@ const FreePostsSlide = () => {
     window.addEventListener("resize", () => {
       setWidth(window.innerWidth);
       // 변화된 width 값을 이용하여 필요한 작업 수행
-      if (width <= 768) {
+      if (width <= 900) {
         setSliderPage(1);
-      } else if (width <= 1200) {
-        setSliderPage(2);
+        // } else if (width <= 1200) {
+        //   setSliderPage(2);
       } else {
-        setSliderPage(3);
+        setSliderPage(2);
       }
     });
   }
   /**2023-05-17 - 새로고침시 width에 따라 페이징 변환 - leekoby */
   useEffect(() => {
-    if (width <= 768) {
+    if (width <= 900) {
       setSliderPage(1);
     } else {
-      setSliderPage(3);
+      setSliderPage(2);
     }
   }, []);
 
@@ -69,57 +69,49 @@ const FreePostsSlide = () => {
 
   /**2023-05-17 - 슬라이드 설정 옵션 - leekoby */
   const settings = {
-    touchThreshold: 100,
     afterChange: handleAfterChange,
-    className: "center",
-    centerMode: true,
-    // centerPadding: "60px",
     infinite: true,
     draggable: true,
     swipeToSlide: true,
     slidesToShow: silderPage,
     autoplay: true,
-    // autoplaySpeed: 4000,
-    speed: 500,
+    speed: 3000,
     dots: false,
     arrow: true,
     appendDots: appendDots,
     customPaging: customPaging,
+    pauseOnHover: true,
   };
 
-  /** 2023/05/17 자유게시판 목록 get 요청 - by leekoby */
-  const { data } = useFetchFreeBoardList({
+  /** 2023/05/17 피드백 목록 get 요청 - by leekoby */
+  const { data } = useFetchFeedbackBoardList({
     selected: "",
+    selectedFeedback: 1,
     sorted: "인기순",
     page: 1,
     size: 10,
   });
 
-  if (!data) return <></>;
-
   return (
     <div>
       <div className="flex justify-between">
-        <h1 className="font-bold text-xl">지금 HOT🔥한 게시글</h1>
-        <Link href="/free">
+        <h1 className="font-bold text-xl">지금 HOT🔥한 피드백</h1>
+        <Link href="/feedback">
           <button className="text-3xl focus:outline-none">+</button>
         </Link>
       </div>
-
       {data?.pages[0].data.length === 0 ? (
         <NotSearch />
       ) : (
-        <div className="">
-          <Slider {...settings}>
-            {data.pages.map((page) =>
+        <div>
+          <Slider {...settings} className="max-h-[550px]">
+            {data?.pages.map((page) =>
               page.data.map((innerData) => {
                 return (
-                  <SlideWrapper className="hover:cursor-pointer" key={innerData.freeBoardId}>
-                    <Link href={`/free/${innerData.freeBoardId}`}>
-                      <div className="h-full mx-3">
-                        <ContentItem props={innerData} />
-                      </div>
-                    </Link>
+                  <SlideWrapper className="h-full" key={innerData.feedbackBoardId}>
+                    <div className="h-full mx-3">
+                      <FeedbackContentItem props={innerData} />
+                    </div>
                   </SlideWrapper>
                 );
               }),
@@ -131,4 +123,4 @@ const FreePostsSlide = () => {
   );
 };
 
-export default FreePostsSlide;
+export default FeedbackPostsSlide;

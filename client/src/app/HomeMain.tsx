@@ -1,7 +1,8 @@
-import BannerSlide from "@/components/BoardMain/Slide/BannerSlide";
-import FeedbackPostsSlide from "@/components/BoardMain/Slide/FeedbackPostsSlide";
-import FreePostsSlide from "@/components/BoardMain/Slide/FreePostsSlide";
+import BannerSlide from "@/app/BannerSlide";
+import FeedbackPostsSlide from "@/app/FeedbackPostsSlide";
+import FreePostsSlide from "@/app/FreePostsSlide";
 import React from "react";
+import YoutubeList from "./YoutubeSlide";
 
 /** 2023/05/11 - 홈화면 구성 - by leekoby */
 
@@ -14,14 +15,13 @@ const HomeMain = () => {
       </div>
 
       <div className="flex flex-col">
+        <YoutubeList />
+      </div>
+      <div className="flex flex-col">
         <FeedbackPostsSlide />
       </div>
       <div className="flex flex-col">
         <FreePostsSlide />
-      </div>
-      <div className="flex flex-col">
-        인기동영상 자리
-        <FeedbackPostsSlide />
       </div>
     </section>
   );
