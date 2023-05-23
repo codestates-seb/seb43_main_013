@@ -33,3 +33,4 @@ export * from "./useFetchBookmarkedBoardList";
 export * from "./useFetchLikedBoardList";
 export * from "./useFetchFollowers";
 export * from "./useFetchFollowings";
+export * from "./useFetchKeywords";

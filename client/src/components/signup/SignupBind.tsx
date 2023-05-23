@@ -41,29 +41,28 @@ const SignupBind = () => {
   ];
 
   const [profileImageUrl, setProfileImageUrl] = useState("");
-
   const [isSubmit, setIsSubmit] = useState(false);
 
   const onsubmit = async () => {
     if (email === "" || password == "" || name === "" || nickname === "") return setIsSubmit(true);
 
+    setIsSubmit(true);
     const data = { email, password, name, nickname, phone, link, introduction, profileImageUrl };
 
     try {
       loading.start();
+      if (email === "admin@gmail.com") return toast({ title: "회원가입에 실패했습니다.", status: "error" });
 
       await axios.post(`${baseUrl}/api/signup`, data);
-
       toast({ title: "회원가입에 성공했습니다.\n로그인 페이지로 이동됩니다.", status: "success" });
 
       router.replace("/login");
-    } catch (error) {
-      console.error(error);
-      console.log("error: ", error);
+    } catch (error: any) {
+      if (error.response) {
+        const fieldErrors = error.response.data.fieldErrors;
 
-      // if(error.status === 409) toast({ title: "email 또는 닉네임 또는 전화번호가 이미 존재합니다.", status: "error" });
-      // if(error.status === 500) toast({ title: "서버가 불안정합니다.", status: "error" });
-      // else toast({ title: "회원가입에 실패했습니다.", status: "error" });
+        toast({ title: fieldErrors[0].reason, status: "error" });
+      }
     } finally {
       loading.end();
     }

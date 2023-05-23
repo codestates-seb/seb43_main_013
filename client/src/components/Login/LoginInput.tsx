@@ -1,6 +1,5 @@
 "use client";
 import { useEffect, useState } from "react";
-import SmallBtn from "./Button/SmallBtn";
 
 interface login {
   label: "이메일" | "비밀번호";
@@ -11,8 +10,6 @@ interface login {
 
 /** 2023/05/05 - 로그인 인풋 창 - by Kadesti */
 const LoginInput = ({ label, value, setValue, submitCnt }: login) => {
-  const height = label === "비밀번호" ? "h-22" : "h-28";
-
   const [message, setMessage] = useState("");
 
   useEffect(() => {
@@ -29,7 +26,7 @@ const LoginInput = ({ label, value, setValue, submitCnt }: login) => {
   }, [submitCnt]);
 
   return (
-    <div className={`w-full ${height}`}>
+    <div className={`w-full h-28`}>
       <div className="text-xl flex mb-1">{label}</div>
       <input
         placeholder={`${label}`}
@@ -39,10 +36,7 @@ const LoginInput = ({ label, value, setValue, submitCnt }: login) => {
         onChange={(e) => setValue(e.target.value)}
       />
 
-      <div className="flex justify-between">
-        {<span className="text-lg text-main-400">{message}</span>}
-        {label === "비밀번호" && <SmallBtn />}
-      </div>
+      <span className="text-lg text-main-400">{message}</span>
     </div>
   );
 };

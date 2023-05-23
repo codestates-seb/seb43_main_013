@@ -55,7 +55,10 @@ const Form = () => {
 
     // 제목 유효성 검사
     if (title.trim().length <= 1) return toast({ title: "제목을 두 글자 이상 입력해주세요!", status: "error" });
-    if (content.trim().length <= 100) return toast({ title: "내용이 너무 적습니다!", status: "error" });
+    const length = content.replace(/<[^>]*>?/g, "").length;
+    if (length <= 10) {
+      return toast({ title: `내용을 10자 이상 입력해주세요 ( ${length}/10 )`, status: "error" });
+    }
 
     try {
       loading.start();
@@ -80,15 +83,35 @@ const Form = () => {
     }
   };
 
+  const [isFocus, setIsFocus] = useState(false);
+
   return (
-    <form className="flex flex-col space-y-4 px-4 p-8 bg-white shadow-lg m-4 mt-0 rounded-md" onSubmit={onSubmit}>
+    <form
+      className="flex flex-col space-y-4 px-4 p-8 bg-white shadow-black/40 shadow-sm my-12 mx-4 m-4 mt-0 rounded-md"
+      onSubmit={onSubmit}
+    >
       {/* title, link, tag, category, thumbnail */}
       <section className="flex space-y-4 md:space-y-0 md:space-x-4 z-[1] flex-col md:flex-row flex-1">
         {/* title, link, tag, category */}
         <div className="w-full md:w-0 md:flex-1 space-y-2 z-[1]">
           <Input name="제목" type="text" placeholder="제목을 입력해주세요!" />
           <div className="flex flex-col md:flex-row space-y-4 md:space-x-4 md:space-y-0">
-            <Input name="태그" type="text" placeholder="태그를 입력해주세요!" noMessage onKeyDown={onSelectedTag} />
+            <div className="relative z-10 flex-1">
+              <Input
+                name="태그"
+                type="text"
+                placeholder="태그를 입력해주세요!"
+                noMessage
+                onKeyDown={onSelectedTag}
+                onFocus={() => setIsFocus(true)}
+                onBlur={() => setIsFocus(false)}
+              />
+              {isFocus && selectedTags.length === 0 && (
+                <p className="whitespace-pre text-sm bg-main-500 shadow-md text-white px-3 py-2 absolute -bottom-16 left-0 rounded-md animate-fade-in">
+                  {"엔터키를 이용하면 태그를 등록할 수 있습니다.\n그리고 태그를 클릭하면 태그가 제거됩니다."}
+                </p>
+              )}
+            </div>
             <NormalCategory selectedCategory={selectedNormalCategory} setSelectedCategory={setSelectedNormalCategory} />
           </div>
         </div>

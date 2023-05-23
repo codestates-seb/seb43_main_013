@@ -19,6 +19,7 @@ import { useRouter } from "next/navigation";
 import { useLoadingStore } from "@/store";
 import useCustomToast from "@/hooks/useCustomToast";
 import OAuthContainer from "@/components/Login/OAuthContainer";
+import SignupRouteBtn from "@/components/Login/Button/SignupRouteBtn";
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
@@ -44,6 +45,8 @@ const LoginWindow = () => {
 
       /** 2023/05/13 - 응답의 토큰과 데이터를 전역상태로 저장 - by Kadesti */
       const { authorization, refreshtoken } = response.headers;
+
+      console.log("response.data: ", response.data);
 
       setMember(response.data);
       setAccessToken(authorization);
@@ -78,8 +81,9 @@ const LoginWindow = () => {
         <LoginInput label="이메일" value={emailData} setValue={setEmailData} submitCnt={submitCnt} />
         <LoginInput label="비밀번호" value={password} setValue={setPassword} submitCnt={submitCnt} />
         <LoginBtn text="로그인" />
-        <OAuthContainer />
       </form>
+      <OAuthContainer />
+      <SignupRouteBtn />
     </div>
   );
 };
