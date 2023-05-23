@@ -10,7 +10,7 @@ import { useMemberStore } from "@/store/useMemberStore";
  * @param nickModal 모달 창 상태
  * @param setNickModal 세터함수
  */
-const IsLoginSide = ({ nickState }: { nickState: [boolean, React.Dispatch<boolean>] }) => {
+const LoginSide = ({ nickState }: { nickState: [boolean, React.Dispatch<boolean>] }) => {
   const [nickModal, setNickModal] = nickState;
   const [nickName, setNickName] = useState("");
   const [profileSrc, setProfileSrc] = useState("");
@@ -46,4 +46,4 @@ const IsLoginSide = ({ nickState }: { nickState: [boolean, React.Dispatch<boolea
   );
 };
 
-export default IsLoginSide;
+export default LoginSide;

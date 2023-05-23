@@ -10,12 +10,12 @@ const SmallBtn = () => {
       >
         회원가입
       </Link>
-      <Link
+      {/* <Link
         href="/signup"
         className="h-8  mb-2 text-lg cursor-pointer text-main-500 hover:border-b-2 hover:border-main-500"
       >
         비밀번호 찾기
-      </Link>
+      </Link> */}
     </span>
   );
 };
