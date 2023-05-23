@@ -80,9 +80,7 @@ const FreePostsSlide = () => {
     autoplay: true,
     speed: 500,
     dots: false,
-    arrow: true,
-    appendDots: appendDots,
-    customPaging: customPaging,
+    arrow: false,
   };
 
   /** 2023/05/17 자유게시판 목록 get 요청 - by leekoby */
@@ -105,13 +103,13 @@ const FreePostsSlide = () => {
       {data?.pages[0].data.length === 0 ? (
         <NotSearch />
       ) : (
-        <div className="">
-          <Slider {...settings}>
+        <div className="h-full">
+          <Slider {...settings} className="h-[220px]">
             {data?.pages.map((page) =>
               page.data.map((innerData) => {
                 return (
-                  <SlideWrapper className="hover:cursor-pointer" key={innerData.freeBoardId}>
-                    <Link href={`/free/${innerData.freeBoardId}`}>
+                  <SlideWrapper className="hover:cursor-pointer h-full" key={innerData.freeBoardId}>
+                    <Link href={`/free/${innerData.freeBoardId}`} className="h-full">
                       <div className="h-full mx-3">
                         <ContentItem props={innerData} />
                       </div>
