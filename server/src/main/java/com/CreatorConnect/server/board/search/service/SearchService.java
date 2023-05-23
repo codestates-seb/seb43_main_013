@@ -1,6 +1,5 @@
 package com.CreatorConnect.server.board.search.service;
 
-import com.CreatorConnect.server.board.Board;
 import com.CreatorConnect.server.board.feedbackboard.entity.FeedbackBoard;
 import com.CreatorConnect.server.board.feedbackboard.repository.FeedbackBoardRepository;
 import com.CreatorConnect.server.board.freeboard.entity.FreeBoard;
@@ -17,7 +16,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,14 +34,14 @@ public class SearchService {
         this.popularSearchRepository = popularSearchRepository;
     }
 
-    public Page<SearchResponseDto> searchPosts(String keyword, Pageable pageable) {
+    public Page<SearchResponseDto> searchPosts(String keyword, Pageable pageable, LocalDate searchDate) {
 
         Page<FreeBoard> freeBoardResults = freeBoardRepository.findByTitleContainingOrContentContaining(keyword, keyword, pageable);
         Page<FeedbackBoard> feedbackBoardResults = feedbackBoardRepository.findByTitleContainingOrContentContaining(keyword, keyword, pageable);
         Page<Member> memberResults = memberRepository.findByNicknameContaining(keyword, pageable);
 
         // update keyword search count
-        updateSearchCount(keyword);
+        updateSearchCount(keyword, searchDate);
 
         // Convert the search results to DTOs
         List<SearchResponseDto> mergedResults = mergeSearchResults(freeBoardResults, feedbackBoardResults, memberResults);
@@ -51,14 +50,14 @@ public class SearchService {
         return new PageImpl<>(mergedResults, pageable, totalElements);
     }
 
-    private void updateSearchCount(String keyword) {
+    private void updateSearchCount(String keyword, LocalDate searchDate) {
         PopularSearch popularSearch = popularSearchRepository.findByKeyword(keyword);
         if (popularSearch == null) {
             popularSearch = new PopularSearch();
+            popularSearch.setKeyword(keyword);
         }
-        popularSearch.setKeyword(keyword);
         popularSearch.setSearchCount(popularSearch.getSearchCount() + 1);
-        popularSearch.setModifiedAt(LocalDateTime.now());
+        popularSearch.setSearchDate(searchDate);
         popularSearchRepository.save(popularSearch);
     }
 
@@ -132,10 +131,30 @@ public class SearchService {
         dto.setName(member.getName());
         dto.setNickname(member.getNickname());
         dto.setProfileImageUrl(member.getProfileImageUrl());
+        dto.setIntroduction(member.getIntroduction());
+        dto.setFollowers(member.getFollowers().size());
+        dto.setFollowings(member.getFollowings().size());
         dto.setCreatedAt(member.getCreatedAt());
         dto.setModifiedAt(member.getModifiedAt());
 
         return dto;
+    }
+
+    public Page<String> getDailyPopularSearchKeywords(Pageable pageable) {
+        LocalDate now = LocalDate.now();
+        return popularSearchRepository.getDailyPopularSearchKeywords(now, pageable);
+    }
+
+    public Page<String> getWeeklyPopularSearchKeywords(Pageable pageable) {
+        LocalDate now = LocalDate.now();
+        LocalDate oneWeekAgo = now.minusWeeks(1);
+        return popularSearchRepository.getWeeklyPopularSearchKeywords(oneWeekAgo, now, pageable);
+    }
+
+    public Page<String> getMonthlyPopularSearchKeywords(Pageable pageable) {
+        LocalDate now = LocalDate.now();
+        LocalDate oneMonthAgo = now.minusMonths(1);
+        return popularSearchRepository.getMonthlyPopularSearchKeywords(oneMonthAgo, now, pageable);
     }
 
     public Page<String> getPopularSearchKeywords(Pageable pageable) {

@@ -4,6 +4,7 @@ import com.CreatorConnect.server.auth.jwt.JwtTokenizer;
 import com.CreatorConnect.server.auth.utils.CustomAuthorityUtils;
 import com.CreatorConnect.server.exception.BusinessLogicException;
 import com.CreatorConnect.server.exception.ExceptionCode;
+import com.CreatorConnect.server.helper.event.MemberRegistrationApplicationEvent;
 import com.CreatorConnect.server.member.entity.Member;
 import com.CreatorConnect.server.member.repository.MemberRepository;
 import io.jsonwebtoken.Claims;

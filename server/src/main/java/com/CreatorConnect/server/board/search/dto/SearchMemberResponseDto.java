@@ -17,6 +17,9 @@ public class SearchMemberResponseDto implements SearchResponseDto {
     private String name;
     private String nickname;
     private String profileImageUrl;
+    private String introduction;
+    private int followers;
+    private int followings;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 

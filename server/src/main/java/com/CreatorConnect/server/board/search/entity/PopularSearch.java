@@ -5,10 +5,10 @@ import com.CreatorConnect.server.audit.LocalDateTimeConverter;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @NoArgsConstructor
@@ -25,11 +25,9 @@ public class PopularSearch extends Auditable {
     private String keyword;
 
     @Column
-    private int searchCount = 0;
+    private Integer searchCount = 0;
 
-    @LastModifiedDate
-    @Column(name = "LAST_UPDATED_AT")
-    @Convert(converter = LocalDateTimeConverter.class)
-    private LocalDateTime modifiedAt;
+    @Column
+    private LocalDate searchDate;
 
 }

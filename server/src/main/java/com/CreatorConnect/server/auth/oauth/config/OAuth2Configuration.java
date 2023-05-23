@@ -36,6 +36,7 @@ public class OAuth2Configuration {
                 .getBuilder("google")
                 .clientId(googleClientId)
                 .clientSecret(googleClientSecret)
+                .redirectUri("https://api.hard-coding.com/login/oauth2/code/google")
                 .build();
     }
 

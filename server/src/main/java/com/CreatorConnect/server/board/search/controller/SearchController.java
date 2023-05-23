@@ -16,12 +16,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
 //@CrossOrigin(origins = "*", allowedHeaders = "*")
-@RequestMapping("/api/search")
 public class SearchController {
     private final SearchService searchService;
 
@@ -30,23 +30,52 @@ public class SearchController {
     }
 
     // GET /api/search?keyword=example&page=0&size=10
-    @GetMapping
+    @GetMapping("/api/search")
     public ResponseEntity search(@RequestParam(required = false) String keyword,
                                  @RequestParam(defaultValue = "0") int page,
                                  @RequestParam(defaultValue = "10") int size) {
 
-        Page<SearchResponseDto> pageResponse = searchService.searchPosts(keyword, PageRequest.of(page, size));
+        LocalDate searchdate = LocalDate.now();
+
+        Page<SearchResponseDto> pageResponse = searchService.searchPosts(keyword, PageRequest.of(page, size), searchdate);
 
         return new ResponseEntity(new MultiResponseDto<>(pageResponse.getContent(), pageResponse), HttpStatus.OK);
     }
 
-    @GetMapping("/popularkeywords")
-    public ResponseEntity getPopularSearchKeywords(@RequestParam(defaultValue = "0") int page,
+    @GetMapping("/api/keyword/all") // 전체 인기 검색어
+    public ResponseEntity getPopularSearchKeywords(@RequestParam(defaultValue = "1") int page,
                                                    @RequestParam(defaultValue = "10") int size) {
 
-
-        Page<String> pageResponse = searchService.getPopularSearchKeywords(PageRequest.of(page, size));
+        Page<String> pageResponse = searchService.getPopularSearchKeywords(PageRequest.of(page - 1, size));
 
         return new ResponseEntity(new MultiResponseDto<>(pageResponse.getContent(), pageResponse), HttpStatus.OK);
     }
+
+    @GetMapping("/api/keyword/daily")
+    public ResponseEntity<Page<String>> getDailyPopularSearchKeywords(@RequestParam(defaultValue = "1") int page,
+                                                                      @RequestParam(defaultValue = "20") int size) {
+
+        Page<String> dailyKeywords = searchService.getDailyPopularSearchKeywords(PageRequest.of(page - 1, size));
+
+        return new ResponseEntity(new MultiResponseDto<>(dailyKeywords.getContent(), dailyKeywords), HttpStatus.OK);
+    }
+
+    @GetMapping("/api/keyword/weekly")
+    public ResponseEntity<Page<String>> getWeeklyPopularSearchKeywords(@RequestParam(defaultValue = "1") int page,
+                                                                       @RequestParam(defaultValue = "20") int size) {
+
+        Page<String> weeklyKeywords = searchService.getWeeklyPopularSearchKeywords(PageRequest.of(page - 1, size));
+
+        return new ResponseEntity(new MultiResponseDto<>(weeklyKeywords.getContent(), weeklyKeywords), HttpStatus.OK);
+    }
+
+    @GetMapping("/api/keyword/monthly")
+    public ResponseEntity<Page<String>> getMonthlyPopularSearchKeywords(@RequestParam(defaultValue = "1") int page,
+                                                                        @RequestParam(defaultValue = "20") int size) {
+
+        Page<String> monthlyKeywords = searchService.getMonthlyPopularSearchKeywords(PageRequest.of(page - 1, size));
+
+        return new ResponseEntity(new MultiResponseDto<>(monthlyKeywords.getContent(), monthlyKeywords), HttpStatus.OK);
+    }
+
 }
