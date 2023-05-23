@@ -19,12 +19,7 @@ const PopularPosts = () => {
             인기 게시글 내용 부분 인기 게시글 내용 부분 인기 게시글 내용 부분
           </h2>
           {/* side tags */}
-          <div className="ml-2.5 flex text-sm gap-x-2">
-            <TagItem tag="먹방" />
-            <TagItem tag="라면" />
-            <TagItem tag="배고파" />
-            <TagItem tag="먹고싶다" />
-          </div>
+          <div className="ml-2.5 flex text-sm gap-x-2"></div>
           {/* leftside footer */}
           {/* <ContentFooter position="side"  /> */}
         </div>

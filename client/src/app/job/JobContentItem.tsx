@@ -8,7 +8,6 @@ import Link from "next/link";
 import useCustomToast from "@/hooks/useCustomToast";
 import { useMemberStore } from "@/store/useMemberStore";
 import { useQueryClient } from "@tanstack/react-query";
-import { usePageStore } from "@/store";
 import { apiCreateBookmark, apiDeleteBookmark } from "@/apis";
 import { isAxiosError } from "axios";
 
@@ -23,7 +22,6 @@ const JobContentItem: React.FC<JobContentItemProps> = ({ props }) => {
   const toast = useCustomToast();
   const { member } = useMemberStore();
   const queryClient = useQueryClient();
-  const currentPage = usePageStore((state) => state.currentPage);
 
   /** 2023/05/19 - 자유게시판 게시글 북마크 - by leekoby */
   const onClickBookmark = async () => {

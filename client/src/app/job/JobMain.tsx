@@ -47,7 +47,7 @@ const JobMain = () => {
   return (
     <>
       <div className="mx-auto mt-6">
-        <h1 className="text-2xl font-bold text-left">🔥 구인/구직 게시판 🔥</h1>
+        <h1 className="text-2xl font-bold text-left"> 구인/구직 게시판 </h1>
         {/* freeboard list header */}
         <div className="flex justify-end mb-4">
           <SortPosts />
@@ -83,11 +83,7 @@ const JobMain = () => {
               )}
             </div>
           </section>
-          {member && (
-            <div className="fixed right-0 bottom-0 transform -translate-y-1/2 ml-2">
-              <RightSideButton destination={`/job/write`} />
-            </div>
-          )}
+          {member && <RightSideButton destination={`/job/write`} />}
         </div>
       </div>
     </>

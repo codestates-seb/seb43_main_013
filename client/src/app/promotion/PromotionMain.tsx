@@ -4,7 +4,6 @@ import SideCategories from "@/components/BoardMain/SideCategories";
 import SortPosts from "@/components/BoardMain/SortPosts";
 import RightSideButton from "@/components/RightSideButton";
 import NoDataExists from "@/components/Svg/NoDataExists";
-import NotSearch from "@/components/Svg/NotSearch";
 
 import { useFetchCategories, useFetchPromotionCategories } from "@/hooks/query";
 import useFetchPromotionBoardList from "@/hooks/query/useFetctPromotionBoardList";
@@ -69,7 +68,7 @@ const PromotionMain = () => {
   return (
     //  전체 컨테이너
     <div className="mx-auto mt-6 ">
-      <h1 className="text-2xl font-bold text-left">🔥 홍보 게시판 🔥</h1>
+      <h1 className="text-2xl font-bold text-left"> 홍보 게시판 </h1>
       <div className="flex justify-end mb-4">
         <SortPosts />
       </div>
@@ -105,11 +104,7 @@ const PromotionMain = () => {
           <div className="flex flex-col items-center m-auto">{}</div>
         </section>
         {/* 오른쪽 사이드 영역 */}
-        {member && (
-          <div className="fixed right-0 bottom-0 transform -translate-y-1/2 ml-2">
-            <RightSideButton destination={`/feedback/write`} />
-          </div>
-        )}
+        {member && <RightSideButton destination={`/feedback/write`} />}
       </div>
     </div>
   );

@@ -42,10 +42,11 @@ const FreeMain = () => {
   /** 2023/05/13 - 공통 카테고리 초기값 - by leekoby */
   const { categories, isLoading } = useFetchCategories({ type: "normal" });
 
+  console.log(data?.pages);
   return (
     //  전체 컨테이너
     <div className="mx-auto mt-6">
-      <h2 className="text-2xl font-bold text-left">🔥 자유게시판 🔥</h2>
+      <h2 className="text-2xl font-bold text-left"> 자유게시판 </h2>
       <div className="flex justify-end  mb-4">
         <SortPosts />
       </div>
@@ -84,11 +85,7 @@ const FreeMain = () => {
           </div>
         </section>
         {/* 오른쪽 사이드 영역 */}
-        {member && (
-          <div className="fixed right-0 bottom-0 transform -translate-y-1/2 ml-2">
-            <RightSideButton destination={`/free/write`} />
-          </div>
-        )}
+        {member && <RightSideButton destination={`/free/write`} />}
       </div>
     </div>
   );
