@@ -8,13 +8,13 @@ import { useFetchFeedbackBoard } from "@/hooks/query";
 
 // component
 import BoardHeader from "@/components/Board/BoardHeader";
-import BoardThumbnail from "@/components/Board/BoardThumbnail";
 import BoardContent from "@/components/Board/BoardContent";
 import BoardFooter from "@/components/Board/BoardFooter";
 import BoardComments from "@/components/Board/BoardComments";
 import BoardCommentForm from "@/components/Board/BoardCommentForm";
 import Skeleton from "@/components/Skeleton";
 import BoardASide from "@/components/Board/BoardASide";
+import BoardIframe from "@/components/Board/BoardIframe";
 
 // type
 interface Props {
@@ -55,7 +55,7 @@ const Board: React.FC<Props> = ({ boardId }) => {
         </Link>
       )}
       {/* 썸네일/영상 */}
-      <BoardThumbnail url={data.link} />
+      <BoardIframe url={data.link} />
 
       {/* 내용 */}
       <BoardContent content={data.content} />

@@ -88,6 +88,9 @@ const Form: React.FC<Props> = ({ boardId }) => {
     if (length <= 20) {
       return toast({ title: `내용을 20자 이상 입력해주세요 ( ${length}/20 )`, status: "error" });
     }
+    if (selectedNormalCategory === "-- 카테고리 선택 --") {
+      return toast({ title: `일반 카테고리를 선택해주세요!`, status: "error" });
+    }
 
     try {
       loading.start();

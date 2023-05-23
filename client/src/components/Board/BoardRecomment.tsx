@@ -114,45 +114,49 @@ const BoardRecomment: React.FC<Props> = ({ type, boardId, commentId, recomment }
         <div className="space-x-2">
           <span className="text-xs font-bold">{recomment.nickname}</span>
           <time className="text-xs text-gray-400">{getTimeDiff(recomment.createdAt)}</time>
-          {disabled ? (
+          {member?.memberId === recomment.memberId && (
             <>
-              <button
-                type="button"
-                className="text-xs text-gray-500 hover:font-bold hover:text-gray-600"
-                onClick={() => {
-                  setDisabled(false);
-                  setTimeout(() => textareaRef.current?.focus(), 0);
-                }}
-              >
-                수정
-              </button>
-              <button
-                type="button"
-                data-recomment-id={recomment.recommentId}
-                className="text-xs text-gray-500 hover:font-bold hover:text-gray-600"
-              >
-                삭제
-              </button>
-            </>
-          ) : (
-            <>
-              <button
-                type="button"
-                className="text-xs text-gray-500 hover:font-bold hover:text-gray-600"
-                onClick={() => onClickUpdate()}
-              >
-                수정 완료
-              </button>
-              <button
-                type="button"
-                className="text-xs text-gray-500 hover:font-bold hover:text-gray-600"
-                onClick={() => {
-                  setDisabled(true);
-                  setContent(recomment.content);
-                }}
-              >
-                수정 취소
-              </button>
+              {disabled ? (
+                <>
+                  <button
+                    type="button"
+                    className="text-xs text-gray-500 hover:font-bold hover:text-gray-600"
+                    onClick={() => {
+                      setDisabled(false);
+                      setTimeout(() => textareaRef.current?.focus(), 0);
+                    }}
+                  >
+                    수정
+                  </button>
+                  <button
+                    type="button"
+                    data-recomment-id={recomment.recommentId}
+                    className="text-xs text-gray-500 hover:font-bold hover:text-gray-600"
+                  >
+                    삭제
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    type="button"
+                    className="text-xs text-gray-500 hover:font-bold hover:text-gray-600"
+                    onClick={() => onClickUpdate()}
+                  >
+                    수정 완료
+                  </button>
+                  <button
+                    type="button"
+                    className="text-xs text-gray-500 hover:font-bold hover:text-gray-600"
+                    onClick={() => {
+                      setDisabled(true);
+                      setContent(recomment.content);
+                    }}
+                  >
+                    수정 취소
+                  </button>
+                </>
+              )}
             </>
           )}
         </div>

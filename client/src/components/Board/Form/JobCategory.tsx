@@ -22,7 +22,7 @@ const JobCategory: React.FC<Props> = ({ selectedCategory, setSelectedCategory })
     if (selectedCategory) return;
     if (!jobCategories?.length) return;
 
-    setSelectedCategory(jobCategories[0].jobCategoryName);
+    setSelectedCategory("-- 카테고리 선택 --");
   }, [selectedCategory, jobCategories, setSelectedCategory]);
 
   const [query, setQuery] = useState("");
@@ -33,13 +33,14 @@ const JobCategory: React.FC<Props> = ({ selectedCategory, setSelectedCategory })
       : jobCategories?.filter(({ jobCategoryName }) => jobCategoryName.toLowerCase().includes(query.toLowerCase()));
 
   return (
-    <section className={"relative flex-1 flex flex-col min-w-0 z-[1]"}>
+    <section className={"relative flex-1 flex flex-col min-w-0 z-[11]"}>
       <span className="text-base font-bold text-sub-800 mb-1">구인구직 카테고리</span>
       <Combobox value={selectedCategory} onChange={setSelectedCategory}>
         {({ open }) => (
           <>
             <Combobox.Input
               onChange={(e) => setQuery(e.target.value)}
+              onClick={(e) => e.target instanceof HTMLInputElement && e.target.select()}
               className="px-3 py-1 bg-transparent rounded-sm text-lg border-2 border-main-300 focus:outline-none focus:border-main-500 placeholder:text-sm placeholder:font-bold"
             />
             <Transition
@@ -52,30 +53,32 @@ const JobCategory: React.FC<Props> = ({ selectedCategory, setSelectedCategory })
               leaveTo="transform scale-90 opacity-0"
             >
               <Combobox.Options className="absolute bottom-0 w-full translate-y-full shadow-md rounded-b-md overflow-hidden">
-                {filteredCategories?.map((category) => (
-                  <Combobox.Option key={category.jobCategoryId} value={category.jobCategoryName}>
-                    {({ active, selected }) => (
-                      <li
-                        className={twMerge(
-                          "group flex p-2 space-x-0.5 cursor-pointer hover:bg-main-500 hover:text-white hover:font-bold focus:bg-main-500",
-                          active ? "bg-main-500 text-white font-bold" : "bg-white text-black",
-                        )}
-                      >
-                        {selected ? (
-                          <CheckIcon
-                            className={twMerge(
-                              "w-5 h-5 text-main-500 group-hover:text-white",
-                              active ? "text-white" : "",
-                            )}
-                          />
-                        ) : (
-                          <div className="w-5 h-5" />
-                        )}
-                        <span>{category.jobCategoryName}</span>
-                      </li>
-                    )}
-                  </Combobox.Option>
-                ))}
+                {filteredCategories
+                  ?.filter((category) => category.jobCategoryName !== "전체")
+                  .map((category) => (
+                    <Combobox.Option key={category.jobCategoryId} value={category.jobCategoryName}>
+                      {({ active, selected }) => (
+                        <li
+                          className={twMerge(
+                            "group flex p-2 space-x-2.5 cursor-pointer hover:bg-main-500 hover:text-white hover:font-bold focus:bg-main-500",
+                            active ? "bg-main-500 text-white font-bold" : "bg-white text-black",
+                          )}
+                        >
+                          {selected ? (
+                            <CheckIcon
+                              className={twMerge(
+                                "w-5 h-5 text-main-500 group-hover:text-white",
+                                active ? "text-white" : "",
+                              )}
+                            />
+                          ) : (
+                            <div className="w-5 h-5" />
+                          )}
+                          <span>{category.jobCategoryName}</span>
+                        </li>
+                      )}
+                    </Combobox.Option>
+                  ))}
               </Combobox.Options>
             </Transition>
           </>
