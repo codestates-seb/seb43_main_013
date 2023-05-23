@@ -132,7 +132,7 @@ const ProfileCard: React.FC<Props> = ({ memberId }) => {
             <button
               type="button"
               onClick={onClickFollow}
-              className="m-auto px-2 py-1 mt-4 text-white font-bold text-sm border-2 bg-main-400 rounded-md transition-colors hover:text-white hover:bg-main-500"
+              className="m-auto px-2 py-1 mt-4 text-white text-lg border-2 bg-main-400 rounded-md transition-colors hover:text-white hover:bg-main-500"
             >
               {data.followed ? "언팔로우" : "팔로우"}
             </button>

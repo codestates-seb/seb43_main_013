@@ -67,7 +67,7 @@ const FollowerModal: React.FC<Props> = ({ memberId, nickname, onCloseModal }) =>
         toast({ title: `${nickname}님을 팔로우했습니다.`, status: "success" });
       }
 
-      queryClient.invalidateQueries(["member", memberId]);
+      queryClient.invalidateQueries(["member"]);
       queryClient.invalidateQueries(["followers"]);
       queryClient.invalidateQueries(["followings"]);
     } catch (error) {
