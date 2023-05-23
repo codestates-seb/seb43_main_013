@@ -1,7 +1,10 @@
 package com.CreatorConnect.server.auth.jwt;
 
+import com.CreatorConnect.server.auth.jwt.refreshToken.RefreshToken;
+import com.CreatorConnect.server.auth.jwt.refreshToken.RefreshTokenRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.io.Encoders;
@@ -13,10 +16,17 @@ import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 @Component
 public class JwtTokenizer {
+    private final RefreshTokenRepository refreshTokenRepository;
+
+    public JwtTokenizer(RefreshTokenRepository refreshTokenRepository) {
+        this.refreshTokenRepository = refreshTokenRepository;
+    }
+
     @Getter
     @Value("${jwt.key}")
     private String secretKey;
@@ -51,12 +61,25 @@ public class JwtTokenizer {
     public String generateRefreshToken(String subject, Date expiration, String base64EncodedSecretKey) {
         Key key = getKeyFromBase64EncodedKey(base64EncodedSecretKey);
 
-        return Jwts.builder()
+        String refreshToken =
+                Jwts.builder()
                 .setSubject(subject)
                 .setIssuedAt(Calendar.getInstance().getTime())
                 .setExpiration(expiration)
                 .signWith(key)
                 .compact();
+
+        // 리프레시 토큰 엔티티 생성 및 저장
+        RefreshToken refreshTokenEntity = new RefreshToken();
+        refreshTokenEntity.setToken(refreshToken);
+        refreshTokenEntity.setEmail(subject); // 사용자 이메일 설정
+        refreshTokenEntity.setIssuedAt(Calendar.getInstance().getTime()); // 생성 시간 설정
+        refreshTokenEntity.setExpiration(expiration); // 유효 기간 설정
+        refreshTokenEntity.setUsed(false); // 사용 여부 설정
+
+        refreshTokenRepository.save(refreshTokenEntity);
+
+        return refreshToken;
     }
 
     public Jws<Claims> getClaims(String jws, String base64EncodedSecretKey) {
