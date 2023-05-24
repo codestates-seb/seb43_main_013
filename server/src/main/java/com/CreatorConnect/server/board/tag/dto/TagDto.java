@@ -16,16 +16,4 @@ public class TagDto {
 
         private String tagName;
     }
-
-//    @Getter
-//    @Setter
-//    @AllArgsConstructor
-//    @NoArgsConstructor
-//    public static class TagResponse{
-//        private long tagId;
-//
-//        private String tagName;
-//    }
-
-
 }
