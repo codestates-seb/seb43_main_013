@@ -6,7 +6,7 @@ import SearchLists from "./SearchLists";
 export const generateMetadata = async ({ searchParams: { keyword } }: Props): Promise<Metadata> => {
   const result = await fetch(process.env.NEXT_PUBLIC_BASE_URL + `/api/search?keyword=${keyword}`, {
     method: "GET",
-    cache: "no-cache",
+    next: { revalidate: 60 },
   }).then((res) => res.json());
 
   return {
@@ -25,14 +25,14 @@ interface Props {
 const Page = async ({ params, searchParams: { keyword } }: Props) => {
   const result = await fetch(process.env.NEXT_PUBLIC_BASE_URL + `/api/search?keyword=${keyword}`, {
     method: "GET",
-    cache: "no-cache",
+    next: { revalidate: 60 },
   })
     .then((res) => res.json())
     .catch(console.error);
 
   return (
     <>
-      <h1 className="mt-12 text-center text-4xl text-sub-900">( 검색어: "{keyword}" )</h1>
+      <h1 className="mt-12 text-center text-2xl text-sub-900">( 검색어: "{keyword}" )</h1>
 
       <SearchLists keyword={keyword} initialData={result} />
     </>

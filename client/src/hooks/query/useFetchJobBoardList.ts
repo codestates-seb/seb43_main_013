@@ -15,8 +15,7 @@ const useFetchJobBoardList = ({ selected, selectedJob, sorted, page, size }: Api
     [QUERY_KEYS.jobBoardList],
     ({ pageParam = page }) => apiFetchJobBoardList({ selected, selectedJob, sorted, page: pageParam, size }),
     {
-      getNextPageParam: (lastPage, allPage) =>
-        lastPage.pageInfo.totalPages > lastPage.pageInfo.page ? lastPage.pageInfo.page + 1 : null,
+      getNextPageParam: (lastPage, allPage) => (lastPage.pageInfo.size === size ? lastPage.pageInfo.page + 1 : null),
     },
   );
 

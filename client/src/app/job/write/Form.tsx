@@ -68,7 +68,7 @@ const Form = () => {
 
       toast({ title: "게시글 생성했습니다.\n생성된 게시글 페이지로 이동됩니다.", status: "success" });
 
-      router.push(`/job/${jobBoardId}`);
+      router.replace(`/job/${jobBoardId}`);
     } catch (error) {
       console.error(error);
 
@@ -87,7 +87,7 @@ const Form = () => {
       <section className="flex space-y-4 md:space-y-0 md:space-x-4 z-[1] flex-col md:flex-row flex-1">
         {/* title, link, tag, category */}
         <div className="w-full md:w-0 md:flex-1 space-y-2 z-[1]">
-          <Input name="제목" type="text" placeholder="제목을 입력해주세요!" />
+          <Input isEssential name="제목" type="text" placeholder="제목을 입력해주세요!" />
           <div className="flex flex-col md:flex-row space-y-4 md:space-x-4 md:space-y-0">
             <JobCategory selectedCategory={selectedJobCategory} setSelectedCategory={setSelectedJobCategory} />
           </div>

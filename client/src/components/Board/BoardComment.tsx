@@ -216,14 +216,14 @@ const BoardComment: React.FC<Props> = ({ type, boardId, comment }) => {
         <textarea
           className={twMerge(
             "py-2 leading-[22px] resize-none overflow-hidden bg-transparent focus:outline-main-400 focus:font-semibold focus:px-2",
-            !disabled && "p-2 border-[3px] rounded-sm border-main-200",
+            !disabled && "py-3 px-2 border-[3px] rounded-sm border-main-200",
           )}
           ref={textareaRef}
           disabled={disabled}
           value={content}
           onChange={(e) => {
             setContent(e.target.value);
-            handleResizeHeight();
+            setTimeout(() => handleResizeHeight(), 0);
           }}
           onKeyDown={onEnter}
         />

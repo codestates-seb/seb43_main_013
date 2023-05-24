@@ -131,7 +131,8 @@ const BoardRecommentForm: React.FC<Props> = ({ type, boardId, commentId, onShowR
           handleResizeHeight();
         }}
         onKeyDown={onEnter}
-        className="resize-none bg-gray-200 w-full min-h-[60px] focus:outline-main-300 rounded-md p-2 focus:bg-gray-100 shadow-sm focus:shadow-md"
+        className="px-4 py-3 resize-none bg-gray-200 w-full min-h-[60px] focus:outline-main-300 rounded-md p-2 focus:bg-gray-100 shadow-sm focus:shadow-md placeholder:text-sub-500"
+        placeholder="답글을 입력해주세요!"
       />
       <button
         type="submit"

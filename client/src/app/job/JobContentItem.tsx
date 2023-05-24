@@ -84,9 +84,7 @@ const JobContentItem: React.FC<JobContentItemProps> = ({ props }) => {
                 )}
               </div>
               {/* content body */}
-              <p className="flex-1 w-full text-left truncate-1 text-ellipsis overflow-hidden line-clamp-2">
-                {props.content.replace(/<[^>]*>?/g, "")}
-              </p>
+              <p className="truncate-3" dangerouslySetInnerHTML={{ __html: props.content.replace(/<[^>]*>?/g, "") }} />
               {/* rightside tag */}
               <div className="flex w-full gap-x-2">
                 {props.tags && props.tags.map((item) => <TagItem tag={item.tagName} />)}
