@@ -20,8 +20,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@RestController
 //@CrossOrigin(origins = "*", allowedHeaders = "*")
+@RestController
 public class SearchController {
     private final SearchService searchService;
 
