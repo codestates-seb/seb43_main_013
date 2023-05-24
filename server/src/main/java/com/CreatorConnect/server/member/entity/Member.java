@@ -113,9 +113,6 @@ public class Member extends Auditable {
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<PromotionBoard> promotionBoards = new ArrayList<>();
 
-//    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-//    private List<PromotionBoard> promotionBoards = new ArrayList<>();
-//
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<FeedbackComment> feedbackComments = new ArrayList<>();
 

@@ -337,23 +337,7 @@ public class MemberController {
                                 like.getFeedbackBoard().getCreatedAt(),
                                 like.getFeedbackBoard().getModifiedAt()
                         );
-                    }else if (like.getBoardType() == Like.BoardType.FEEDBACKBOARD) {
-                            return new MemberBoardResponseDto(
-                                    like.getBoardType().toString(),
-                                    like.getPromotionBoard().getPromotionBoardId(),
-                                    like.getPromotionBoard().getTitle(),
-                                    like.getPromotionBoard().getContent(),
-                                    like.getPromotionBoard().getCommentCount(),
-                                    like.getPromotionBoard().getLikeCount(),
-                                    like.getPromotionBoard().getViewCount(),
-                                    like.getPromotionBoard().getMember().getMemberId(),
-                                    like.getPromotionBoard().getMember().getEmail(),
-                                    like.getPromotionBoard().getMember().getNickname(),
-                                    like.getPromotionBoard().getMember().getProfileImageUrl(),
-                                    like.getPromotionBoard().getCreatedAt()
-                                    like.getPromotionBoard().getModifiedAt()
-                            );
-                        } else if (like.getBoardType() == Like.BoardType.JOBBOARD) {
+                    }  else if (like.getBoardType() == Like.BoardType.JOBBOARD) {
                             return new MemberBoardResponseDto(
                                     like.getBoardType().toString(),
                                     like.getJobBoard().getJobBoardId(),
@@ -370,7 +354,24 @@ public class MemberController {
                                     like.getJobBoard().getCreatedAt(),
                                     like.getJobBoard().getModifiedAt()
                             );
-                        }
+                        } else if (like.getBoardType() == Like.BoardType.PROMOTIONBOARD) {
+                            return new MemberBoardResponseDto(
+                                like.getBoardType().toString(),
+                                like.getPromotionBoard().getPromotionBoardId(),
+                                like.getPromotionBoard().getTitle(),
+                                like.getPromotionBoard().getContent(),
+                                like.getPromotionBoard().getCommentCount(),
+                                like.getPromotionBoard().getLikeCount(),
+                                like.getPromotionBoard().getViewCount(),
+                                like.getPromotionBoard().getCategoryName(),
+                                like.getPromotionBoard().getMember().getMemberId(),
+                                like.getPromotionBoard().getMember().getEmail(),
+                                like.getPromotionBoard().getMember().getNickname(),
+                                like.getPromotionBoard().getMember().getProfileImageUrl(),
+                                like.getPromotionBoard().getCreatedAt(),
+                                like.getPromotionBoard().getModifiedAt()
+                        );
+                    }
                         return null;
                     })
                 .filter(Objects::nonNull)
@@ -446,6 +447,23 @@ public class MemberController {
                                     bookmark.getJobBoard().getMember().getProfileImageUrl(),
                                     bookmark.getJobBoard().getCreatedAt(),
                                     bookmark.getJobBoard().getModifiedAt()
+                            );
+                        } else if (bookmark.getBoardType() == Bookmark.BoardType.PROMOTIONBOARD) {
+                            return new MemberBoardResponseDto(
+                                    bookmark.getBoardType().toString(),
+                                    bookmark.getPromotionBoard().getPromotionBoardId(),
+                                    bookmark.getPromotionBoard().getTitle(),
+                                    bookmark.getPromotionBoard().getContent(),
+                                    bookmark.getPromotionBoard().getCommentCount(),
+                                    bookmark.getPromotionBoard().getLikeCount(),
+                                    bookmark.getPromotionBoard().getViewCount(),
+                                    bookmark.getPromotionBoard().getCategoryName(),
+                                    bookmark.getPromotionBoard().getMember().getMemberId(),
+                                    bookmark.getPromotionBoard().getMember().getEmail(),
+                                    bookmark.getPromotionBoard().getMember().getNickname(),
+                                    bookmark.getPromotionBoard().getMember().getProfileImageUrl(),
+                                    bookmark.getPromotionBoard().getCreatedAt(),
+                                    bookmark.getPromotionBoard().getModifiedAt()
                             );
                         }
                         return null;
