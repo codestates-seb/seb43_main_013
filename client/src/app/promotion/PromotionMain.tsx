@@ -11,12 +11,16 @@ import { useCategoriesStore, useSortStore } from "@/store";
 import { useMemberStore } from "@/store/useMemberStore";
 import { usePromotionCategoriesStore } from "@/store/usePromotionCategoriesStore";
 import Link from "next/link";
-import { useRef, useEffect, useCallback } from "react";
+import { useRef, useEffect, useCallback, useState } from "react";
 import PromotionContentItem from "./PromotionContentItem";
 
 /** 2023/05/17 - 홍보 게시판 메인 화면 - by leekoby */
 const PromotionMain = () => {
   const member = useMemberStore((state) => state.member);
+  const [isClient, setIsClient] = useState(false);
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   /** 2023/05/17 - 사이드 카테고리 상태 - by leekoby */
   const selectedCategory = useCategoriesStore((state) => state.selectedCategory);
@@ -69,9 +73,11 @@ const PromotionMain = () => {
     //  전체 컨테이너
     <div className="mx-auto mt-6 ">
       <h1 className="text-2xl font-bold text-left"> 홍보 게시판 </h1>
-      <div className="flex justify-end mb-4">
-        <SortPosts />
-      </div>
+      {isClient && (
+        <div className="flex justify-end  mb-4">
+          <SortPosts />
+        </div>
+      )}
       <div className="flex flex-col md:flex-row ">
         {/* Left Side */}
         <aside className="flex flex-row md:flex-col items-center justify-center md:justify-start  md:w-0 md:grow-[2]  ">
@@ -104,7 +110,7 @@ const PromotionMain = () => {
           <div className="flex flex-col items-center m-auto">{}</div>
         </section>
         {/* 오른쪽 사이드 영역 */}
-        {member && <RightSideButton destination={`/feedback/write`} />}
+        {isClient && member && <RightSideButton destination={`/promotion/write`} />}
       </div>
     </div>
   );
