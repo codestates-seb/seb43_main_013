@@ -25,7 +25,7 @@ const AuthCheck = () => {
     //     .catch(() => router.push("/login"));
     // }, []);
 
-    console.log("value: ", value);
+    // console.log("value: ", value);
 
     useEffect(() => {
       const router = useRouter();

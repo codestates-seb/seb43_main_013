@@ -48,7 +48,7 @@ const FreeMain = () => {
   /** 2023/05/13 - 공통 카테고리 초기값 - by leekoby */
   const { categories, isLoading } = useFetchCategories({ type: "normal" });
 
-  console.log(data?.pages);
+  
   return (
     //  전체 컨테이너
     <div className="mx-auto mt-6">
