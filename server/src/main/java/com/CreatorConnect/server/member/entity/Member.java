@@ -56,7 +56,7 @@ public class Member extends Auditable {
     @Column(length = 30, nullable = false, unique = true)
     private String nickname;
 
-    @Pattern(regexp = "^01(?:0|1|[6-9])-(\\d{3,4})-(\\d{4})$")
+    @Pattern(regexp = "^(01(?:[0-9]{1})-(\\d{3,4})-(\\d{4}))?$") // null 인 경우에도 유효성 검사 통과
     @Column(length = 13, unique = true)
     private String phone;
 

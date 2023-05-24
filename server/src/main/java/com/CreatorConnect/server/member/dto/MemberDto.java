@@ -29,7 +29,7 @@ public class MemberDto {
         @NotBlank(message = "닉네임은 필수 입력사항입니다.")
         private String nickname;
 
-        @Pattern(regexp = "^01(?:0|1|[6-9])-(\\d{3,4})-(\\d{4})$")
+        @Pattern(regexp = "^(01(?:[0-9]{1})-(\\d{3,4})-(\\d{4}))?$") // null 인 경우에도 유효성 검사 통과
         private String phone;
 
         private String introduction;
@@ -66,7 +66,7 @@ public class MemberDto {
 
         private String nickname;
 
-        @Pattern(regexp = "^01(?:0|1|[6-9])-(\\d{3,4})-(\\d{4})$")
+        @Pattern(regexp = "^(01(?:[0-9]{1})-(\\d{3,4})-(\\d{4}))?$") // null 인 경우에도 유효성 검사 통과
         private String phone;
 
         private String introduction;
