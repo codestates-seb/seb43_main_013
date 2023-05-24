@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.Column;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -36,11 +37,14 @@ public class PromotionBoardResponseDto {
         private long promotionBoardId;
         private String title;
         private String content;
-        private List<TagDto.TagInfo> tag;
+        private List<TagDto.TagInfo> tags;
         private long commentCount;
         private long likeCount;
         private long viewCount;
         private String categoryName;
+        private String link;
+        private String channelName;
+        private String subscriberCount;
         private LocalDateTime createdAt;
         private LocalDateTime modifiedAt;
         private long memberId;
