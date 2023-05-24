@@ -46,7 +46,7 @@ const Board: React.FC<Props> = ({ boardId }) => {
       </div>
 
       {/* 영상 링크 */}
-      {data.link.includes("https://www.youtube.com") && (
+      {data?.link?.includes("https://www.youtube.com") && (
         <Link
           href={data.link}
           target="_blank"
@@ -57,7 +57,7 @@ const Board: React.FC<Props> = ({ boardId }) => {
         </Link>
       )}
       {/* 썸네일/영상 */}
-      <BoardIframe url={data.link} />
+      {data.link && <BoardIframe url={data.link} />}
 
       {/* 내용 */}
       <BoardContent content={data.content} />
@@ -80,10 +80,10 @@ const Board: React.FC<Props> = ({ boardId }) => {
       </div>
 
       {/* 댓글과 답글 */}
-      <BoardComments type="free" boardId={boardId} />
+      <BoardComments type="promotion" boardId={boardId} />
 
       {/* 댓글폼 */}
-      <BoardCommentForm type="free" boardId={boardId} />
+      <BoardCommentForm type="promotion" boardId={boardId} />
 
       {/* 북마크 사이드 버튼 */}
       <BoardASide

@@ -96,9 +96,7 @@ const FeedbackContentItem = forwardRef<HTMLDivElement, ContentItemProps>(({ prop
               )}
             </div>
             {/* content body */}
-            <p className="text-md flex-1 w-full text-left truncate-1 text-ellipsis overflow-hidden line-clamp-1">
-              {props.content.replace(/<[^>]*>?/g, "")}
-            </p>
+            <p className="truncate-2" dangerouslySetInnerHTML={{ __html: props.content.replace(/<[^>]*>?/g, "") }} />
             {/* 오른쪽 사이드 영역 */}
             {/* rightside tag */}
             {props.tags && <TagItem tags={props.tags} />}

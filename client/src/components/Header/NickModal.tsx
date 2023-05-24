@@ -3,6 +3,7 @@ import axios from "axios";
 import Link from "next/link";
 import { useTokenStore } from "@/store/useTokenStore";
 import { useMemberStore } from "@/store/useMemberStore";
+import { useRouter } from "next/router";
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 /** 2023/05/10 - 닉네임 클릭 후 등장 모달창 - by Kadesti */
@@ -12,12 +13,13 @@ const NickModal = ({ setNickModal }: { setNickModal: React.Dispatch<boolean> }) 
 
   const { member } = useMemberStore();
   const [memberLink, setMemberLink] = useState("");
+  const router = useRouter();
 
   useEffect(() => {
     if (member) setMemberLink(`/profile/${member.memberId}`);
   }, [member]);
 
-  const logoutEvent = async () => {
+  const logoutEvent = async (router: any) => {
     const Authorization = localStorage.getItem("accessToken");
     await axios.post(`${baseUrl}/api/logout`, {
       headers: {
@@ -29,6 +31,7 @@ const NickModal = ({ setNickModal }: { setNickModal: React.Dispatch<boolean> }) 
     setMember(null);
     localStorage.removeItem("accessToken");
     localStorage.removeItem("member");
+    router.reload();
   };
 
   return (
@@ -42,7 +45,7 @@ const NickModal = ({ setNickModal }: { setNickModal: React.Dispatch<boolean> }) 
       <li
         onClick={(e) => {
           e.preventDefault();
-          logoutEvent();
+          logoutEvent(router);
         }}
         className="cursor-pointer hover:text-black text-xl mb-2"
       >

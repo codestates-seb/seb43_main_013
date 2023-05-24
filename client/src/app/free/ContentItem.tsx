@@ -87,9 +87,7 @@ const ContentItem: React.FC<ContentItemProps> = ({ props }) => {
                 )}
               </div>
               {/* content body */}
-              <p className="flex-1 w-full text-left truncate-1 text-ellipsis overflow-hidden line-clamp-2 ">
-                {props.content.replace(/<[^>]*>?/g, "")}
-              </p>
+              <p className="truncate-3" dangerouslySetInnerHTML={{ __html: props.content.replace(/<[^>]*>?/g, "") }} />
               {/* rightside tag */}
               {props.tags && <TagItem tags={props.tags} />}
             </div>

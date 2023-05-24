@@ -1,4 +1,4 @@
-import Logo4 from "@/public/logo/main-logo4.png";
+import Logo4 from "@/public/logo/main-logo.png";
 import Image from "next/image";
 
 /** 2023/05/24 - 푸터 컴포넌트 - by leekoby */

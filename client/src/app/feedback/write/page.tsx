@@ -1,4 +1,5 @@
 // component
+import Info from "@/components/Board/Form/Info";
 import Form from "./Form";
 
 // type
@@ -13,6 +14,8 @@ const Page = () => {
   return (
     <>
       <h1 className="px-4 pt-8 pb-4 text-2xl font-bold">✏️ 피드백 게시글 작성 ✏️</h1>
+
+      <Info />
 
       <Form />
     </>

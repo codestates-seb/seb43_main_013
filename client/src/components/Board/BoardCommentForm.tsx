@@ -125,14 +125,15 @@ const BoardCommentForm: React.FC<Props> = ({ type, boardId }) => {
           handleResizeHeight();
         }}
         onKeyDown={onEnter}
-        className="resize-none bg-sub-200 w-full min-h-[120px] focus:outline-main-300 rounded-md p-2 focus:bg-sub-100 shadow-sm focus:shadow-md"
+        className="resize-none px-4 py-3 bg-sub-200 w-full min-h-[120px] focus:outline-main-300 rounded-md p-2 focus:bg-sub-100 shadow-sm focus:shadow-md placeholder:text-sub-500"
+        placeholder="댓글을 입력해주세요!"
       />
       <button
         type="submit"
         className="ml-auto mt-3 px-3 py-2 bg-main-400 text-white font-bold rounded-sm transition-colors hover:bg-main-500 active:bg-main-600"
         ref={buttonRef}
       >
-        작성하기
+        댓글 작성
       </button>
     </form>
   );

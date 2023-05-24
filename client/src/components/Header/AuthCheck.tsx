@@ -13,25 +13,27 @@ const AuthCheck = () => {
 
     // 2. 엑세스 토큰이 만료된 경우
     // 3. 둘 다 만료된 경우
-    const refreshProcess = useCallback((router: any) => {
-      axios
-        .post("/refresh-token", {
-          headers: {
-            refreshToken,
-          },
-        })
-        .then((res) => setAccessToken(res.data))
-        // 3. 둘 다 만료된 경우
-        .catch(() => router.push("/login"));
-    }, []);
+    // const refreshProcess = useCallback((router: any) => {
+    //   axios
+    //     .post("/refresh-token", {
+    //       headers: {
+    //         refreshToken,
+    //       },
+    //     })
+    //     .then((res) => setAccessToken(res.data))
+    //     // 3. 둘 다 만료된 경우
+    //     .catch(() => router.push("/login"));
+    // }, []);
+
+    console.log("value: ", value);
 
     useEffect(() => {
       const router = useRouter();
 
       // 2. 엑세스 토큰이 만료된 경우
-      if (value.status === 401 || value.statusText === "unauthenticated") {
-        refreshProcess(router);
-      }
+      // if (value.status === 401 || value.statusText === "unauthenticated") {
+      //   refreshProcess(router);
+      // }
     }, [value.status]);
 
     return value;

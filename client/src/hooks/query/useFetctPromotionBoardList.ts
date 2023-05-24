@@ -17,7 +17,7 @@ const useFetchPromotionBoardList = ({ selected, sorted, page, size }: ApiFetchPr
       ({ pageParam = page }) => apiFetchPromotionBoardList({ selected, sorted, page: pageParam, size }),
       {
         getNextPageParam: (lastPage, allPage) =>
-          lastPage.pageInfo.totalPages > lastPage.pageInfo.page ? lastPage.pageInfo.page + 1 : null,
+          lastPage?.pageInfo?.size === size ? lastPage?.pageInfo?.page + 1 : null,
       },
     );
 

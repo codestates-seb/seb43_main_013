@@ -16,7 +16,7 @@ const useFetchSearch = ({ keyword, page, size, initialData }: Props) => {
     ({ pageParam = page }) => apiFetchSearch({ keyword, page: pageParam, size }),
     {
       getNextPageParam: (lastPage, allPage) =>
-        lastPage.pageInfo.totalPages > lastPage.pageInfo.page ? lastPage.pageInfo.page + 1 : null,
+        lastPage?.pageInfo?.size === size ? lastPage?.pageInfo?.page + 1 : null,
       // ssr
       ...(initialData && {
         initialData: { pageParams: [], pages: [initialData] },
