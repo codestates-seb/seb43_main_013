@@ -35,7 +35,7 @@ public class PromotionBoardController {
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-    // 목록조회
+
     @GetMapping("/promotionboard/{promotionBoardId}")
     public ResponseEntity<PromotionBoardResponseDto.Details> getPromotion(@PathVariable("promotionBoardId") @Positive Long promotionBoardId){
 
@@ -54,8 +54,8 @@ public class PromotionBoardController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping("/promotionboards/promotioncategories/{categoryId}")
-    public ResponseEntity getPromotionByCategory(@PathVariable("categoryId") long categoryId,
+    @GetMapping("/promotionboards/categories/{category-id}")
+    public ResponseEntity getPromotionByCategory(@PathVariable("category-id") long categoryId,
                                                  @RequestParam String sort,
                                                  @Positive @RequestParam int page,
                                                  @Positive @RequestParam int size) {

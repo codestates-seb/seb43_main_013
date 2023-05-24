@@ -26,7 +26,7 @@ import java.util.Set;
 public class PromotionBoard extends Auditable implements Board {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "promotion_Board_id")
+    @Column
     private Long promotionBoardId;
     @Column(nullable = false)
     private String title;
