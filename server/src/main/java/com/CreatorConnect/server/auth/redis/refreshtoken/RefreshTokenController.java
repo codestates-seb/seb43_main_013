@@ -1,6 +1,7 @@
-package com.CreatorConnect.server.auth.jwt.refreshToken;
+package com.CreatorConnect.server.auth.redis.refreshtoken;
 
 import com.CreatorConnect.server.auth.jwt.JwtTokenizer;
+import com.CreatorConnect.server.auth.jwt.TokenService;
 import com.CreatorConnect.server.member.entity.Member;
 import com.CreatorConnect.server.member.repository.MemberRepository;
 import io.jsonwebtoken.Claims;
@@ -10,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 

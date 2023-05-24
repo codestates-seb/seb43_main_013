@@ -1,8 +1,8 @@
-package com.CreatorConnect.server.auth.jwt.refreshToken;
+package com.CreatorConnect.server.auth.jwt;
 
-import com.CreatorConnect.server.auth.jwt.JwtTokenizer;
+import com.CreatorConnect.server.auth.redis.refreshtoken.RefreshToken;
+import com.CreatorConnect.server.auth.redis.refreshtoken.RefreshTokenRepository;
 import com.CreatorConnect.server.member.entity.Member;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -40,8 +40,6 @@ public class TokenService { // 토큰 생성
 
     public String delegateRefreshToken(Member member) {
 
-        log.info("리프레시 토큰 생성");
-
         String subject = member.getEmail();
         Date expiration = jwtTokenizer.getTokenExpiration(jwtTokenizer.getRefreshTokenExpirationMinutes());
         String base64EncodedSecretKey = jwtTokenizer.encodeBase64SecretKey(jwtTokenizer.getSecretKey());
@@ -51,8 +49,6 @@ public class TokenService { // 토큰 생성
         RefreshToken rtk = new RefreshToken(refreshToken, member.getMemberId());
 
         refreshTokenRepository.save(rtk);
-
-        log.info("리프레시 토큰 저장 완료");
 
         return refreshToken;
     }

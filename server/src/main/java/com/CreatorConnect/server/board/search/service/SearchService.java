@@ -15,11 +15,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+@Transactional
 @Service
 public class SearchService {
     private final FreeBoardRepository freeBoardRepository;
@@ -50,7 +52,7 @@ public class SearchService {
         return new PageImpl<>(mergedResults, pageable, totalElements);
     }
 
-    private void updateSearchCount(String keyword, LocalDate searchDate) {
+    void updateSearchCount(String keyword, LocalDate searchDate) {
         PopularSearch popularSearch = popularSearchRepository.findByKeyword(keyword);
         if (popularSearch == null) {
             popularSearch = new PopularSearch();

@@ -4,7 +4,7 @@ import com.CreatorConnect.server.auth.filter.JwtAuthenticationFilter;
 import com.CreatorConnect.server.auth.filter.JwtVerificationFilter;
 import com.CreatorConnect.server.auth.handler.*;
 import com.CreatorConnect.server.auth.jwt.JwtTokenizer;
-import com.CreatorConnect.server.auth.jwt.refreshToken.TokenService;
+import com.CreatorConnect.server.auth.jwt.TokenService;
 import com.CreatorConnect.server.auth.oauth.handler.OAuth2MemberSuccessHandler;
 import com.CreatorConnect.server.auth.utils.CustomAuthorityUtils;
 import com.CreatorConnect.server.member.repository.MemberRepository;
@@ -75,6 +75,7 @@ public class SecurityConfiguration {
                         .antMatchers("/h2/**").permitAll()
                         .antMatchers(HttpMethod.OPTIONS).permitAll()
                         .antMatchers(HttpMethod.POST, "/api/signup/**", "/api/login", "/api/refresh-token").permitAll()
+                        .antMatchers(HttpMethod.DELETE, "/api/refresh-token").permitAll()
                         .antMatchers(HttpMethod.GET, "/", "/api/search/**", "/api/keyword/**").permitAll()
                         .antMatchers(HttpMethod.GET, "/api/login/**", "/auth/**", "/api/member/**").permitAll()
                         .antMatchers(HttpMethod.GET, "/api/freeboard/**", "/api/freeboards/**").permitAll()
@@ -130,9 +131,8 @@ public class SecurityConfiguration {
             JwtVerificationFilter jwtVerificationFilter = new JwtVerificationFilter(jwtTokenizer, authorityUtils);
 
             builder
-                    .addFilter(jwtAuthenticationFilter)
-                    .addFilterAfter(jwtVerificationFilter, JwtAuthenticationFilter.class)
-                    .addFilterAfter(new JwtVerificationFilter(jwtTokenizer, authorityUtils), JwtVerificationFilter.class)
+                    .addFilter(jwtAuthenticationFilter) // Spring Security Filter Chain 에 JwtAuthenticationFilter 추가
+                    .addFilterAfter(jwtVerificationFilter, JwtAuthenticationFilter.class) // JwtAuthenticationFilter 에서 로그인 인증 후, 발급 받은 JWT가 요청의 request header(Authorization)에 포함되어 있을 경우 동작
                     .addFilterAfter(jwtVerificationFilter, OAuth2LoginAuthenticationFilter.class);
         }
     }

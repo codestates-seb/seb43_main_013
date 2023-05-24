@@ -1,6 +1,6 @@
 package com.CreatorConnect.server.auth.filter;
 
-import com.CreatorConnect.server.auth.jwt.refreshToken.TokenService;
+import com.CreatorConnect.server.auth.jwt.TokenService;
 import com.CreatorConnect.server.member.dto.MemberLoginDto;
 import com.CreatorConnect.server.member.entity.Member;
 import com.fasterxml.jackson.databind.ObjectMapper;

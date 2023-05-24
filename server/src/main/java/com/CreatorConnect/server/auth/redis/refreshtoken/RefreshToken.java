@@ -1,8 +1,8 @@
-package com.CreatorConnect.server.auth.jwt.refreshToken;
+package com.CreatorConnect.server.auth.redis.refreshtoken;
 
 import javax.persistence.Id;
 
-// @RedisHash(value = "refreshToken", timeToLive = 604800) // refresh token 유효기간 일주일
+// @RedisHash(value = "refreshToken", timeToLive = 604800) - redis repository 사용시 활성화
 public class RefreshToken {
 
     @Id
@@ -13,10 +13,6 @@ public class RefreshToken {
     public RefreshToken(String refreshToken, Long memberId) {
         this.refreshToken = refreshToken;
         this.memberId = memberId;
-    }
-
-    public RefreshToken() {
-
     }
 
     public String getRefreshToken() {
