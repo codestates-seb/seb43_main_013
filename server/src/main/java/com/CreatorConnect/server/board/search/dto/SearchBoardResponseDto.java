@@ -21,6 +21,7 @@ public class SearchBoardResponseDto implements SearchResponseDto {
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
     private Long memberId;
+    private String nickname;
     private String profileImageUrl;
 
     @Override

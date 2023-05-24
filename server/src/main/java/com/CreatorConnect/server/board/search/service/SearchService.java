@@ -126,6 +126,7 @@ public class SearchService {
         dto.setViewCount(board.getViewCount());
         dto.setCategoryName(board.getCategoryName());
         dto.setMemberId(board.getMember().getMemberId());
+        dto.setNickname(board.getMember().getNickname());
         dto.setProfileImageUrl(board.getMember().getProfileImageUrl());
         dto.setCreatedAt(board.getCreatedAt());
         dto.setModifiedAt(board.getModifiedAt());
@@ -144,6 +145,7 @@ public class SearchService {
         dto.setViewCount(board.getViewCount());
         dto.setCategoryName(board.getCategoryName());
         dto.setMemberId(board.getMember().getMemberId());
+        dto.setNickname(board.getMember().getNickname());
         dto.setProfileImageUrl(board.getMember().getProfileImageUrl());
         dto.setCreatedAt(board.getCreatedAt());
         dto.setModifiedAt(board.getModifiedAt());
@@ -163,6 +165,7 @@ public class SearchService {
         dto.setViewCount(board.getViewCount());
         dto.setCategoryName(board.getCategoryName());
         dto.setMemberId(board.getMember().getMemberId());
+        dto.setNickname(board.getMember().getNickname());
         dto.setProfileImageUrl(board.getMember().getProfileImageUrl());
         dto.setCreatedAt(board.getCreatedAt());
         dto.setModifiedAt(board.getModifiedAt());
@@ -182,6 +185,7 @@ public class SearchService {
         dto.setViewCount(board.getViewCount());
         dto.setCategoryName(board.getJobCategoryName());
         dto.setMemberId(board.getMember().getMemberId());
+        dto.setNickname(board.getMember().getNickname());
         dto.setProfileImageUrl(board.getMember().getProfileImageUrl());
         dto.setCreatedAt(board.getCreatedAt());
         dto.setModifiedAt(board.getModifiedAt());
