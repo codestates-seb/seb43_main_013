@@ -8,11 +8,13 @@ const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 /** 2023/05/10 - 닉네임 클릭 후 등장 모달창 - by Kadesti */
 const NickModal = ({ setNickModal }: { setNickModal: React.Dispatch<boolean> }) => {
   const { setAccessToken } = useTokenStore();
+  const { setMember } = useMemberStore();
+
   const { member } = useMemberStore();
   const [memberLink, setMemberLink] = useState("");
 
   useEffect(() => {
-    // if (member) setMemberLink(member.memberId);
+    if (member) setMemberLink(`/profile/${member.memberId}`);
   }, [member]);
 
   const logoutEvent = async () => {
@@ -24,6 +26,7 @@ const NickModal = ({ setNickModal }: { setNickModal: React.Dispatch<boolean> }) 
     });
 
     setAccessToken("");
+    setMember(null);
     localStorage.removeItem("accessToken");
     localStorage.removeItem("member");
   };
