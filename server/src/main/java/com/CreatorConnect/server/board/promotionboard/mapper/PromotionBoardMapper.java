@@ -13,8 +13,8 @@ import java.util.List;
 public interface PromotionBoardMapper {
 
     PromotionBoard promotionBoardPostDtoToPromotionBoard(PromotionBoardDto.Post PromotionBoardPostDto);
-    PromotionBoard promotionBoardPatchDtoToPromotionBoard(PromotionBoardDto.Potct PromotionBoardPatchDto);
     PromotionBoardResponseDto.Post promotionBoardToPromotionPostResponse(PromotionBoard promotionBoard);
+    PromotionBoard promotionBoardPatchDtoToPromotionBoard(PromotionBoardDto.Patch PromotionBoardPatchDto);
     PromotionBoardResponseDto.Patch promotionBoardToPromotionPatchResponse(PromotionBoard promotionBoard);
     PromotionBoardResponseDto.Details prmotionBoardToPromotionBoardDetailsResponse(PromotionBoard promotionBoard);
     PromotionBoardResponseDto.Details promotionBoardToResponse(PromotionBoard promotionBoard, List<TagDto.TagInfo> tags);

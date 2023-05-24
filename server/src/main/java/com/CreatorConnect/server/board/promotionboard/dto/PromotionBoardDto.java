@@ -36,12 +36,12 @@ public class PromotionBoardDto {
         private String content;
 
         private String categoryName;
-        private List<TagDto.TagInfo> tag;
+        private List<TagDto.TagInfo> tags;
 
-        public long getMemberId() {
+        public Member getMember() {
             Member member = new Member();
             member.setMemberId(memberId);
-            return memberId;
+            return member;
         }
     }
 
@@ -49,22 +49,20 @@ public class PromotionBoardDto {
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class Potct {
+    public static class Patch {
         private long memberId;
         private String title;
         private String link;
         private String channelName;
         private String subscriberCount;
-
         private String content;
-
         private String categoryName;
-        private List<TagDto.TagInfo> tag;
+        private List<TagDto.TagInfo> tags;
 
-        public long getMemberId() {
+        public Member getMember() {
             Member member = new Member();
             member.setMemberId(memberId);
-            return memberId;
+            return member;
         }
     }
 }

@@ -4,6 +4,7 @@ import com.CreatorConnect.server.audit.Auditable;
 import com.CreatorConnect.server.board.feedbackboard.entity.FeedbackBoard;
 import com.CreatorConnect.server.board.freeboard.entity.FreeBoard;
 import com.CreatorConnect.server.board.jobboard.entity.JobBoard;
+import com.CreatorConnect.server.board.promotionboard.entity.PromotionBoard;
 import com.CreatorConnect.server.member.entity.Member;
 import com.CreatorConnect.server.member.like.entity.Like;
 import lombok.AllArgsConstructor;
@@ -41,6 +42,9 @@ public class Bookmark extends Auditable {
     @JoinColumn(name = "bookmarkedjobboard_id")
     private JobBoard jobBoard;
 
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "bookmarkedpromotionboard_id")
+    private PromotionBoard promotionBoard;
     @Enumerated(EnumType.STRING)
     private BoardType boardType;
 

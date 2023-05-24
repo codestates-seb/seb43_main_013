@@ -22,18 +22,18 @@ public class PromotionBoardResponseDto {
     @NoArgsConstructor
     public static class Patch {
 
-        private long promotionboardId;
+        private long promotionBoardId;
         private String title;
         private String content;
         private String categoryName;
-        private List<TagDto.TagInfo> tag;
+        private List<TagDto.TagInfo> tags;
     }
 
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
     public static class Details {
-        private long promotionboardId;
+        private long promotionBoardId;
         private String title;
         private String content;
         private List<TagDto.TagInfo> tag;
@@ -47,6 +47,8 @@ public class PromotionBoardResponseDto {
         private String nickname;
         private String email;
         private String profileImageUrl;
+        private Boolean bookmarked = false;
+        private Boolean liked = false;
     }
 
     @Data
@@ -61,8 +63,8 @@ public class PromotionBoardResponseDto {
     public static class PageInfo {
         private int page;
         private int siza;
+        private long totalElements;
         private int totalPages;
-        private int totalElements;
     }
 
 }
