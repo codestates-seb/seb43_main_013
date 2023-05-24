@@ -71,7 +71,7 @@ public class YoutubeApiService {
                  *  standard = 640  *  480
                  *  maxres   = 1280 *  720
                 */
-                Thumbnail thumbnail = (Thumbnail) singleVideo.getSnippet().getThumbnails().get("maxres");
+
 
                 // entity에 저장
                 VideoPK videoPK = new VideoPK(categoryId,id);
@@ -79,7 +79,12 @@ public class YoutubeApiService {
                 video.setVideoPK(videoPK);
                 video.setYoutubeId(singleVideo.getId());
                 video.setYoutubeUrl("https://youtu.be/" + singleVideo.getId());
-                video.setThumbnailUrl(thumbnail.getUrl());
+                if(singleVideo.getSnippet().getThumbnails().get("maxres") != null){
+                    Thumbnail thumbnail = (Thumbnail) singleVideo.getSnippet().getThumbnails().get("maxres");
+                    video.setThumbnailUrl(thumbnail.getUrl());
+                } else{
+                    video.setThumbnailUrl("https://img.youtube.com/vi/fvtzZFhrKLE/maxresdefault.jpg");
+                }
                 // 타이틀 database에 넣을 때 이모지 제거
                 video.setTitle(mysqlUtf8Safe(singleVideo.getSnippet().getTitle()));
                 youtubeApiRepository.save(video);

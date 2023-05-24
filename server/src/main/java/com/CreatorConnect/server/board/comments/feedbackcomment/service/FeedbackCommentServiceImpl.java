@@ -34,16 +34,16 @@ public class FeedbackCommentServiceImpl implements CommentService {
 
     // 댓글 등록
     @Override
-    public CommentResponseDto.Post createComment(Long id, CommentDto.Post postDto) {
+    public CommentResponseDto.Post createComment(Long feedbackBoardId, CommentDto.Post postDto) {
         // 멤버 검증
         memberService.verifiedAuthenticatedMember(postDto.getMemberId());
 
         //feedbackBoard찾기
-        Optional<FeedbackBoard> feedbackBoard = feedbackBoardRepository.findById(id);
+        Optional<FeedbackBoard> feedbackBoard = feedbackBoardRepository.findById(feedbackBoardId);
         FeedbackBoard foundFeedback = feedbackBoard.orElseThrow(() -> new BusinessLogicException(ExceptionCode.FEEDBACK_NOT_FOUND));
 
         //dto to Entity
-        FeedbackComment feedbackComment = mapper.dtoToFeedbackComment(id, postDto, foundFeedback);
+        FeedbackComment feedbackComment = mapper.dtoToFeedbackComment(feedbackBoardId, postDto, foundFeedback);
 
         // entity to dto
         CommentResponseDto.Post post = new CommentResponseDto.Post();

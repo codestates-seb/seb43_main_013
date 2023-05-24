@@ -49,11 +49,11 @@ public class FeedbackCommentMapper {
 
         return list;
     }
-    public FeedbackComment dtoToFeedbackComment(Long id, CommentDto.Post postDto, FeedbackBoard feedbackBoard){
+    public FeedbackComment dtoToFeedbackComment(Long feedbackBoardId, CommentDto.Post postDto, FeedbackBoard feedbackBoard){
 
         // dto-entity 매핑
         FeedbackComment feedbackComment = new FeedbackComment();
-        CommentPK commentPK = new CommentPK(id, feedbackBoard.getMaxCommentCount()+1);
+        CommentPK commentPK = new CommentPK(feedbackBoardId, feedbackBoard.getMaxCommentCount()+1);
         feedbackComment.setCommentPK(commentPK);
         feedbackComment.setContent(postDto.getContent());
         feedbackComment.setMember(postDto.getMember());
