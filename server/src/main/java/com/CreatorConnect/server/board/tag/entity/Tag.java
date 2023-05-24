@@ -22,11 +22,10 @@ public class Tag {
 
     @OneToMany(mappedBy = "tag")
     private List<TagToFreeBoard> tagBoardList = new ArrayList<>();
-    @OneToMany(mappedBy = "tag")
-    private List<TagToPromotionBoard> tagBoardList = new ArrayList<>();
 
-    public Tag(String tagName) {
-        this.tagName = tagName;
-        this.tagBoardList = new ArrayList<>();
-    }
+
+//    public Tag(String tagName) {
+//        this.tagName = tagName;
+//        this.tagBoardList = new ArrayList<>();
+//    }
 }
