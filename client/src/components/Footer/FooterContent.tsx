@@ -6,12 +6,12 @@ const FooterContent = () => {
   return (
     <div className="sticky w-full min-h-max bg-gray-700 text-white top-0 z-5 mt-24 pb-3">
       <div className="w-full py-5 relative  flex justify-center">
-        <div className="flex flex-row w-full mt-7">
+        <div className="flex flex-row w-full  lg:w-[80%] mt-7">
           <ul className="flex flex-row justify-around w-full space-x-4 lg:4">
             <li className="text-left">
               {/* <img className="w-36 mt-[-5] h-auto" src={logo} alt="로고" /> */}
               <div className="flex flex-col lg:flex-row items-center justify-center lg:gap-x-2">
-                <Image src={Logo4} alt="" className="inline-block lg:h-[72px] lg:w-[72px]" />
+                <Image src={Logo4} alt="" className="inline-block  lg:h-[72px] lg:w-[72px] " />
                 <h3 className="font-bold text-2xl lg:text-3xl">
                   Creator <br /> Connect
                 </h3>
@@ -26,29 +26,35 @@ const FooterContent = () => {
             <li className="text-left space-y-2">
               <h3 className="font-bold text-sm lg:text-lg ">FRONT-END</h3>
               <ul className="space-y-1">
-                <li className="text-sm lg:text-lg">REACT</li>
-                <li className="text-sm lg:text-lg">TYPESCRIPT</li>
-                <li className="text-sm lg:text-lg">NEXT13(beta)</li>
-                <li className="text-sm lg:text-lg">TANSTACK-QUERY</li>
+                <li className="text-sm lg:text-lg">React</li>
+                <li className="text-sm lg:text-lg">Typescript</li>
+                <li className="text-sm lg:text-lg">Next.js 13(beta)</li>
+                <li className="text-sm lg:text-lg">Tanstack-Query</li>
                 <li className="text-sm lg:text-lg">ZUSTAND</li>
-                <li className="text-sm lg:text-lg">TAILWINDCSS</li>
-                <li className="text-sm lg:text-lg">CHAKRAUI</li>
-                <li className="text-sm lg:text-lg">VERCEL</li>
+                <li className="text-sm lg:text-lg">Tailwind CSS</li>
+                <li className="text-sm lg:text-lg">Chakra UI</li>
+                <li className="text-sm lg:text-lg">Vercel</li>
               </ul>
             </li>
             <li className="text-left space-y-2">
               <h3 className="font-bold text-sm lg:text-lg ">BACK-END</h3>
               <ul className="space-y-1">
-                <li className="text-sm lg:text-lg">JAVA</li>
-                <li className="text-sm lg:text-lg">SPRING BOOT</li>
-                <li className="text-sm lg:text-lg">SPRING SECURITY</li>
-                <li className="text-sm lg:text-lg">SPRINGDATA</li>
-                <li className="text-sm lg:text-lg">JWT</li>
-                <li className="text-sm lg:text-lg">AMAZON EC2</li>
-                <li className="text-sm lg:text-lg">MYSQL</li>
-                <li className="text-sm lg:text-lg">REDIS</li>
-                <li className="text-sm lg:text-lg">RDS</li>
-                <li className="text-sm lg:text-lg">JPA</li>
+                <li className="text-xs lg:text-md ">Java 11</li>
+                <li className="text-xs lg:text-md ">Spring Boot 2.7.11</li>
+                <li className="text-xs lg:text-md">Spring Security</li>
+                <li className="text-xs lg:text-md">Spring Data JPA</li>
+                <li className="text-xs lg:text-md">JsonWeb Token</li>
+                <li className="text-xs lg:text-md">AWS EC2</li>
+                <li className="text-xs lg:text-md">AWS RDS</li>
+                <li className="text-xs lg:text-md">AWS Certificate Manager</li>
+                <li className="text-xs lg:text-md">AWS Route 53</li>
+                <li className="text-xs lg:text-md">AWS IAM</li>
+                <li className="text-xs lg:text-md">AWS CloudWatch</li>
+                <li className="text-xs lg:text-md">AWS CodeDeploy</li>
+                <li className="text-xs lg:text-md">Github Action</li>
+                <li className="text-xs lg:text-md">MySQL</li>
+                <li className="text-xs lg:text-md">REDIS</li>
+                <li className="text-xs lg:text-md">Thymeleaf</li>
               </ul>
             </li>
             <li className="text-left space-y-2">
