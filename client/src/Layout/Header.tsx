@@ -20,7 +20,7 @@ const Header: React.FC = () => {
 
   return (
     <header className="bg-white h-[96px] border-b-4 flex justify-center">
-      <AuthCheck />
+      {/* <AuthCheck /> */}
       <div className="flex w-full max-w-[1440px] items-center">
         <HeaderLogo />
         <SearchSide array={leftArr} />
