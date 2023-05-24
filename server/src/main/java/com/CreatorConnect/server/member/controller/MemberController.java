@@ -3,6 +3,7 @@ package com.CreatorConnect.server.member.controller;
 import com.CreatorConnect.server.board.feedbackboard.entity.FeedbackBoard;
 import com.CreatorConnect.server.board.freeboard.entity.FreeBoard;
 import com.CreatorConnect.server.board.jobboard.entity.JobBoard;
+import com.CreatorConnect.server.board.promotionboard.entity.PromotionBoard;
 import com.CreatorConnect.server.exception.BusinessLogicException;
 import com.CreatorConnect.server.exception.ExceptionCode;
 import com.CreatorConnect.server.member.bookmark.entity.Bookmark;
@@ -30,10 +31,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -337,24 +335,7 @@ public class MemberController {
                                 like.getFeedbackBoard().getCreatedAt(),
                                 like.getFeedbackBoard().getModifiedAt()
                         );
-                    }  else if (like.getBoardType() == Like.BoardType.JOBBOARD) {
-                            return new MemberBoardResponseDto(
-                                    like.getBoardType().toString(),
-                                    like.getJobBoard().getJobBoardId(),
-                                    like.getJobBoard().getTitle(),
-                                    like.getJobBoard().getContent(),
-                                    like.getJobBoard().getCommentCount(),
-                                    like.getJobBoard().getLikeCount(),
-                                    like.getJobBoard().getViewCount(),
-                                    like.getJobBoard().getJobCategoryName(),
-                                    like.getJobBoard().getMember().getMemberId(),
-                                    like.getJobBoard().getMember().getEmail(),
-                                    like.getJobBoard().getMember().getNickname(),
-                                    like.getJobBoard().getMember().getProfileImageUrl(),
-                                    like.getJobBoard().getCreatedAt(),
-                                    like.getJobBoard().getModifiedAt()
-                            );
-                        } else if (like.getBoardType() == Like.BoardType.PROMOTIONBOARD) {
+                    } else if (like.getBoardType() == Like.BoardType.PROMOTIONBOARD) {
                             return new MemberBoardResponseDto(
                                 like.getBoardType().toString(),
                                 like.getPromotionBoard().getPromotionBoardId(),
@@ -371,8 +352,24 @@ public class MemberController {
                                 like.getPromotionBoard().getCreatedAt(),
                                 like.getPromotionBoard().getModifiedAt()
                         );
-                    }
-                        return null;
+                    } else if (like.getBoardType() == Like.BoardType.JOBBOARD) {
+                        return new MemberBoardResponseDto(
+                                like.getBoardType().toString(),
+                                like.getJobBoard().getJobBoardId(),
+                                like.getJobBoard().getTitle(),
+                                like.getJobBoard().getContent(),
+                                like.getJobBoard().getCommentCount(),
+                                like.getJobBoard().getLikeCount(),
+                                like.getJobBoard().getViewCount(),
+                                like.getJobBoard().getJobCategoryName(),
+                                like.getJobBoard().getMember().getMemberId(),
+                                like.getJobBoard().getMember().getEmail(),
+                                like.getJobBoard().getMember().getNickname(),
+                                like.getJobBoard().getMember().getProfileImageUrl(),
+                                like.getJobBoard().getCreatedAt(),
+                                like.getJobBoard().getModifiedAt()
+                        );
+                    } return null;
                     })
                 .filter(Objects::nonNull)
                             .skip((page - 1) * size) // 페이지네이션 처리
@@ -431,23 +428,6 @@ public class MemberController {
                                     bookmark.getFeedbackBoard().getCreatedAt(),
                                     bookmark.getFeedbackBoard().getModifiedAt()
                             );
-                        } else if (bookmark.getBoardType() == Bookmark.BoardType.JOBBOARD) {
-                            return new MemberBoardResponseDto(
-                                    bookmark.getBoardType().toString(),
-                                    bookmark.getJobBoard().getJobBoardId(),
-                                    bookmark.getJobBoard().getTitle(),
-                                    bookmark.getJobBoard().getContent(),
-                                    bookmark.getJobBoard().getCommentCount(),
-                                    bookmark.getJobBoard().getLikeCount(),
-                                    bookmark.getJobBoard().getViewCount(),
-                                    bookmark.getJobBoard().getJobCategoryName(),
-                                    bookmark.getJobBoard().getMember().getMemberId(),
-                                    bookmark.getJobBoard().getMember().getEmail(),
-                                    bookmark.getJobBoard().getMember().getNickname(),
-                                    bookmark.getJobBoard().getMember().getProfileImageUrl(),
-                                    bookmark.getJobBoard().getCreatedAt(),
-                                    bookmark.getJobBoard().getModifiedAt()
-                            );
                         } else if (bookmark.getBoardType() == Bookmark.BoardType.PROMOTIONBOARD) {
                             return new MemberBoardResponseDto(
                                     bookmark.getBoardType().toString(),
@@ -465,8 +445,24 @@ public class MemberController {
                                     bookmark.getPromotionBoard().getCreatedAt(),
                                     bookmark.getPromotionBoard().getModifiedAt()
                             );
-                        }
-                        return null;
+                        } else if (bookmark.getBoardType() == Bookmark.BoardType.JOBBOARD) {
+                            return new MemberBoardResponseDto(
+                                    bookmark.getBoardType().toString(),
+                                    bookmark.getJobBoard().getJobBoardId(),
+                                    bookmark.getJobBoard().getTitle(),
+                                    bookmark.getJobBoard().getContent(),
+                                    bookmark.getJobBoard().getCommentCount(),
+                                    bookmark.getJobBoard().getLikeCount(),
+                                    bookmark.getJobBoard().getViewCount(),
+                                    bookmark.getJobBoard().getJobCategoryName(),
+                                    bookmark.getJobBoard().getMember().getMemberId(),
+                                    bookmark.getJobBoard().getMember().getEmail(),
+                                    bookmark.getJobBoard().getMember().getNickname(),
+                                    bookmark.getJobBoard().getMember().getProfileImageUrl(),
+                                    bookmark.getJobBoard().getCreatedAt(),
+                                    bookmark.getJobBoard().getModifiedAt()
+                            );
+                        } return null;
                     })
                     .filter(Objects::nonNull)
                     .skip((page - 1) * size) // 페이지네이션 처리
@@ -488,64 +484,83 @@ public class MemberController {
 
             List<FreeBoard> freeBoards = member.getFreeBoards();
             List<FeedbackBoard> feedbackBoards = member.getFeedbackBoards();
+            List<PromotionBoard> promotionBoards = member.getPromotionBoards();
             List<JobBoard> jobBoards = member.getJobBoards();
 
-            List<MemberBoardResponseDto> response = Stream.concat(
-                            Stream.concat(
-                                    freeBoards.stream().map(freeBoard -> new MemberBoardResponseDto(
-                                            "FREEBOARD",
-                                            freeBoard.getFreeBoardId(),
-                                            freeBoard.getTitle(),
-                                            freeBoard.getContent(),
-                                            freeBoard.getCommentCount(),
-                                            freeBoard.getLikeCount(),
-                                            freeBoard.getViewCount(),
-                                            freeBoard.getCategoryName(),
-                                            freeBoard.getMember().getMemberId(),
-                                            freeBoard.getMember().getEmail(),
-                                            freeBoard.getMember().getNickname(),
-                                            freeBoard.getMember().getProfileImageUrl(),
-                                            freeBoard.getCreatedAt(),
-                                            freeBoard.getModifiedAt()
-                                    )),
-                                    feedbackBoards.stream().map(feedbackBoard -> new MemberBoardResponseDto(
-                                            "FEEDBACKBOARD",
-                                            feedbackBoard.getFeedbackBoardId(),
-                                            feedbackBoard.getTitle(),
-                                            feedbackBoard.getContent(),
-                                            feedbackBoard.getCommentCount(),
-                                            feedbackBoard.getLikeCount(),
-                                            feedbackBoard.getViewCount(),
-                                            feedbackBoard.getFeedbackCategoryName(),
-                                            feedbackBoard.getMember().getMemberId(),
-                                            feedbackBoard.getMember().getEmail(),
-                                            feedbackBoard.getMember().getNickname(),
-                                            feedbackBoard.getMember().getProfileImageUrl(),
-                                            feedbackBoard.getCreatedAt(),
-                                            feedbackBoard.getModifiedAt()
-                                    ))
-                            ),
-                            jobBoards.stream().map(jobBoard -> new MemberBoardResponseDto(
-                                    "JOBBOARD",
-                                    jobBoard.getJobBoardId(),
-                                    jobBoard.getTitle(),
-                                    jobBoard.getContent(),
-                                    jobBoard.getCommentCount(),
-                                    jobBoard.getLikeCount(),
-                                    jobBoard.getViewCount(),
-                                    jobBoard.getJobCategoryName(),
-                                    jobBoard.getMember().getMemberId(),
-                                    jobBoard.getMember().getEmail(),
-                                    jobBoard.getMember().getNickname(),
-                                    jobBoard.getMember().getProfileImageUrl(),
-                                    jobBoard.getCreatedAt(),
-                                    jobBoard.getModifiedAt()
-                            ))
-                    )
-                    .sorted(Comparator.comparing(MemberBoardResponseDto::getCreatedAt).reversed())
-                    .skip((page - 1) * size)
-                    .limit(size)
-                    .collect(Collectors.toList());
+            List<MemberBoardResponseDto> response =
+                    Stream.concat(
+                                    Stream.concat(
+                                            Stream.concat(
+                                                    freeBoards.stream().map(freeBoard -> new MemberBoardResponseDto(
+                                                            "FREEBOARD",
+                                                            freeBoard.getFreeBoardId(),
+                                                            freeBoard.getTitle(),
+                                                            freeBoard.getContent(),
+                                                            freeBoard.getCommentCount(),
+                                                            freeBoard.getLikeCount(),
+                                                            freeBoard.getViewCount(),
+                                                            freeBoard.getCategoryName(),
+                                                            freeBoard.getMember().getMemberId(),
+                                                            freeBoard.getMember().getEmail(),
+                                                            freeBoard.getMember().getNickname(),
+                                                            freeBoard.getMember().getProfileImageUrl(),
+                                                            freeBoard.getCreatedAt(),
+                                                            freeBoard.getModifiedAt()
+                                                    )),
+                                                    feedbackBoards.stream().map(feedbackBoard -> new MemberBoardResponseDto(
+                                                            "FEEDBACKBOARD",
+                                                            feedbackBoard.getFeedbackBoardId(),
+                                                            feedbackBoard.getTitle(),
+                                                            feedbackBoard.getContent(),
+                                                            feedbackBoard.getCommentCount(),
+                                                            feedbackBoard.getLikeCount(),
+                                                            feedbackBoard.getViewCount(),
+                                                            feedbackBoard.getFeedbackCategoryName(),
+                                                            feedbackBoard.getMember().getMemberId(),
+                                                            feedbackBoard.getMember().getEmail(),
+                                                            feedbackBoard.getMember().getNickname(),
+                                                            feedbackBoard.getMember().getProfileImageUrl(),
+                                                            feedbackBoard.getCreatedAt(),
+                                                            feedbackBoard.getModifiedAt()
+                                                    ))
+                                            ),
+                                            promotionBoards.stream().map(promotionBoard -> new MemberBoardResponseDto(
+                                                    "PROMOTIONBOARD",
+                                                    promotionBoard.getPromotionBoardId(),
+                                                    promotionBoard.getTitle(),
+                                                    promotionBoard.getContent(),
+                                                    promotionBoard.getCommentCount(),
+                                                    promotionBoard.getLikeCount(),
+                                                    promotionBoard.getViewCount(),
+                                                    promotionBoard.getCategoryName(),
+                                                    promotionBoard.getMember().getMemberId(),
+                                                    promotionBoard.getMember().getEmail(),
+                                                    promotionBoard.getMember().getNickname(),
+                                                    promotionBoard.getMember().getProfileImageUrl(),
+                                                    promotionBoard.getCreatedAt(),
+                                                    promotionBoard.getModifiedAt()
+                                            ))
+                                    ),
+                                    jobBoards.stream().map(jobBoard -> new MemberBoardResponseDto(
+                                            "JOBBOARD",
+                                            jobBoard.getJobBoardId(),
+                                            jobBoard.getTitle(),
+                                            jobBoard.getContent(),
+                                            jobBoard.getCommentCount(),
+                                            jobBoard.getLikeCount(),
+                                            jobBoard.getViewCount(),
+                                            jobBoard.getJobCategoryName(),
+                                            jobBoard.getMember().getMemberId(),
+                                            jobBoard.getMember().getEmail(),
+                                            jobBoard.getMember().getNickname(),
+                                            jobBoard.getMember().getProfileImageUrl(),
+                                            jobBoard.getCreatedAt(),
+                                            jobBoard.getModifiedAt()
+                                    )))
+                                    .sorted(Comparator.comparing(MemberBoardResponseDto::getCreatedAt).reversed())
+                                    .skip((page - 1) * size)
+                                    .limit(size)
+                                    .collect(Collectors.toList());
 
             int totalElements = response.size();
 

@@ -142,6 +142,15 @@ public class MemberService {
         memberRepository.save(findMember);
     }
 
+    public void verifyExistsEmail(String email) {
+
+        Optional<Member> member = memberRepository.findByEmail(email);
+
+        if (member.isPresent()) {
+            throw new BusinessLogicException(ExceptionCode.EMAIL_EXISTS);
+        }
+    }
+
     private void verifyExistsNickname(String nickname) {
 
         Optional<Member> member = memberRepository.findByNickname(nickname);
@@ -160,15 +169,7 @@ public class MemberService {
         }
     }
 
-    public void verifyExistsEmail(String email) {
-
-        Optional<Member> member = memberRepository.findByEmail(email);
-
-        if (member.isPresent()) {
-            throw new BusinessLogicException(ExceptionCode.EMAIL_EXISTS);
-        }
-    }
-
+    // 회원가입 시 이메일 인증
     public void confirmEmail(String email) {
 
         Optional<Member> findMember = memberRepository.findByEmail(email);
@@ -212,6 +213,7 @@ public class MemberService {
         return passwordEncoder.matches(password, findMember.getPassword());
     }
 
+    // 인증 member 추출 ( access-token )
     public Member jwtTokenToMember (String jwtToken) {
 
         try {
@@ -231,39 +233,43 @@ public class MemberService {
 
     }
 
-//    public void verifiedAuthenticatedMember(Long memberId) {
-//
-//        // securitycontextholder 인증 검증 방식
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        Member findMember = findVerifiedMember(memberId);
-//
-//        if (!authentication.getName().equals(findMember.getEmail())) {
-//            throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_ALLOWED);
-//        }
-//
-//    }
+    // 인증 멤버 검증 ( Authentication )
+    public void verifiedAuthenticatedByAuthenticationMember(Long memberId) {
 
+        // securitycontextholder 인증 검증 방식
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Member findMember = findVerifiedMember(memberId);
 
+        if (!authentication.getName().equals(findMember.getEmail())) {
+            throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_ALLOWED);
+        }
+
+    }
+
+    // 인증 멤버 검증 ( header - access-token )
     public void verifiedAuthenticatedMember(Long memberId) {
+
         if(getHeader("Authorization") == null){
             throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_ALLOWED);
         }
+
         String jws = getHeader("Authorization").substring(7);
+
         long memberIdFromJws = getMemberIdFromJws(jws);
         long memberIdFromRequest = memberId;
+
         if (memberIdFromJws != memberIdFromRequest) {
             throw new BusinessLogicException(ExceptionCode.INVALID_TOKEN);
         }
     }
 
-    //헤더 얻는 메서드
     protected String getHeader(String headerName) {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
 
         return request.getHeader(headerName);
     }
 
-    // jws에서 memberId 추출하는 메서드
+    // jws 에서 memberId 추출
     protected long getMemberIdFromJws(String jws) {
         String base64EncodedSecretKey = jwtTokenizer.encodeBase64SecretKey(jwtTokenizer.getSecretKey());
         Map<String, Object> claims = jwtTokenizer.getClaims(jws, base64EncodedSecretKey).getBody();
