@@ -24,8 +24,8 @@ public class Tag {
     private List<TagToFreeBoard> tagBoardList = new ArrayList<>();
 
 
-//    public Tag(String tagName) {
-//        this.tagName = tagName;
-//        this.tagBoardList = new ArrayList<>();
-//    }
+    public Tag(String tagName) {
+        this.tagName = tagName;
+        this.tagBoardList = new ArrayList<>();
+    }
 }
