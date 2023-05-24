@@ -3,8 +3,6 @@ package com.CreatorConnect.server.board.promotionboard.service;
 import com.CreatorConnect.server.board.categories.category.entity.Category;
 import com.CreatorConnect.server.board.categories.category.repository.CategoryRepository;
 import com.CreatorConnect.server.board.categories.category.service.CategoryService;
-import com.CreatorConnect.server.board.feedbackboard.entity.FeedbackBoard;
-import com.CreatorConnect.server.board.freeboard.entity.FreeBoard;
 import com.CreatorConnect.server.board.promotionboard.dto.PromotionBoardDto;
 import com.CreatorConnect.server.board.promotionboard.dto.PromotionBoardResponseDto;
 import com.CreatorConnect.server.board.promotionboard.entity.PromotionBoard;
@@ -13,7 +11,7 @@ import com.CreatorConnect.server.board.promotionboard.repository.PromotionBoardR
 import com.CreatorConnect.server.board.tag.dto.TagDto;
 import com.CreatorConnect.server.board.tag.entity.Tag;
 import com.CreatorConnect.server.board.tag.mapper.TagMapper;
-import com.CreatorConnect.server.board.tag.service.PromotionBoardTagservice;
+import com.CreatorConnect.server.board.tag.service.PromotionBoardTagService;
 import com.CreatorConnect.server.exception.BusinessLogicException;
 import com.CreatorConnect.server.exception.ExceptionCode;
 import com.CreatorConnect.server.member.bookmark.entity.Bookmark;
@@ -41,7 +39,7 @@ import java.util.stream.Collectors;
 public class PromotionBoardService {
     private final PromotionBoardMapper mapper;
     private final PromotionBoardRepository promotionBoardRepository;
-    private final PromotionBoardTagservice promotionBoardTagservice;
+    private final PromotionBoardTagService promotionBoardTagService;
     private final MemberRepository memberRepository;
     private final MemberService memberService;
     private final TagMapper tagMapper;
@@ -62,7 +60,7 @@ public class PromotionBoardService {
         PromotionBoard savePromotionBoard = promotionBoardRepository.save(promotionBoard);
 
         List<Tag> tags = tagMapper.tagPostDtosToTag(postDto.getTags());
-        List<Tag> createTags = promotionBoardTagservice.createPromotionBoardTag(tags, savePromotionBoard);
+        List<Tag> createTags = promotionBoardTagService.createPromotionBoardTag(tags, savePromotionBoard);
 
         PromotionBoardResponseDto.Post responseDto = mapper.promotionBoardToPromotionPostResponse(savePromotionBoard);
         return responseDto;
@@ -100,7 +98,7 @@ public class PromotionBoardService {
 
         //태그 저장
         List<Tag> tags = tagMapper.tagPostDtosToTag(patchDto.getTags());
-        List<Tag> updatedTags = promotionBoardTagservice.updatePromotionBoardTag(tags, updatedPromotionBoard);
+        List<Tag> updatedTags = promotionBoardTagService.updatePromotionBoardTag(tags, updatedPromotionBoard);
 
 
         PromotionBoardResponseDto.Patch responseDto = mapper.promotionBoardToPromotionPatchResponse(updatedPromotionBoard);
@@ -182,9 +180,9 @@ public class PromotionBoardService {
         return new PromotionBoardResponseDto.Multi<>(responses, pageInfo);
     }
 
-    public PromotionBoardResponseDto.Multi<PromotionBoardResponseDto.Details> responseFeedbacksByCategory(Long promotioncategoryId, String sort, int page, int size){
+    public PromotionBoardResponseDto.Multi<PromotionBoardResponseDto.Details> getPromotionByCategory(Long promotionCategoryId, String sort, int page, int size){
         // page생성 - 카테고리 ID로 검색 후 정렬 적용
-        Page<PromotionBoard> promotionBoards = promotionBoardRepository.findPromotionCategoryId(promotioncategoryId, sortedPageRequest(sort, page, size));
+        Page<PromotionBoard> promotionBoards = promotionBoardRepository.findPromotionCategoryId(promotionCategoryId, sortedPageRequest(sort, page, size));
 
         // pageInfo 가져오기
         PromotionBoardResponseDto.PageInfo pageInfo = new PromotionBoardResponseDto.PageInfo(promotionBoards.getNumber() + 1, promotionBoards.getSize(), promotionBoards.getTotalElements(), promotionBoards.getTotalPages());

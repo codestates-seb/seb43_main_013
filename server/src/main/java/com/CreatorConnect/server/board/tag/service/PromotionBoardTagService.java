@@ -75,7 +75,7 @@ public class PromotionBoardTagService {
         // 3. 수정된 태그를 입력받은 경우
         // 3-1. 기존 TagBoard에 있는 데이터를 지우고 입력받은 데이터를 TagBoard에 저장
         for (int i = 0; i < findTagToPromotionBoards.size(); i++) {
-            removeTagToPromotionBoard(findTagToPromotionBoards.get(i));
+            removeTagPromotionBoard(findTagToPromotionBoards.get(i));
         }
 
         for (int i = 0; i < tags.size(); i++) {
