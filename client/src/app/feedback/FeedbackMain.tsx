@@ -7,7 +7,7 @@ import { useFetchCategories, useFetchFeedbackCategories } from "@/hooks/query";
 import { useFetchFeedbackBoardList } from "@/hooks/query/useFetchFeedbackBoardList";
 import { useCategoriesStore, useSortStore } from "@/store";
 import { useFeedbackCategoriesStore } from "@/store/useFeedbackCategoriesStore";
-import { useRef, useEffect, useCallback } from "react";
+import { useRef, useEffect, useCallback, useState } from "react";
 import FeedbackContentItem from "./FeedbackContentItem";
 import FeedbackCategories from "./FeedbackCategories";
 import { useMemberStore } from "@/store/useMemberStore";
@@ -16,7 +16,12 @@ import NoDataExists from "@/components/Svg/NoDataExists";
 /** 2023/05/08 - 피드백 게시판 메인 화면 - by leekoby */
 const FeedbackMain = () => {
   const member = useMemberStore((state) => state.member);
-  //  TODO: 정렬기능 수정하기
+
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
   /** 2023/05/14 - 사이드 카테고리 상태 - by leekoby */
 
   const selectedCategory = useCategoriesStore((state) => state.selectedCategory);
@@ -79,12 +84,14 @@ const FeedbackMain = () => {
         </aside>
         {/* rightside freeboard post list */}
         <section className="flex flex-col md:w-0 ml-5  grow-[8]">
-          <div className="flex flex-col md:flex-row md:justify-between mb-4 ">
-            {feedbackCategories && <FeedbackCategories feedbackCategoryData={feedbackCategories} />}
-            <div className="flex self-end mt-2 md:mt-0">
-              <SortPosts />
+          {isClient && (
+            <div className="flex flex-col md:flex-row md:justify-between mb-4 ">
+              {feedbackCategories && <FeedbackCategories feedbackCategoryData={feedbackCategories} />}
+              <div className="flex justify-end  mb-4">
+                <SortPosts />
+              </div>
             </div>
-          </div>
+          )}
           {/* freeboard list header */}
 
           {/* post item */}
@@ -105,7 +112,7 @@ const FeedbackMain = () => {
               )
             )}
           </div>
-          {member && <RightSideButton destination={`/feedback/write`} />}
+          {isClient && member && <RightSideButton destination={`/feedback/write`} />}
         </section>
         {/* 오른쪽 사이드 영역 */}
       </div>
