@@ -26,10 +26,14 @@ const Page = async ({ params, searchParams: { keyword } }: Props) => {
   const result = await fetch(process.env.NEXT_PUBLIC_BASE_URL + `/api/search?keyword=${keyword}`, {
     method: "GET",
     cache: "no-cache",
-  }).then((res) => res.json());
+  })
+    .then((res) => res.json())
+    .catch(console.error);
 
   return (
     <>
+      <h1 className="mt-12 text-center text-4xl text-sub-900">( 검색어: "{keyword}" )</h1>
+
       <SearchLists keyword={keyword} initialData={result} />
     </>
   );

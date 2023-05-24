@@ -1,5 +1,4 @@
 "use client";
-
 import React from "react";
 import { useState } from "react";
 
@@ -10,6 +9,7 @@ import HeaderLogo from "../components/Header/HeaderLogo";
 import SearchSide from "../components/Header/SearchSide";
 import headerArr from "../components/Header/HeaderArr";
 import { useTokenStore } from "@/store/useTokenStore";
+import AuthCheck from "@/components/Header/AuthCheck";
 
 /** 2023/05/04 - 헤더 컴포넌트 - by Kadesti */
 const Header: React.FC = () => {
@@ -20,6 +20,7 @@ const Header: React.FC = () => {
 
   return (
     <header className="bg-white h-[96px] border-b-4 flex justify-center">
+      {/* <AuthCheck /> */}
       <div className="flex w-full max-w-[1440px] items-center">
         <HeaderLogo />
         <SearchSide array={leftArr} />

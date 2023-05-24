@@ -7,7 +7,7 @@ import Image from "next/image";
 const HeaderLogo = () => {
   return (
     <Link href="/">
-      <Image src={Logo4} alt="" className="mr-8" />
+      <Image src={Logo4} alt="" className="mr-8 p-2" />
     </Link>
   );
 };

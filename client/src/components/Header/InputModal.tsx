@@ -64,8 +64,6 @@ const InputModal = ({ setInputModal }: { setInputModal: React.Dispatch<boolean> 
       localStorage.setItem("keywords", JSON.stringify([...new Set([value, ...keywords])]));
     }
 
-    toast({ title: `"${value}"를 검색했습니다.` });
-
     router.push(`/search?keyword=${value}`);
     setInputModal(false);
   };
@@ -123,7 +121,7 @@ const InputModal = ({ setInputModal }: { setInputModal: React.Dispatch<boolean> 
           ref={formRef}
           onSubmit={onSearch}
           className={twMerge(
-            "relative w-[70%] min-w-[260px] px-2 py-1.5 md:px-3 md:py-2 text-lg font-semibold flex justify-center bg-white border-4 border-main-400 space-x-2 rounded-sm mx-auto transition-colors",
+            "relative z-[1] w-[70%] px-2 py-1.5 md:px-3 md:py-2 text-lg font-semibold flex justify-center bg-white border-4 border-main-400 space-x-2 rounded-sm mx-auto transition-colors",
             isFocus && "border-main-500",
           )}
         >
@@ -150,7 +148,7 @@ const InputModal = ({ setInputModal }: { setInputModal: React.Dispatch<boolean> 
           </button>
 
           {isShow && (
-            <ul className="absolute top-[41px] md:top-[50px] right-0 w-full bg-white max-h-[40vh] overflow-y-auto rounded-b-md scrollbar">
+            <ul className="absolute top-[41px] md:top-[50px] right-0 w-full bg-white max-h-[200px] md:max-h-[250px] overflow-y-auto rounded-b-md scrollbar animate-fade-in">
               {recentWords.map((recentWord) => (
                 <li key={recentWord}>
                   <Link
@@ -186,7 +184,7 @@ const InputModal = ({ setInputModal }: { setInputModal: React.Dispatch<boolean> 
           )}
 
           {value.trim().length !== 0 && isShow && (
-            <ul className="absolute top-[41px] md:top-[50px] right-0 w-full bg-white max-h-[40vh] overflow-y-auto rounded-b-md scrollbar">
+            <ul className="absolute top-[41px] md:top-[50px] right-0 w-full bg-white max-h-[200px] md:max-h-[250px] overflow-y-auto rounded-b-md scrollbar animate-fade-in">
               {suggestedWords.map((suggestedWord) => (
                 <li key={suggestedWord}>
                   <Link
@@ -202,7 +200,12 @@ const InputModal = ({ setInputModal }: { setInputModal: React.Dispatch<boolean> 
         </form>
 
         {/* 키워드 클라우드 */}
-        <section className="w-full flex justify-evenly lg:space-x-20">
+        <section
+          className={twMerge(
+            "w-full flex justify-evenly lg:space-x-20 duration-500",
+            (value.trim().length !== 0 || isShow) && "translate-y-52",
+          )}
+        >
           {/* 월간 */}
           <div className="w-[30vw] max-w-[500px] rounded-md hidden lg:inline-block">
             <h4 className="text-3xl my-4 font-bold text-white">월간 인기 검색어</h4>

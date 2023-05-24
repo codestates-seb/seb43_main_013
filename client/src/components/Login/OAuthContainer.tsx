@@ -9,34 +9,32 @@ import Image from "next/image";
 
 const OAuthContainer = () => {
   const svgArr = [google, naver, kakao];
+  const commonStyle =
+    "border-2 w-full h-16 mb-4 flex justify-center items-center text-3xl rounded-2xl cursor-pointer hover:opacity-50";
 
-  const bgcolor = (linkText: string) => {
-    if (linkText === "구글 로그인") return "bg-white border-2 border-black";
-    if (linkText === "네이버 로그인") return "bg-green-600";
-    if (linkText === "카카오 로그인") return "bg-yellow-300";
+  const linkcolor = (linkText: string) => {
+    if (linkText === "구글 로그인") return "rose-600";
+    if (linkText === "네이버 로그인") return "green-600";
+    if (linkText === "카카오 로그인") return "yellow-300";
   };
 
   return (
     <div className="w-full flex flex-col">
       {linkArr.map((link, idx) => {
-        const backColor = bgcolor(linkText[idx]);
+        const linkColor = linkcolor(linkText[idx]);
         return (
-          <Link
-            href={link}
-            className={`${backColor} text-white w-full h-16 mb-4 flex justify-center items-center text-3xl rounded-2xl cursor-pointer hover:opacity-50`}
-            key={idx}
-          >
-            <div
-              className={`flex items-center text-2xl ${
-                linkText[idx] === "네이버 로그인" ? "text-white" : "text-black"
-              }`}
-            >
+          <Link href={link} className={`border-${linkColor} ${commonStyle}`} key={idx}>
+            <div className={`flex items-center text-2xl text-${linkColor}`}>
               <Image src={svgArr[idx]} alt="" key={idx} width={60} />
               {linkText[idx]}
             </div>
           </Link>
         );
       })}
+
+      <Link href="/signup" className={`border-main-500 ${commonStyle} text-main-500`}>
+        회원가입
+      </Link>
     </div>
   );
 };
