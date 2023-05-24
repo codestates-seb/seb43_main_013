@@ -1,11 +1,13 @@
 package com.CreatorConnect.server.redis.service;
 
+import com.CreatorConnect.server.auth.jwt.JwtTokenizer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
+import java.sql.Time;
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
@@ -31,16 +33,21 @@ public class RedisService {
     }
 
     // AccessToken  redis 저장(key : accessToken, value : "logout")
-    public void setAccessTokenLogOut(String accessToken, int expirationMinutes) {
+    public void setAccessTokenLogOut(String accessToken, long expiration) {
         ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
-        valueOperations.set(accessToken, "logout", expirationMinutes);
-        log.info("Access Token 만료 시간 : {} ", Duration.ofMinutes(expirationMinutes));
+        valueOperations.set(accessToken, "logout", expiration, TimeUnit.MILLISECONDS);
+        String expirationTime = String.format("%d min, %d sec",
+                TimeUnit.MILLISECONDS.toMinutes(expiration),
+                TimeUnit.MILLISECONDS.toSeconds(expiration) -
+                        TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(expiration))
+        );
+        log.info("Access Token 만료 시간 : {} ", expirationTime);
     }
 
     // redis에 저장된 access token 조회
     public String getAccessToken(String accessToken) {
         ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
-        return valueOperations.get(accessToken);
+        return valueOperations.get(accessToken).replace("Bearer ", "");
     }
 
     // redis에 저장된 refresh token 삭제

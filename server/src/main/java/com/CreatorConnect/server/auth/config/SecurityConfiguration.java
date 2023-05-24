@@ -1,6 +1,7 @@
 package com.CreatorConnect.server.auth.config;
 
 import com.CreatorConnect.server.auth.filter.JwtAuthenticationFilter;
+import com.CreatorConnect.server.auth.filter.JwtLogoutFilter;
 import com.CreatorConnect.server.auth.filter.JwtVerificationFilter;
 import com.CreatorConnect.server.auth.handler.*;
 import com.CreatorConnect.server.auth.jwt.JwtTokenizer;
@@ -61,7 +62,7 @@ public class SecurityConfiguration {
                 .formLogin().disable()
                 .httpBasic().disable()
                 .logout()
-                .logoutUrl("/api/logout")
+                .logoutUrl("/logout")
                 .logoutSuccessUrl("/")
                 .invalidateHttpSession(true)
                 .deleteCookies("JSESSIONID", "remember-me")
@@ -78,6 +79,7 @@ public class SecurityConfiguration {
                         .antMatchers(HttpMethod.POST, "/api/signup/**", "/api/login").permitAll()
                         .antMatchers(HttpMethod.GET, "/", "/api/search/**", "/api/keyword/**").permitAll()
                         .antMatchers(HttpMethod.GET, "/api/login/**", "/auth/**", "/api/member/**").permitAll()
+//                                .antMatchers(HttpMethod.POST, "/api/logout")
                         .antMatchers(HttpMethod.GET, "/api/freeboard/**", "/api/freeboards/**").permitAll()
                         .antMatchers(HttpMethod.GET, "/api/feedbackboard/**", "/api/feedbackboards/**").permitAll()
                         .antMatchers(HttpMethod.GET, "/api/promotionboard/**","/api/promotionboards/**").permitAll()
@@ -128,12 +130,14 @@ public class SecurityConfiguration {
             jwtAuthenticationFilter.setAuthenticationSuccessHandler(new MemberAuthenticationSuccessHandler(memberRepository));
             jwtAuthenticationFilter.setAuthenticationFailureHandler(new MemberAuthenticationFailureHandler());
 
-            JwtVerificationFilter jwtVerificationFilter = new JwtVerificationFilter(jwtTokenizer, authorityUtils);
+            JwtVerificationFilter jwtVerificationFilter = new JwtVerificationFilter(jwtTokenizer, authorityUtils, redisService);
+            JwtLogoutFilter jwtLogoutFilter = new JwtLogoutFilter(jwtTokenizer, redisService);
 
             builder
                     .addFilter(jwtAuthenticationFilter)
                     .addFilterAfter(jwtVerificationFilter, JwtAuthenticationFilter.class)
-                    .addFilterAfter(jwtVerificationFilter, OAuth2LoginAuthenticationFilter.class);
+                    .addFilterAfter(jwtVerificationFilter, OAuth2LoginAuthenticationFilter.class)
+                    .addFilterAfter(jwtLogoutFilter, JwtVerificationFilter.class);
         }
 
     }
