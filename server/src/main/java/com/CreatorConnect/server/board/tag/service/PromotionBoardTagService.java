@@ -7,6 +7,7 @@ import com.CreatorConnect.server.board.tag.repository.TagRepository;
 import com.CreatorConnect.server.board.tag.repository.TagToPromotionBoardRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,6 +45,51 @@ public class PromotionBoardTagService {
         return tags;
     }
 
+    /**
+     * <태그 수정>
+     * 1. 태그 수정 시 수정된 태그 존재 여부 확인
+     * 2. 수정으로 태그를 입력받지 않은 경우(태그가 없는 상태) 수정 전 게시글에 태그 존재 여부 확인
+     *  2-1. 기존 게시글에 태그가 존재하는 경우 게시글에 연결된 태그 삭제
+     * <p>
+     * 3. 수정된 태그를 입력받은 경우
+     *  3-1. 기존 TagBoard에 있는 데이터를 지우고 입력받은 데이터를 TagBoard에 저장
+     *  // (사용X). 태그가 수정되면서 기존 태그가 사라진 경우 게시글과 태그 연결 해제 (ex 기존 태그 : a,b,c / 수정된 태그 : a,c -> b는 TagToFreeBoard에서 삭제되어야 한다.)
+     *  3-2. 수정된 태그가 이미 db에 존재하면 db에 있는 tagId, tagName 사용
+     *  3-3. 수정된 태그가 db에 없으면 db에 수정된 태그 저장
+     */
+    public List<Tag> updatePromotionBoardTag(List<Tag> tags, PromotionBoard promotionBoard) {
+        // 1. 태그 수정 시 수정된 태그 존재 여부 확인
+        List<TagToPromotionBoard> findTagToPromotionBoards = tagToPromotionBoardRepository.findByPromotionBoard(promotionBoard);
+        List<Tag> updatedPromotionBoardTags = new ArrayList<>();
+
+        // 2. 수정으로 태그를 입력받지 않은 경우(태그가 없는 상태) 수정 전 게시글에 태그 존재 여부 확인
+        if (tags == null) {
+            if (!findTagToPromotionBoards.isEmpty()) {
+                for (int i = 0; i < findTagToPromotionBoards.size(); i++) {
+                    removeTagPromotionBoard(findTagToPromotionBoards.get(i));
+                }
+                return null;
+            }
+        }
+
+        // 3. 수정된 태그를 입력받은 경우
+        // 3-1. 기존 TagBoard에 있는 데이터를 지우고 입력받은 데이터를 TagBoard에 저장
+        for (int i = 0; i < findTagToPromotionBoards.size(); i++) {
+            removeTagToPromotionBoard(findTagToPromotionBoards.get(i));
+        }
+
+        for (int i = 0; i < tags.size(); i++) {
+            // 3.2 수정된 태그가 db에 없으면 db에 수정된 태그 저장
+            Tag updatedTag = findTag(tags.get(i));
+            TagToPromotionBoard tagToPromotionBoard = new TagToPromotionBoard(promotionBoard, updatedTag);
+            updatedPromotionBoardTags.add(updatedTag);
+
+            // 3.3 수정된 태그가 db에 없으면 db에 수정된 태그 저장
+            tagToPromotionBoardRepository.save(tagToPromotionBoard);
+        }
+        return updatedPromotionBoardTags;
+    }
+
     // 태그 존재 여부 검증 메서드
     private Tag findTag(Tag tag) {
         Optional<Tag> optionalTag = tagRepository.findByTagName(tag.getTagName());
@@ -63,6 +109,11 @@ public class PromotionBoardTagService {
         long tagId = optionalTag.get().getTagId();
 
         return tagId;
+    }
+
+    // 게시글과 연결된 태그 삭제 메서드(TagToPromotionBoard에 있는 데이터 삭제)
+    private void removeTagPromotionBoard(TagToPromotionBoard tagToPromotionBoard) {
+        tagToPromotionBoardRepository.delete(tagToPromotionBoard);
     }
 
     /**
