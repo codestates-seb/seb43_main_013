@@ -29,5 +29,5 @@ jobs:
         shell: bash
       
       - name: Build with Gradle
-        run: ./gradlew build
+        run: ./server/gradlew build
         shell: bash
