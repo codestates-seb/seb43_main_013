@@ -4,6 +4,7 @@ import com.CreatorConnect.server.audit.Auditable;
 import com.CreatorConnect.server.board.comments.feedbackcomment.entity.FeedbackComment;
 import com.CreatorConnect.server.board.comments.freecomment.entity.FreeComment;
 import com.CreatorConnect.server.board.comments.jobcomment.entity.JobComment;
+import com.CreatorConnect.server.board.comments.promotioncomment.entity.PromotionComment;
 import com.CreatorConnect.server.board.freeboard.entity.FreeBoard;
 import com.CreatorConnect.server.board.feedbackboard.entity.FeedbackBoard;
 import com.CreatorConnect.server.board.jobboard.entity.JobBoard;
@@ -12,6 +13,7 @@ import com.CreatorConnect.server.board.promotionboard.entity.PromotionBoard;
 import com.CreatorConnect.server.board.recomments.feedbackrecomment.entity.FeedbackReComment;
 import com.CreatorConnect.server.board.recomments.freerecomment.entity.FreeReComment;
 import com.CreatorConnect.server.board.recomments.jobrecomment.entity.JobReComment;
+import com.CreatorConnect.server.board.recomments.promotionrecomment.entity.PromotionReComment;
 import com.CreatorConnect.server.member.bookmark.entity.Bookmark;
 import com.CreatorConnect.server.member.like.entity.Like;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -124,6 +126,9 @@ public class Member extends Auditable {
     private List<JobComment> jobComments = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<PromotionComment> promotionComments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<FeedbackReComment> feedbackReComments = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -131,6 +136,9 @@ public class Member extends Auditable {
 
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<JobReComment> jobReComments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<PromotionReComment> promotionReComments = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<Like> likes = new HashSet<>();

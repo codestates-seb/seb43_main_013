@@ -3,16 +3,14 @@ package com.CreatorConnect.server.board.promotionboard.entity;
 import com.CreatorConnect.server.audit.Auditable;
 import com.CreatorConnect.server.board.Board;
 import com.CreatorConnect.server.board.categories.category.entity.Category;
-import com.CreatorConnect.server.board.comments.feedbackcomment.entity.FeedbackComment;
+import com.CreatorConnect.server.board.comments.promotioncomment.entity.PromotionComment;
 import com.CreatorConnect.server.board.tag.dto.TagDto;
 import com.CreatorConnect.server.board.tag.entity.TagToFeedbackBoard;
 import com.CreatorConnect.server.board.tag.entity.TagToPromotionBoard;
 import com.CreatorConnect.server.member.bookmark.entity.Bookmark;
 import com.CreatorConnect.server.member.entity.Member;
 import com.CreatorConnect.server.member.like.entity.Like;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -20,9 +18,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
+@Setter
 @Entity
 public class PromotionBoard extends Auditable implements Board {
     @Id
@@ -97,8 +96,8 @@ public class PromotionBoard extends Auditable implements Board {
         }
     }
 
-//    @OneToMany(mappedBy = "promotionBoard", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<PromotionCommnet> feedbackComments = new ArrayList<>();
+    @OneToMany(mappedBy = "promotionBoard", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PromotionComment> promotionComments = new ArrayList<>();
 
     @OneToMany(mappedBy = "promotionBoard", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<TagToPromotionBoard> tagBoards = new ArrayList<>();
