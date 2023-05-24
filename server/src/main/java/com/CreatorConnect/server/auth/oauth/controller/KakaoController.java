@@ -53,6 +53,8 @@ public class KakaoController {
         attributes.put("name", kakaoProfile.getKakao_account().getProfile().getNickname());
         attributes.put("profileImage", kakaoProfile.getProperties().getProfile_image());
 
+        log.info("{}", kakaoProfile.getKakao_account().getEmail()); // todo 이메일 선택동의 하지 않았을 때 에러 처리
+
         OAuth2User oAuth2User = new DefaultOAuth2User(
                 Collections.singleton(new SimpleGrantedAuthority("ROLE_USER")),
                 attributes,
