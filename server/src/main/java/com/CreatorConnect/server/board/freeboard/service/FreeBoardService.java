@@ -74,12 +74,12 @@ public class FreeBoardService {
         // post dto 의 memberId 와 로그인 한 유저 비교
         memberService.verifiedAuthenticatedMember(post.getMemberId());
 
-        // 회원 매핑
+        // 1. 회원 매핑
         Optional<Member> member = memberRepository.findById(post.getMemberId());
         freeBoard.setMember(member.orElseThrow(() ->
                 new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND)));
 
-        // 카테고리 매핑
+        // 2. 카테고리 매핑
         Optional<Category> category = categoryRepository.findByCategoryName(post.getCategoryName());
         freeBoard.setCategory(category.orElseThrow(() ->
                 new BusinessLogicException(ExceptionCode.CATEGORY_EXISTS)));
