@@ -112,7 +112,7 @@ public class YoutubeApiService {
             throw new BusinessLogicException(ExceptionCode.CATEGORY_ID_NOT_FOUND);
         }
         List<YoutubeApiDto.Details> responses = new ArrayList<>();
-        VideoPK videoPK = new VideoPK(categoryId,1L);
+        VideoPK videoPK = new VideoPK(categoryId,10L);
 
         // entity 확인 메서드 실행
         if(entityExistCheck(videoPK)) {
