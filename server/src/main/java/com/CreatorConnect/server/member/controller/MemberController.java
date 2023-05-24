@@ -6,10 +6,7 @@ import com.CreatorConnect.server.board.jobboard.entity.JobBoard;
 import com.CreatorConnect.server.exception.BusinessLogicException;
 import com.CreatorConnect.server.exception.ExceptionCode;
 import com.CreatorConnect.server.member.bookmark.entity.Bookmark;
-import com.CreatorConnect.server.member.dto.MemberBoardResponseDto;
-import com.CreatorConnect.server.member.dto.MemberDto;
-import com.CreatorConnect.server.member.dto.MemberFollowResponseDto;
-import com.CreatorConnect.server.member.dto.MemberResponseDto;
+import com.CreatorConnect.server.member.dto.*;
 import com.CreatorConnect.server.member.entity.Member;
 import com.CreatorConnect.server.member.like.entity.Like;
 import com.CreatorConnect.server.member.mapper.MemberMapper;
@@ -70,6 +67,14 @@ public class MemberController {
         MemberResponseDto response = mapper.memberToMemberResponseDto(createdMember);
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+    // 로그아웃
+    @Secured({"ROLE_USER","ROLE_ADMIN"})
+    @PostMapping("/api/logout")
+    public ResponseEntity logoutMember(@RequestHeader("Authorization") String accessToken,
+                                       @RequestHeader("Refresh-Token") String refreshToken) {
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PostMapping("/api/signup/confirm")
