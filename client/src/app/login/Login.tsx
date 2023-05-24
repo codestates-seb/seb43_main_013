@@ -19,7 +19,6 @@ import { useRouter } from "next/navigation";
 import { useLoadingStore } from "@/store";
 import useCustomToast from "@/hooks/useCustomToast";
 import OAuthContainer from "@/components/Login/OAuthContainer";
-import SignupRouteBtn from "@/components/Login/Button/SignupRouteBtn";
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
@@ -68,7 +67,7 @@ const LoginWindow = () => {
 
   return (
     <div className="bg-white w-2/5 min-w-[450px] max-w-[600px] flex flex-col items-center p-6 rounded-xl drop-shadow-xl">
-      <h1 className="text-4xl mb-6">로그인</h1>
+      <h1 className="text-4xl">로그인</h1>
       <form
         className="w-full"
         onSubmit={(e) => {
@@ -80,8 +79,16 @@ const LoginWindow = () => {
         <LoginInput label="비밀번호" value={password} setValue={setPassword} submitCnt={submitCnt} />
         <LoginBtn text="로그인" />
       </form>
-      <OAuthContainer />
-      <SignupRouteBtn />
+      <AddLogin />
     </div>
+  );
+};
+
+const AddLogin = () => {
+  return (
+    <>
+      <div className="text-3xl my-3">또는</div>
+      <OAuthContainer />
+    </>
   );
 };
