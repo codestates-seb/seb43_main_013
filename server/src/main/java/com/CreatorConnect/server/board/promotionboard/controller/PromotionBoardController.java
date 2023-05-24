@@ -54,16 +54,60 @@ public class PromotionBoardController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping("promotions/promotioncategories/{categoryId}")
+    @GetMapping("/promotionboards/promotioncategories/{categoryId}")
     public ResponseEntity getPromotionByCategory(@PathVariable("categoryId") long categoryId,
                                                  @RequestParam String sort,
                                                  @Positive @RequestParam int page,
                                                  @Positive @RequestParam int size) {
 
-         PromotionBoardResponseDto.Multi response = promotionBoardService.responsePromotions(getPromotionByCategory(categoryId, sort, page, size)
+         PromotionBoardResponseDto.Multi response = promotionBoardService.responsePromotions(getPromotionByCategory(categoryId, sort, page, size));
 
          return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @DeleteMapping("/promotionboard/{promotionboard-id}")
+    public ResponseEntity deletePromotionBoard (@Positive @PathVariable("promotionboard-id") Long promotionBoardId,
+                                          @RequestHeader(value = "Authorization") String authorizationToken) {
+
+        promotionBoardService.deletePromotion(promotionBoardId);
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @PostMapping("/promotionboard/{promotionboard-id}/like")
+    public ResponseEntity likePromotionBoard (@PathVariable("promotionboard-id") @Positive Long promotionBoardId,
+                                         @RequestHeader(value = "Authorization") String authorizationToken) {
+
+        promotionBoardService.likePromotionBoard(promotionBoardId);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @DeleteMapping("/promotionboard/{promotionboard-id}/like")
+    public ResponseEntity unLikePromotionBoard (@PathVariable("promotionboard-id") @Positive Long promotionBoardId,
+                                           @RequestHeader(value = "Authorization") String authorizationToken) {
+
+        promotionBoardService.unlikePromotionBoard(promotionBoardId);
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @PostMapping("/promotionboard/{promotionboard-id}/bookmark")
+    public ResponseEntity bookmarkPromotionBoard (@PathVariable("promotionboard-id") @Positive Long promotionBoardId,
+                                                 @RequestHeader(value = "Authorization") String authorizationToken) {
+
+        promotionBoardService.bookmarkPromotionBoard(promotionBoardId);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @DeleteMapping("/promotionboard/{promotionboard-id}/bookmark")
+    public ResponseEntity unbookmarkPromotionBoard (@PathVariable("promotionboard-id") @Positive Long promotionBoardId,
+                                                   @RequestHeader(value = "Authorization") String authorizationToken) {
+
+        promotionBoardService.unbookmarkpromotionBoard(promotionBoardId);
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 
 }
