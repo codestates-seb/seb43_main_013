@@ -13,7 +13,8 @@ const useFetchNoticeBoardList = ({ sorted, page, size }: ApiFetchNoticeBoardList
       [QUERY_KEYS.noticeBoardList, page],
       ({ pageParam = page }) => apiFetchNoticeBoardList({ sorted, page: pageParam, size }),
       {
-        getNextPageParam: (lastPage, allPage) => (lastPage.pageInfo.size === size ? lastPage.pageInfo.page + 1 : null),
+        getNextPageParam: (lastPage, allPage) =>
+          lastPage?.pageInfo?.size === size ? lastPage?.pageInfo?.page + 1 : null,
       },
     );
 

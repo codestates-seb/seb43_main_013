@@ -21,7 +21,8 @@ const useFetchComments = ({ type, boardId, page, size }: Props) => {
     [QUERY_KEYS.comment, type, boardId],
     ({ pageParam = page }) => apiFetchComments(type, { boardId, page: pageParam, size }),
     {
-      getNextPageParam: (lastPage, allPage) => (lastPage.pageInfo.size === size ? lastPage.pageInfo.page + 1 : null),
+      getNextPageParam: (lastPage, allPage) =>
+        lastPage?.pageInfo?.size === size ? lastPage?.pageInfo?.page + 1 : null,
     },
   );
 

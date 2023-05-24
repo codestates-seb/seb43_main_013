@@ -12,7 +12,8 @@ const useFetchFollowers = ({ memberId, page, size }: ApiFetchFollowersRequest) =
     ["followers", memberId],
     ({ pageParam = page }) => apiFetchFollowers({ memberId, page: pageParam, size }),
     {
-      getNextPageParam: (lastPage, allPage) => (lastPage.pageInfo.size === size ? lastPage.pageInfo.page + 1 : null),
+      getNextPageParam: (lastPage, allPage) =>
+        lastPage?.pageInfo?.size === size ? lastPage?.pageInfo?.page + 1 : null,
     },
   );
 
