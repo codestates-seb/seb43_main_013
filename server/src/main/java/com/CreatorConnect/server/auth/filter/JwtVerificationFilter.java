@@ -16,9 +16,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.security.SignatureException;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -44,7 +41,6 @@ public class JwtVerificationFilter extends OncePerRequestFilter { // OncePerRequ
         } catch (ExpiredJwtException ee) {
             // 액세스 토큰이 만료된 경우
             log.info("catch ExpiredJwtException");
-
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Access-Token expired");
             return;
 
