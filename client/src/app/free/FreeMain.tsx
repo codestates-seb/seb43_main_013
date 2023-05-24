@@ -52,9 +52,9 @@ const FreeMain = () => {
   return (
     //  전체 컨테이너
     <div className="mx-auto mt-6">
-      <h2 className="text-2xl font-bold text-left"> 자유게시판 </h2>
       {isClient && (
-        <div className="flex justify-end  mb-4">
+        <div className="flex justify-between  mb-4">
+          <h2 className="pl-5 text-2xl font-bold text-left"> 자유 게시판 </h2>
           <SortPosts />
         </div>
       )}

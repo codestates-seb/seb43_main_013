@@ -11,8 +11,8 @@ export const getYoutubeThumbnail = (url: string) => {
   const vedioId = url.slice(sp + 3, ep);
 
   // 2. 썸네일 링크 생성
-  return `https://img.youtube.com/vi/${vedioId}/maxresdefault.jpg`;
-  // return `https://img.youtube.com/vi/uBH1e1Hm3M8/0.jpg`;
+  return `https://img.youtube.com/vi/${vedioId}/mqdefault.jpg`;
+  // https://img.youtube.com/vi/LzV7k5zxF68/maxresdefault.jpg
 };
 
 /** 2023/05/23 - 유튜브 Iframe 링크 추출 - by 1-blue */

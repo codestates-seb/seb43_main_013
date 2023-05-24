@@ -23,7 +23,7 @@ const RightSideButton: React.FC<RightSideButtonProps> = ({ destination }) => {
   };
 
   return (
-    <div className="fixed right-0 top-1/2 xl:right-6 2xl:right-20 transform -translate-y-1/2 ml-2">
+    <div className="fixed right-0 top-1/2 xl:right-6 2xl:right-20 transform -translate-y-1/2 ml-2 z-50">
       <div className="flex flex-col items-center justify-center gap-y-2">
         <span
           onClick={() => scrollPage("top")}

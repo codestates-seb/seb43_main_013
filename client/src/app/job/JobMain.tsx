@@ -54,10 +54,10 @@ const JobMain = () => {
   return (
     <>
       <div className="mx-auto mt-6">
-        <h1 className="text-2xl font-bold text-left"> 구인/구직 게시판 </h1>
-        {/* freeboard list header */}
         {isClient && (
-          <div className="flex justify-end  mb-4">
+          <div className="flex justify-between  mb-4">
+            <h1 className="pl-5 text-2xl font-bold text-left"> 구인/구직 게시판 </h1>
+            {/* freeboard list header */}
             <SortPosts />
           </div>
         )}

@@ -1,19 +1,26 @@
 "use client";
 
+import { DetailTag } from "@/types/api";
+import Link from "next/link";
+
 /** 2023/05/08 - 임시 Tag UI - by leekoby */
 interface TagItemProps {
-  tag: string;
+  tags: DetailTag[];
 }
-const TagItem: React.FC<TagItemProps> = ({ tag }) => {
+const TagItem: React.FC<TagItemProps> = ({ tags }) => {
   return (
-    <li className="list-none">
-      <button
-        type="button"
-        className="px-2 py-1 bg-main-400 text-xs text-white rounded-lg transition-colors hover:font-bold hover:bg-main-500"
-      >
-        {tag}
-      </button>
-    </li>
+    <ul className="flex space-x-2 flex-wrap">
+      {tags.map(({ tagName }) => (
+        <li key={tagName}>
+          <Link
+            href={`/search?keyword=${tagName}`}
+            className="px-2 py-1 mt-1 text-xs font-bold text-main-500 border-2 border-main-500 rounded-lg transition-colors hover:bg-main-500 hover:text-white"
+          >
+            {tagName}
+          </Link>
+        </li>
+      ))}
+    </ul>
   );
 };
 
