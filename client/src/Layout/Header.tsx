@@ -14,11 +14,10 @@ import AuthCheck from "@/components/Header/AuthCheck";
 /** 2023/05/04 - 헤더 컴포넌트 - by Kadesti */
 const Header: React.FC = () => {
   const { accessToken } = useTokenStore();
-  const [isLogin, setIsLogin] = useState(false);
+  const [hasToken, setHasToken] = useState(accessToken);
 
   useEffect(() => {
-    if (accessToken !== "") setIsLogin(true);
-    else setIsLogin(false);
+    setHasToken(accessToken);
   }, [accessToken]);
 
   const nickState = useState(false);
@@ -31,7 +30,7 @@ const Header: React.FC = () => {
         <HeaderLogo />
         <SearchSide array={leftArr} />
         <SearchDiv />
-        {isLogin ? <LoginSide nickState={nickState} /> : <SearchSide array={rightArr} />}
+        {hasToken !== "" ? <LoginSide nickState={nickState} /> : <SearchSide array={rightArr} />}
       </div>
     </header>
   );

@@ -16,15 +16,19 @@ const MustInput = ({ mustBind, isSubmit }: { mustBind: mustType; isSubmit: boole
 
   useEffect(() => {
     if (label === "이메일") {
-      setRegText("abc123@gmail.com");
-
-      if (value === "admin@gmail.com" && isSubmit) return;
       const emailRegExp = /^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.com$/;
       const emailValid = emailRegExp.test(value);
-
-      return setValid(emailValid);
+      setValid(emailValid);
+      setRegText("abc123@gmail.com");
     }
-    if (label === "이름") setRegText("한글 또는 영어");
+    if (label === "이름") {
+      const nameRexExp = /^[가-힣a-zA-Z]+$/;
+      const nameValid = nameRexExp.test(value);
+      setValid(nameValid);
+      setRegText("한글 또는 영어");
+    }
+    if (label === "전화번호") setRegText("010-0000-0000");
+
     if (value !== "") return setValid(true);
     return setValid(false);
   }, [value]);
