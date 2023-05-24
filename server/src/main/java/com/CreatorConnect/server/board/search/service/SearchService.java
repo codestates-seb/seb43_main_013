@@ -44,6 +44,7 @@ public class SearchService {
         this.popularSearchRepository = popularSearchRepository;
     }
 
+    @Transactional
     public Page<SearchResponseDto> searchPosts(String keyword, Pageable pageable, LocalDate searchDate) {
 
         Page<FreeBoard> freeBoardResults = freeBoardRepository.findByTitleContainingOrContentContaining(keyword, keyword, pageable);

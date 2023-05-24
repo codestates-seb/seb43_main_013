@@ -68,7 +68,6 @@ public class PromotionBoard extends Auditable implements Board {
         }
     }
 
-
     @ManyToOne
     @JoinColumn(name = "member_id")
     private Member member;
@@ -101,7 +100,6 @@ public class PromotionBoard extends Auditable implements Board {
 
     @OneToMany(mappedBy = "promotionBoard", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<TagToPromotionBoard> tagBoards = new ArrayList<>();
-
 
     // promotionBoard - Bookmark 일대다 매핑
     @OneToMany(mappedBy = "promotionBoard", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
