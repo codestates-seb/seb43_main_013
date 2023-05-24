@@ -17,11 +17,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+@Transactional
 @Service
 public class SearchService {
     private final FreeBoardRepository freeBoardRepository;
@@ -55,7 +57,7 @@ public class SearchService {
         return new PageImpl<>(mergedResults, pageable, totalElements);
     }
 
-    private void updateSearchCount(String keyword, LocalDate searchDate) {
+    void updateSearchCount(String keyword, LocalDate searchDate) {
         PopularSearch popularSearch = popularSearchRepository.findByKeyword(keyword);
         if (popularSearch == null) {
             popularSearch = new PopularSearch();
@@ -66,8 +68,11 @@ public class SearchService {
         popularSearchRepository.save(popularSearch);
     }
 
-    private List<SearchResponseDto> mergeSearchResults(Page<FreeBoard> freeBoardResults, Page<FeedbackBoard> feedbackBoardResults, Page<FeedbackBoard> promotionBoardResults,
+    private List<SearchResponseDto> mergeSearchResults(Page<FreeBoard> freeBoardResults,
+                                                       Page<FeedbackBoard> feedbackBoardResults,
+                                                       Page<PromotionBoard> promotionBoardResults,
                                                        Page<Member> memberResults) {
+
         List<SearchResponseDto> mergedResults = new ArrayList<>();
 
         // Convert FreeBoard search results
@@ -82,6 +87,7 @@ public class SearchService {
             mergedResults.add(dto);
         }
 
+        // Convert PromotionBoard search results
         for (PromotionBoard promotionBoard : promotionBoardResults.getContent()) {
             SearchBoardResponseDto dto = convertToSearchPromotionBoardResponseDto(promotionBoard);
             mergedResults.add(dto);
@@ -118,6 +124,25 @@ public class SearchService {
         SearchBoardResponseDto dto = new SearchBoardResponseDto();
         dto.setBoardType("FEEDBACKBOARD");
         dto.setId(board.getFeedbackBoardId());
+        dto.setTitle(board.getTitle());
+        dto.setContent(board.getContent());
+        dto.setCommentCount(board.getCommentCount());
+        dto.setLikeCount(board.getLikeCount());
+        dto.setViewCount(board.getViewCount());
+        dto.setCategoryName(board.getCategoryName());
+        dto.setMemberId(board.getMember().getMemberId());
+        dto.setProfileImageUrl(board.getMember().getProfileImageUrl());
+        dto.setCreatedAt(board.getCreatedAt());
+        dto.setModifiedAt(board.getModifiedAt());
+
+        return dto;
+    }
+
+    private SearchBoardResponseDto convertToSearchPromotionBoardResponseDto(PromotionBoard board) {
+
+        SearchBoardResponseDto dto = new SearchBoardResponseDto();
+        dto.setBoardType("PROMOTIONBOARD");
+        dto.setId(board.getPromotionBoardId());
         dto.setTitle(board.getTitle());
         dto.setContent(board.getContent());
         dto.setCommentCount(board.getCommentCount());

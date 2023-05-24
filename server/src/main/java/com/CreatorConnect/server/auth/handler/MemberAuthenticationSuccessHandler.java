@@ -33,7 +33,7 @@ public class MemberAuthenticationSuccessHandler implements AuthenticationSuccess
                                         HttpServletResponse response,
                                         Authentication authentication) throws IOException {
 
-        // 인증 성공 후, 로그를 기록하거나 사용자 정보를 response로 전송하는 등의 추가 작업을 할 수 있다.
+        // 로그인 인증 성공 후, 로그를 기록하거나 사용자 정보를 response 로 전송하는 등의 추가 작업
         log.info("# Authenticated successfully!");
 
         // 인증된 사용자의 username 가져오기
@@ -41,7 +41,7 @@ public class MemberAuthenticationSuccessHandler implements AuthenticationSuccess
 
         Member member = memberRepository.findByEmail(username).orElseThrow();
 
-        // response JSON 형식으로 응답하기
+        // response 에 JSON 형식으로 응답하기
         ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
         objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS"));
 

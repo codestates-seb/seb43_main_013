@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Slf4j
-@Component
+@Component // 인증은 성공 했지만 권한이 없을 시 호출
 public class MemberAccessDeniedHandler implements AccessDeniedHandler {
 
     @Override
