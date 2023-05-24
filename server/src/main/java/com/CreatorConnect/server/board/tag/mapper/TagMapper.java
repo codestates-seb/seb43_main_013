@@ -19,10 +19,8 @@ public interface TagMapper {
         return tag;
     }
 
+    // List<TagDto.TagInfo> -> List<Tag>
     List<Tag> tagPostDtosToTag(List<TagDto.TagInfo> tagInfos);
-
-    // tag -> List<Tag>
-//    List<Tag> tagResponse(Tag tag);
 
     // List<Tag> -> TagDto.TagResponse
     List<TagDto.TagInfo> tagsToTagResponseDto(List<Tag> tags);
