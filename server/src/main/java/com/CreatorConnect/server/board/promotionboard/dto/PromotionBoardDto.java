@@ -19,7 +19,7 @@ public class PromotionBoardDto {
     public static class Post {
         @Valid
         @NotNull
-        private long memberId;
+        private Long memberId;
         @Valid
         @NotBlank(message = "게시글의 제목을 입력하세요.")
         private String title;
