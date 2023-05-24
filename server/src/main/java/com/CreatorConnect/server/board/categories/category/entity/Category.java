@@ -30,7 +30,6 @@ public class Category {
     @OneToMany(mappedBy = "category", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<FeedbackBoard> feedbackBoards = new ArrayList<>();
 
-
     @OneToMany(mappedBy = "category", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<PromotionBoard> promotionBoards = new ArrayList<>();
 }

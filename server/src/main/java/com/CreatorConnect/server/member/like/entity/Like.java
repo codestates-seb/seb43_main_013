@@ -4,6 +4,7 @@ import com.CreatorConnect.server.audit.Auditable;
 import com.CreatorConnect.server.board.feedbackboard.entity.FeedbackBoard;
 import com.CreatorConnect.server.board.freeboard.entity.FreeBoard;
 import com.CreatorConnect.server.board.jobboard.entity.JobBoard;
+import com.CreatorConnect.server.board.promotionboard.entity.PromotionBoard;
 import com.CreatorConnect.server.member.entity.Member;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -40,6 +41,10 @@ public class Like extends Auditable {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "likedjobboard_id")
     private JobBoard jobBoard;
+
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "likedpromotionboard_id")
+    private PromotionBoard promotionBoard;
 
     @Enumerated(EnumType.STRING)
     private BoardType boardType;

@@ -4,6 +4,8 @@ import com.CreatorConnect.server.board.feedbackboard.entity.FeedbackBoard;
 import com.CreatorConnect.server.board.feedbackboard.repository.FeedbackBoardRepository;
 import com.CreatorConnect.server.board.freeboard.entity.FreeBoard;
 import com.CreatorConnect.server.board.freeboard.repository.FreeBoardRepository;
+import com.CreatorConnect.server.board.promotionboard.entity.PromotionBoard;
+import com.CreatorConnect.server.board.promotionboard.repository.PromotionBoardRepository;
 import com.CreatorConnect.server.board.search.dto.SearchBoardResponseDto;
 import com.CreatorConnect.server.board.search.dto.SearchMemberResponseDto;
 import com.CreatorConnect.server.board.search.dto.SearchResponseDto;
@@ -26,12 +28,14 @@ import java.util.List;
 public class SearchService {
     private final FreeBoardRepository freeBoardRepository;
     private final FeedbackBoardRepository feedbackBoardRepository;
+    private final PromotionBoardRepository promotionBoardRepository;
     private final MemberRepository memberRepository;
     private final PopularSearchRepository popularSearchRepository;
 
-    public SearchService(FreeBoardRepository freeBoardRepository, FeedbackBoardRepository feedbackBoardRepository, MemberRepository memberRepository, PopularSearchRepository popularSearchRepository) {
+    public SearchService(FreeBoardRepository freeBoardRepository, FeedbackBoardRepository feedbackBoardRepository, PromotionBoardRepository promotionBoardRepository, MemberRepository memberRepository, PopularSearchRepository popularSearchRepository) {
         this.freeBoardRepository = freeBoardRepository;
         this.feedbackBoardRepository = feedbackBoardRepository;
+        this.promotionBoardRepository = promotionBoardRepository;
         this.memberRepository = memberRepository;
         this.popularSearchRepository = popularSearchRepository;
     }
@@ -40,13 +44,14 @@ public class SearchService {
 
         Page<FreeBoard> freeBoardResults = freeBoardRepository.findByTitleContainingOrContentContaining(keyword, keyword, pageable);
         Page<FeedbackBoard> feedbackBoardResults = feedbackBoardRepository.findByTitleContainingOrContentContaining(keyword, keyword, pageable);
+        Page<PromotionBoard> promotionBoardResults = promotionBoardRepository.findByTitleContainingOrContentContaining(keyword, keyword, pageable);
         Page<Member> memberResults = memberRepository.findByNicknameContaining(keyword, pageable);
 
         // update keyword search count
         updateSearchCount(keyword, searchDate);
 
         // Convert the search results to DTOs
-        List<SearchResponseDto> mergedResults = mergeSearchResults(freeBoardResults, feedbackBoardResults, memberResults);
+        List<SearchResponseDto> mergedResults = mergeSearchResults(freeBoardResults, feedbackBoardResults, promotionBoardResults, memberResults);
         long totalElements = mergedResults.size();
 
         return new PageImpl<>(mergedResults, pageable, totalElements);
@@ -63,7 +68,7 @@ public class SearchService {
         popularSearchRepository.save(popularSearch);
     }
 
-    private List<SearchResponseDto> mergeSearchResults(Page<FreeBoard> freeBoardResults, Page<FeedbackBoard> feedbackBoardResults,
+    private List<SearchResponseDto> mergeSearchResults(Page<FreeBoard> freeBoardResults, Page<FeedbackBoard> feedbackBoardResults, Page<FeedbackBoard> promotionBoardResults,
                                                        Page<Member> memberResults) {
         List<SearchResponseDto> mergedResults = new ArrayList<>();
 
@@ -76,6 +81,11 @@ public class SearchService {
         // Convert FeedbackBoard search results
         for (FeedbackBoard feedbackBoard : feedbackBoardResults.getContent()) {
             SearchBoardResponseDto dto = convertToSearchFeedBackBoardResponseDto(feedbackBoard);
+            mergedResults.add(dto);
+        }
+
+        for (PromotionBoard promotionBoard : promotionBoardResults.getContent()) {
+            SearchBoardResponseDto dto = convertToSearchPromotionBoardResponseDto(promotionBoard);
             mergedResults.add(dto);
         }
 

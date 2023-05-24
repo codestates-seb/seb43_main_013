@@ -1,23 +1,34 @@
 package com.CreatorConnect.server.board.promotionboard.entity;
 
+import com.CreatorConnect.server.audit.Auditable;
+import com.CreatorConnect.server.board.Board;
 import com.CreatorConnect.server.board.categories.category.entity.Category;
+import com.CreatorConnect.server.board.comments.feedbackcomment.entity.FeedbackComment;
 import com.CreatorConnect.server.board.tag.dto.TagDto;
+import com.CreatorConnect.server.board.tag.entity.TagToFeedbackBoard;
+import com.CreatorConnect.server.board.tag.entity.TagToPromotionBoard;
+import com.CreatorConnect.server.member.bookmark.entity.Bookmark;
 import com.CreatorConnect.server.member.entity.Member;
+import com.CreatorConnect.server.member.like.entity.Like;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
-@Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class PromotionBoard {
+@Entity
+public class PromotionBoard extends Auditable implements Board {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long promotionId;
+    @Column(name = "promotion_Board_id")
+    private long promotionBoardId;
     @Column(nullable = false)
     private String title;
     @Column(nullable = false)
@@ -29,7 +40,7 @@ public class PromotionBoard {
     @Column
     private String content;
     @Column
-    private Long commnetCount;
+    private Long commentCount;
     @Column
     private Long maxCommentCount;
     @Column
@@ -39,7 +50,7 @@ public class PromotionBoard {
 
     @PrePersist
     public void prePersist() {
-        this.commnetCount = this.commnetCount == null ? 0 : this.commnetCount;
+        this.commentCount = this.commentCount == null ? 0 : this.commentCount;
         this.maxCommentCount = this.maxCommentCount == null ? 0 : this.maxCommentCount;
         this.likeCount = this.likeCount == null ? 0 : this.likeCount;
         this.viewCount = this.viewCount == null ? 0 : this.viewCount;
@@ -49,9 +60,7 @@ public class PromotionBoard {
     @JoinColumn(name = "category_id")
     private Category category;
 
-    public Category getCategory() {
-        return category;
-    }
+    public String getCategoryName() { return category.getCategoryName();}
 
     public void setCategory(Category category) {
         this.category = category;
@@ -59,6 +68,7 @@ public class PromotionBoard {
             this.category.getPromotionBoards().add(this);
         }
     }
+
 
     @ManyToOne
     @JoinColumn(name = "member_id")
@@ -86,5 +96,21 @@ public class PromotionBoard {
             this.member.getPromotionBoards().add(this);
         }
     }
+
+//    @OneToMany(mappedBy = "promotionBoard", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<PromotionCommnet> feedbackComments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "promotionBoard", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<TagToPromotionBoard> tagBoards = new ArrayList<>();
+
+
+    // FeedbackBoard - Bookmark 일대다 매핑
+    @OneToMany(mappedBy = "promotionBoard", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Set<Bookmark> bookmarks = new HashSet<>();
+
+    // FeedbackBoard - Like 일대다 매핑
+    @OneToMany(mappedBy = "promotionBoard", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Set<Like> likes = new HashSet<>();
+
 
 }
