@@ -16,7 +16,7 @@ const MustInput = ({ mustBind, isSubmit }: { mustBind: mustType; isSubmit: boole
 
   useEffect(() => {
     if (label === "이메일") {
-      setRegText("EX) abc123@gmail.com");
+      setRegText("abc123@gmail.com");
 
       if (value === "admin@gmail.com" && isSubmit) return;
       const emailRegExp = /^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.com$/;
@@ -24,16 +24,16 @@ const MustInput = ({ mustBind, isSubmit }: { mustBind: mustType; isSubmit: boole
 
       return setValid(emailValid);
     }
-    if (label === "이름") setRegText("이름은 한글 또는 영어만 가능합니다");
+    if (label === "이름") setRegText("한글 또는 영어");
     if (value !== "") return setValid(true);
     return setValid(false);
   }, [value]);
 
   return (
-    <div className="w-full h-28">
+    <div className="w-full h-24">
       <div className="flex text-xl mb-1">{label + " (필수)"}</div>
       <input
-        placeholder={label}
+        placeholder={regText}
         type={label === "비밀번호" ? "password" : ""}
         className="w-full h-12 border-2 border-black rounded-lg p-3 text-xl"
         value={value}
@@ -41,14 +41,12 @@ const MustInput = ({ mustBind, isSubmit }: { mustBind: mustType; isSubmit: boole
           setValue(e.target.value);
         }}
       />
-      {!isSubmit ? (
-        <div className="self-end">{regText}</div>
-      ) : isMaster ? (
-        <div className="self-end text-rose-600">사용이 불가능한 계정입니다</div>
-      ) : (
-        !valid && <div className="self-end text-rose-600">형식에 맞게 입력해주세요!</div>
-      )}
-      {/* {isSubmit && !valid && <div className="self-end text-rose-600">형식에 맞게 입력해주세요!</div>} */}
+      {isSubmit &&
+        (isMaster ? (
+          <div className="self-end text-rose-600">사용이 불가능한 계정입니다</div>
+        ) : (
+          !valid && <div className="self-end text-rose-600">형식에 맞게 입력해주세요!</div>
+        ))}
     </div>
   );
 };
@@ -62,16 +60,15 @@ const OptionalInput = ({ optionBind }: { optionBind: OptionType }) => {
   const { label, value, setValue } = optionBind;
 
   return (
-    <div className="w-full h-28">
+    <div className="w-full h-24">
       <div className="flex text-xl mb-1">{label}</div>
       <input
-        placeholder={label}
+        placeholder={label === "전화번호" ? "010-0000-0000" : ""}
         type=""
         className="w-full h-12 border-2 border-black rounded-lg p-3 text-xl"
         value={value}
         onChange={(e) => setValue(e.target.value)}
       />
-      {label === "전화번호" && <div className="self-end">EX) 010-0000-0000</div>}
     </div>
   );
 };
