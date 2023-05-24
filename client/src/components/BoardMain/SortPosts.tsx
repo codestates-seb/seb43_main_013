@@ -1,3 +1,4 @@
+"use client";
 import { useSortStore } from "@/store";
 import { CheckIcon } from "@heroicons/react/20/solid";
 import { useEffect, useState } from "react";

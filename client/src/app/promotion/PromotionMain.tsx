@@ -4,7 +4,6 @@ import SideCategories from "@/components/BoardMain/SideCategories";
 import SortPosts from "@/components/BoardMain/SortPosts";
 import RightSideButton from "@/components/RightSideButton";
 import NoDataExists from "@/components/Svg/NoDataExists";
-import NotSearch from "@/components/Svg/NotSearch";
 
 import { useFetchCategories, useFetchPromotionCategories } from "@/hooks/query";
 import useFetchPromotionBoardList from "@/hooks/query/useFetctPromotionBoardList";
@@ -12,12 +11,16 @@ import { useCategoriesStore, useSortStore } from "@/store";
 import { useMemberStore } from "@/store/useMemberStore";
 import { usePromotionCategoriesStore } from "@/store/usePromotionCategoriesStore";
 import Link from "next/link";
-import { useRef, useEffect, useCallback } from "react";
+import { useRef, useEffect, useCallback, useState } from "react";
 import PromotionContentItem from "./PromotionContentItem";
 
 /** 2023/05/17 - 홍보 게시판 메인 화면 - by leekoby */
 const PromotionMain = () => {
   const member = useMemberStore((state) => state.member);
+  const [isClient, setIsClient] = useState(false);
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   /** 2023/05/17 - 사이드 카테고리 상태 - by leekoby */
   const selectedCategory = useCategoriesStore((state) => state.selectedCategory);
@@ -69,10 +72,12 @@ const PromotionMain = () => {
   return (
     //  전체 컨테이너
     <div className="mx-auto mt-6 ">
-      <h1 className="text-2xl font-bold text-left">🔥 홍보 게시판 🔥</h1>
-      <div className="flex justify-end mb-4">
-        <SortPosts />
-      </div>
+      <h1 className="text-2xl font-bold text-left"> 홍보 게시판 </h1>
+      {isClient && (
+        <div className="flex justify-end  mb-4">
+          <SortPosts />
+        </div>
+      )}
       <div className="flex flex-col md:flex-row ">
         {/* Left Side */}
         <aside className="flex flex-row md:flex-col items-center justify-center md:justify-start  md:w-0 md:grow-[2]  ">
@@ -105,11 +110,7 @@ const PromotionMain = () => {
           <div className="flex flex-col items-center m-auto">{}</div>
         </section>
         {/* 오른쪽 사이드 영역 */}
-        {member && (
-          <div className="fixed right-0 bottom-0 transform -translate-y-1/2 ml-2">
-            <RightSideButton destination={`/feedback/write`} />
-          </div>
-        )}
+        {isClient && member && <RightSideButton destination={`/promotion/write`} />}
       </div>
     </div>
   );

@@ -1,5 +1,5 @@
 "use client";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useFetchFreeBoardList } from "@/hooks/query/useFetchFreeBoardList";
 import { useFetchCategories } from "@/hooks/query";
 import SideCategories from "@/components/BoardMain/SideCategories";
@@ -14,6 +14,12 @@ import NoDataExists from "@/components/Svg/NoDataExists";
 /** 2023/05/08 - 자유게시판 메인 화면 - by leekoby */
 const FreeMain = () => {
   const member = useMemberStore((state) => state.member);
+
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   /** 2023/05/14 - 게시판 page 상태관리 - by leekoby */
   const currentPage = usePageStore((state) => state.currentPage);
@@ -42,13 +48,16 @@ const FreeMain = () => {
   /** 2023/05/13 - 공통 카테고리 초기값 - by leekoby */
   const { categories, isLoading } = useFetchCategories({ type: "normal" });
 
+  console.log(data?.pages);
   return (
     //  전체 컨테이너
     <div className="mx-auto mt-6">
-      <h2 className="text-2xl font-bold text-left">🔥 자유게시판 🔥</h2>
-      <div className="flex justify-end  mb-4">
-        <SortPosts />
-      </div>
+      <h2 className="text-2xl font-bold text-left"> 자유게시판 </h2>
+      {isClient && (
+        <div className="flex justify-end  mb-4">
+          <SortPosts />
+        </div>
+      )}
       <div className="flex flex-col md:flex-row ">
         {/* Left Side */}
         {/* rightside freeboard post list */}
@@ -73,7 +82,6 @@ const FreeMain = () => {
 
             {data && (
               <div className="flex justify-center items-center">
-                {/* TODO: React Query를 이용한 PreFetch 방식으로 변경하기 */}
                 <Pagination
                   page={data?.pages[0].pageInfo.page}
                   totalPages={data?.pages[0].pageInfo.totalPages}
@@ -84,11 +92,7 @@ const FreeMain = () => {
           </div>
         </section>
         {/* 오른쪽 사이드 영역 */}
-        {member && (
-          <div className="fixed right-0 bottom-0 transform -translate-y-1/2 ml-2">
-            <RightSideButton destination={`/free/write`} />
-          </div>
-        )}
+        {isClient && member && <RightSideButton destination={`/free/write`} />}
       </div>
     </div>
   );

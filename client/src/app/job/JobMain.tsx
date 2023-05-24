@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { useFetchCategories, useFetchJobCategories } from "@/hooks/query";
+import { useFetchJobCategories } from "@/hooks/query";
 import SortPosts from "@/components/BoardMain/SortPosts";
 import Pagination from "@/components/Pagination";
 import JobContentItem from "./JobContentItem";
@@ -15,6 +15,13 @@ import NoDataExists from "@/components/Svg/NoDataExists";
 /** 2023/05/18 - 자유게시판 메인 화면 - by leekoby */
 const JobMain = () => {
   const member = useMemberStore((state) => state.member);
+
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
   /** 2023/05/18 - 게시판 page 상태관리 - by leekoby */
   const currentPage = usePageStore((state) => state.currentPage);
   const setCurrentPage = usePageStore((state) => state.setCurrentPage);
@@ -47,11 +54,13 @@ const JobMain = () => {
   return (
     <>
       <div className="mx-auto mt-6">
-        <h1 className="text-2xl font-bold text-left">🔥 구인/구직 게시판 🔥</h1>
+        <h1 className="text-2xl font-bold text-left"> 구인/구직 게시판 </h1>
         {/* freeboard list header */}
-        <div className="flex justify-end mb-4">
-          <SortPosts />
-        </div>
+        {isClient && (
+          <div className="flex justify-end  mb-4">
+            <SortPosts />
+          </div>
+        )}
         <div className="flex flex-col md:flex-row ">
           {/* Left Side */}
           <aside className=" flex flex-row md:flex-col items-center justify-center md:justify-start  md:w-0 md:grow-[2]  ">
@@ -83,11 +92,7 @@ const JobMain = () => {
               )}
             </div>
           </section>
-          {member && (
-            <div className="fixed right-0 bottom-0 transform -translate-y-1/2 ml-2">
-              <RightSideButton destination={`/job/write`} />
-            </div>
-          )}
+          {isClient && member && <RightSideButton destination={`/job/write`} />}
         </div>
       </div>
     </>

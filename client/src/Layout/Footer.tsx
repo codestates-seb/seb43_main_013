@@ -1,6 +1,7 @@
-/** 2023/05/04 - 푸터 컴포넌트 - by 1-blue */
+/** 2023/05/24 - 푸터 컴포넌트 - by leekoby */
+import FooterContent from "@/components/Footer/FooterContent";
 const Footer = () => {
-  return <footer></footer>;
+  return <FooterContent />;
 };
 
 export default Footer;
