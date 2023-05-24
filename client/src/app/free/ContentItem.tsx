@@ -58,7 +58,7 @@ const ContentItem: React.FC<ContentItemProps> = ({ props }) => {
   return (
     <>
       {/*  list container */}
-      <div className="flex flex-col items-center justify-center p-2 bg-white rounded-md shadow-main md:flex-row">
+      <div className=" flex flex-col items-center p-2 bg-white rounded-md shadow-md md:flex-row md:w-full shadow-black/20 hover:shadow-black/30 hover:shadow-lg transition-all ">
         {/* List Item * */}
         <div className="items-center p-5 bg-sub-100 rounded-md w-full">
           {/* right content */}
@@ -89,9 +89,7 @@ const ContentItem: React.FC<ContentItemProps> = ({ props }) => {
               {/* content body */}
               <p className="truncate-3" dangerouslySetInnerHTML={{ __html: props.content.replace(/<[^>]*>?/g, "") }} />
               {/* rightside tag */}
-              <div className="flex w-full gap-x-2">
-                {props.tags && props.tags.map((item) => <TagItem tag={item.tagName} />)}
-              </div>
+              {props.tags && <TagItem tags={props.tags} />}
             </div>
           </div>
           <ContentFooter position="main" footerData={props} type={type} boardId={props.freeBoardId} />

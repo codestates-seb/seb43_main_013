@@ -75,7 +75,13 @@ const FeedbackMain = () => {
   return (
     //  전체 컨테이너
     <div className="mx-auto mt-6">
-      <h1 className="text-2xl font-bold text-left"> 피드백 게시판 </h1>
+      {isClient && (
+        <div className="flex justify-between mb-4">
+          <h1 className="pl-5 text-2xl font-bold text-left"> 피드백 게시판 </h1>
+          <SortPosts />
+        </div>
+      )}
+
       <div className="flex flex-col md:flex-row ">
         {/* Left Side */}
         <aside className="flex flex-row md:flex-col items-center justify-center md:justify-start  md:w-0 md:grow-[2] md:mt-14 ">
@@ -87,16 +93,13 @@ const FeedbackMain = () => {
           {isClient && (
             <div className="flex flex-col md:flex-row md:justify-between mb-4 ">
               {feedbackCategories && <FeedbackCategories feedbackCategoryData={feedbackCategories} />}
-              <div className="flex justify-end  mb-4">
-                <SortPosts />
-              </div>
             </div>
           )}
           {/* freeboard list header */}
 
           {/* post item */}
           {/*  2023/05/14 - 무한스크롤 피드백 게시글 목록 - by leekoby  */}
-          <div className="flex flex-col flex-wrap gap-5 md:flex-row">
+          <div className="flex flex-col flex-wrap gap-1 md:flex-row md:justify-around">
             {data?.pages[0].data.length === 0 ? (
               <NoDataExists />
             ) : (
@@ -104,7 +107,7 @@ const FeedbackMain = () => {
                 page.data.map((innerData, itemIndex) => {
                   const isLastItem = pageIndex === data.pages.length - 1 && itemIndex === page.data.length - 1;
                   return (
-                    <div key={innerData.feedbackBoardId} className="w-full lg:w-[48%]">
+                    <div key={innerData.feedbackBoardId} className="w-full lg:w-[49%]">
                       <FeedbackContentItem props={innerData} ref={isLastItem ? loader : undefined} position="board" />
                     </div>
                   );
@@ -112,9 +115,9 @@ const FeedbackMain = () => {
               )
             )}
           </div>
-          {isClient && member && <RightSideButton destination={`/feedback/write`} />}
         </section>
         {/* 오른쪽 사이드 영역 */}
+        {isClient && member && <RightSideButton destination={`/feedback/write`} />}
       </div>
     </div>
   );

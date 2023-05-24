@@ -7,10 +7,16 @@ import NoDataExists from "@/components/Svg/NoDataExists";
 import { useFetchNoticeBoardList } from "@/hooks/query/useFetchNoticeBoardList";
 import { usePageStore, useSortStore } from "@/store";
 import { useMemberStore } from "@/store/useMemberStore";
+import { useEffect, useState } from "react";
 import NoticeContentItem from "./NoticeContetnItem";
 
 /** 2023/05/20 - 공지사항 메인 화면 - by leekoby */
 const NoticeMain = () => {
+  const [isClient, setIsClient] = useState(false);
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
   /** 2023/05/20 - 게시판 page 상태관리 - by leekoby */
   const currentPage = usePageStore((state) => state.currentPage);
   const setCurrentPage = usePageStore((state) => state.setCurrentPage);
@@ -26,13 +32,13 @@ const NoticeMain = () => {
 
   return (
     // 전체 컨테이너
-    <div className="mx-auto mt-6">
-      <div className="flex justify-between ml-5 mb-4">
-        <h2 className="text-2xl font-bold text-left"> 공지사항 </h2>
-        <div className="flex justify-end  ">
+    <div className="mx-auto mt-6 ">
+      {isClient && (
+        <div className="flex justify-between  mb-4">
+          <h1 className="pl-5 text-2xl font-bold text-left"> 공지사항 </h1>
           <SortPosts />
         </div>
-      </div>
+      )}
       <div className="flex flex-col md:flex-row ">
         {/* 카테고리 영역 추가 시  */}
         {/* <aside className=" flex flex-row md:flex-col items-center justify-center md:justify-start  md:w-0 md:grow-[2]  ">

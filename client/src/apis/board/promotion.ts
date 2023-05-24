@@ -50,7 +50,7 @@ export const apiFetchPromotionBoardList: ApiFetchPromotionBoardListHandler = asy
   size,
 }) => {
   const { data } = await serverInstance.get<ApiFetchPromotionBoardListResponse>(
-    `/promotionboards?sort=${sorted}&page=${page}&size=${size}`,
+    `/promotionboards${selected}?sort=${sorted}&page=${page}&size=${size}`,
   );
 
   return data;
