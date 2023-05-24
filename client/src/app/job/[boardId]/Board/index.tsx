@@ -13,6 +13,7 @@ import BoardComments from "@/components/Board/BoardComments";
 import BoardCommentForm from "@/components/Board/BoardCommentForm";
 import Skeleton from "@/components/Skeleton";
 import BoardASide from "@/components/Board/BoardASide";
+import BoardHashtag from "@/components/Board/BoardHashtag";
 
 // type
 interface Props {
@@ -45,6 +46,9 @@ const Board: React.FC<Props> = ({ boardId }) => {
       {/* 썸네일/영상 */}
       {/* 내용 */}
       <BoardContent content={data.content} />
+
+      {/* 해시태그 */}
+      <BoardHashtag content={data.content} />
 
       {/* 댓글 정보 / 좋아요 정보 */}
       <BoardFooter

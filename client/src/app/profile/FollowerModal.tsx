@@ -29,7 +29,7 @@ interface Props {
 const FollowerModal: React.FC<Props> = ({ memberId, nickname, onCloseModal }) => {
   const { member } = useMemberStore();
   const toast = useCustomToast();
-  const { data, fetchNextPage, hasNextPage } = useFetchFollowers({ memberId, page: 1, size: 1 });
+  const { data, fetchNextPage, hasNextPage } = useFetchFollowers({ memberId, page: 1, size: 20 });
   const queryClient = useQueryClient();
 
   const modalRef = useRef<null | HTMLUListElement>(null);
@@ -67,7 +67,7 @@ const FollowerModal: React.FC<Props> = ({ memberId, nickname, onCloseModal }) =>
         toast({ title: `${nickname}님을 팔로우했습니다.`, status: "success" });
       }
 
-      queryClient.invalidateQueries(["member", memberId]);
+      queryClient.invalidateQueries(["member"]);
       queryClient.invalidateQueries(["followers"]);
       queryClient.invalidateQueries(["followings"]);
     } catch (error) {

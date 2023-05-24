@@ -29,7 +29,7 @@ interface Props {
 const FollowingModal: React.FC<Props> = ({ memberId, nickname, onCloseModal }) => {
   const { member } = useMemberStore();
   const toast = useCustomToast();
-  const { data, fetchNextPage, hasNextPage } = useFetchFollowings({ memberId, page: 1, size: 1 });
+  const { data, fetchNextPage, hasNextPage } = useFetchFollowings({ memberId, page: 1, size: 20 });
   const queryClient = useQueryClient();
 
   const modalRef = useRef<null | HTMLUListElement>(null);

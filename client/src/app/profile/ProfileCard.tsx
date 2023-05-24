@@ -66,7 +66,7 @@ const ProfileCard: React.FC<Props> = ({ memberId }) => {
         toast({ title: `${data.nickname}님을 팔로우했습니다.`, status: "success" });
       }
 
-      queryClient.invalidateQueries(["member", memberId]);
+      queryClient.invalidateQueries(["member"]);
     } catch (error) {
       console.error(error);
 
@@ -97,7 +97,7 @@ const ProfileCard: React.FC<Props> = ({ memberId }) => {
         </div>
 
         {/* 자기소개 */}
-        {data.introduction && <p className="whitespace-pre font-bold text-sm">{data.introduction}</p>}
+        {data.introduction && <p className="whitespace-pre font-bold text-sm w-3/4 text-center">{data.introduction}</p>}
 
         <div className="space-x-6 text-sm flex">
           <button
@@ -132,7 +132,7 @@ const ProfileCard: React.FC<Props> = ({ memberId }) => {
             <button
               type="button"
               onClick={onClickFollow}
-              className="m-auto px-2 py-1 mt-4 text-white font-bold text-sm border-2 bg-main-400 rounded-md transition-colors hover:text-white hover:bg-main-500"
+              className="m-auto px-2 py-1 mt-4 text-white text-lg border-2 bg-main-400 rounded-md transition-colors hover:text-white hover:bg-main-500"
             >
               {data.followed ? "언팔로우" : "팔로우"}
             </button>

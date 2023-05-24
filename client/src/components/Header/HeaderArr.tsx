@@ -2,10 +2,12 @@ import { usePathname } from "next/navigation";
 
 const headerArr = () => {
   const pathname = usePathname();
-  const activeLeft = "mr-5 text-main-400 border-b-2 border-b-main-400";
-  const activeRight = "text-main-400 border-b-2 border-b-main-400";
 
-  const homePath = pathname === "/" ? activeLeft : "mr-5";
+  const margin = pathname === "/" ? "mr-14" : "mr-5";
+  const activeLeft = `${margin} text-main-400 border-b-2 border-b-main-400 h-8`;
+  const activeRight = "text-main-400 border-b-2 border-b-main-400 h-8";
+
+  const homePath = pathname === "/" ? activeLeft : "mr-14";
   const noticePath = pathname === "/notice" ? activeRight : "";
 
   const loginPath = pathname === "/login" ? activeLeft : "mr-5";
@@ -19,7 +21,7 @@ const headerArr = () => {
     },
     {
       path: "/notice",
-      name: "공지",
+      name: "공지사항",
       style: noticePath,
     },
   ];
