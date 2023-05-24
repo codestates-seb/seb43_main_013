@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 
 import SearchDiv from "../components/Header/SearchDiv";
@@ -14,6 +14,12 @@ import AuthCheck from "@/components/Header/AuthCheck";
 /** 2023/05/04 - 헤더 컴포넌트 - by Kadesti */
 const Header: React.FC = () => {
   const { accessToken } = useTokenStore();
+  const [isLogin, setIsLogin] = useState(false);
+
+  useEffect(() => {
+    if (accessToken !== "") setIsLogin(true);
+    else setIsLogin(false);
+  }, [accessToken]);
 
   const nickState = useState(false);
   const { leftArr, rightArr } = headerArr();
@@ -25,7 +31,7 @@ const Header: React.FC = () => {
         <HeaderLogo />
         <SearchSide array={leftArr} />
         <SearchDiv />
-        {accessToken !== "" ? <LoginSide nickState={nickState} /> : <SearchSide array={rightArr} />}
+        {isLogin ? <LoginSide nickState={nickState} /> : <SearchSide array={rightArr} />}
       </div>
     </header>
   );

@@ -14,8 +14,6 @@ const RankMenu = () => {
     useCurrentRank(setCurRank);
   }, []);
 
-  // console.log("curRank: ", curRank);
-
   return (
     <>
       <RankClose rankBind={rankBind} curRank={curRank} />
