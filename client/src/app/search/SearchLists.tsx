@@ -12,6 +12,8 @@ import {
 } from "@heroicons/react/24/outline";
 import InfiniteScrollContainer from "@/components/InfiniteScrollContainer";
 import NotSearch from "@/components/Svg/NotSearch";
+import { useEffect } from "react";
+import useCustomToast from "@/hooks/useCustomToast";
 
 interface Props {
   keyword: string;
@@ -27,10 +29,13 @@ const table = {
 
 /** 2023/05/22 - 검색된 리스트 컴포넌트 - by 1-blue */
 const SearchLists: React.FC<Props> = ({ keyword, initialData }) => {
+  const toast = useCustomToast();
   const { data, fetchNextPage, hasNextPage } = useFetchSearch({ keyword, page: 1, size: 10, initialData });
 
   const boardPages = data?.pages.map((page) => page.data.filter((v): v is SearchBoard => v.boardType !== "MEMBER"));
   const memberPages = data?.pages.map((page) => page.data.filter((v): v is SearchMember => v.boardType === "MEMBER"));
+
+  useEffect(() => void toast({ title: `"${keyword}"를 검색했습니다.` }), [toast, keyword]);
 
   return (
     <article className="mb-12">
