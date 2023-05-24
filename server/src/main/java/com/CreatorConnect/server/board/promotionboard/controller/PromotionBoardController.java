@@ -23,7 +23,8 @@ public class PromotionBoardController {
                                                                         @RequestHeader(value = "Authorization") String outhorizationToken) {
 
         PromotionBoardResponseDto.Post response = promotionBoardService.createPromotion(postDto);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
     //수정
     @PatchMapping("/promotionboard/{promotionBoardId}")
