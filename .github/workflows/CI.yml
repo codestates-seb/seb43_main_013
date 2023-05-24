@@ -30,4 +30,3 @@ jobs:
       
       - name: Build with Gradle
         run: ./server/gradlew clean build
-        shell: bash
