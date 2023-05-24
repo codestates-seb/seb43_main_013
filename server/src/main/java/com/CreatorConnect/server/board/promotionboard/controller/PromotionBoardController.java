@@ -37,6 +37,7 @@ public class PromotionBoardController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    // 게시글 상세 조회
     @GetMapping("/promotionboard/{promotionBoardId}")
     public ResponseEntity<PromotionBoardResponseDto.Details> getPromotion(@PathVariable("promotionBoardId") @Positive Long promotionBoardId){
 
@@ -45,6 +46,7 @@ public class PromotionBoardController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    // 게시글 목록 조회
     @GetMapping("/promotionboards")
     public ResponseEntity getpromotion(@RequestParam("sort") String sort,
                                        @RequestParam("page") @Positive int page,
@@ -55,6 +57,7 @@ public class PromotionBoardController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    // 카테고리 별 조회
     @GetMapping("/promotionboards/categories/{category-id}")
     public ResponseEntity getPromotionByCategory(@PathVariable("category-id") long categoryId,
                                                  @RequestParam String sort,
@@ -66,6 +69,7 @@ public class PromotionBoardController {
          return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    // 게시글 삭제
     @DeleteMapping("/promotionboard/{promotionboard-id}")
     public ResponseEntity deletePromotionBoard (@Positive @PathVariable("promotionboard-id") Long promotionBoardId,
                                           @RequestHeader(value = "Authorization") String authorizationToken) {
@@ -75,6 +79,7 @@ public class PromotionBoardController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    // 좋아요 추가
     @PostMapping("/promotionboard/{promotionboard-id}/like")
     public ResponseEntity likePromotionBoard (@PathVariable("promotionboard-id") @Positive Long promotionBoardId,
                                          @RequestHeader(value = "Authorization") String authorizationToken) {
@@ -84,6 +89,7 @@ public class PromotionBoardController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    // 좋아요 취소
     @DeleteMapping("/promotionboard/{promotionboard-id}/like")
     public ResponseEntity unLikePromotionBoard (@PathVariable("promotionboard-id") @Positive Long promotionBoardId,
                                            @RequestHeader(value = "Authorization") String authorizationToken) {
@@ -93,6 +99,7 @@ public class PromotionBoardController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    // 북마크 추가
     @PostMapping("/promotionboard/{promotionboard-id}/bookmark")
     public ResponseEntity bookmarkPromotionBoard (@PathVariable("promotionboard-id") @Positive Long promotionBoardId,
                                                  @RequestHeader(value = "Authorization") String authorizationToken) {
@@ -102,6 +109,7 @@ public class PromotionBoardController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    // 북마크 취소
     @DeleteMapping("/promotionboard/{promotionboard-id}/bookmark")
     public ResponseEntity unbookmarkPromotionBoard (@PathVariable("promotionboard-id") @Positive Long promotionBoardId,
                                                    @RequestHeader(value = "Authorization") String authorizationToken) {
