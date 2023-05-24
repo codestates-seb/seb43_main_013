@@ -4,6 +4,7 @@ import com.CreatorConnect.server.board.categories.category.entity.Category;
 import com.CreatorConnect.server.board.categories.category.repository.CategoryRepository;
 import com.CreatorConnect.server.board.categories.category.service.CategoryService;
 import com.CreatorConnect.server.board.feedbackboard.entity.FeedbackBoard;
+import com.CreatorConnect.server.board.freeboard.entity.FreeBoard;
 import com.CreatorConnect.server.board.promotionboard.dto.PromotionBoardDto;
 import com.CreatorConnect.server.board.promotionboard.dto.PromotionBoardResponseDto;
 import com.CreatorConnect.server.board.promotionboard.entity.PromotionBoard;
@@ -18,6 +19,7 @@ import com.CreatorConnect.server.exception.ExceptionCode;
 import com.CreatorConnect.server.member.bookmark.entity.Bookmark;
 import com.CreatorConnect.server.member.bookmark.repository.BookmarkRepository;
 import com.CreatorConnect.server.member.entity.Member;
+import com.CreatorConnect.server.member.like.entity.Like;
 import com.CreatorConnect.server.member.like.repository.LikeRepository;
 import com.CreatorConnect.server.member.repository.MemberRepository;
 import com.CreatorConnect.server.member.service.MemberService;
@@ -77,12 +79,14 @@ public class PromotionBoardService {
 
         memberService.verifiedAuthenticatedMember(foundPromotionBoard.getMemberId());
 
+        // 수정
         Optional.ofNullable(promotionBoard.getTitle())
-                .ifPresent(foundPromotionBoard::setTitle);
+                .ifPresent(title -> foundPromotionBoard.setTitle(title));
         Optional.ofNullable(promotionBoard.getLink())
-                .ifPresent(foundPromotionBoard::setLink);
+                .ifPresent(link -> foundPromotionBoard.setLink(link));
         Optional.ofNullable(promotionBoard.getContent())
-                .ifPresent(foundPromotionBoard::setContent);
+                .ifPresent(content -> foundPromotionBoard.setContent(content));
+
         // 카테골리 유효성 검증
         if (patchDto.getCategoryName() != null) {
             categoryService.verifyCategory(patchDto.getCategoryName());
@@ -91,7 +95,6 @@ public class PromotionBoardService {
             foundPromotionBoard.setCategory(category.orElseThrow(() ->
                     new BusinessLogicException(ExceptionCode.CATEGORY_NOT_FOUND)));
         }
-
 
         PromotionBoard updatedPromotionBoard = promotionBoardRepository.save(foundPromotionBoard);
 
@@ -129,11 +132,11 @@ public class PromotionBoardService {
 
             // 게시물을 북마크한 경우
             bookmarked = loggedinMember.getBookmarks().stream()
-                    .anyMatch(bookmark -> foundPromotionBoard.equals(bookmark.getFeedbackBoard()));
+                    .anyMatch(bookmark -> foundPromotionBoard.equals(bookmark.getPromotionBoard()));
 
             // 게시물을 좋아요한 경우
             liked = loggedinMember.getLikes().stream()
-                    .anyMatch(like -> foundPromotionBoard.equals(like.getFeedbackBoard()));
+                    .anyMatch(like -> foundPromotionBoard.equals(like.getPromotionBoard()));
         }
 
         // 매핑
@@ -148,10 +151,10 @@ public class PromotionBoardService {
     public PromotionBoardResponseDto.Multi<PromotionBoardResponseDto.Details> responsePromotions(String sort, int page, int size){
         // Page 생성 - 최신순, 등록순, 인기순
         // 기본값 = 최신순
-        Page<PromotionBoard> promotionBoardsPage = promotionBoardRepository.findAll(sortedPageRequest(sort, page, size));
+        Page<PromotionBoard> promotionBoards = promotionBoardRepository.findAll(sortedPageRequest(sort, page, size));
 
         // pageInfo 가져오기
-        PromotionBoardResponseDto.PageInfo pageInfo = new PromotionBoardResponseDto.PageInfo(promotionBoardsPage.getNumber() + 1, promotionBoardsPage.getSize(), promotionBoardsPage.getTotalElements(), promotionBoardsPage.getTotalPages());
+        PromotionBoardResponseDto.PageInfo pageInfo = new PromotionBoardResponseDto.PageInfo(promotionBoards.getNumber() + 1, promotionBoards.getSize(), promotionBoards.getTotalElements(), promotionBoards.getTotalPages());
 
         // 로그인한 멤버
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -160,31 +163,31 @@ public class PromotionBoardService {
         if (authentication != null && authentication.isAuthenticated() && !"anonymousUser".equals(authentication.getName())) {
             Member loggedinMember = memberService.findVerifiedMember(authentication.getName());
 
-            for (PromotionBoard promotionBoard : promotionBoardsPage.getContent()) {
+            for (PromotionBoard promotionBoard : promotionBoards.getContent()) {
                 boolean bookmarked = loggedinMember.getBookmarks().stream()
-                        .anyMatch(bookmark -> promotionBoard.equals(bookmark.getFeedbackBoard()));
+                        .anyMatch(bookmark -> promotionBoard.equals(bookmark.getPromotionBoard()));
 
                 boolean liked = loggedinMember.getLikes().stream()
-                        .anyMatch(like -> promotionBoard.equals(like.getFeedbackBoard()));
+                        .anyMatch(like -> promotionBoard.equals(like.getPromotionBoard()));
 
-                PromotionBoardResponseDto.Details feedbackResponse = mapper.prmotionBoardToPromotionBoardDetailsResponse(promotionBoard);
-                feedbackResponse.setBookmarked(bookmarked);
-                feedbackResponse.setLiked(liked);
-                responses.add(promotionBoard);
+                PromotionBoardResponseDto.Details promotionBoardResponse = mapper.prmotionBoardToPromotionBoardDetailsResponse(promotionBoard);
+                promotionBoardResponse.setBookmarked(bookmarked);
+                promotionBoardResponse.setLiked(liked);
+                responses.add(promotionBoardResponse);
             }
         } else {
-            responses = getResponseList(promotionBoardsPage);
+            responses = getResponseList(promotionBoards);
         }
 
         return new PromotionBoardResponseDto.Multi<>(responses, pageInfo);
     }
-    //피드백 목록 조회
-    public PromotionBoardResponseDto.Multi<PromotionBoardResponseDto.Details> responseFeedbacksByCategory(Long promotioncategory, String sort, int page, int size){
-        // page생성 - 피드백 카테고리 ID로 검색 후 정렬 적용
-        Page<FeedbackBoard> feedbackBoardsPage = promotionBoardRepository.findFeedbackBoardsByFeedbackCategoryId(feedbackCategoryId, sortedPageRequest(sort, page, size));
+
+    public PromotionBoardResponseDto.Multi<PromotionBoardResponseDto.Details> responseFeedbacksByCategory(Long promotioncategoryId, String sort, int page, int size){
+        // page생성 - 카테고리 ID로 검색 후 정렬 적용
+        Page<PromotionBoard> promotionBoards = promotionBoardRepository.findPromotionCategoryId(promotioncategoryId, sortedPageRequest(sort, page, size));
 
         // pageInfo 가져오기
-        PromotionBoardResponseDto.PageInfo pageInfo = new PromotionBoardResponseDto.PageInfo(feedbackBoardsPage.getNumber() + 1, feedbackBoardsPage.getSize(), feedbackBoardsPage.getTotalElements(), feedbackBoardsPage.getTotalPages());
+        PromotionBoardResponseDto.PageInfo pageInfo = new PromotionBoardResponseDto.PageInfo(promotionBoards.getNumber() + 1, promotionBoards.getSize(), promotionBoards.getTotalElements(), promotionBoards.getTotalPages());
 
         // 로그인한 멤버 후 게시글 목록
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -193,20 +196,20 @@ public class PromotionBoardService {
         if (authentication != null && authentication.isAuthenticated() && !"anonymousUser".equals(authentication.getName())) {
             Member loggedinMember = memberService.findVerifiedMember(authentication.getName());
 
-            for (FeedbackBoard feedbackBoard : feedbackBoardsPage.getContent()) {
+            for (PromotionBoard promotionBoard : promotionBoards.getContent()) {
                 boolean bookmarked = loggedinMember.getBookmarks().stream()
-                        .anyMatch(bookmark -> feedbackBoard.equals(bookmark.getPromotionBoard()));
+                        .anyMatch(bookmark -> promotionBoard.equals(bookmark.getPromotionBoard()));
 
                 boolean liked = loggedinMember.getLikes().stream()
-                        .anyMatch(like -> feedbackBoard.equals(like.getPromotionBoard()));
+                        .anyMatch(like -> promotionBoard.equals(like.getPromotionBoard()));
 
-                PromotionBoardResponseDto.Details promotionResponse = mapper.prmotionBoardToPromotionBoardDetailsResponse(feedbackBoard);
+                PromotionBoardResponseDto.Details promotionResponse = mapper.prmotionBoardToPromotionBoardDetailsResponse(promotionBoard);
                 promotionResponse.setBookmarked(bookmarked);
                 promotionResponse.setLiked(liked);
-                responses.add(feedbackResponse);
+                responses.add(promotionResponse);
             }
         } else {
-            responses = getResponseList(feedbackBoardsPage);
+            responses = getResponseList(promotionBoards);
         }
 
         return new PromotionBoardResponseDto.Multi<>(responses, pageInfo);
@@ -214,6 +217,7 @@ public class PromotionBoardService {
 
     //삭제
     public void deletePromotion(Long promotionBoardId) {
+
         PromotionBoard promotionBoard = findVerifiedPromotionBoard(promotionBoardId);
 
         memberService.verifiedAuthenticatedMember(promotionBoard.getMemberId());
@@ -221,8 +225,9 @@ public class PromotionBoardService {
         promotionBoardRepository.delete(promotionBoard);
     }
 
-    //프로모션 아이디로 프로모션 찾는 메서드
+    // 프로모션 아이디로 프로모션 찾는 메서드
     public PromotionBoard findVerifiedPromotionBoard(Long promotionBoardId) {
+
         Optional<PromotionBoard> promotionBoard = promotionBoardRepository.findById(promotionBoardId);
 
         return promotionBoard.orElseThrow(() -> new BusinessLogicException(ExceptionCode.FEEDBACK_NOT_FOUND));
@@ -277,7 +282,7 @@ public class PromotionBoardService {
         }
 
         Bookmark bookmark = new Bookmark();
-        bookmark.setBoardType(Bookmark.BoardType.FEEDBACKBOARD);
+        bookmark.setBoardType(Bookmark.BoardType.PROMOTIONBOARD);
         bookmark.setMember(currentMember);
         bookmark.setPromotionBoard(findpromotionBoard);
         bookmarkRepository.save(bookmark);
@@ -313,5 +318,67 @@ public class PromotionBoardService {
         memberRepository.save(currentMember);
     }
 
+    public void likePromotionBoard (Long promotionBoardId) {
+
+        PromotionBoard findpromotionBoard = findVerifiedPromotionBoard(promotionBoardId);
+        Member currentMember = memberService.getLoggedinMember();
+
+        // 현재 로그인한 사용자가 해당 게시물을 좋아요 했는지 확인
+        boolean isAlreadyLiked = currentMember.getLikes().stream()
+                .filter(Objects::nonNull) // null인 요소 필터링
+                .map(Like::getPromotionBoard)
+                .filter(Objects::nonNull) // null인 FreeBoard 필터링
+                .anyMatch(promotionBoard -> findpromotionBoard.getPromotionBoardId().equals(promotionBoard.getPromotionBoardId()));
+
+        if (isAlreadyLiked) {
+            throw new BusinessLogicException(ExceptionCode.LIKE_ALREADY_EXISTS);
+        }
+
+        // 게시물의 likeCount 증가
+        findpromotionBoard.setLikeCount(findpromotionBoard.getLikeCount() + 1);
+        promotionBoardRepository.save(findpromotionBoard);
+
+        Like like = new Like();
+        like.setBoardType(Like.BoardType.PROMOTIONBOARD);
+        like.setMember(currentMember);
+        like.setPromotionBoard(findpromotionBoard);
+        likeRepository.save(like);
+
+        // 현재 사용자의 likes 컬렉션에 좋아요 추가
+        currentMember.getLikes().add(like);
+        memberRepository.save(currentMember);
+    }
+
+    public void unlikePromotionBoard(Long promotionBoardId) {
+
+        PromotionBoard findPromotionBoard = findVerifiedPromotionBoard(promotionBoardId);
+        Member currentMember = memberService.getLoggedinMember();
+
+        // 현재 로그인한 사용자가 해당 게시물을 좋아요 했는지 확인
+        Optional<Set<Like>> likes = Optional.ofNullable(currentMember.getLikes());
+
+        Set<Like> foundLikes = likes.orElse(Collections.emptySet())
+                .stream()
+                .filter(l -> l != null && l.getPromotionBoard() != null && l.getPromotionBoard().getPromotionBoardId().equals(findPromotionBoard.getPromotionBoardId()))
+                .collect(Collectors.toSet());
+
+        if (foundLikes.isEmpty()) {
+            throw new BusinessLogicException(ExceptionCode.LIKE_NOT_FOUND);
+        }
+
+        // 게시글의 likeCount 감소
+        if (findPromotionBoard.getLikeCount() > 0) {
+            findPromotionBoard.setLikeCount(findPromotionBoard.getLikeCount() - 1);
+            promotionBoardRepository.save(findPromotionBoard);
+        }
+
+        // 현재 사용자의 likes 컬렉션에서 좋아요 삭제
+        for (Like foundLike : foundLikes) {
+            currentMember.getLikes().remove(foundLike);
+            likeRepository.delete(foundLike);
+        }
+
+        memberRepository.save(currentMember);
+    }
 
 }

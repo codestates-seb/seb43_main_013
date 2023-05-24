@@ -28,7 +28,7 @@ public class PromotionBoard extends Auditable implements Board {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "promotion_Board_id")
-    private long promotionBoardId;
+    private Long promotionBoardId;
     @Column(nullable = false)
     private String title;
     @Column(nullable = false)
@@ -104,11 +104,11 @@ public class PromotionBoard extends Auditable implements Board {
     private List<TagToPromotionBoard> tagBoards = new ArrayList<>();
 
 
-    // FeedbackBoard - Bookmark 일대다 매핑
+    // promotionBoard - Bookmark 일대다 매핑
     @OneToMany(mappedBy = "promotionBoard", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<Bookmark> bookmarks = new HashSet<>();
 
-    // FeedbackBoard - Like 일대다 매핑
+    // promotionBoard - Like 일대다 매핑
     @OneToMany(mappedBy = "promotionBoard", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<Like> likes = new HashSet<>();
 
