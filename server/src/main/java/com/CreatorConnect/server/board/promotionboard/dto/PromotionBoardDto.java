@@ -36,12 +36,12 @@ public class PromotionBoardDto {
         private String content;
 
         private String categoryName;
-        private List<TagDto.TagInfo> tag;
+        private List<TagDto.TagInfo> tags;
 
-        public long getMemberId() {
+        public Member getMember() {
             Member member = new Member();
             member.setMemberId(memberId);
-            return memberId;
+            return member;
         }
     }
 
@@ -57,12 +57,12 @@ public class PromotionBoardDto {
         private String subscriberCount;
         private String content;
         private String categoryName;
-        private List<TagDto.TagInfo> tag;
+        private List<TagDto.TagInfo> tags;
 
-        public long getMemberId() {
+        public Member getMember() {
             Member member = new Member();
             member.setMemberId(memberId);
-            return memberId;
+            return member;
         }
     }
 }
