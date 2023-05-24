@@ -14,7 +14,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { isAxiosError } from "axios";
 import { usePageStore } from "@/store";
 
-// /** 2023/05/08 - 자유게시판 메인 화면 게시글 - by leekoby */
+/** 2023/05/08 - 자유게시판 메인 화면 게시글 - by leekoby */
 interface ContentItemProps {
   props: FreeBoard;
 }
