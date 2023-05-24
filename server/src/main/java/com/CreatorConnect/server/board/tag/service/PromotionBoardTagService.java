@@ -116,6 +116,11 @@ public class PromotionBoardTagService {
         tagToPromotionBoardRepository.delete(tagToPromotionBoard);
     }
 
+    // 게시글과 연결된 태그 삭제 메서드(TagToPromotionBoard에 있는 데이터 삭제)
+    private void removeTagToPromotionBoard(TagToPromotionBoard tagToPromotionBoard) {
+        tagToPromotionBoardRepository.delete(tagToPromotionBoard);
+    }
+
     /**
      * 태그 중복 처리방법
      * 1. 태그가 db에 존재하는지 찾는다
