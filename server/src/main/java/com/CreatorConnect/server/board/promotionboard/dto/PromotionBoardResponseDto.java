@@ -15,7 +15,7 @@ public class PromotionBoardResponseDto {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class Post {
-        private long promotionboardId;
+        private Long promotionBoardId;
     }
 
     @Data
@@ -23,7 +23,7 @@ public class PromotionBoardResponseDto {
     @NoArgsConstructor
     public static class Patch {
 
-        private long promotionBoardId;
+        private Long promotionBoardId;
         private String title;
         private String content;
         private String categoryName;
@@ -34,7 +34,7 @@ public class PromotionBoardResponseDto {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class Details {
-        private long promotionBoardId;
+        private Long promotionBoardId;
         private String title;
         private String content;
         private List<TagDto.TagInfo> tags;
