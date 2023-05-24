@@ -4,9 +4,9 @@ name: CI
 # 해당 workflow가 언제 실행될 것인지에 대한 트리거를 지정
 on:
   push:
-    branches: [ be-dev ] # main branch로 push 될 때 실행됩니다.
+    branches: [ be-dev ] # be-dev branch로 push 될 때 실행됩니다.
   pull_request:
-    branches: [ be-dev ]  # main branch로 pull request될 때 실행됩니다.
+    branches: [ be-dev ]  # be-dev branch로 pull request될 때 실행됩니다.
 
 # workflow는 한개 이상의 job을 가지며, 각 job은 여러 step에 따라 단계를 나눌 수 있습니다.
 jobs:
