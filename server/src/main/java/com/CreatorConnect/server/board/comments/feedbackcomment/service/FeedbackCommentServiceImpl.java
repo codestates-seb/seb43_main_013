@@ -71,6 +71,7 @@ public class FeedbackCommentServiceImpl implements CommentService {
     }
 
     // 댓글 조회
+    @Transactional(readOnly = true)
     @Override
     public  CommentResponseDto.Details responseComment(Long feedbackBoardId, Long commentId){
         // 클라이언트에서 보낸 ID값으로 Entity 조회
@@ -80,6 +81,7 @@ public class FeedbackCommentServiceImpl implements CommentService {
     }
 
     // 댓글 목록 조회
+    @Transactional(readOnly = true)
     @Override
     public CommentResponseDto.Multi<CommentResponseDto.Details> responseComments(Long feedbackBoardId, int page, int size){
         PageRequest pageRequest = PageRequest.of(page - 1, size, Sort.by("commentPK").ascending());
@@ -114,7 +116,8 @@ public class FeedbackCommentServiceImpl implements CommentService {
     }
 
     // 피드백 댓글 찾는 메서드
-    private FeedbackComment findVerifiedFeedbackComment(Long feedbackBoardId, Long commentId) {
+    @Transactional(readOnly = true)
+    public FeedbackComment findVerifiedFeedbackComment(Long feedbackBoardId, Long commentId) {
         Optional<FeedbackComment> feedbackComment = feedbackCommentRepository.findById(new CommentPK(feedbackBoardId, commentId));
         return feedbackComment.orElseThrow(() -> new BusinessLogicException(ExceptionCode.COMMENT_NOT_FOUND));
     }

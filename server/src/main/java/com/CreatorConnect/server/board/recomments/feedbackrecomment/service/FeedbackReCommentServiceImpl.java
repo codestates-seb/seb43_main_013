@@ -66,6 +66,7 @@ public class FeedbackReCommentServiceImpl implements ReCommentService {
     }
 
     // 대댓글 조회
+    @Transactional(readOnly = true)
     @Override
     public  ReCommentResponseDto.Details responseReComment(Long feedbackBoardId, Long commentId, Long reCommentId){
         // 클라이언트에서 보낸 ID값으로 Entity 조회
@@ -90,7 +91,8 @@ public class FeedbackReCommentServiceImpl implements ReCommentService {
     }
 
     // 피드백 대댓글 찾는 메서드
-    private FeedbackReComment findVerifiedFeedbackReComment(Long feedbackBoardId, Long commentId, Long reCommentId) {
+    @Transactional(readOnly = true)
+    public FeedbackReComment findVerifiedFeedbackReComment(Long feedbackBoardId, Long commentId, Long reCommentId) {
         Optional<FeedbackReComment> feedbackReComment = feedbackReCommentRepository.findById(new ReCommentPK(new CommentPK(feedbackBoardId, commentId),reCommentId));
         return feedbackReComment.orElseThrow(() -> new BusinessLogicException(ExceptionCode.RE_COMMENT_NOT_FOUND));
     }
