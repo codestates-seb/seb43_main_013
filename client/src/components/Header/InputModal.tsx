@@ -1,13 +1,16 @@
 import { FormEventHandler, useEffect, useRef, useState } from "react";
 import { MagnifyingGlassIcon } from "../HeaderIcon";
 import { XMarkIcon } from "@heroicons/react/24/outline";
+import dynamic from "next/dynamic";
 
 import useCustomToast from "@/hooks/useCustomToast";
 import { twMerge } from "tailwind-merge";
-import KeywordCloud from "../KeywordCloud";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useFetchMonthlyKeywords, useFetchWeeklyKeywords } from "@/hooks/query";
+import { useLoadingStore } from "@/store";
+
+const KeywordCloud = dynamic(() => import("../KeywordCloud"), { ssr: false });
 
 /** 2023/05/10 - 입력 모달창 - by Kadesti */
 const InputModal = ({ setInputModal }: { setInputModal: React.Dispatch<boolean> }) => {
@@ -16,6 +19,7 @@ const InputModal = ({ setInputModal }: { setInputModal: React.Dispatch<boolean> 
   const modalRef = useRef<HTMLDivElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
   const [value, setValue] = useState("");
+  const { loading } = useLoadingStore();
 
   const { weeklyKeywords } = useFetchWeeklyKeywords({ page: 1, size: 30 });
   const { MonthlyKeywords } = useFetchMonthlyKeywords({ page: 1, size: 30 });
@@ -64,6 +68,7 @@ const InputModal = ({ setInputModal }: { setInputModal: React.Dispatch<boolean> 
       localStorage.setItem("keywords", JSON.stringify([...new Set([value, ...keywords])]));
     }
 
+    loading.start();
     router.push(`/search?keyword=${value}`);
     setInputModal(false);
   };

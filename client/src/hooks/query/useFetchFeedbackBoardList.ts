@@ -21,8 +21,7 @@ const useFetchFeedbackBoardList = ({
     [QUERY_KEYS.feedbackBoardList],
     ({ pageParam = page }) => apiFetchFeedbackBoardList({ selected, selectedFeedback, sorted, page: pageParam, size }),
     {
-      getNextPageParam: (lastPage, allPage) =>
-        lastPage.pageInfo.totalPages > lastPage.pageInfo.page ? lastPage.pageInfo.page + 1 : null,
+      getNextPageParam: (lastPage, allPage) => (lastPage.pageInfo.size === size ? lastPage.pageInfo.page + 1 : null),
     },
   );
 

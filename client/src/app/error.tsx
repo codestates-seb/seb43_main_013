@@ -12,7 +12,7 @@ interface Props {
 /** 2023/05/04 - Erorr 페이지 - by 1-blue */
 const Error: React.FC<Props> = ({ error, reset }) => {
   return (
-    <article className="flex flex-col justify-center items-center mt-24 space-y-8">
+    <article className="flex flex-col justify-center items-center mt-24 space-y-8 h-[50vh]">
       <section className="h-[100px] space-x-4">
         <span
           className="relative top-5 inline-block text-[48px] sm:text-[60px] md:text-[80px] font-bold font-special animate-error-text-bounce text-red-500"

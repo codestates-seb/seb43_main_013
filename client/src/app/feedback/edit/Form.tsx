@@ -121,7 +121,7 @@ const Form: React.FC<Props> = ({ boardId }) => {
     }
     // 유효한 URL인지 확인
     if (!validateYoutubeURL(link)) {
-      return toast({ title: "유효한 링크를 입력해주세요!", status: "error" });
+      return toast({ title: "유튜브 영상 링크를 입력해주세요!", status: "error" });
     }
     const length = content.replace(/<[^>]*>?/g, "").length;
     if (length <= 20) {
@@ -152,7 +152,7 @@ const Form: React.FC<Props> = ({ boardId }) => {
 
       toast({ title: "게시글 수정했습니다.\n수정된 게시글 페이지로 이동됩니다.", status: "success" });
 
-      router.push(`/feedback/${boardId}`);
+      router.replace(`/feedback/${boardId}`);
     } catch (error) {
       console.error(error);
 
@@ -175,8 +175,14 @@ const Form: React.FC<Props> = ({ boardId }) => {
       <section className="flex space-y-4 md:space-y-0 md:space-x-4 z-[1] flex-col md:flex-row flex-1">
         {/* title, link, tag, category */}
         <div className="w-full md:w-0 md:flex-1 space-y-2 z-[1]">
-          <Input name="제목" type="text" placeholder="제목을 입력해주세요!" defaultValue={data?.title} />
-          <Input name="유튜브 링크" type="text" placeholder="유튜브 링크을 입력해주세요!" defaultValue={data?.link} />
+          <Input isEssential name="제목" type="text" placeholder="제목을 입력해주세요!" defaultValue={data?.title} />
+          <Input
+            isEssential
+            name="유튜브 링크"
+            type="text"
+            placeholder="유튜브 링크을 입력해주세요!"
+            defaultValue={data?.link}
+          />
           <div className="flex flex-col pb-3 md:flex-row space-y-4 md:space-x-4 md:space-y-0">
             <NormalCategory selectedCategory={selectedNormalCategory} setSelectedCategory={setSelectedNormalCategory} />
             <FeedbackCategory
@@ -246,7 +252,7 @@ const Form: React.FC<Props> = ({ boardId }) => {
       {/* wysiwyg */}
       <section className="flex flex-col space-y-1">
         <label>
-          <span className="text-base font-bold text-sub-800">내용</span>
+          <span className="text-base font-bold text-sub-800">내용 *</span>
         </label>
         <Editor content={content} setContent={setContent} />
       </section>

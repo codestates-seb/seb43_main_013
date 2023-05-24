@@ -1,4 +1,5 @@
 // component
+import Info from "@/components/Board/Form/Info";
 import Form from "./Form";
 
 // type
@@ -18,6 +19,8 @@ const Page = ({ searchParams: { boardId } }: Props) => {
   return (
     <>
       <h1 className="px-4 pt-8 pb-4 text-2xl font-bold">✏️ 피드백 게시글 수정 ✏️</h1>
+
+      <Info />
 
       <Form boardId={+boardId} />
     </>

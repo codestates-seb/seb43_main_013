@@ -29,7 +29,7 @@ const formats: ReactQuillType.ReactQuillProps["formats"] = [
   "bullet",
   "indent",
   "link",
-  "image",
+  // "image",
   "video",
   "align",
   "color",
@@ -59,7 +59,11 @@ const Editor: React.FC<Props> = ({ content, setContent }) => {
           // 리스트, 인덴트
           [{ list: "ordered" }, { list: "bullet" }, { indent: "-1" }, { indent: "+1" }],
           // 링크, 이미지, 비디오
-          ["link", "image", "video"],
+          [
+            "link",
+            // "image"
+            "video",
+          ],
           // 정렬, 글자색, 배경색
           [{ align: [] }, { color: [] }, { background: [] }],
           // 초기화
@@ -78,7 +82,7 @@ const Editor: React.FC<Props> = ({ content, setContent }) => {
       value={content}
       placeholder="내용을 입력하세요."
       onChange={(content, delta, source, editor) => setContent(content)}
-      className="editor"
+      className="editor shadow-black/40 shadow-sm"
     />
   );
 };
