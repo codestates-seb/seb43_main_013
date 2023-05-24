@@ -4,6 +4,8 @@ import com.CreatorConnect.server.board.feedbackboard.entity.FeedbackBoard;
 import com.CreatorConnect.server.board.feedbackboard.repository.FeedbackBoardRepository;
 import com.CreatorConnect.server.board.freeboard.entity.FreeBoard;
 import com.CreatorConnect.server.board.freeboard.repository.FreeBoardRepository;
+import com.CreatorConnect.server.board.jobboard.entity.JobBoard;
+import com.CreatorConnect.server.board.jobboard.repository.JobBoardRepository;
 import com.CreatorConnect.server.board.promotionboard.entity.PromotionBoard;
 import com.CreatorConnect.server.board.promotionboard.repository.PromotionBoardRepository;
 import com.CreatorConnect.server.board.search.dto.SearchBoardResponseDto;
@@ -29,13 +31,15 @@ public class SearchService {
     private final FreeBoardRepository freeBoardRepository;
     private final FeedbackBoardRepository feedbackBoardRepository;
     private final PromotionBoardRepository promotionBoardRepository;
+    private final JobBoardRepository jobBoardRepository;
     private final MemberRepository memberRepository;
     private final PopularSearchRepository popularSearchRepository;
 
-    public SearchService(FreeBoardRepository freeBoardRepository, FeedbackBoardRepository feedbackBoardRepository, PromotionBoardRepository promotionBoardRepository, MemberRepository memberRepository, PopularSearchRepository popularSearchRepository) {
+    public SearchService(FreeBoardRepository freeBoardRepository, FeedbackBoardRepository feedbackBoardRepository, PromotionBoardRepository promotionBoardRepository, JobBoardRepository jobBoardRepository, MemberRepository memberRepository, PopularSearchRepository popularSearchRepository) {
         this.freeBoardRepository = freeBoardRepository;
         this.feedbackBoardRepository = feedbackBoardRepository;
         this.promotionBoardRepository = promotionBoardRepository;
+        this.jobBoardRepository = jobBoardRepository;
         this.memberRepository = memberRepository;
         this.popularSearchRepository = popularSearchRepository;
     }
@@ -45,13 +49,15 @@ public class SearchService {
         Page<FreeBoard> freeBoardResults = freeBoardRepository.findByTitleContainingOrContentContaining(keyword, keyword, pageable);
         Page<FeedbackBoard> feedbackBoardResults = feedbackBoardRepository.findByTitleContainingOrContentContaining(keyword, keyword, pageable);
         Page<PromotionBoard> promotionBoardResults = promotionBoardRepository.findByTitleContainingOrContentContaining(keyword, keyword, pageable);
+        Page<JobBoard> jobBoardResults = jobBoardRepository.findByTitleContainingOrContentContaining(keyword, keyword, pageable);
         Page<Member> memberResults = memberRepository.findByNicknameContaining(keyword, pageable);
 
         // update keyword search count
         updateSearchCount(keyword, searchDate);
 
         // Convert the search results to DTOs
-        List<SearchResponseDto> mergedResults = mergeSearchResults(freeBoardResults, feedbackBoardResults, promotionBoardResults, memberResults);
+        List<SearchResponseDto> mergedResults =
+                mergeSearchResults(freeBoardResults, feedbackBoardResults, promotionBoardResults, jobBoardResults, memberResults);
         long totalElements = mergedResults.size();
 
         return new PageImpl<>(mergedResults, pageable, totalElements);
@@ -71,6 +77,7 @@ public class SearchService {
     private List<SearchResponseDto> mergeSearchResults(Page<FreeBoard> freeBoardResults,
                                                        Page<FeedbackBoard> feedbackBoardResults,
                                                        Page<PromotionBoard> promotionBoardResults,
+                                                       Page<JobBoard> jobBoardResults,
                                                        Page<Member> memberResults) {
 
         List<SearchResponseDto> mergedResults = new ArrayList<>();
@@ -90,6 +97,11 @@ public class SearchService {
         // Convert PromotionBoard search results
         for (PromotionBoard promotionBoard : promotionBoardResults.getContent()) {
             SearchBoardResponseDto dto = convertToSearchPromotionBoardResponseDto(promotionBoard);
+            mergedResults.add(dto);
+        }
+
+        for (JobBoard jobBoard : jobBoardResults.getContent()) {
+            SearchBoardResponseDto dto = convertToSearchJobBoardResponseDto(jobBoard);
             mergedResults.add(dto);
         }
 
@@ -149,6 +161,25 @@ public class SearchService {
         dto.setLikeCount(board.getLikeCount());
         dto.setViewCount(board.getViewCount());
         dto.setCategoryName(board.getCategoryName());
+        dto.setMemberId(board.getMember().getMemberId());
+        dto.setProfileImageUrl(board.getMember().getProfileImageUrl());
+        dto.setCreatedAt(board.getCreatedAt());
+        dto.setModifiedAt(board.getModifiedAt());
+
+        return dto;
+    }
+
+    private SearchBoardResponseDto convertToSearchJobBoardResponseDto(JobBoard board) {
+
+        SearchBoardResponseDto dto = new SearchBoardResponseDto();
+        dto.setBoardType("JOBBOARD");
+        dto.setId(board.getJobBoardId());
+        dto.setTitle(board.getTitle());
+        dto.setContent(board.getContent());
+        dto.setCommentCount(board.getCommentCount());
+        dto.setLikeCount(board.getLikeCount());
+        dto.setViewCount(board.getViewCount());
+        dto.setCategoryName(board.getJobCategoryName());
         dto.setMemberId(board.getMember().getMemberId());
         dto.setProfileImageUrl(board.getMember().getProfileImageUrl());
         dto.setCreatedAt(board.getCreatedAt());
