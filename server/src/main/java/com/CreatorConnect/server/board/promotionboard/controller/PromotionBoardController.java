@@ -60,7 +60,7 @@ public class PromotionBoardController {
                                                  @Positive @RequestParam int page,
                                                  @Positive @RequestParam int size) {
 
-         PromotionBoardResponseDto.Multi response = promotionBoardService.responsePromotions(getPromotionByCategory(categoryId, sort, page, size));
+         PromotionBoardResponseDto.Multi response = promotionBoardService.getPromotionByCategory(categoryId, sort, page, size);
 
          return new ResponseEntity<>(response, HttpStatus.OK);
     }
