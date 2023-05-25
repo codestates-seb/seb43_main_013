@@ -11,7 +11,7 @@ const FooterContent = () => {
             <li className="text-left">
               {/* <img className="w-36 mt-[-5] h-auto" src={logo} alt="로고" /> */}
               <div className="flex flex-col lg:flex-row items-center justify-center lg:gap-x-2">
-                <Image src={Logo4} alt="" className="inline-block  lg:h-[72px] lg:w-[72px] " />
+                <Image src={Logo4} alt="" className="inline-block  lg:h-[72px] lg:w-[72px] bg-white rounded-full" />
                 <h3 className="font-bold text-2xl lg:text-3xl">
                   Creator <br /> Connect
                 </h3>
