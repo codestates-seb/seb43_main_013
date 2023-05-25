@@ -86,6 +86,7 @@ public class JobBoardController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    // 좋아요 추가
     @PostMapping("/jobboard/{jobBoardId}/like")
     public ResponseEntity likeFreeBoard (@PathVariable("jobBoardId") @Positive Long jobBoardId,
                                          @RequestHeader(value = "Authorization") String authorizationToken) {
@@ -95,6 +96,7 @@ public class JobBoardController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    // 좋아요 취소
     @DeleteMapping("/jobboard/{jobBoardId}/like")
     public ResponseEntity unlikeFreeBoard (@PathVariable("jobBoardId") @Positive Long jobBoardId,
                                            @RequestHeader(value = "Authorization") String authorizationToken) {
@@ -104,6 +106,7 @@ public class JobBoardController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    // 북마크 추가
     @PostMapping("/jobboard/{jobBoardId}/bookmark")
     public ResponseEntity bookmarkFeedbackBoard (@PathVariable("jobBoardId") @Positive Long jobBoardId,
                                                  @RequestHeader(value = "Authorization") String authorizationToken) {
@@ -113,6 +116,7 @@ public class JobBoardController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    // 북마크 취소
     @DeleteMapping("/jobboard/{jobBoardId}/bookmark")
     public ResponseEntity unbookmarkFeedbackBoard (@PathVariable("jobBoardId") @Positive Long jobBoardId,
                                                    @RequestHeader(value = "Authorization") String authorizationToken) {
