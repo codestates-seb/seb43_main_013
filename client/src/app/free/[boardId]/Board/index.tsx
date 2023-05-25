@@ -14,15 +14,17 @@ import BoardCommentForm from "@/components/Board/BoardCommentForm";
 import Skeleton from "@/components/Skeleton";
 import BoardASide from "@/components/Board/BoardASide";
 import BoardHashtag from "@/components/Board/BoardHashtag";
+import { ApiFetchFreeBoardResponse } from "@/types/api";
 
 // type
 interface Props {
   boardId: number;
+  initialData?: ApiFetchFreeBoardResponse;
 }
 
 /** 2023/05/11 - 게시판 내용 - by 1-blue */
-const Board: React.FC<Props> = ({ boardId }) => {
-  const { data, isLoading } = useFetchFreeBoard({ freeBoardId: boardId });
+const Board: React.FC<Props> = ({ boardId, initialData }) => {
+  const { data, isLoading } = useFetchFreeBoard({ freeBoardId: boardId, initialData });
 
   // Skeleton UI
   if (isLoading) return <Skeleton.Board />;

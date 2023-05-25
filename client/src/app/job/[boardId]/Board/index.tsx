@@ -14,15 +14,17 @@ import BoardCommentForm from "@/components/Board/BoardCommentForm";
 import Skeleton from "@/components/Skeleton";
 import BoardASide from "@/components/Board/BoardASide";
 import BoardHashtag from "@/components/Board/BoardHashtag";
+import { ApiFetchJobBoardResponse } from "@/types/api";
 
 // type
 interface Props {
   boardId: number;
+  initialData?: ApiFetchJobBoardResponse;
 }
 
 /** 2023/05/11 - 게시판 내용 - by 1-blue */
-const Board: React.FC<Props> = ({ boardId }) => {
-  const { data, isLoading } = useFetchJobBoard({ jobBoardId: boardId });
+const Board: React.FC<Props> = ({ boardId, initialData }) => {
+  const { data, isLoading } = useFetchJobBoard({ jobBoardId: boardId, initialData });
 
   // Skeleton UI
   if (isLoading) return <Skeleton.Board />;
@@ -65,10 +67,10 @@ const Board: React.FC<Props> = ({ boardId }) => {
       </div>
 
       {/* 댓글과 답글 */}
-      <BoardComments type="free" boardId={boardId} />
+      <BoardComments type="job" boardId={boardId} />
 
       {/* 댓글폼 */}
-      <BoardCommentForm type="free" boardId={boardId} />
+      <BoardCommentForm type="job" boardId={boardId} />
 
       {/* 북마크 사이드 버튼 */}
       <BoardASide

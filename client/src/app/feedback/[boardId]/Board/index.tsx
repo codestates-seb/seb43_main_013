@@ -16,10 +16,12 @@ import Skeleton from "@/components/Skeleton";
 import BoardASide from "@/components/Board/BoardASide";
 import BoardIframe from "@/components/Board/BoardIframe";
 import BoardHashtag from "@/components/Board/BoardHashtag";
+import { ApiFetchFeedbackBoardResponse } from "@/types/api";
 
 // type
 interface Props {
   boardId: number;
+  initialData?: ApiFetchFeedbackBoardResponse;
 }
 
 /** 2023/05/11 - 게시판 내용 - by 1-blue */

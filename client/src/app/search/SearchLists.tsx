@@ -12,8 +12,6 @@ import {
 } from "@heroicons/react/24/outline";
 import InfiniteScrollContainer from "@/components/InfiniteScrollContainer";
 import NotSearch from "@/components/Svg/NotSearch";
-import { useEffect } from "react";
-import useCustomToast from "@/hooks/useCustomToast";
 
 interface Props {
   keyword: string;
@@ -29,13 +27,10 @@ const table = {
 
 /** 2023/05/22 - 검색된 리스트 컴포넌트 - by 1-blue */
 const SearchLists: React.FC<Props> = ({ keyword, initialData }) => {
-  const toast = useCustomToast();
   const { data, fetchNextPage, hasNextPage } = useFetchSearch({ keyword, page: 1, size: 10, initialData });
 
   const boardPages = data?.pages.map((page) => page.data.filter((v): v is SearchBoard => v.boardType !== "MEMBER"));
   const memberPages = data?.pages.map((page) => page.data.filter((v): v is SearchMember => v.boardType === "MEMBER"));
-
-  useEffect(() => void toast({ title: `"${keyword}"를 검색했습니다.` }), [toast, keyword]);
 
   return (
     <article className="mb-12">
@@ -62,14 +57,16 @@ const SearchLists: React.FC<Props> = ({ keyword, initialData }) => {
                       {board.categoryName}
                     </Link>
 
-                    {/* TODO: 게시글단위로 구분해서 링크 넣기 */}
                     <Link href={`/${table[board.boardType]}/${board.id}`} className="inline-block">
                       <h4 className="max-w-3/4 text-2xl truncate-1 decoration-2 underline-offset-8 transition-colors hover:text-main-500 hover:underline">
                         {board.title}
                       </h4>
                     </Link>
 
-                    <p className="truncate-3">{board.content?.replace(/<[^>]*>?/g, "")}</p>
+                    <p
+                      className="truncate-3"
+                      dangerouslySetInnerHTML={{ __html: board.content.replace(/<[^>]*>?/g, "") }}
+                    />
 
                     <div className="flex justify-between">
                       <div className="flex items-center space-x-3">

@@ -10,6 +10,8 @@ import RightSideButton from "@/components/RightSideButton";
 import { useCategoriesStore, usePageStore, useSortStore } from "@/store";
 import { useMemberStore } from "@/store/useMemberStore";
 import NoDataExists from "@/components/Svg/NoDataExists";
+import LoadingPage from "../loading";
+import BoardError from "../boarderror";
 
 /** 2023/05/08 - 자유게시판 메인 화면 - by leekoby */
 const FreeMain = () => {
@@ -34,7 +36,7 @@ const FreeMain = () => {
   const sortSelectedOption = useSortStore((state) => state.selectedOption);
 
   /** 2023/05/11 자유게시판 목록 get 요청 - by leekoby */
-  const { data, refetch } = useFetchFreeBoardList({
+  const { data, refetch, isError, isLoading, error } = useFetchFreeBoardList({
     selected,
     sorted: sortSelectedOption?.optionName,
     page: currentPage,
@@ -46,15 +48,17 @@ const FreeMain = () => {
   }, [selectedCategory, sortSelectedOption, currentPage]);
 
   /** 2023/05/13 - 공통 카테고리 초기값 - by leekoby */
-  const { categories, isLoading } = useFetchCategories({ type: "normal" });
+  const { categories } = useFetchCategories({ type: "normal" });
 
-  console.log(data?.pages);
+  if (isLoading) return <LoadingPage />;
+  if (isError) return <BoardError />;
+
   return (
     //  전체 컨테이너
     <div className="mx-auto mt-6">
-      <h2 className="text-2xl font-bold text-left"> 자유게시판 </h2>
       {isClient && (
-        <div className="flex justify-end  mb-4">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="pl-10 text-2xl font-bold text-left"> 자유 게시판 </h2>
           <SortPosts />
         </div>
       )}

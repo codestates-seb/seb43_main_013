@@ -3,6 +3,7 @@ import WordCloud from "react-d3-cloud";
 
 import { useRouter } from "next/navigation";
 import { useFetchDailyKeywords, useFetchMonthlyKeywords, useFetchWeeklyKeywords } from "@/hooks/query";
+import { useLoadingStore } from "@/store";
 
 interface Props {
   type: "daily" | "weekly" | "monthly";
@@ -10,6 +11,7 @@ interface Props {
 
 const KeywordCloud: React.FC<Props> = ({ type }) => {
   const router = useRouter();
+  const { loading } = useLoadingStore();
 
   const { dailyKeywords } = useFetchDailyKeywords({ page: 1, size: 30 });
   const { weeklyKeywords } = useFetchWeeklyKeywords({ page: 1, size: 30 });
@@ -43,6 +45,7 @@ const KeywordCloud: React.FC<Props> = ({ type }) => {
       padding={4}
       random={Math.random}
       onWordClick={(e, d) => {
+        loading.start();
         router.push(`/search?keyword=${d.text}`);
       }}
       onWordMouseOver={(e, d) => {

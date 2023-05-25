@@ -11,6 +11,8 @@ import { useFetchJobBoardList } from "@/hooks/query/useFetchJobBoardList";
 import JobCategories from "./JobCategories";
 import { useMemberStore } from "@/store/useMemberStore";
 import NoDataExists from "@/components/Svg/NoDataExists";
+import LoadingPage from "../loading";
+import BoardError from "../boarderror";
 
 /** 2023/05/18 - 자유게시판 메인 화면 - by leekoby */
 const JobMain = () => {
@@ -37,7 +39,7 @@ const JobMain = () => {
   const sortSelectedOption = useSortStore((state) => state.selectedOption);
 
   /** 2023/05/18 구인구직 게시판 목록 get 요청 - by leekoby */
-  const { data, refetch } = useFetchJobBoardList({
+  const { data, refetch, isError, isLoading, error } = useFetchJobBoardList({
     selected,
     sorted: sortSelectedOption?.optionName,
     page: currentPage,
@@ -51,13 +53,16 @@ const JobMain = () => {
   /** 2023/05/18 - 구인구직 카테고리 초기값 요청 - by leekoby */
   const { jobCategories, jobCategoryIsLoading } = useFetchJobCategories({ type: "job" });
 
+  if (isLoading) return <LoadingPage />;
+  if (isError) return <BoardError />;
+
   return (
     <>
       <div className="mx-auto mt-6">
-        <h1 className="text-2xl font-bold text-left"> 구인/구직 게시판 </h1>
-        {/* freeboard list header */}
         {isClient && (
-          <div className="flex justify-end  mb-4">
+          <div className="flex justify-between items-center mb-4">
+            <h1 className="pl-10 text-2xl font-bold text-left"> 구인/구직 게시판 </h1>
+            {/* freeboard list header */}
             <SortPosts />
           </div>
         )}

@@ -69,8 +69,8 @@ const FeedbackPostsSlide = () => {
   });
 
   return (
-    <div>
-      <div className="flex justify-between">
+    <div className="h-auto">
+      <div className="flex justify-between h-full">
         <h1 className="font-bold text-xl">지금 HOT🔥한 피드백</h1>
         <Link href="/feedback">
           <button className="text-3xl focus:outline-none">+</button>
@@ -79,8 +79,8 @@ const FeedbackPostsSlide = () => {
       {data?.pages[0].data.length === 0 ? (
         <NotSearch />
       ) : (
-        <div>
-          <Slider {...settings} className="max-h-[550px]">
+        <div className="h-[580px]">
+          <Slider {...settings} className="h-full">
             {data?.pages.map((page) =>
               page.data.map((innerData) => {
                 return (

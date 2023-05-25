@@ -218,9 +218,15 @@ const BoardHeader: React.FC<Props> = ({
       {/* 카테고리 || 채널명/구독자수 */}
       <section className="flex">
         {channelName && subscriberCount && (
-          <div className="flex flex-col mr-auto">
-            {<span className="font-semibold text-xs text-sub-700">채널명: {channelName}</span>}
-            {<span className="font-semibold text-xs text-sub-700">구독자: {subscriberCount.toLocaleString()}</span>}
+          <div className="flex flex-col space-y-1 mr-auto">
+            <div className="flex items-center space-x-2">
+              <span className="font-semibold text-lg text-sub-700">채널명: </span>
+              <span className="text-main-600 text-sm font-semibold">{channelName}</span>
+            </div>
+            <div>
+              <span className="font-semibold text-lg text-sub-700">구독자: </span>
+              <span className="text-sm">{subscriberCount.toLocaleString()}명</span>
+            </div>
           </div>
         )}
       </section>

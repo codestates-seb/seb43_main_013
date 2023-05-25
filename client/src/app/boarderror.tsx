@@ -3,14 +3,12 @@
 import Link from "next/link";
 import { ChevronDoubleDownIcon } from "@heroicons/react/24/solid";
 
-// type
-interface Props {
-  error: Error;
-  reset: () => void;
-}
-
 /** 2023/05/04 - Erorr 페이지 - by 1-blue */
-const Error: React.FC<Props> = ({ error, reset }) => {
+const BoardError: React.FC = () => {
+  const reset = () => {
+    location.reload();
+  };
+
   return (
     <article className="flex flex-col justify-center items-center mt-24 space-y-8 h-[50vh]">
       <section className="h-[100px] space-x-4">
@@ -47,7 +45,6 @@ const Error: React.FC<Props> = ({ error, reset }) => {
       </section>
       <section className="text-center">
         <h1 className="text-3xl whitespace-pre-line">{"문제가 발생했습니다.\n잠시후에 다시 시도해주세요!"}</h1>
-        <p className="text-lg">( {error?.message} )</p>
       </section>
       <ChevronDoubleDownIcon className="w-16 h-16 text-sub-600 animate-bounce" />
       <section className="flex flex-col justify-center space-y-4">
@@ -69,4 +66,4 @@ const Error: React.FC<Props> = ({ error, reset }) => {
   );
 };
 
-export default Error;
+export default BoardError;

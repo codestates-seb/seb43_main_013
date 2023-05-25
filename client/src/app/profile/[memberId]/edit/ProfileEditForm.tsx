@@ -140,7 +140,6 @@ const ProfileEditForm: React.FC<Props> = ({ memberId }) => {
         introduction: member.introduction === introduction ? null : introduction,
         memberId,
       });
-      // TODO: 이놈 대체 왜
       apiLogOut({});
 
       toast({ title: "정보를 수정했습니다. 다시 로그인해주세요!", status: "success" });
@@ -214,14 +213,6 @@ const ProfileEditForm: React.FC<Props> = ({ memberId }) => {
           name="프로필 이미지"
           defaultPhoto={member.profileImageUrl}
         />
-
-        <button
-          type="button"
-          onClick={onClickSignOut}
-          className="self-start text-red-400 transition-colors hover:text-red-500"
-        >
-          회원 탈퇴
-        </button>
       </div>
       {/* OAuth가 아니라면 비밀번호 확인 */}
       {member.oauth || (
@@ -282,7 +273,17 @@ const ProfileEditForm: React.FC<Props> = ({ memberId }) => {
         className="min-h-[20vh] resize-none overflow-hidden"
         defaultValue={member.introduction}
       />
-      <Form.Button>수정</Form.Button>
+      <div className="flex justify-between">
+        <button
+          type="button"
+          onClick={onClickSignOut}
+          className="bg-red-400 transition-colors hover:bg-red-500 text-white rounded-md px-2 py-1"
+        >
+          회원 탈퇴
+        </button>
+
+        <Form.Button>수정</Form.Button>
+      </div>
     </form>
   );
 };
