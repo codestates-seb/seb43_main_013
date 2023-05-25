@@ -12,6 +12,8 @@ import FeedbackContentItem from "./FeedbackContentItem";
 import FeedbackCategories from "./FeedbackCategories";
 import { useMemberStore } from "@/store/useMemberStore";
 import NoDataExists from "@/components/Svg/NoDataExists";
+import LoadingPage from "../loading";
+import BoardError from "../boarderror";
 
 /** 2023/05/08 - 피드백 게시판 메인 화면 - by leekoby */
 const FeedbackMain = () => {
@@ -40,20 +42,21 @@ const FeedbackMain = () => {
       : `/feedbackcategories/${selectedFeedbackCategory?.feedbackCategoryId}`;
 
   /** 2023/05/11 피드백 목록 get 요청 - by leekoby */
-  const { data, fetchNextPage, hasNextPage, isFetching, refetch } = useFetchFeedbackBoardList({
-    selected,
-    selectedFeedback: selectFeedback,
-    sorted: sortSelectedOption?.optionName,
-    page: 1,
-    size: 10,
-  });
+  const { data, fetchNextPage, hasNextPage, isFetching, refetch, isError, isLoading, error } =
+    useFetchFeedbackBoardList({
+      selected,
+      selectedFeedback: selectFeedback,
+      sorted: sortSelectedOption?.optionName,
+      page: 1,
+      size: 10,
+    });
 
   useEffect(() => {
     refetch();
   }, [selectedCategory, sortSelectedOption, selectedFeedbackCategory]);
 
   /** 2023/05/13 - 공통 사이드 카테고리  - by leekoby */
-  const { categories, isLoading } = useFetchCategories({ type: "normal" });
+  const { categories } = useFetchCategories({ type: "normal" });
   /** 2023/05/13 - 피드백게시판 피드백 카테고리  - by leekoby */
   const { feedbackCategories, feedbackCategoryIsLoading } = useFetchFeedbackCategories({ type: "feedback" });
 
@@ -72,6 +75,8 @@ const FeedbackMain = () => {
     [fetchNextPage, hasNextPage, isFetching],
   );
 
+  if (isLoading) return <LoadingPage />;
+  if (isError) return <BoardError />;
   return (
     //  전체 컨테이너
     <div className="mx-auto mt-6">
