@@ -25,7 +25,7 @@ interface Props {
 }
 
 /** 2023/05/11 - 게시판 내용 - by 1-blue */
-const Board: React.FC<Props> = ({ boardId }) => {
+const Board: React.FC<Props> = ({ boardId, initialData }) => {
   const { data, isLoading } = useFetchFeedbackBoard({ feedbackBoardId: boardId });
 
   // Skeleton UI

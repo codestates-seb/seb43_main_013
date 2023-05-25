@@ -30,7 +30,7 @@ interface Props {
 
 /** 2023/05/14 - 프로필 카드 컴포넌트 - by 1-blue */
 const ProfileCard: React.FC<Props> = ({ memberId, initialData }) => {
-  const { data, isLoading } = useFetchMember({ memberId, initialData });
+  const { data, isLoading } = useFetchMember({ memberId });
   const toast = useCustomToast();
   const { member } = useMemberStore();
   const queryClient = useQueryClient();

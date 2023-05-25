@@ -24,7 +24,7 @@ interface Props {
 
 /** 2023/05/11 - 게시판 내용 - by 1-blue */
 const Board: React.FC<Props> = ({ boardId, initialData }) => {
-  const { data, isLoading } = useFetchJobBoard({ jobBoardId: boardId, initialData });
+  const { data, isLoading } = useFetchJobBoard({ jobBoardId: boardId });
 
   // Skeleton UI
   if (isLoading) return <Skeleton.Board />;
