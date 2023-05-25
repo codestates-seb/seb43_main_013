@@ -29,10 +29,10 @@ jobs:
         java-version: '11'
         distribution: 'temurin'
     - name: init with Gradle
-      uses: gradle/gradle-build-action@v3
+      uses: gradle/gradle-build-action@v2
     - run: gradle init
     - name: Build with Gradle
-      uses: gradle/gradle-build-action@v3
+      uses: gradle/gradle-build-action@v2
       with:
         gradle-version: 7.6.1
     - name: Build with Gradle
