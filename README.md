@@ -25,19 +25,27 @@
 
 <br />
 
-## 📤 BackEnd
-
-| Java 11 | Spring<br> Boot | Spring<br> Security | Gradle | MySQL | AWS | Redis | OAuth2 | JWT | GitHub <br /> Actions | thymeleaf |
-| :---: | :---:  | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| <div style="display: flex; align-items: flex-start;"><img src="https://techstack-generator.vercel.app/java-icon.svg" alt="icon" width="65" height="65" /></div> | <img alt="spring-boot logo" src="https://t1.daumcdn.net/cfile/tistory/27034D4F58E660F616" width="65" height="65" > | <div style="display: flex; align-items: flex-start;"><img src="https://i1.daumcdn.net/thumb/C230x300/?fname=https://blog.kakaocdn.net/dn/dyxfnl/btrYLyp1cIz/fRRLDe0HXzKaaVA13kU0wK/img.png" alt="icon" width="65" height="65" /></div> | <div style="display: flex; align-items: flex-start;"><img src="https://static-00.iconduck.com/assets.00/file-type-light-gradle-icon-512x377-slv3rykw.png" alt="icon" width="65" height="65" /></div> | <div style="display: flex; align-items: flex-start;"><img src="https://techstack-generator.vercel.app/mysql-icon.svg" alt="icon" width="65" height="65" /></div> | <div style="display: flex; align-items: center;"><img src="https://techstack-generator.vercel.app/aws-icon.svg" alt="icon" width="65" height="65" /></div> | <img alt="redis logo" src="https://www.vectorlogo.zone/logos/redis/redis-icon.svg" height="65" width="65" > |  <img alt="oauth2 logo" src="https://oauth.net/images/oauth-2-sm.png" height="65" width="65" > | <img alt="spring-boot logo" src="https://cdn.worldvectorlogo.com/logos/jwt-3.svg" width="65" height="65" > | <img alt="spring-boot logo" src="https://avatars.githubusercontent.com/u/44036562?s=280&v=4" width="65" height="65" > | <img alt="spring-boot logo" src="https://www.thymeleaf.org/images/thymeleaf.png" width="65" height="65" > |
-
-<br />
-
 ## 📥 FrontEnd
 
 | TypeScript | React | Next.js | React-Query | Zustand | TailwindCss | Vercel |
 |:---:|:---:|:---:|:---:|:---:|:---:|:---:|
 | <div style="display: flex; align-items: flex-start;"><img src="https://techstack-generator.vercel.app/ts-icon.svg" alt="icon" width="75" height="75" /></div> | <div style="display: flex; align-items: flex-start;"><img src="https://camo.githubusercontent.com/cbb0ed4ed73eb0bdf880019fe4fd13e0e0b0812435f11ac0d920c8f523a8d8d0/68747470733a2f2f74656368737461636b2d67656e657261746f722e76657263656c2e6170702f72656163742d69636f6e2e737667" alt="icon" width="75" height="75" /></div> | <div style="display: flex; align-items: flex-start;"><img src="https://github.com/1-blue/1-blue.github.io/assets/63289318/0072f3a5-bf9d-4d9a-9015-4b2653ea1d02" alt="icon" width="75" height="75" /></div> | <div style="display: flex; align-items: flex-start;"><img src="https://seeklogo.com/images/R/react-query-logo-1340EA4CE9-seeklogo.com.png" alt="icon" width="75" height="75" /></div> | <div style="display: flex; align-items: flex-start;"><img src="https://raw.githubusercontent.com/github/explore/990a9efe0b9529eca38ca9e081bc7a97b18dff45/topics/zustand/zustand.png" alt="icon" width="75" height="75" /></div> | <div style="display: flex; align-items: flex-start;"><img src="https://avatars.githubusercontent.com/u/67109815?s=280&v=4" alt="icon" width="75" height="75" /></div> | <div style="display: flex; align-items: flex-start;"><img src="https://www.svgrepo.com/show/327408/logo-vercel.svg" alt="icon" width="75" height="75" /></div> |
+
+<br />
+
+## 📤 BackEnd
+
+| Java 11 | Spring<br> Boot | Spring<br> Security | Gradle | MySQL | Redis | OAuth2 | JWT | thymeleaf |
+| :---: | :---:  | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| <div style="display: flex; align-items: flex-start;"><img src="https://techstack-generator.vercel.app/java-icon.svg" alt="icon" width="65" height="65" /></div> | <img alt="spring-boot logo" src="https://t1.daumcdn.net/cfile/tistory/27034D4F58E660F616" width="65" height="65" > | <div style="display: flex; align-items: flex-start;"><img src="https://i1.daumcdn.net/thumb/C230x300/?fname=https://blog.kakaocdn.net/dn/dyxfnl/btrYLyp1cIz/fRRLDe0HXzKaaVA13kU0wK/img.png" alt="icon" width="65" height="65" /></div> | <div style="display: flex; align-items: flex-start;"><img src="https://static-00.iconduck.com/assets.00/file-type-light-gradle-icon-512x377-slv3rykw.png" alt="icon" width="65" height="65" /></div> | <div style="display: flex; align-items: flex-start;"><img src="https://techstack-generator.vercel.app/mysql-icon.svg" alt="icon" width="65" height="65" /></div> | <img alt="redis logo" src="https://www.vectorlogo.zone/logos/redis/redis-icon.svg" height="65" width="65" > |  <img alt="oauth2 logo" src="https://oauth.net/images/oauth-2-sm.png" height="65" width="65" > | <img alt="spring-boot logo" src="https://cdn.worldvectorlogo.com/logos/jwt-3.svg" width="65" height="65" > | <img alt="spring-boot logo" src="https://www.thymeleaf.org/images/thymeleaf.png" width="65" height="65" > |
+
+<br />
+
+## 🚀 DevOps
+
+| AWS-EC2 | AWS-RDS | AWS-RDS | AWS-S3 | GitHub <br /> Actions | 
+| :---: | :---: | :---: | :---: | :---: |
+| <div style="display: flex; align-items: flex-start;"><img src="https://www.javainuse.com/ec2logo.jpg" alt="icon" width="65" height="65" /></div> | <div style="display: flex; align-items: flex-start;"><img src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2Fbg4h1z%2FbtrgnqWVpqZ%2FiO4dXPP1VAzPcjKyS1MA60%2Fimg.png" alt="icon" width="65" height="65" /></div> | <div style="display: flex; align-items: flex-start;"><img src="https://cdn.freebiesupply.com/logos/thumbs/2x/aws-codedeploy-logo.png" alt="icon" width="65" height="65" /></div> | <div style="display: flex; align-items: flex-start;"><img src="https://cdn-blog.lawrencemcdaniel.com/wp-content/uploads/2021/01/30083957/aws-s3-logo.png" alt="icon" width="65" height="65" /></div> | <img alt="spring-boot logo" src="https://avatars.githubusercontent.com/u/44036562?s=280&v=4" width="65" height="65" > |
 
 <br />
 
