@@ -9,11 +9,11 @@ import YoutubeList from "./YoutubeSlide";
 const HomeMain = () => {
   return (
     /** 2023/05/16 - 홈화면 구성 - by leekoby */
-    <section className="flex flex-col space-y-24">
+    <section className="flex flex-col space-y-24 mb-36">
       <div className="flex flex-col mt-10">
         <YoutubeList />
       </div>
-      <div className="flex flex-col">
+      <div className="flex flex-col ">
         <FeedbackPostsSlide />
       </div>
       <div className="flex flex-col">

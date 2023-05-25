@@ -32,7 +32,7 @@ const Layout: React.FC<React.PropsWithChildren> = ({ children }) => {
       <Header />
       <Nav />
       <Main>{children}</Main>
-      <Footer />
+      {/* <Footer /> */}
       {isLoading && <FullSpinner />}
     </>
   );

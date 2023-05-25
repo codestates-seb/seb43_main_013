@@ -77,7 +77,7 @@ const FreePostsSlide = () => {
     draggable: true,
     swipeToSlide: true,
     slidesToShow: silderPage,
-    autoplay: true,
+    // autoplay: true,
     speed: 500,
     dots: false,
     arrow: false,
@@ -103,15 +103,15 @@ const FreePostsSlide = () => {
       {data?.pages[0].data.length === 0 ? (
         <NotSearch />
       ) : (
-        <div className="h-full">
-          <Slider {...settings} className="h-[220px]">
+        <div className="">
+          <Slider {...settings} className="">
             {data?.pages.map((page) =>
               page.data.map((innerData) => {
                 return (
-                  <SlideWrapper className="hover:cursor-pointer h-full" key={innerData.freeBoardId}>
-                    <Link href={`/free/${innerData.freeBoardId}`} className="h-full">
+                  <SlideWrapper className="hover:cursor-pointer" key={innerData.freeBoardId}>
+                    <Link href={`/free/${innerData.freeBoardId}`} className="">
                       <div className="h-full mx-3">
-                        <ContentItem props={innerData} />
+                        <ContentItem props={innerData} position="main" />
                       </div>
                     </Link>
                   </SlideWrapper>

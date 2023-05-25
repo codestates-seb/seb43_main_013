@@ -75,11 +75,7 @@ const NoticeMain = () => {
           </div>
         </section>
         {/* 오른쪽 사이드 영역 */}
-        {member?.email === process.env.NEXT_PUBLIC_ADMIN && (
-          <div className="fixed right-0 bottom-0 transform -translate-y-1/2 ml-2">
-            <RightSideButton destination={`/notice/write`} />
-          </div>
-        )}
+        {member?.email === process.env.NEXT_PUBLIC_ADMIN && <RightSideButton destination={`/notice/write`} />}
       </div>
     </div>
   );
