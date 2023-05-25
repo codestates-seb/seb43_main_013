@@ -38,22 +38,13 @@ const FooterContent = () => {
             <li className="text-left space-y-2">
               <h3 className="font-bold text-sm lg:text-lg ">BACK-END</h3>
               <ul className="space-y-1">
-                <li className="text-xs lg:text-md ">Java 11</li>
-                <li className="text-xs lg:text-md ">Spring Boot 2.7.11</li>
-                <li className="text-xs lg:text-md">Spring Security</li>
-                <li className="text-xs lg:text-md">Spring Data JPA</li>
-                <li className="text-xs lg:text-md">JsonWeb Token</li>
-                <li className="text-xs lg:text-md">AWS EC2</li>
-                <li className="text-xs lg:text-md">AWS RDS</li>
-                <li className="text-xs lg:text-md">AWS Certificate Manager</li>
-                <li className="text-xs lg:text-md">AWS Route 53</li>
-                <li className="text-xs lg:text-md">AWS IAM</li>
-                <li className="text-xs lg:text-md">AWS CloudWatch</li>
-                <li className="text-xs lg:text-md">AWS CodeDeploy</li>
-                <li className="text-xs lg:text-md">Github Action</li>
-                <li className="text-xs lg:text-md">MySQL</li>
-                <li className="text-xs lg:text-md">REDIS</li>
-                <li className="text-xs lg:text-md">Thymeleaf</li>
+                <li className="text-sm lg:text-lg">Java 11</li>
+                <li className="text-sm lg:text-lg">Spring Boot 2.7.11</li>
+                <li className="text-sm lg:text-lg">Spring Security</li>
+                <li className="text-sm lg:text-lg">Spring Data JPA</li>
+                <li className="text-sm lg:text-lg">AWS EC2</li>
+                <li className="text-sm lg:text-lg">AWS RDS</li>
+                <li className="text-sm lg:text-lg">Github Action</li>
               </ul>
             </li>
             <li className="text-left space-y-2">
