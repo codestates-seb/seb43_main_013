@@ -80,7 +80,7 @@ const FollowerModal: React.FC<Props> = ({ memberId, nickname, onCloseModal }) =>
   return (
     <section className="fixed inset-0 bg-black/70 animate-fade-in">
       <ul
-        className="w-[280px] max-h-[60vh] mx-auto mt-[16vh] overflow-y-auto flex flex-col bg-sub-200 rounded-md scrollbar"
+        className="w-[360px] max-h-[60vh] mx-auto mt-[16vh] overflow-y-auto flex flex-col bg-sub-200 rounded-md scrollbar"
         ref={modalRef}
       >
         <li className="py-4 bg-main-200 text-center font-bold space-y-2">
