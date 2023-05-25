@@ -69,7 +69,7 @@ jobs:
           --deployment-config-name CodeDeployDefault.AllAtOnce \
           --deployment-group-name back-L-End \
           --file-exists-behavior OVERWRITE \
-          --s3-location bucket=api.hard-coding.com,bundleType=zip,key=project/$GITHUB_SHA.zip \
+          --s3-location bucket=api.hard-coding.com,bundleType=zip,key=seb43_main_013/$GITHUB_SHA.zip \
           --region ap-northeast-2 \
         
         
