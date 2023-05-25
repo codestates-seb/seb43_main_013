@@ -12,6 +12,8 @@ import { useMemberStore } from "@/store/useMemberStore";
 import { usePromotionCategoriesStore } from "@/store/usePromotionCategoriesStore";
 import { useRef, useEffect, useCallback, useState } from "react";
 import PromotionContentItem from "./PromotionContentItem";
+import LoadingPage from "../loading";
+import BoardError from "../boarderror";
 
 /** 2023/05/17 - 홍보 게시판 메인 화면 - by leekoby */
 const PromotionMain = () => {
@@ -42,10 +44,6 @@ const PromotionMain = () => {
     refetch();
   }, [selectedCategory, sortSelectedOption]);
 
-  if (isError) {
-    console.log(error);
-  }
-
   /** 2023/05/17 - 공통 사이드 카테고리  - by leekoby */
   const { categories, isLoading } = useFetchCategories({ type: "normal" });
 
@@ -64,6 +62,9 @@ const PromotionMain = () => {
     },
     [fetchNextPage, hasNextPage, isFetching],
   );
+
+  if (isLoading) return <LoadingPage />;
+  if (isError) return <BoardError />;
 
   return (
     //  전체 컨테이너
