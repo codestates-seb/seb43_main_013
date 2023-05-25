@@ -9,6 +9,8 @@ import { usePageStore, useSortStore } from "@/store";
 import { useMemberStore } from "@/store/useMemberStore";
 import { useEffect, useState } from "react";
 import NoticeContentItem from "./NoticeContetnItem";
+import LoadingPage from "../loading";
+import BoardError from "../boarderror";
 
 /** 2023/05/20 - 공지사항 메인 화면 - by leekoby */
 const NoticeMain = () => {
@@ -24,11 +26,14 @@ const NoticeMain = () => {
   /** 2023/05/20 - 정렬 전역 상태 - by leekoby */
   const sortSelectedOption = useSortStore((state) => state.selectedOption);
   /** 2023/05/11  공지사항 목록 get 요청 - by leekoby */
-  const { data, refetch } = useFetchNoticeBoardList({
+  const { data, refetch, isError, isLoading, error } = useFetchNoticeBoardList({
     sorted: sortSelectedOption?.optionName,
     page: currentPage,
     size: 10,
   });
+
+  if (isLoading) return <LoadingPage />;
+  if (isError) return <BoardError />;
 
   return (
     // 전체 컨테이너

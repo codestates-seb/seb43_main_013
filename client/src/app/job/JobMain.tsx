@@ -11,6 +11,8 @@ import { useFetchJobBoardList } from "@/hooks/query/useFetchJobBoardList";
 import JobCategories from "./JobCategories";
 import { useMemberStore } from "@/store/useMemberStore";
 import NoDataExists from "@/components/Svg/NoDataExists";
+import LoadingPage from "../loading";
+import BoardError from "../boarderror";
 
 /** 2023/05/18 - 자유게시판 메인 화면 - by leekoby */
 const JobMain = () => {
@@ -37,7 +39,7 @@ const JobMain = () => {
   const sortSelectedOption = useSortStore((state) => state.selectedOption);
 
   /** 2023/05/18 구인구직 게시판 목록 get 요청 - by leekoby */
-  const { data, refetch } = useFetchJobBoardList({
+  const { data, refetch, isError, isLoading, error } = useFetchJobBoardList({
     selected,
     sorted: sortSelectedOption?.optionName,
     page: currentPage,
@@ -50,6 +52,9 @@ const JobMain = () => {
 
   /** 2023/05/18 - 구인구직 카테고리 초기값 요청 - by leekoby */
   const { jobCategories, jobCategoryIsLoading } = useFetchJobCategories({ type: "job" });
+
+  if (isLoading) return <LoadingPage />;
+  if (isError) return <BoardError />;
 
   return (
     <>
