@@ -80,7 +80,7 @@ const Form: React.FC<Props> = ({ boardId }) => {
     // 제목 유효성 검사
     if (title.trim().length <= 1) return toast({ title: "제목을 두 글자 이상 입력해주세요!", status: "error" });
     // 유효한 URL인지 확인
-    if (!validateYoutubeURL(link)) return toast({ title: "유효한 링크를 입력해주세요!", status: "error" });
+    if (!validateYoutubeURL(link)) return toast({ title: "유튜브 영상 링크를 입력해주세요!", status: "error" });
     // 채널명 유효성 검사
     if (channelName.trim().length <= 0) return toast({ title: "채널명을 한 글자 이상 입력해주세요!", status: "error" });
     if (+subscriberCount <= 0) return toast({ title: "구독자 수를 0명 이상으로 입력해주세요!", status: "error" });
@@ -110,7 +110,7 @@ const Form: React.FC<Props> = ({ boardId }) => {
 
       toast({ title: "게시글 수정했습니다.\n수정된 게시글 페이지로 이동됩니다.", status: "success" });
 
-      router.push(`/promotion/${boardId}`);
+      router.replace(`/promotion/${boardId}`);
     } catch (error) {
       console.error(error);
 
@@ -133,11 +133,24 @@ const Form: React.FC<Props> = ({ boardId }) => {
       <section className="flex space-y-4 md:space-y-0 md:space-x-4 z-[1] flex-col md:flex-row flex-1">
         {/* title, link, tag, category */}
         <div className="w-full md:w-0 md:flex-1 space-y-2 z-[1]">
-          <Input name="제목" type="text" placeholder="제목을 입력해주세요!" defaultValue={data?.title} />
-          <Input name="유튜브 링크" type="text" placeholder="유튜브 링크을 입력해주세요!" defaultValue={data?.link} />
+          <Input isEssential name="제목" type="text" placeholder="제목을 입력해주세요!" defaultValue={data?.title} />
+          <Input
+            isEssential
+            name="유튜브 링크"
+            type="text"
+            placeholder="유튜브 링크을 입력해주세요!"
+            defaultValue={data?.link}
+          />
           <div className="flex flex-col md:flex-row md:space-x-4">
-            <Input name="채널명" type="text" placeholder="채널명을 입력해주세요!" defaultValue={data?.channelName} />
             <Input
+              isEssential
+              name="채널명"
+              type="text"
+              placeholder="채널명을 입력해주세요!"
+              defaultValue={data?.channelName}
+            />
+            <Input
+              isEssential
               name="구독자 수"
               type="number"
               placeholder="구독자 수를 입력해주세요!"

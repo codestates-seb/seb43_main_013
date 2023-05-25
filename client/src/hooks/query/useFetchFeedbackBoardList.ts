@@ -17,16 +17,18 @@ const useFetchFeedbackBoardList = ({
   page,
   size,
 }: ApiFetchFeedbackBoardListRequest) => {
-  const { data, fetchNextPage, hasNextPage, isFetching, refetch } = useInfiniteQuery<ApiFetchFeedbackBoardListResponse>(
-    [QUERY_KEYS.feedbackBoardList],
-    ({ pageParam = page }) => apiFetchFeedbackBoardList({ selected, selectedFeedback, sorted, page: pageParam, size }),
-    {
-      getNextPageParam: (lastPage, allPage) =>
-        lastPage.pageInfo.totalPages > lastPage.pageInfo.page ? lastPage.pageInfo.page + 1 : null,
-    },
-  );
+  const { data, fetchNextPage, hasNextPage, isFetching, refetch, isError, isLoading, error } =
+    useInfiniteQuery<ApiFetchFeedbackBoardListResponse>(
+      [QUERY_KEYS.feedbackBoardList],
+      ({ pageParam = page }) =>
+        apiFetchFeedbackBoardList({ selected, selectedFeedback, sorted, page: pageParam, size }),
+      {
+        getNextPageParam: (lastPage, allPage) =>
+          lastPage?.pageInfo?.size === size ? lastPage?.pageInfo?.page + 1 : null,
+      },
+    );
 
-  return { data, fetchNextPage, hasNextPage, isFetching, refetch };
+  return { data, fetchNextPage, hasNextPage, isFetching, refetch, isError, isLoading, error };
 };
 
 export { useFetchFeedbackBoardList };

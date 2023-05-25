@@ -66,6 +66,15 @@ html::-webkit-scrollbar-thumb:hover {
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 1;
   }
+  /* 2줄 제한 */
+  .truncate-2 {
+    white-space: normal;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
 }
 
 /* react-quill 높이 지정 */

@@ -81,7 +81,6 @@ export interface ApiDeletePromotionBoardHandler {
 /** 2023/05/17- 홍보 게시판 게시글리스트 조회 요청 송신 타입 - by leekoby */
 export interface ApiFetchPromotionBoardListRequest {
   selected: string;
-  selectedPromotion: number;
   sorted: string;
   page: number;
   size: number;

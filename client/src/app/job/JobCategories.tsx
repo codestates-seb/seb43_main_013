@@ -23,7 +23,7 @@ const JobCategories: React.FC<JobCategoriessProps> = ({ jobCategories, selectedC
   return (
     <div className="flex flex-col shadow-md my-5 md:my-0 mx-5 rounded-xl w-full ">
       {/* category header */}
-      <h2 className="flex ml-5 text-xl font-bold text-black mt-7">카테고리</h2>
+      <h2 className="flex justify-center text-xl font-bold text-black mt-7">카테고리</h2>
 
       {/* category Item  */}
       <div className="m-5 flex gap-2 md:flex-col flex-wrap">

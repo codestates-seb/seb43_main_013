@@ -26,12 +26,6 @@ const AuthCheck = () => {
     //     .catch(() => router.push("/login"));
     // };
 
-    // console.log("value: ", value);
-    // console.log("value.status: ", value.status);
-    // console.log("value.statusText: ", value.statusText);
-
-    // console.log("value.status: ", value.status);
-
     useEffect(() => {
       console.log("value: ", value);
       // 2. 엑세스 토큰이 만료된 경우

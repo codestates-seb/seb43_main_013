@@ -1,16 +1,20 @@
-import { BookmarkIcon as BookmarkIconUnchecked } from "@heroicons/react/24/outline";
-import { BookmarkIcon as BookmarkIconChecked } from "@heroicons/react/24/solid";
-import ContentFooter from "../../components/BoardMain/ContentFooter";
-import TagItem from "../../components/BoardMain/TagItem";
-import { FeedbackBoard } from "@/types/api";
-import { forwardRef } from "react";
 import Link from "next/link";
+import { forwardRef } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { isAxiosError } from "axios";
+
+import { FeedbackBoard } from "@/types/api";
+import { apiCreateBookmark, apiDeleteBookmark } from "@/apis";
+
+import TagItem from "../../components/BoardMain/TagItem";
+import ContentFooter from "../../components/BoardMain/ContentFooter";
 import BoardThumbnail from "@/components/Board/BoardThumbnail";
 import useCustomToast from "@/hooks/useCustomToast";
+
 import { useMemberStore } from "@/store/useMemberStore";
-import { useQueryClient } from "@tanstack/react-query";
-import { apiCreateBookmark, apiDeleteBookmark } from "@/apis";
-import { isAxiosError } from "axios";
+
+import { BookmarkIcon as BookmarkIconUnchecked } from "@heroicons/react/24/outline";
+import { BookmarkIcon as BookmarkIconChecked } from "@heroicons/react/24/solid";
 
 interface ContentItemProps {
   props: FeedbackBoard;
@@ -39,7 +43,6 @@ const FeedbackContentItem = forwardRef<HTMLDivElement, ContentItemProps>(({ prop
         toast({ title: "북마크를 눌렀습니다.", status: "success" });
       }
 
-      // TODO: 캐싱 무효화 어떻게 사용하는건지 알아보기
       queryClient.invalidateQueries([`${type}BoardList`]);
     } catch (error) {
       console.error(error);
@@ -57,12 +60,12 @@ const FeedbackContentItem = forwardRef<HTMLDivElement, ContentItemProps>(({ prop
       {/*  list container */}
       <div
         ref={ref}
-        className=" flex flex-col items-center p-3 bg-white rounded-md shadow-md md:flex-row md:w-full shadow-black/20 hover:shadow-black/30 hover:shadow-lg"
+        className=" flex flex-col items-center p-3 bg-white rounded-md shadow-md md:flex-row md:w-full shadow-black/20 hover:shadow-black/30 hover:shadow-lg transition-all h-full"
       >
         {/* 게시글 영역* */}
-        <div className="flex flex-col items-center w-full  h-full p-5  bg-sub-100 rounded-md ">
-          {/* Thumnail */}
-          <Link href={`/feedback/${props.feedbackBoardId}  `} className=" w-full flex items-center justify-center">
+        <div className="flex flex-col items-center w-full  h-full p-3  bg-sub-100 rounded-md ">
+          {/* Thumbnail */}
+          <Link href={`/feedback/${props.feedbackBoardId}`} className=" w-full flex items-center justify-center">
             <BoardThumbnail
               url={props.link}
               alt={props.title}
@@ -93,11 +96,10 @@ const FeedbackContentItem = forwardRef<HTMLDivElement, ContentItemProps>(({ prop
               )}
             </div>
             {/* content body */}
-            <p className="text-md flex-1 w-full text-left truncate-1 text-ellipsis overflow-hidden line-clamp-1">
-              {props.content.replace(/<[^>]*>?/g, "")}
-            </p>
+            <p className="truncate-2" dangerouslySetInnerHTML={{ __html: props.content.replace(/<[^>]*>?/g, "") }} />
             {/* 오른쪽 사이드 영역 */}
-            <div className="flex gap-x-2">{props.tags && props.tags.map((item) => <TagItem tag={item.tagName} />)}</div>
+            {/* rightside tag */}
+            {props.tags && <TagItem tags={props.tags} />}
           </div>
           <ContentFooter position="main" footerData={props} type={type} boardId={props.feedbackBoardId} />
         </div>

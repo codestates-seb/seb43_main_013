@@ -36,7 +36,7 @@ const FeedbackCategory: React.FC<Props> = ({ selectedCategory, setSelectedCatego
 
   return (
     <section className={"relative flex-1 flex flex-col min-w-0 z-[11]"}>
-      <span className="text-base font-bold text-sub-800 mb-1">피드백 카테고리</span>
+      <span className="text-base font-bold text-sub-800 mb-1">피드백 카테고리 *</span>
       <Combobox value={selectedCategory} onChange={setSelectedCategory}>
         {({ open }) => (
           <>

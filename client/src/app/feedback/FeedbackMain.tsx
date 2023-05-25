@@ -12,6 +12,8 @@ import FeedbackContentItem from "./FeedbackContentItem";
 import FeedbackCategories from "./FeedbackCategories";
 import { useMemberStore } from "@/store/useMemberStore";
 import NoDataExists from "@/components/Svg/NoDataExists";
+import LoadingPage from "../loading";
+import BoardError from "../boarderror";
 
 /** 2023/05/08 - 피드백 게시판 메인 화면 - by leekoby */
 const FeedbackMain = () => {
@@ -40,20 +42,21 @@ const FeedbackMain = () => {
       : `/feedbackcategories/${selectedFeedbackCategory?.feedbackCategoryId}`;
 
   /** 2023/05/11 피드백 목록 get 요청 - by leekoby */
-  const { data, fetchNextPage, hasNextPage, isFetching, refetch } = useFetchFeedbackBoardList({
-    selected,
-    selectedFeedback: selectFeedback,
-    sorted: sortSelectedOption?.optionName,
-    page: 1,
-    size: 10,
-  });
+  const { data, fetchNextPage, hasNextPage, isFetching, refetch, isError, isLoading, error } =
+    useFetchFeedbackBoardList({
+      selected,
+      selectedFeedback: selectFeedback,
+      sorted: sortSelectedOption?.optionName,
+      page: 1,
+      size: 10,
+    });
 
   useEffect(() => {
     refetch();
   }, [selectedCategory, sortSelectedOption, selectedFeedbackCategory]);
 
   /** 2023/05/13 - 공통 사이드 카테고리  - by leekoby */
-  const { categories, isLoading } = useFetchCategories({ type: "normal" });
+  const { categories } = useFetchCategories({ type: "normal" });
   /** 2023/05/13 - 피드백게시판 피드백 카테고리  - by leekoby */
   const { feedbackCategories, feedbackCategoryIsLoading } = useFetchFeedbackCategories({ type: "feedback" });
 
@@ -72,10 +75,18 @@ const FeedbackMain = () => {
     [fetchNextPage, hasNextPage, isFetching],
   );
 
+  if (isLoading) return <LoadingPage />;
+  if (isError) return <BoardError />;
   return (
     //  전체 컨테이너
     <div className="mx-auto mt-6">
-      <h1 className="text-2xl font-bold text-left"> 피드백 게시판 </h1>
+      {isClient && (
+        <div className="flex justify-between items-center mb-4">
+          <h1 className="pl-10 text-2xl font-bold text-left"> 피드백 게시판 </h1>
+          <SortPosts />
+        </div>
+      )}
+
       <div className="flex flex-col md:flex-row ">
         {/* Left Side */}
         <aside className="flex flex-row md:flex-col items-center justify-center md:justify-start  md:w-0 md:grow-[2] md:mt-14 ">
@@ -87,16 +98,13 @@ const FeedbackMain = () => {
           {isClient && (
             <div className="flex flex-col md:flex-row md:justify-between mb-4 ">
               {feedbackCategories && <FeedbackCategories feedbackCategoryData={feedbackCategories} />}
-              <div className="flex justify-end  mb-4">
-                <SortPosts />
-              </div>
             </div>
           )}
           {/* freeboard list header */}
 
           {/* post item */}
           {/*  2023/05/14 - 무한스크롤 피드백 게시글 목록 - by leekoby  */}
-          <div className="flex flex-col flex-wrap gap-5 md:flex-row">
+          <div className="flex flex-col flex-wrap gap-1 md:flex-row md:justify-around">
             {data?.pages[0].data.length === 0 ? (
               <NoDataExists />
             ) : (
@@ -104,7 +112,7 @@ const FeedbackMain = () => {
                 page.data.map((innerData, itemIndex) => {
                   const isLastItem = pageIndex === data.pages.length - 1 && itemIndex === page.data.length - 1;
                   return (
-                    <div key={innerData.feedbackBoardId} className="w-full lg:w-[48%]">
+                    <div key={innerData.feedbackBoardId} className="w-full lg:w-[49%]">
                       <FeedbackContentItem props={innerData} ref={isLastItem ? loader : undefined} position="board" />
                     </div>
                   );
@@ -112,9 +120,9 @@ const FeedbackMain = () => {
               )
             )}
           </div>
-          {isClient && member && <RightSideButton destination={`/feedback/write`} />}
         </section>
         {/* 오른쪽 사이드 영역 */}
+        {isClient && member && <RightSideButton destination={`/feedback/write`} />}
       </div>
     </div>
   );
