@@ -78,7 +78,9 @@ const FreeMain = () => {
               <NoDataExists />
             ) : (
               data?.pages.map((page) =>
-                page.data.map((innerData) => <ContentItem props={innerData} key={innerData.freeBoardId} />),
+                page.data.map((innerData) => (
+                  <ContentItem props={innerData} key={innerData.freeBoardId} position={"board"} />
+                )),
               )
             )}
 
