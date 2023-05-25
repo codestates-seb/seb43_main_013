@@ -69,18 +69,16 @@ const FreePostsSlide = () => {
 
   /**2023-05-17 - 슬라이드 설정 옵션 - leekoby */
   const settings = {
-    touchThreshold: 100,
     afterChange: handleAfterChange,
-    className: "center",
-    centerMode: true,
     infinite: true,
     draggable: true,
     swipeToSlide: true,
     slidesToShow: silderPage,
-    // autoplay: true,
-    speed: 500,
+    autoplay: true,
+    speed: 3000,
     dots: false,
     arrow: false,
+    pauseOnHover: true,
   };
 
   /** 2023/05/17 자유게시판 목록 get 요청 - by leekoby */
