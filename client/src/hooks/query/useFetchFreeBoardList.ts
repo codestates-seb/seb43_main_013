@@ -10,7 +10,7 @@ import type { ApiFetchFreeBoardListRequest, ApiFetchFreeBoardListResponse } from
 
 /** 2023/05/11 - 자유 게시판 게시글 리스트 정보 패치하는 훅 - by leekoby */
 const useFetchFreeBoardList = ({ selected, sorted, page, size }: ApiFetchFreeBoardListRequest) => {
-  const { data, fetchNextPage, hasNextPage, isFetching, refetch, isPreviousData } =
+  const { data, fetchNextPage, hasNextPage, isFetching, refetch, isPreviousData, isError, isLoading, error } =
     useInfiniteQuery<ApiFetchFreeBoardListResponse>(
       [QUERY_KEYS.freeBoardList, page],
       ({ pageParam = page }) => apiFetchFreeBoardList({ selected, sorted, page: pageParam, size }),
@@ -20,7 +20,7 @@ const useFetchFreeBoardList = ({ selected, sorted, page, size }: ApiFetchFreeBoa
       },
     );
 
-  return { data, fetchNextPage, hasNextPage, isFetching, refetch, isPreviousData };
+  return { data, fetchNextPage, hasNextPage, isFetching, refetch, isPreviousData, isError, isLoading, error };
 };
 
 export { useFetchFreeBoardList };
