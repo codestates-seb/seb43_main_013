@@ -52,7 +52,7 @@ const FeedbackPostsSlide = () => {
     draggable: true,
     swipeToSlide: true,
     slidesToShow: silderPage,
-    autoplay: true,
+    // autoplay: true,
     speed: 3000,
     dots: false,
     arrow: false,
@@ -79,8 +79,8 @@ const FeedbackPostsSlide = () => {
       {data?.pages[0].data.length === 0 ? (
         <NotSearch />
       ) : (
-        <div className="h-[580px]">
-          <Slider {...settings} className="h-full">
+        <div className="">
+          <Slider {...settings} className="">
             {data?.pages.map((page) =>
               page.data.map((innerData) => {
                 return (

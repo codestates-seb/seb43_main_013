@@ -18,7 +18,7 @@ interface Props {
   boardId: number;
 }
 
-/** 2023/05/11 - 게시판 내용 - by 1-blue */
+/** 2023/05/20 - 공지사항 게시글 내용 - by leekoby */
 const Board: React.FC<Props> = ({ boardId }) => {
   const { data, isLoading } = useFetchNoticeBoard({ noticeId: boardId });
 

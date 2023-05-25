@@ -17,9 +17,10 @@ import { usePageStore } from "@/store";
 /** 2023/05/08 - 자유게시판 메인 화면 게시글 - by leekoby */
 interface ContentItemProps {
   props: FreeBoard;
+  position: "main" | "board";
 }
 
-const ContentItem: React.FC<ContentItemProps> = ({ props }) => {
+const ContentItem: React.FC<ContentItemProps> = ({ props, position }) => {
   const type = "free";
   const boardId = Number(props[`${type}BoardId`]);
   const toast = useCustomToast();
@@ -58,13 +59,17 @@ const ContentItem: React.FC<ContentItemProps> = ({ props }) => {
   return (
     <>
       {/*  list container */}
-      <div className=" flex flex-col items-center p-2 bg-white rounded-md shadow-md md:flex-row md:w-full shadow-black/20 hover:shadow-black/30 hover:shadow-lg transition-all ">
+      <div
+        className={`flex flex-col items-center p-2 bg-white rounded-md shadow-md md:flex-col md:w-full shadow-black/20 hover:shadow-black/30 hover:shadow-lg transition-all ${
+          position === "main" ? "h-[230px] md:h-[265px] " : ""
+        }`}
+      >
         {/* List Item * */}
-        <div className="items-center p-5 bg-sub-100 rounded-md w-full">
+        <div className="items-center justify-start p-5 bg-sub-100 rounded-md w-full h-full ">
           {/* right content */}
-          <div className="flex justify-between w-full h-full">
+          <div className="flex flex-col w-full h-full">
             {/* content header */}
-            <div className="flex flex-col justify-between w-full h-full gap-2 p-2 md:p-3">
+            <div className="flex flex-col  w-full gap-2 p-2 md:p-3 h-full">
               <div className="flex items-center justify-between w-full space-x-2">
                 {/* 게시글 제목 */}
                 <Link href={`/free/${props.freeBoardId}`} className="contents">
@@ -87,12 +92,15 @@ const ContentItem: React.FC<ContentItemProps> = ({ props }) => {
                 )}
               </div>
               {/* content body */}
-              <p className="truncate-3" dangerouslySetInnerHTML={{ __html: props.content.replace(/<[^>]*>?/g, "") }} />
+              <p
+                className="truncate-3 flex-1"
+                dangerouslySetInnerHTML={{ __html: props.content.replace(/<[^>]*>?/g, "") }}
+              />
               {/* rightside tag */}
               {props.tags && <TagItem tags={props.tags} />}
             </div>
+            <ContentFooter position="main" footerData={props} type={type} boardId={props.freeBoardId} />
           </div>
-          <ContentFooter position="main" footerData={props} type={type} boardId={props.freeBoardId} />
         </div>
       </div>
     </>

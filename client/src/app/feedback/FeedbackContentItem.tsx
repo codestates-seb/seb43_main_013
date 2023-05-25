@@ -60,7 +60,9 @@ const FeedbackContentItem = forwardRef<HTMLDivElement, ContentItemProps>(({ prop
       {/*  list container */}
       <div
         ref={ref}
-        className=" flex flex-col items-center p-3 bg-white rounded-md shadow-md md:flex-row md:w-full shadow-black/20 hover:shadow-black/30 hover:shadow-lg transition-all h-full"
+        className={` flex flex-col items-center p-3 bg-white rounded-md shadow-md md:flex-row md:w-full shadow-black/20 hover:shadow-black/30 hover:shadow-lg transition-all ${
+          position === "main" ? "h-[450px] md:h-[596px] my-1" : "h-[455px] md:h-[540px] my-1"
+        }`}
       >
         {/* 게시글 영역* */}
         <div className="flex flex-col items-center w-full  h-full p-3  bg-sub-100 rounded-md ">
