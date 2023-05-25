@@ -4,7 +4,7 @@ import { ChevronDoubleDownIcon } from "@heroicons/react/24/solid";
 import Link from "next/link";
 
 /** 2023/05/04 - 전체 잘못된 경로 - by 1-blue */
-const LoadingPage = () => (
+const NotFoundPage = () => (
   <article className="flex flex-col justify-center items-center mt-24 space-y-8 h-[50vh]">
     <section className="flex h-[100px] space-x-4">
       <span
@@ -73,4 +73,4 @@ const LoadingPage = () => (
   </article>
 );
 
-export default LoadingPage;
+export default NotFoundPage;

@@ -1,9 +1,12 @@
 // component
+import { apiSSRFetchMember } from "@/apis/ssr";
 import ProfileBookmarkedBoardList from "../ProfileBookmarkedBoardList";
 import ProfileCard from "../ProfileCard";
 import ProfileLikedBoardList from "../ProfileLikedBoardList";
 import ProfileWrittenBoardList from "../ProfileWrittenBoardList";
 import ProfileNav from "./ProfileNav";
+import { Metadata } from "next";
+import { getMetadata } from "@/libs";
 
 // type
 interface Props {
@@ -11,13 +14,26 @@ interface Props {
   searchParams: { type: "written" | "bookmarked" | "liked"; page: string };
 }
 
-const Page = ({ params: { memberId }, searchParams: { type = "written", page = "1" } }: Props) => {
+/** 2023/05/25 - 메타데이터 - by 1-blue */
+export const generateMetadata = async ({ params: { memberId } }: Props): Promise<Metadata> => {
+  const initialData = await apiSSRFetchMember({ memberId: +memberId });
+
+  return getMetadata({
+    title: initialData.nickname,
+    description: `${initialData.nickname}님의 프로필 페이지입니다.` + "\n" + initialData.introduction,
+    images: initialData.profileImageUrl ? [initialData.profileImageUrl] : undefined,
+  });
+};
+
+const Page = async ({ params: { memberId }, searchParams: { type = "written", page = "1" } }: Props) => {
+  const initialData = await apiSSRFetchMember({ memberId: +memberId });
+
   return (
     <article className="relative flex flex-col lg:flex-row">
       {/* 유저 프로필 / 프로필 네비게이션 */}
       <section className="flex flex-col z-[1]">
         <div className="lg:sticky lg:top-4">
-          <ProfileCard memberId={+memberId} />
+          <ProfileCard memberId={+memberId} initialData={initialData} />
           <ProfileNav type={type} memberId={+memberId} />
         </div>
       </section>

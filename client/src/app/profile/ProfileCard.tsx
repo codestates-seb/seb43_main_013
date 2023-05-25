@@ -21,14 +21,16 @@ import Avatar from "@/components/Avatar";
 import Skeleton from "@/components/Skeleton";
 import FollowerModal from "./FollowerModal";
 import FollowingModal from "./FollowingModal";
+import { ApiFetchMemberResponse } from "@/types/api";
 
 interface Props {
   memberId: number;
+  initialData?: ApiFetchMemberResponse;
 }
 
 /** 2023/05/14 - 프로필 카드 컴포넌트 - by 1-blue */
-const ProfileCard: React.FC<Props> = ({ memberId }) => {
-  const { data, isLoading } = useFetchMember({ memberId });
+const ProfileCard: React.FC<Props> = ({ memberId, initialData }) => {
+  const { data, isLoading } = useFetchMember({ memberId, initialData });
   const toast = useCustomToast();
   const { member } = useMemberStore();
   const queryClient = useQueryClient();
