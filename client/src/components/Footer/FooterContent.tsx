@@ -32,7 +32,6 @@ const FooterContent = () => {
                 <li className="text-sm lg:text-lg">Tanstack-Query</li>
                 <li className="text-sm lg:text-lg">ZUSTAND</li>
                 <li className="text-sm lg:text-lg">Tailwind CSS</li>
-                <li className="text-sm lg:text-lg">Chakra UI</li>
                 <li className="text-sm lg:text-lg">Vercel</li>
               </ul>
             </li>
