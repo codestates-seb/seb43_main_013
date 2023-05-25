@@ -12,12 +12,12 @@ import AuthCheck from "@/components/Header/AuthCheck";
 
 /** 2023/05/04 - 헤더 컴포넌트 - by Kadesti */
 const Header: React.FC = () => {
-  const accessToken = localStorage.getItem("accessToken");
-  const [hasToken, setHasToken] = useState(!!accessToken);
+  const [hasToken, setHasToken] = useState(false);
 
   useEffect(() => {
+    const accessToken = localStorage.getItem("accessToken");
     setHasToken(!!accessToken);
-  }, [accessToken]);
+  }, []);
 
   const nickState = useState(false);
   const { leftArr, rightArr } = headerArr();
