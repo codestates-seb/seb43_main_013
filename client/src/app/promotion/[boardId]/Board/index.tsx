@@ -16,15 +16,17 @@ import Skeleton from "@/components/Skeleton";
 import BoardASide from "@/components/Board/BoardASide";
 import BoardIframe from "@/components/Board/BoardIframe";
 import BoardHashtag from "@/components/Board/BoardHashtag";
+import { ApiFetchPromotionBoardResponse } from "@/types/api";
 
 // type
 interface Props {
   boardId: number;
+  initialData?: ApiFetchPromotionBoardResponse;
 }
 
 /** 2023/05/11 - 게시판 내용 - by 1-blue */
-const Board: React.FC<Props> = ({ boardId }) => {
-  const { data, isLoading } = useFetchPromotionBoard({ promotionBoardId: boardId });
+const Board: React.FC<Props> = ({ boardId, initialData }) => {
+  const { data, isLoading } = useFetchPromotionBoard({ promotionBoardId: boardId, initialData });
 
   // Skeleton UI
   if (isLoading) return <Skeleton.Board />;

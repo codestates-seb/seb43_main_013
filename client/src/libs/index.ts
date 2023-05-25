@@ -29,3 +29,4 @@ export const getYoutubeIframe = (url: string) => {
 };
 
 export * from "./validate";
+export * from "./metadata";
