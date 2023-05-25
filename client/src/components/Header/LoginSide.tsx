@@ -3,7 +3,6 @@ import { ChevronUpIcon, ChevronDownIcon } from "../HeaderIcon";
 import NickModal from "./NickModal";
 import { useEffect, useState } from "react";
 import Avatar from "../Avatar";
-import { useMemberStore } from "@/store/useMemberStore";
 
 /**
  * 2023/05/10 - 로그인 상태의 검색창 우측 메뉴 - by Kadesti
@@ -14,8 +13,6 @@ const LoginSide = ({ nickState }: { nickState: [boolean, React.Dispatch<boolean>
   const [nickModal, setNickModal] = nickState;
   const [nickName, setNickName] = useState("");
   const [profileSrc, setProfileSrc] = useState("");
-
-  const { member } = useMemberStore();
 
   useEffect(() => {
     const memberState = localStorage.getItem("member");
@@ -31,7 +28,7 @@ const LoginSide = ({ nickState }: { nickState: [boolean, React.Dispatch<boolean>
         onClick={() => setNickModal(!nickModal)}
         className="break-keep flex items-center cursor-pointer hover:text-slate-400 mr-2 relative"
       >
-        <Avatar src={member?.profileImageUrl || ""} className="mr-2 w-10 h-10" />
+        <Avatar src={profileSrc || ""} className="mr-2 w-10 h-10" />
         <span className="mr-2 text-2xl cursor-pointer">{nickName}</span>
         {nickModal ? (
           <>

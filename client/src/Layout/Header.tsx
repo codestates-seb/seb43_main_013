@@ -8,12 +8,11 @@ import LoginSide from "../components/Header/LoginSide";
 import HeaderLogo from "../components/Header/HeaderLogo";
 import SearchSide from "../components/Header/SearchSide";
 import headerArr from "../components/Header/HeaderArr";
-import { useTokenStore } from "@/store/useTokenStore";
 import AuthCheck from "@/components/Header/AuthCheck";
 
 /** 2023/05/04 - 헤더 컴포넌트 - by Kadesti */
 const Header: React.FC = () => {
-  const { accessToken } = useTokenStore();
+  const accessToken = localStorage.getItem("accessToken");
   const [hasToken, setHasToken] = useState(!!accessToken);
 
   useEffect(() => {
@@ -25,7 +24,7 @@ const Header: React.FC = () => {
 
   return (
     <header className="bg-white h-[96px] border-b-4 flex justify-center">
-      <AuthCheck />
+      {/* <AuthCheck /> */}
       <div className="flex w-full max-w-[1440px] items-center">
         <HeaderLogo />
         <SearchSide array={leftArr} />

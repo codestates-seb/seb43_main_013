@@ -58,13 +58,13 @@ const SignupBind = () => {
 
       router.replace("/login");
     } catch (error: any) {
-      // if (error.response) {
-      //   const fieldErrors = error.response.data.fieldErrors;
-      //   if (error.response.data.message === "The phone is already registered. Please use a different phone.") {
-      //     return toast({ title: "전화번호가 올바르지 않습니다", status: "error" });
-      //   }
-      //   toast({ title: fieldErrors[0].reason, status: "error" });
-      // }
+      if (error.response) {
+        const fieldErrors = error.response.data.fieldErrors;
+        if (error.response.data.message === "The phone is already registered. Please use a different phone.") {
+          return toast({ title: "전화번호가 올바르지 않습니다", status: "error" });
+        }
+        toast({ title: fieldErrors[0].reason, status: "error" });
+      }
     } finally {
       loading.end();
     }
