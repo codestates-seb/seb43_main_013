@@ -8,7 +8,7 @@ import { ApiFetchNoticeBoardListRequest, ApiFetchNoticeBoardListResponse } from 
 
 /** 2023/05/20 - 공지사항 게시글 리스트 정보 패치하는 훅 - by leekoby */
 const useFetchNoticeBoardList = ({ sorted, page, size }: ApiFetchNoticeBoardListRequest) => {
-  const { data, fetchNextPage, hasNextPage, isFetching, refetch, isPreviousData } =
+  const { data, fetchNextPage, hasNextPage, isFetching, refetch, isPreviousData, isError, isLoading, error } =
     useInfiniteQuery<ApiFetchNoticeBoardListResponse>(
       [QUERY_KEYS.noticeBoardList, page],
       ({ pageParam = page }) => apiFetchNoticeBoardList({ sorted, page: pageParam, size }),
@@ -18,7 +18,7 @@ const useFetchNoticeBoardList = ({ sorted, page, size }: ApiFetchNoticeBoardList
       },
     );
 
-  return { data, fetchNextPage, hasNextPage, isFetching, refetch, isPreviousData };
+  return { data, fetchNextPage, hasNextPage, isFetching, refetch, isPreviousData, isError, isLoading, error };
 };
 
 export { useFetchNoticeBoardList };
