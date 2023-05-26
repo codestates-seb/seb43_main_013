@@ -41,7 +41,8 @@ public class JwtLogoutFilter extends OncePerRequestFilter {
      * <로그 아웃>
      * 1. request를 통해 accessToken, refreshToken 추출
      * 2. 남은 유효시간 계산
-     * 3. redis에 accessToken 저장(로그아웃 된 토큰)
+     * 3. redis에 저장된 refreshToken 삭제
+     * 4. redis에 accessToken 저장(로그아웃 된 토큰)
      */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -54,7 +55,10 @@ public class JwtLogoutFilter extends OncePerRequestFilter {
             Jws<Claims> claims = jwtTokenizer.getClaims(accessToken, jwtTokenizer.encodeBase64SecretKey(jwtTokenizer.getSecretKey()));
             long remainExpiration = calcuateRemainExpiration(claims);
 
-            // 3. redis에 accessToken 저장(로그아웃 된 토큰)
+            // 3. redis에 저장된 refreshToken 삭제
+            redisService.deleteRefreshToken(refreshToken);
+
+            // 4. redis에 accessToken 저장(로그아웃 된 토큰)
             redisService.setAccessTokenLogOut(accessToken, remainExpiration);
             log.info("로그아웃 성공, 남은 만료 시간 : {}", remainExpiration);
 
