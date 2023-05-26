@@ -1,6 +1,7 @@
 package com.CreatorConnect.server.auth.config;
 
 import com.CreatorConnect.server.auth.filter.JwtAuthenticationFilter;
+import com.CreatorConnect.server.auth.filter.JwtLogoutFilter;
 import com.CreatorConnect.server.auth.filter.JwtVerificationFilter;
 import com.CreatorConnect.server.auth.handler.*;
 import com.CreatorConnect.server.auth.jwt.JwtTokenizer;
@@ -8,8 +9,10 @@ import com.CreatorConnect.server.auth.jwt.TokenService;
 import com.CreatorConnect.server.auth.oauth.handler.OAuth2MemberSuccessHandler;
 import com.CreatorConnect.server.auth.utils.CustomAuthorityUtils;
 import com.CreatorConnect.server.member.repository.MemberRepository;
+import com.CreatorConnect.server.redis.RedisService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
@@ -39,12 +42,18 @@ public class SecurityConfiguration {
     private final MemberRepository memberRepository;
     private final TokenService tokenService;
 
-    public SecurityConfiguration(JwtTokenizer jwtTokenizer, CustomAuthorityUtils authorityUtils, OAuth2MemberSuccessHandler oAuth2MemberSuccessHandler, MemberRepository memberRepository, TokenService tokenService) {
+    private final RedisService redisService;
+
+    private final RedisTemplate redisTemplate;
+
+    public SecurityConfiguration(JwtTokenizer jwtTokenizer, CustomAuthorityUtils authorityUtils, OAuth2MemberSuccessHandler oAuth2MemberSuccessHandler, MemberRepository memberRepository, TokenService tokenService, RedisService redisService, RedisTemplate redisTemplate) {
         this.jwtTokenizer = jwtTokenizer;
         this.authorityUtils = authorityUtils;
         this.oAuth2MemberSuccessHandler = oAuth2MemberSuccessHandler;
         this.memberRepository = memberRepository;
         this.tokenService = tokenService;
+        this.redisService = redisService;
+        this.redisTemplate = redisTemplate;
     }
 
     @Bean
@@ -123,17 +132,19 @@ public class SecurityConfiguration {
         public void configure(HttpSecurity builder) throws Exception {
             AuthenticationManager authenticationManager = builder.getSharedObject(AuthenticationManager.class);
 
-            JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(authenticationManager, tokenService);
+            JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(authenticationManager, tokenService, redisService, jwtTokenizer);
             jwtAuthenticationFilter.setFilterProcessesUrl("/api/login");
             jwtAuthenticationFilter.setAuthenticationSuccessHandler(new MemberAuthenticationSuccessHandler(memberRepository));
             jwtAuthenticationFilter.setAuthenticationFailureHandler(new MemberAuthenticationFailureHandler());
 
-            JwtVerificationFilter jwtVerificationFilter = new JwtVerificationFilter(jwtTokenizer, authorityUtils);
+            JwtVerificationFilter jwtVerificationFilter = new JwtVerificationFilter(jwtTokenizer, authorityUtils, redisService, redisTemplate);
+            JwtLogoutFilter jwtLogoutFilter = new JwtLogoutFilter(jwtTokenizer, redisService);
 
             builder
                     .addFilter(jwtAuthenticationFilter) // Spring Security Filter Chain 에 JwtAuthenticationFilter 추가
                     .addFilterAfter(jwtVerificationFilter, JwtAuthenticationFilter.class) // JwtAuthenticationFilter 에서 로그인 인증 후, 발급 받은 JWT가 요청의 request header(Authorization)에 포함되어 있을 경우 동작
-                    .addFilterAfter(jwtVerificationFilter, OAuth2LoginAuthenticationFilter.class);
+                    .addFilterAfter(jwtVerificationFilter, OAuth2LoginAuthenticationFilter.class)
+                    .addFilterAfter(jwtLogoutFilter, JwtVerificationFilter.class);
         }
     }
 }
