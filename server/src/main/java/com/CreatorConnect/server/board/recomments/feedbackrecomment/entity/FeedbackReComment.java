@@ -44,7 +44,7 @@ public class FeedbackReComment extends Auditable {
     @ManyToOne
     @JoinColumns({
             @JoinColumn(name = "feedback_board_id"),
-            @JoinColumn(name = "feedback_comment_id")
+            @JoinColumn(name = "feed_comment_id")
     })
     private FeedbackComment feedbackComment;
     public void setFeedbackComment(FeedbackComment feedbackComment){

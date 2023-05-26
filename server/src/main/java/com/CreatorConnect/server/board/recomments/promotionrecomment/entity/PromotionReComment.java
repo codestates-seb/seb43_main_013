@@ -44,7 +44,7 @@ public class PromotionReComment extends Auditable {
     @ManyToOne
     @JoinColumns({
             @JoinColumn(name = "promotion_board_id"),
-            @JoinColumn(name = "promotion_comment_id")
+            @JoinColumn(name = "promo_comment_id")
     })
     private PromotionComment promotionComment;
     public void setPromotionComment(PromotionComment promotionComment){
