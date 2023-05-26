@@ -29,7 +29,9 @@ public enum ExceptionCode {
     CATEGORY_EXISTS(409, "Category already exists. Please provide a different category"),
     MEMBER_FIELD_NOT_FOUND(500, "Member field not found. Please check the object and try again."),
     INVALID_TOKEN(403, "Invalid token. Please provide a valid token."),
-    NOTICE_NOT_FOUND(404, "Notice not found, Please check the Notice Id and try again");
+    NOTICE_NOT_FOUND(404, "Notice not found, Please check the Notice Id and try again"),
+
+    EXPIRED_TOKEN(403, "Access Token is Expired, Please check the Access Token.");
 
     @Getter
     private int status;
