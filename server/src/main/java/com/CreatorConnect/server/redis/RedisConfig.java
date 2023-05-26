@@ -1,4 +1,4 @@
-package com.CreatorConnect.server.auth.redis;
+package com.CreatorConnect.server.redis;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

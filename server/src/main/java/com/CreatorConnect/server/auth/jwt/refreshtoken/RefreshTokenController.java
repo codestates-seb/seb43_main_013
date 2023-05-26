@@ -1,4 +1,4 @@
-package com.CreatorConnect.server.auth.redis.refreshtoken;
+package com.CreatorConnect.server.auth.jwt.refreshtoken;
 
 import com.CreatorConnect.server.auth.jwt.JwtTokenizer;
 import com.CreatorConnect.server.auth.jwt.TokenService;
