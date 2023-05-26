@@ -84,6 +84,11 @@ public class PromotionBoardService {
                 .ifPresent(link -> foundPromotionBoard.setLink(link));
         Optional.ofNullable(promotionBoard.getContent())
                 .ifPresent(content -> foundPromotionBoard.setContent(content));
+        Optional.ofNullable(promotionBoard.getChannelName())
+                .ifPresent(channelName -> foundPromotionBoard.setChannelName(channelName));
+        Optional.ofNullable(promotionBoard.getSubscriberCount())
+                .ifPresent(subscribeCount -> foundPromotionBoard.setSubscriberCount(subscribeCount));
+
 
         // 카테골리 유효성 검증
         if (patchDto.getCategoryName() != null) {
