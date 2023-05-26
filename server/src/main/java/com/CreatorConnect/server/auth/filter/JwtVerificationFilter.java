@@ -2,13 +2,19 @@ package com.CreatorConnect.server.auth.filter;
 
 import com.CreatorConnect.server.auth.jwt.JwtTokenizer;
 import com.CreatorConnect.server.auth.utils.CustomAuthorityUtils;
+import com.CreatorConnect.server.exception.BusinessLogicException;
+import com.CreatorConnect.server.exception.ExceptionCode;
 import com.CreatorConnect.server.member.entity.Member;
+import com.CreatorConnect.server.redis.RedisService;
 import io.jsonwebtoken.ExpiredJwtException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -20,19 +26,26 @@ import java.util.List;
 import java.util.Map;
 
 @Slf4j // jwt 검증 필터
+@RequiredArgsConstructor
 public class JwtVerificationFilter extends OncePerRequestFilter { // OncePerRequestFilter -request 마다 한번 수행
 
     private final JwtTokenizer jwtTokenizer;
+
     private final CustomAuthorityUtils authorityUtils;
 
-    public JwtVerificationFilter(JwtTokenizer jwtTokenizer, CustomAuthorityUtils authorityUtils) {
-        this.jwtTokenizer = jwtTokenizer;
-        this.authorityUtils = authorityUtils;
-    }
+
+    private final RedisTemplate redisTemplate;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         log.info("# JwtVerificationFilter");
+
+        String accessToken = request.getHeader("Authorization").replace("Bearer ", "");
+        String isLogout = (String) redisTemplate.opsForValue().get(accessToken);
+
+        if (!ObjectUtils.isEmpty(isLogout)) { // redis에 Acces Token이 있다면 로그아웃 된 토큰
+            throw new BusinessLogicException(ExceptionCode.EXPIRED_TOKEN);
+        }
 
         try {
             Map<String, Object> claims = verifyJws(request);
