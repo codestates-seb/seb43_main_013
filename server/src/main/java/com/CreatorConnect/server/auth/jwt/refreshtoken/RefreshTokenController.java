@@ -8,6 +8,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,6 +22,7 @@ import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 public class RefreshTokenController {
     private final JwtTokenizer jwtTokenizer;
     private final MemberRepository memberRepository;
