@@ -34,7 +34,7 @@ jobs:
       - run : cat ./server/src/main/resources/application.yml
 
       # gradlew에 권한 부여
-      - run : cd ./server
+
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
         shell: bash
