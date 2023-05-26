@@ -1,4 +1,4 @@
-package com.CreatorConnect.server.auth.redis.service;
+package com.CreatorConnect.server.redis;
 
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
@@ -32,6 +32,25 @@ public class RedisService {
     public String getAccessToken(String accessToken) {
         ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
         return valueOperations.get(accessToken).replace("Bearer ", "");
+    }
+
+    // RefreshToken redis 저장 (key : refreshToken, value : email)
+    public void setRefreshToken(String refreshToken, String email, long expiration) {
+        ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
+        // refresh token의 만료시간 까지 저장
+        valueOperations.set(refreshToken, email, expiration);
+        log.info("Refresh Token 만료 시간 : {} min", expiration);
+    }
+
+    // redis에 저장된 refreshToken 조회
+    public String getRefreshToken(String refreshToken) {
+        ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
+        return valueOperations.get(refreshToken);
+    }
+
+    // redis에 저장된 refreshToken 삭제
+    public void deleteRefreshToken(String refreshToken) {
+        redisTemplate.delete(refreshToken);
     }
 
 }
