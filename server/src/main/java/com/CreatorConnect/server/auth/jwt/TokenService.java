@@ -1,7 +1,7 @@
 package com.CreatorConnect.server.auth.jwt;
 
-import com.CreatorConnect.server.auth.redis.refreshtoken.RefreshToken;
-import com.CreatorConnect.server.auth.redis.refreshtoken.RefreshTokenRepository;
+import com.CreatorConnect.server.auth.jwt.refreshtoken.RefreshToken;
+import com.CreatorConnect.server.auth.jwt.refreshtoken.RefreshTokenRepository;
 import com.CreatorConnect.server.member.entity.Member;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
