@@ -53,9 +53,9 @@
 
 ## 📤 BackEnd
 
-|[홍승현 (BE) (팀장)](https://github.com/seunghyun711)|[임종영 (BE)](https://github.com/lim3873)|[이미연 (BE)](https://github.com/leemiyeonn)|[윤영우 (BE)](https://github.com/happy-camel)|
+|[홍승현 (BE) (팀장)](https://github.com/seunghyun711)|[임종영 (BE)](https://github.com/lim3873)|[윤영우 (BE)](https://github.com/happy-camel)|[이미연 (BE)](https://github.com/leemiyeonn)|
 |:--:|:--:|:--:|:--:|
-|<img src='https://i.seadn.io/gcs/files/e4e9629ca074948f38931ee4c344d633.png?auto=format&dpr=1&w=1000' width='150'>|<img src='https://i.seadn.io/gcs/files/13b5cc7f3a80e1aa3d7254d8f8941b93.png?auto=format&dpr=1&w=1000' width='150'/>|<img src='https://i.seadn.io/gcs/files/f545699de367582580325bb5870c8fed.png?auto=format&dpr=1&w=1000' width='150'/>|<img src='https://i.seadn.io/gcs/files/f30af51922e097acc859bfe284009546.png?auto=format&dpr=1&w=1000' width='150'/>|
+|<img src='https://i.seadn.io/gcs/files/e4e9629ca074948f38931ee4c344d633.png?auto=format&dpr=1&w=1000' width='150'>|<img src='https://i.seadn.io/gcs/files/13b5cc7f3a80e1aa3d7254d8f8941b93.png?auto=format&dpr=1&w=1000' width='150'/>|<img src='https://i.seadn.io/gcs/files/f30af51922e097acc859bfe284009546.png?auto=format&dpr=1&w=1000' width='150'/>|<img src='https://i.seadn.io/gcs/files/f545699de367582580325bb5870c8fed.png?auto=format&dpr=1&w=1000' width='150'/>|
 |자유 & 홍보 게시판 <br /> 공지 사항 <br /> 태그 <br /> 로그아웃 | 홍보게시판 <br /> 백앤드 서버 <br /> DB 배포 <br /> 백앤드 CI/CD | 카테고리 <br /> 피드백 게시판 <br /> 댓글 & 대댓글 <br /> 유튜브 api | 인증 & 보안 <br /> 회원 CRUD & 팔로우 & 팔로잉 <br /> 게시글 좋아요 & 북마크 <br /> 검색 & 인기검색어 |
 
 <br />
