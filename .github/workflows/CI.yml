@@ -23,6 +23,9 @@ jobs:
           # 자신이 사용하는 자바 버전에 맞춰주자
           java-version: '11'
           distribution: 'temurin'
+      - name: init with Gradle
+        uses: gradle/gradle-build-action@v2
+      - run: gradle init
 
       - uses : actions/checkout@v3
       #1
