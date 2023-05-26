@@ -63,26 +63,26 @@ public class YoutubeApiService {
             Video singleVideo = iteratorSearchResults.next();
 
             if (singleVideo.getKind().equals("youtube#video")) {
-                /** 썸네일 크기 지정 - medium
-                 *             너비  *  높이
-                 *  default  = 120  *  90
-                 *  medium   = 320  *  180
-                 *  high     = 480  *  360
-                 *  standard = 640  *  480
-                 *  maxres   = 1280 *  720
-                */
-
-
-                // entity에 저장
+                                // entity에 저장
                 VideoPK videoPK = new VideoPK(categoryId,id);
                 VideoEntity video = new VideoEntity();
                 video.setVideoPK(videoPK);
                 video.setYoutubeId(singleVideo.getId());
                 video.setYoutubeUrl("https://youtu.be/" + singleVideo.getId());
+                // 썸네일이 존재하면
                 if(singleVideo.getSnippet().getThumbnails().get("maxres") != null){
+                    /** 썸네일 크기 지정 - medium
+                     *             너비  *  높이
+                     *  default  = 120  *  90
+                     *  medium   = 320  *  180
+                     *  high     = 480  *  360
+                     *  standard = 640  *  480
+                     *  maxres   = 1280 *  720
+                     */
                     Thumbnail thumbnail = (Thumbnail) singleVideo.getSnippet().getThumbnails().get("maxres");
                     video.setThumbnailUrl(thumbnail.getUrl());
                 } else{
+                    // 존재하지 않으면 디폴트 썸네일
                     video.setThumbnailUrl("https://img.youtube.com/vi/fvtzZFhrKLE/maxresdefault.jpg");
                 }
                 // 타이틀 database에 넣을 때 이모지 제거
