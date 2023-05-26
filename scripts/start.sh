@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 PROJECT_ROOT="/home/ec2-user/app/deploy"
-JAR_FILE="$PROJECT_ROOT/build/libs/어쩌구저쩌구.jar"
+JAR_FILE="$PROJECT_ROOT/build/libs/seb43_main_013.jar"
 
 APP_LOG="$PROJECT_ROOT/application.log"
 ERROR_LOG="$PROJECT_ROOT/error.log"
