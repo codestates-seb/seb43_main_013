@@ -33,7 +33,6 @@ public class JwtVerificationFilter extends OncePerRequestFilter { // OncePerRequ
 
     private final CustomAuthorityUtils authorityUtils;
 
-
     private final RedisTemplate redisTemplate;
 
     @Override
