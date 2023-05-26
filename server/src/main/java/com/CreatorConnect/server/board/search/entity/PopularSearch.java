@@ -21,7 +21,7 @@ public class PopularSearch extends Auditable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long popularSearchId;
 
-    @Column
+    @Column(unique = true)
     private String keyword;
 
     @Column
