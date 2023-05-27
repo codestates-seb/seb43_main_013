@@ -118,7 +118,6 @@ fabric.properties
 .mtj.tmp/
 
 # Package Files #
-*.jar
 *.war
 *.nar
 *.ear
@@ -297,31 +296,5 @@ $RECYCLE.BIN/
 # and uncomment the following lines
 # .pnp.*
 
-### Gradle ###
-.gradle
-**/build/
-!src/**/build/
-
-# Ignore Gradle GUI config
-gradle-app.setting
-
-# Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
-!gradle-wrapper.jar
-
-# Avoid ignore Gradle wrappper properties
-!gradle-wrapper.properties
-
-# Cache of project
-.gradletasknamecache
-
-# Eclipse Gradle plugin generated files
-# Eclipse Core
-.project
-# JDT-specific (Eclipse Java Development Tools)
-.classpath
-
-### Gradle Patch ###
-# Java heap dump
-*.hprof
 
 # End of https://www.toptal.com/developers/gitignore/api/windows,macos,visualstudiocode,java,intellij+all,yarn,vim,git,gradle,linux,nextjs
