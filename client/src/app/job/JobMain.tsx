@@ -18,11 +18,7 @@ import BoardError from "../boarderror";
 const JobMain = () => {
   const member = useMemberStore((state) => state.member);
 
-  const [isClient, setIsClient] = useState(false);
-
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
+  const [isClient, setIsClient] = useState(typeof window !== "undefined");
 
   /** 2023/05/18 - 게시판 page 상태관리 - by leekoby */
   const currentPage = usePageStore((state) => state.currentPage);
