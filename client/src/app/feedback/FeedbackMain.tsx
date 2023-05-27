@@ -19,11 +19,8 @@ import BoardError from "../boarderror";
 const FeedbackMain = () => {
   const member = useMemberStore((state) => state.member);
 
-  const [isClient, setIsClient] = useState(false);
+  const [isClient, setIsClient] = useState(typeof window !== "undefined");
 
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
   /** 2023/05/14 - 사이드 카테고리 상태 - by leekoby */
 
   const selectedCategory = useCategoriesStore((state) => state.selectedCategory);

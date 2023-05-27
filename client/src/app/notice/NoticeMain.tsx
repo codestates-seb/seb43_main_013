@@ -14,17 +14,16 @@ import BoardError from "../boarderror";
 
 /** 2023/05/20 - 공지사항 메인 화면 - by leekoby */
 const NoticeMain = () => {
-  const [isClient, setIsClient] = useState(false);
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
+  const member = useMemberStore((state) => state.member);
+  const [isClient, setIsClient] = useState(typeof window !== "undefined");
 
   /** 2023/05/20 - 게시판 page 상태관리 - by leekoby */
   const currentPage = usePageStore((state) => state.currentPage);
   const setCurrentPage = usePageStore((state) => state.setCurrentPage);
-  const member = useMemberStore((state) => state.member);
+
   /** 2023/05/20 - 정렬 전역 상태 - by leekoby */
   const sortSelectedOption = useSortStore((state) => state.selectedOption);
+
   /** 2023/05/11  공지사항 목록 get 요청 - by leekoby */
   const { data, refetch, isError, isLoading, error } = useFetchNoticeBoardList({
     sorted: sortSelectedOption?.optionName,

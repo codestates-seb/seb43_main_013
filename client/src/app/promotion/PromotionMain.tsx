@@ -19,10 +19,7 @@ import BoardError from "../boarderror";
 const PromotionMain = () => {
   const member = useMemberStore((state) => state.member);
 
-  const [isClient, setIsClient] = useState(false);
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
+  const [isClient, setIsClient] = useState(typeof window !== "undefined");
 
   /** 2023/05/17 - 사이드 카테고리 상태 - by leekoby */
   const selectedCategory = useCategoriesStore((state) => state.selectedCategory);

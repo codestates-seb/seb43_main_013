@@ -53,7 +53,7 @@ const FeedbackPostsSlide = () => {
     swipeToSlide: true,
     slidesToShow: silderPage,
     autoplay: true,
-    speed: 3000,
+    speed: 2000,
     dots: false,
     arrow: false,
     pauseOnHover: true,
