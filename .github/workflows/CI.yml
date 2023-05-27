@@ -80,5 +80,5 @@ jobs:
           --application-name seb43_main_013 \
           --deployment-group-name back-L-End \
           --file-exists-behavior OVERWRITE \
-          --s3-location bucket=api.hard-coding.com,bundleType=zip,key=main13.zip \
+          --s3-location bucket=api.hard-coding.com,bundleType=zip,key=project/main13.zip \
           --region ${{ secrets.AWS_REGION }}
