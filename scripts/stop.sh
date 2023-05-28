@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-PROJECT_ROOT="/home/ec2-user/app/deploy/server"
-JAR_FILE="$PROJECT_ROOT/build/libs/seb43_main_013.jar"
+PROJECT_ROOT="/home/ec2-user/app/deploy"
+JAR_FILE="$PROJECT_ROOT/server/build/libs/seb43_main_013.jar"
 
 DEPLOY_LOG="$PROJECT_ROOT/deploy.log"
 
