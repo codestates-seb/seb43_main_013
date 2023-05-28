@@ -42,11 +42,9 @@ jobs:
       - name: init with Gradle
         uses: gradle/gradle-build-action@v2
       - run: gradle init
-      - name: Build with Gradle
-        uses: gradle/gradle-build-action@v2
-        with:
-         gradle-version: 7.5.1
-         arguments: build
+        # Gradle을 통해 프로젝트를 빌드한다
+      - name: Build Project
+        run: ./gradlew clean build
 
       # 빌드를 성공하면 해당 프로젝트를 zip로 만듬
       # 이름은 run 에서 설정 가능
