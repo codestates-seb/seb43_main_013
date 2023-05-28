@@ -12,14 +12,18 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @Configuration
 public class RedisConfig {
 
-    private final String redisHost;
-    private final int redisPort;
-
-    public RedisConfig(@Value("${spring.redis.host}") final String redisHost,
-                       @Value("${spring.redis.port}") final int redisPort) {
-        this.redisHost = redisHost;
-        this.redisPort = redisPort;
-    }
+//    private final String redisHost;
+//    private final int redisPort;
+//
+//    public RedisConfig(@Value("${spring.redis.host}") final String redisHost,
+//                       @Value("${spring.redis.port}") final int redisPort) {
+//        this.redisHost = redisHost;
+//        this.redisPort = redisPort;
+//    }
+    @Value("${spring.redis.host}")
+    private String redisHost;
+    @Value("${spring.redis.port}")
+    private int redisPort;
 
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
@@ -29,6 +33,8 @@ public class RedisConfig {
     @Bean
     public RedisTemplate<?, ?> redisTemplate() {
         RedisTemplate<?, ?> redisTemplate = new RedisTemplate<>();
+        redisTemplate.setKeySerializer(new StringRedisSerializer());
+        redisTemplate.setValueSerializer(new StringRedisSerializer());
         redisTemplate.setConnectionFactory(redisConnectionFactory());
         return redisTemplate;
     }
