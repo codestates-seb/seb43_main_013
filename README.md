@@ -43,7 +43,7 @@
 
 ## 🚀 DevOps
 
-| AWS-EC2 | AWS-RDS | AWS-RDS | AWS-S3 | GitHub <br /> Actions | 
+| AWS-EC2 | AWS-RDS | CodeDeploy | AWS-S3 | GitHub <br /> Actions | 
 | :---: | :---: | :---: | :---: | :---: |
 | <div style="display: flex; align-items: flex-start;"><img src="https://www.javainuse.com/ec2logo.jpg" alt="icon" width="65" height="65" /></div> | <div style="display: flex; align-items: flex-start;"><img src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2Fbg4h1z%2FbtrgnqWVpqZ%2FiO4dXPP1VAzPcjKyS1MA60%2Fimg.png" alt="icon" width="65" height="65" /></div> | <div style="display: flex; align-items: flex-start;"><img src="https://cdn.freebiesupply.com/logos/thumbs/2x/aws-codedeploy-logo.png" alt="icon" width="65" height="65" /></div> | <div style="display: flex; align-items: flex-start;"><img src="https://cdn-blog.lawrencemcdaniel.com/wp-content/uploads/2021/01/30083957/aws-s3-logo.png" alt="icon" width="65" height="65" /></div> | <img alt="spring-boot logo" src="https://avatars.githubusercontent.com/u/44036562?s=280&v=4" width="65" height="65" > |
 
