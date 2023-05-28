@@ -37,6 +37,9 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x ./server/gradlew
         shell: bash
+      - name: Grant execute permission for gradlew.bat
+        run: chmod +x ./server/gradlew.bat
+        shell: bash
 
       # gradlew 빌드
       - name: init with Gradle
