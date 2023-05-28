@@ -59,8 +59,6 @@
 # *.iml
 # *.ipr
 
-# CMake
-cmake-build-*/
 
 # Mongo Explorer plugin
 .idea/**/mongoSettings.xml
@@ -192,8 +190,6 @@ server-0.0.1-SNAPSHOT
 */.next/*
 /out/
 
-# production
-*/build
 
 # misc
 *.pem
