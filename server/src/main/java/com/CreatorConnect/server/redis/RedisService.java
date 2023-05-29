@@ -7,10 +7,12 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.concurrent.TimeUnit;
 
 @Service
 @Slf4j
+@Transactional
 @RequiredArgsConstructor
 public class RedisService {
     private final RedisTemplate redisTemplate;
