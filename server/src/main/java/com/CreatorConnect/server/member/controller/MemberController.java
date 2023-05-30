@@ -1,5 +1,6 @@
 package com.CreatorConnect.server.member.controller;
 
+import com.CreatorConnect.server.auth.jwt.refreshtoken.RefreshTokenController;
 import com.CreatorConnect.server.board.feedbackboard.entity.FeedbackBoard;
 import com.CreatorConnect.server.board.freeboard.entity.FreeBoard;
 import com.CreatorConnect.server.board.jobboard.entity.JobBoard;
@@ -18,6 +19,7 @@ import com.CreatorConnect.server.member.repository.MemberRepository;
 import com.CreatorConnect.server.member.service.MemberService;
 import com.CreatorConnect.server.response.MultiResponseDto;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -29,6 +31,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import java.util.*;
@@ -47,16 +51,18 @@ public class MemberController {
     private final MemberMapper mapper;
     private final MemberService memberService;
     private final MemberRepository memberRepository;
+    private final RefreshTokenController refreshTokenController;
 
-    public MemberController(MemberMapper mapper, MemberService memberService, MemberRepository memberRepository) {
+    public MemberController(MemberMapper mapper, MemberService memberService, MemberRepository memberRepository, RefreshTokenController refreshTokenController) {
         this.mapper = mapper;
         this.memberService = memberService;
         this.memberRepository = memberRepository;
+        this.refreshTokenController = refreshTokenController;
     }
 
     @GetMapping("/")
     public ResponseEntity home() {
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity("server home",HttpStatus.OK);
     }
 
     @PostMapping("/api/signup")
@@ -68,6 +74,11 @@ public class MemberController {
         MemberResponseDto response = mapper.memberToMemberResponseDto(createdMember);
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+    @DeleteMapping("/api/logout")
+    public ResponseEntity logout() {
+        return new ResponseEntity(HttpStatus.OK);
     }
 
     @PostMapping("/api/signup/confirm")

@@ -29,7 +29,7 @@ import java.util.Objects;
 
 @Slf4j // jwt 검증 필터
 @RequiredArgsConstructor
-public class JwtVerificationFilter extends OncePerRequestFilter { // OncePerRequestFilter -request 마다 한번 수행
+public class JwtVerificationFilter extends OncePerRequestFilter { // OncePerRequestFilter - request 마다 한번 수행
 
     private final JwtTokenizer jwtTokenizer;
 
@@ -49,7 +49,7 @@ public class JwtVerificationFilter extends OncePerRequestFilter { // OncePerRequ
         String accessToken = request.getHeader("Authorization").replace("Bearer ", "");
         String isLogout = (String) redisTemplate.opsForValue().get(accessToken);
 
-        if (!ObjectUtils.isEmpty(isLogout)) { // redis에 Acces Token이 있다면 로그아웃 된 토큰
+        if (!ObjectUtils.isEmpty(isLogout)) { // redis 에 AccessToken 이 있다면 로그아웃 된 토큰
             throw new BusinessLogicException(ExceptionCode.EXPIRED_TOKEN);
         }
 
