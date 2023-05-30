@@ -1,8 +1,7 @@
 package com.CreatorConnect.server.auth.jwt;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.Jwts;
+import com.CreatorConnect.server.exception.JwtVerificationException;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.io.Encoders;
 import io.jsonwebtoken.security.Keys;
@@ -13,10 +12,12 @@ import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
-@Component
+@Component // jwt 생성 및 검증
 public class JwtTokenizer {
+
     @Getter
     @Value("${jwt.key}")
     private String secretKey;
@@ -51,26 +52,38 @@ public class JwtTokenizer {
     public String generateRefreshToken(String subject, Date expiration, String base64EncodedSecretKey) {
         Key key = getKeyFromBase64EncodedKey(base64EncodedSecretKey);
 
-        return Jwts.builder()
-                .setSubject(subject)
-                .setIssuedAt(Calendar.getInstance().getTime())
-                .setExpiration(expiration)
-                .signWith(key)
-                .compact();
+        String refreshToken =
+                Jwts.builder()
+                        .setSubject(subject)
+                        .setIssuedAt(Calendar.getInstance().getTime())
+                        .setExpiration(expiration)
+                        .signWith(key)
+                        .compact();
+
+        return refreshToken;
     }
 
-    public Jws<Claims> getClaims(String jws, String base64EncodedSecretKey) {
-        Key key = getKeyFromBase64EncodedKey(base64EncodedSecretKey);
+    public Jws<Claims> getClaims(String jws, String base64EncodedSecretKey) throws ExpiredJwtException {
 
-        // 검증 후, Claims 을 반환하는 용도
-        Jws<Claims> claims = Jwts.parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(jws);
-        return claims;
+        Key key = getKeyFromBase64EncodedKey(base64EncodedSecretKey); // base64 인코딩된 Secret Key 를 디코딩
+
+        try {
+            // 검증 후, Claims 을 반환하는 용도
+            Jws<Claims> claims = Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(jws);
+
+            return claims;
+
+        } catch (ExpiredJwtException e) {
+            throw new JwtVerificationException("Expired Access-Token", e);
+        } catch (JwtException ee) {
+            throw ee;
+        }
     }
 
-    // 단순히 검증만 하는 용도로 쓰일 경우
+    // 단순 검증 용도
     public void verifySignature(String jws, String base64EncodedSecretKey) {
         Key key = getKeyFromBase64EncodedKey(base64EncodedSecretKey);
 

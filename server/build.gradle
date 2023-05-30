@@ -46,8 +46,24 @@ dependencies {
 	testImplementation 'org.springframework.security:spring-security-test'
 
 	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+
+	//Youtube Data API implementation
+	implementation 'com.google.api-client:google-api-client:1.23.0'
+	implementation 'com.google.oauth-client:google-oauth-client-jetty:1.23.0'
+	implementation 'com.google.apis:google-api-services-youtube:v3-rev222-1.25.0'
+
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+	annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+
 }
 
-tasks.named('test') {
+test {
 	useJUnitPlatform()
+}
+
+jar {  // SNAPSHOT-plain.jar 생성 방지
+	enabled = false
 }

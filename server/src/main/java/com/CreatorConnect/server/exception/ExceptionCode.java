@@ -4,17 +4,34 @@ import lombok.Getter;
 
 public enum ExceptionCode {
     INVALID_MEMBER(400, "Invalid member object. Please provide a valid member object."),
+    CATEGORY_ID_NOT_FOUND(400, "Requested categoryId is not supported. provided categoryId List > https://silicon-hip-dc5.notion.site/ID-9b3125d98d05462cb157dd38a4949c7c"),
     MEMBER_NOT_ALLOWED(403, "Access denied. Please authenticate as a member."),
+    LIMIT_EXCESS(403, "The request cannot be completed because you have exceeded your quota."),
     MEMBER_NOT_FOUND(404, "Member not found. Please check the member ID and try again."),
     CATEGORY_NOT_FOUND(404, "Category not found. Please check the Category and try again."),
     FEEDBACK_NOT_FOUND(404, "Feedback not found. Please check the Feedback ID and try again."),
+    VIDEO_NOT_FOUND(404, "VideoEntity not found. Please check the VideoEntity ID and try again."),
+    FREEBOARD_NOT_FOUND(404, "FreeBoard not found, Please check the FreeBoard ID and try again."),
     FEEDBACK_CATEGORY_NOT_FOUND(404, "FeedbackCategory not found. Please check the FeedbackCategory and try again."),
+    COMMENT_NOT_FOUND(404, "Comment not found. Please check the CommentId and try again."),
+    RE_COMMENT_NOT_FOUND(404, "ReComment not found. Please check the ReCommentId and try again."),
+    JOBBOARD_NOT_FOUND(404, "JobBoard not found, Please check the JobBoard ID and try again."),
+    LIKE_NOT_FOUND(404,  "Like not found. Please check the CommentId and try again."),
+    BOOKMARK_NOT_FOUND(404,  "Bookmark not found. Please check the CommentId and try again."),
     MEMBER_EXISTS(409, "Member already exists. Please provide a different member ID."),
+    EMAIL_EXISTS(409, "The email is already registered. Please use a different email."),
+    NICKNAME_EXISTS(409, "The nickname is already registered. Please use a different nickname."),
+    PHONE_EXISTS(409, "The phone is already registered. Please use a different phone."),
     FOLLOWING_ALREADY_EXISTS(409, "The member is already being followed."),
     FOLLOWING_ALREADY_DELETED(409,  "The member has already been unfollowed."),
-    MEMBER_FIELD_NOT_FOUND(500, "Member field not found. Please check the object and try again."),
+    LIKE_ALREADY_EXISTS(409, "The member is already being liked."),
+    BOOKMARK_ALREADY_EXISTS(409, "The member is already being bookmarked."),
     CATEGORY_EXISTS(409, "Category already exists. Please provide a different category"),
-    FREEBOARD_NOT_FOUND(404, "FreeBoard not found, Please check the FreeBoard ID and try again.");
+    MEMBER_FIELD_NOT_FOUND(500, "Member field not found. Please check the object and try again."),
+    INVALID_TOKEN(403, "Invalid token. Please provide a valid token."),
+    NOTICE_NOT_FOUND(404, "Notice not found, Please check the Notice Id and try again"),
+
+    EXPIRED_TOKEN(403, "Access Token is Expired, Please check the Access Token.");
 
     @Getter
     private int status;

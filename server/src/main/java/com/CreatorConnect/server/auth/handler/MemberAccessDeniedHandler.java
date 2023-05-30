@@ -1,6 +1,6 @@
 package com.CreatorConnect.server.auth.handler;
 
-import com.CreatorConnect.server.errorresponse.ErrorResponder;
+import com.CreatorConnect.server.response.ErrorResponder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Slf4j
-@Component
+@Component // 인증은 성공 했지만 권한이 없을 시 호출
 public class MemberAccessDeniedHandler implements AccessDeniedHandler {
 
     @Override
