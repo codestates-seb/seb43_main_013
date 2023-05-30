@@ -3,6 +3,8 @@ package com.CreatorConnect.server.board.freeboard.service;
 import com.CreatorConnect.server.board.categories.category.entity.Category;
 import com.CreatorConnect.server.board.categories.category.repository.CategoryRepository;
 import com.CreatorConnect.server.board.categories.category.service.CategoryService;
+import com.CreatorConnect.server.board.feedbackboard.dto.FeedbackBoardResponseDto;
+import com.CreatorConnect.server.board.feedbackboard.entity.FeedbackBoard;
 import com.CreatorConnect.server.board.freeboard.mapper.FreeBoardMapper;
 import com.CreatorConnect.server.board.freeboard.repository.FreeBoardRepository;
 import com.CreatorConnect.server.exception.BusinessLogicException;
@@ -28,6 +30,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -136,25 +139,31 @@ public class FreeBoardService {
     /**
      * <자유 게시판 게시글 목록>
      * 1. 페이지네이션 적용 - 최신순 / 등록순 / 인기순
-     * 2. Response에 각 게시글의 태그 정보 적용
+     * 2. 로그인 여부 검증
      */
-    public FreeBoardDto.MultiResponseDto<FreeBoardDto.Response> getAllFreeBoards(int page, int size, String sort) {
+    public FreeBoardDto.MultiResponseDto<FreeBoardDto.Response> getAllFreeBoards(int page, int size, String sort, HttpServletRequest request) {
 
         // 1. 페이지네이션 적용 - 최신순 / 등록순 / 인기순
         Page<FreeBoard> freeBoards = freeBoardRepository.findAll(sortedBy(page, size, sort));
 
-        // 2. 로그인한 멤버 조회 후 게시글 목록
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        // 2. 로그인 여부 검증
+        String accessToken = request.getHeader("Authorization");
+
+        Member loggedinMember = null;
+        boolean bookmarked = false;
+        boolean liked = false;
+
         List<FreeBoardDto.Response> responses = new ArrayList<>();
 
-        if (authentication != null && authentication.isAuthenticated() && !"anonymousUser".equals(authentication.getName())) {
-            Member loggedinMember = memberService.findVerifiedMember(authentication.getName());
+        if (accessToken != null){
+
+            loggedinMember = memberService.getLoggedinMember(accessToken);
 
             for (FreeBoard freeBoard : freeBoards.getContent()) {
-                boolean bookmarked = loggedinMember.getBookmarks().stream()
+                bookmarked = loggedinMember.getBookmarks().stream()
                         .anyMatch(bookmark -> freeBoard.equals(bookmark.getFreeBoard()));
 
-                boolean liked = loggedinMember.getLikes().stream()
+                liked = loggedinMember.getLikes().stream()
                         .anyMatch(like -> freeBoard.equals(like.getFreeBoard()));
 
                 FreeBoardDto.Response freeBoardResponse = mapper.freeBoardToFreeBoardResponseDto(freeBoard);
@@ -172,25 +181,31 @@ public class FreeBoardService {
     /**
      * <자유 게시판 카테고리 별 목록>
      * 1. 페이지네이션 적용 - 최신순 / 등록순 / 인기순
-     * 2. Response에 각 게시글의 태그 정보 적용
+     * 2. 로그인 여부 검증
+     *
      */
-    public FreeBoardDto.MultiResponseDto<FreeBoardDto.Response> getAllFreeBoardsByCategory(long categoryId, int page, int size, String sort) {
+    public FreeBoardDto.MultiResponseDto<FreeBoardDto.Response> getAllFreeBoardsByCategory(long categoryId, int page, int size, String sort, HttpServletRequest request) {
 
         // 1. 페이지네이션 적용
         Page<FreeBoard> freeBoards = freeBoardRepository.findFreeBoardsByCategoryId(categoryId, sortedBy(page, size, sort));
 
-        // 2. 로그인한 멤버 조회 후 게시글 목록
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        // 2. 로그인 여부 검증
+        String accessToken = request.getHeader("Authorization");
+
+        Member loggedinMember = null;
+        boolean bookmarked = false;
+        boolean liked = false;
+
         List<FreeBoardDto.Response> responses = new ArrayList<>();
 
-        if (authentication != null && authentication.isAuthenticated() && !"anonymousUser".equals(authentication.getName())) {
-            Member loggedinMember = memberService.findVerifiedMember(authentication.getName());
+        if (accessToken != null){
+            loggedinMember = memberService.getLoggedinMember(accessToken);
 
             for (FreeBoard freeBoard : freeBoards.getContent()) {
-                boolean bookmarked = loggedinMember.getBookmarks().stream()
+                bookmarked = loggedinMember.getBookmarks().stream()
                         .anyMatch(bookmark -> freeBoard.equals(bookmark.getFreeBoard()));
 
-                boolean liked = loggedinMember.getLikes().stream()
+                liked = loggedinMember.getLikes().stream()
                         .anyMatch(like -> freeBoard.equals(like.getFreeBoard()));
 
                 FreeBoardDto.Response freeBoardResponse = mapper.freeBoardToFreeBoardResponseDto(freeBoard);
@@ -219,10 +234,12 @@ public class FreeBoardService {
      * <자유 게시판 게시글 상세 조회>
      * 1. 게시글 존재 여부 확인
      * 2. 해당 게시글 태그 추출
-     * 3. 조회수 증가
-     * 4. 리턴
+     * 3. 로그인 여부 검증
+     * 4. 조회수 증가
+     * 5. 매핑
+     * 6. 리턴
      */
-    public FreeBoardDto.Response getFreeBoardDetail(long freeboardId) {
+    public FreeBoardDto.Response getFreeBoardDetail(long freeboardId, HttpServletRequest request) {
 
         // 1. 게시글 존재 여부 확인
         FreeBoard freeBoard = verifyFreeBoard(freeboardId);
@@ -233,32 +250,44 @@ public class FreeBoardService {
             return tagInfo;
         }).collect(Collectors.toList());
 
-        // 3. 조회수 증가
-        addViews(freeBoard);
 
-        // 로그인한 멤버
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        // 3. 로그인 여부 검증
+        String accessToken = request.getHeader("Authorization");
+
+        Member loggedinMember = null;
         boolean bookmarked = false;
         boolean liked = false;
 
-        if (authentication != null && authentication.isAuthenticated() && !"anonymousUser".equals(authentication.getName())) {
-            Member loggedinMember = memberService.findVerifiedMember(authentication.getName());
+        // 로그인 여부 확인
+        if (accessToken != null) {
+            // 로그인 했을 때
+            loggedinMember = memberService.getLoggedinMember(accessToken);
 
-            // 게시물을 북마크한 경우
-            bookmarked = loggedinMember.getBookmarks().stream()
-                    .anyMatch(bookmark -> freeBoard.equals(bookmark.getFreeBoard()));
+            if (loggedinMember != null) {
+                // 게시물을 북마크한 경우
+                if (loggedinMember.getBookmarks() != null) {
+                    bookmarked = loggedinMember.getBookmarks().stream()
+                            .anyMatch(bookmark -> freeBoard.equals(bookmark.getFreeBoard()));
+                }
 
-            // 게시물을 좋아요한 경우
-            liked = loggedinMember.getLikes().stream()
-                    .anyMatch(like -> freeBoard.equals(like.getFreeBoard()));
+                // 게시물을 좋아요한 경우
+                if (loggedinMember.getLikes() != null) {
+                    liked = loggedinMember.getLikes().stream()
+                            .anyMatch(like -> freeBoard.equals(like.getFreeBoard()));
+                }
+            }
         }
 
-        // 4. 매핑
+        // 4. 조회수 증가
+        addViews(freeBoard);
+
+        // 5. 매핑
         FreeBoardDto.Response response = mapper.freeBoardToResponse(freeBoard, tags);
         response.setBookmarked(bookmarked);
         response.setLiked(liked);
 
-        // 5. 리턴
+        // 6. 리턴
         return response;
     }
 
@@ -309,10 +338,10 @@ public class FreeBoardService {
         }
     }
 
-    public void likeFreeBoard(Long freeBoardId) {
+    public void likeFreeBoard(Long freeBoardId, String authorizationToken) {
 
         FreeBoard findfreeBoard = verifyFreeBoard(freeBoardId);
-        Member currentMember = memberService.getLoggedinMember();
+        Member currentMember = memberService.getLoggedinMember(authorizationToken);
 
         // 현재 로그인한 사용자가 해당 게시물을 좋아요 했는지 확인
         boolean isAlreadyLiked = currentMember.getLikes().stream()
@@ -340,10 +369,10 @@ public class FreeBoardService {
         memberRepository.save(currentMember);
     }
 
-    public void unlikeFreeBoard(Long freeBoardId) {
+    public void unlikeFreeBoard(Long freeBoardId, String authorizationToken) {
 
         FreeBoard findfreeBoard = verifyFreeBoard(freeBoardId);
-        Member currentMember = memberService.getLoggedinMember();
+        Member currentMember = memberService.getLoggedinMember(authorizationToken);
 
         // 현재 로그인한 사용자가 해당 게시물을 좋아요 했는지 확인
         Optional<Set<Like>> likes = Optional.ofNullable(currentMember.getLikes());
@@ -372,10 +401,10 @@ public class FreeBoardService {
         memberRepository.save(currentMember);
     }
 
-    public void bookmarkFreeBoard(Long freeBoardId) {
+    public void bookmarkFreeBoard(Long freeBoardId, String authorizationToken) {
 
         FreeBoard findfreeBoard = verifyFreeBoard(freeBoardId);
-        Member currentMember = memberService.getLoggedinMember();
+        Member currentMember = memberService.getLoggedinMember(authorizationToken);
 
         // 현재 로그인한 사용자가 해당 게시물을 북마크 했는지 확인
         boolean isAlreadyBookMarked = currentMember.getBookmarks().stream()
@@ -399,10 +428,10 @@ public class FreeBoardService {
         memberRepository.save(currentMember);
     }
 
-    public void unbookmarkFreeBoard(Long freeBoardId) {
+    public void unbookmarkFreeBoard(Long freeBoardId, String authorizationToken) {
 
         FreeBoard findfreeBoard = verifyFreeBoard(freeBoardId);
-        Member currentMember = memberService.getLoggedinMember();
+        Member currentMember = memberService.getLoggedinMember(authorizationToken);
 
         // 현재 로그인한 사용자가 해당 게시물을 북마크 했는지 확인
         Optional<Set<Bookmark>> bookmarks = Optional.ofNullable(currentMember.getBookmarks());

@@ -75,7 +75,8 @@ public class MemberController {
     }
 
     @DeleteMapping("/api/logout")
-    public ResponseEntity logout() {
+    public ResponseEntity logout(@RequestHeader(value = "Authorization") String authorizationToken) {
+
         return new ResponseEntity(HttpStatus.OK);
     }
 
@@ -108,9 +109,8 @@ public class MemberController {
     public ResponseEntity getMember(@PathVariable("member-id") @Positive Long memberId,
                                     HttpServletRequest request) {
 
-        String accessToken = request.getHeader("Authorization").replace("Bearer ", "");
-
-        Member loginMember = memberService.jwtTokenToMember(accessToken);
+        String accessToken = request.getHeader("Authorization");
+        Member loginMember = memberService.getLoggedinMember(accessToken);
 
         if (loginMember == null) {
             throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND);
@@ -125,6 +125,7 @@ public class MemberController {
         MemberResponseDto responseDto = mapper.memberToMemberResponseDto(findMember);
 
         if (loginMember != null) {
+
             if (loginMember.getFollowings().stream().anyMatch(member -> findMember.equals(member))) {
                 responseDto.setFollowed(true);
             }
@@ -178,7 +179,7 @@ public class MemberController {
     public ResponseEntity followMember(@PathVariable("member-id") @Positive Long memberId,
                                        @RequestHeader(value = "Authorization") String authorizationToken) {
 
-        Member loginUser = memberService.getLoggedinMember();
+        Member loginUser = memberService.getLoggedinMember(authorizationToken);
         Member memberToFollow = memberService.findVerifiedMember(memberId);
 
         if (loginUser.getMemberId() == memberToFollow.getMemberId()) {
@@ -205,7 +206,7 @@ public class MemberController {
     public ResponseEntity unfollowMember(@PathVariable("member-id") @Positive Long memberId,
                                          @RequestHeader(value = "Authorization") String authorizationToken) {
 
-        Member loginUser = memberService.getLoggedinMember();
+        Member loginUser = memberService.getLoggedinMember(authorizationToken);
         Member memberToUnFollow = memberService.findVerifiedMember(memberId);
 
         // 현재 로그인한 사용자가 이미 해당 사용자를 팔로우하고 있는지 확인
@@ -224,16 +225,13 @@ public class MemberController {
     @GetMapping("/api/member/{member-id}/followings")
     public ResponseEntity getFollowings(@PathVariable("member-id") @Positive Long memberId,
                                         @RequestParam(defaultValue = "1") int page,
-                                        @RequestParam(defaultValue = "10") int size) {
+                                        @RequestParam(defaultValue = "10") int size,
+                                        HttpServletRequest request) {
+
+        String accessToken = request.getHeader("Authorization");
 
         // 현재 로그인한 사용자 정보
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        final Member loginUser;
-        if (authentication != null && authentication.isAuthenticated() && !"anonymousUser".equals(authentication.getName())) {
-            loginUser = memberService.findVerifiedMember(authentication.getName());
-        } else {
-            loginUser = null;
-        }
+        Member loginUser = memberService.getLoggedinMember(accessToken);
 
         // 조회 할 사용자 정보
         Member member = memberService.findVerifiedMember(memberId);
@@ -263,16 +261,13 @@ public class MemberController {
     @GetMapping("/api/member/{member-id}/followers")
     public ResponseEntity getFollowers(@PathVariable("member-id") @Positive Long memberId,
                                        @RequestParam(defaultValue = "1") int page,
-                                       @RequestParam(defaultValue = "10") int size) {
+                                       @RequestParam(defaultValue = "10") int size,
+                                       HttpServletRequest request) {
+
+        String accessToken = request.getHeader("Authorization");
 
         // 현재 로그인한 사용자 정보
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        final Member loginUser;
-        if (authentication != null && authentication.isAuthenticated() && !"anonymousUser".equals(authentication.getName())) {
-            loginUser = memberService.findVerifiedMember(authentication.getName());
-        } else {
-            loginUser = null;
-        }
+        Member loginUser = memberService.getLoggedinMember(accessToken);
 
         // 조회할 사용자 정보
         Member member = memberService.findVerifiedMember(memberId);
@@ -299,6 +294,7 @@ public class MemberController {
         return new ResponseEntity(new MultiResponseDto<>(pageResponse.getContent(), pageResponse), HttpStatus.OK);
     }
 
+    // todo 로그인한 유저가 좋아요했는지 확인
     @GetMapping("/api/member/{member-id}/liked")
     public ResponseEntity getliked(@PathVariable("member-id") @Positive Long memberId,
                                    @RequestParam(defaultValue = "1") int page,
@@ -389,13 +385,14 @@ public class MemberController {
                     Page<MemberBoardResponseDto> pageResponse =
                             new PageImpl<>(response, PageRequest.of(page - 1, size), totalElements);
 
-                    return new ResponseEntity(new MultiResponseDto<>(pageResponse.getContent(), pageResponse), HttpStatus.OK);
-                }
+        return new ResponseEntity(new MultiResponseDto<>(pageResponse.getContent(), pageResponse), HttpStatus.OK);
+    }
 
+        // todo 로그인한 유저가 북마크했는지 확인
         @GetMapping("/api/member/{member-id}/bookmarked")
         public ResponseEntity getbookmarked (@PathVariable("member-id") @Positive Long memberId,
-        @RequestParam(defaultValue = "1") int page,
-        @RequestParam(defaultValue = "10") int size){
+                                             @RequestParam(defaultValue = "1") int page,
+                                             @RequestParam(defaultValue = "10") int size){
 
             Member member = memberService.findVerifiedMember(memberId);
 
@@ -487,8 +484,8 @@ public class MemberController {
 
         @GetMapping("/api/member/{member-id}/written")
         public ResponseEntity getwritten (@PathVariable("member-id") @Positive Long memberId,
-        @RequestParam(defaultValue = "1") int page,
-        @RequestParam(defaultValue = "10") int size){
+                                          @RequestParam(defaultValue = "1") int page,
+                                          @RequestParam(defaultValue = "10") int size){
 
             Member member = memberService.findVerifiedMember(memberId);
 

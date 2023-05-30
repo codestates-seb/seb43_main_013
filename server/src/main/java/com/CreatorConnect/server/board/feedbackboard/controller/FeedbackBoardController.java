@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 
@@ -38,9 +40,10 @@ public class FeedbackBoardController {
     }
 
     @GetMapping("/feedbackboard/{feedbackBoardId}")
-    public ResponseEntity<FeedbackBoardResponseDto.Details> getFeedback(@PathVariable("feedbackBoardId") @Positive Long feedbackBoardId){
+    public ResponseEntity<FeedbackBoardResponseDto.Details> getFeedback(@PathVariable("feedbackBoardId") @Positive Long feedbackBoardId,
+                                                                        HttpServletRequest request){
 
-        FeedbackBoardResponseDto.Details response = feedbackBoardService.responseFeedback(feedbackBoardId);
+        FeedbackBoardResponseDto.Details response = feedbackBoardService.responseFeedback(feedbackBoardId, request);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -48,9 +51,10 @@ public class FeedbackBoardController {
     @GetMapping("/feedbackboards")
     public ResponseEntity getFeedbacks(@RequestParam("sort") String sort,
                                        @RequestParam("page") @Positive int page,
-                                       @RequestParam("size") @Positive int size) {
+                                       @RequestParam("size") @Positive int size,
+                                       HttpServletRequest request) {
 
-        FeedbackBoardResponseDto.Multi response = feedbackBoardService.responseFeedbacks(sort, page, size);
+        FeedbackBoardResponseDto.Multi response = feedbackBoardService.responseFeedbacks(sort, page, size, request);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -60,9 +64,10 @@ public class FeedbackBoardController {
     public ResponseEntity getFeedbacksByFeedbackCategory(@PathVariable("feedbackCategoryId") @Positive Long feedbackCategoryId,
                                                          @RequestParam("sort") String sort,
                                                          @RequestParam("page") @Positive int page,
-                                                         @RequestParam("size") @Positive int size) {
+                                                         @RequestParam("size") @Positive int size,
+                                                         HttpServletRequest request) {
 
-        FeedbackBoardResponseDto.Multi response = feedbackBoardService.responseFeedbacksByCategory(feedbackCategoryId, sort, page, size);
+        FeedbackBoardResponseDto.Multi response = feedbackBoardService.responseFeedbacksByCategory(feedbackCategoryId, sort, page, size, request);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -72,9 +77,10 @@ public class FeedbackBoardController {
     public ResponseEntity getFeedbacksByCategory(@PathVariable("categoryId") @Positive Long categoryId,
                                                  @RequestParam("sort") String sort,
                                                  @RequestParam("page") @Positive int page,
-                                                 @RequestParam("size") @Positive int size) {
+                                                 @RequestParam("size") @Positive int size,
+                                                 HttpServletRequest request) {
 
-        FeedbackBoardResponseDto.Multi response = feedbackBoardService.responseFeedbacksByFeedbackCategory(categoryId, sort, page, size);
+        FeedbackBoardResponseDto.Multi response = feedbackBoardService.responseFeedbacksByFeedbackCategory(categoryId, sort, page, size, request);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -85,9 +91,10 @@ public class FeedbackBoardController {
                                                          @PathVariable("categoryId") @Positive Long categoryId,
                                                          @RequestParam("sort") String sort,
                                                          @RequestParam("page") @Positive int page,
-                                                         @RequestParam("size") @Positive int size) {
+                                                         @RequestParam("size") @Positive int size,
+                                                                    HttpServletRequest request) {
 
-        FeedbackBoardResponseDto.Multi response = feedbackBoardService.responseFeedbacksByCategory(feedbackCategoryId, categoryId, sort, page, size);
+        FeedbackBoardResponseDto.Multi response = feedbackBoardService.responseFeedbacksByCategory(feedbackCategoryId, categoryId, sort, page, size, request);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -105,7 +112,7 @@ public class FeedbackBoardController {
     public ResponseEntity likeFeedbackBoard (@PathVariable("feedbackBoardId") @Positive Long feedbackBoardId,
                                              @RequestHeader(value = "Authorization") String authorizationToken) {
 
-        feedbackBoardService.likeFeedbackBoard(feedbackBoardId);
+        feedbackBoardService.likeFeedbackBoard(feedbackBoardId, authorizationToken);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -114,7 +121,7 @@ public class FeedbackBoardController {
     public ResponseEntity unlikeFeedbackBoard (@PathVariable("feedbackBoardId") @Positive Long feedbackBoardId,
                                                @RequestHeader(value = "Authorization") String authorizationToken) {
 
-        feedbackBoardService.unlike(feedbackBoardId);
+        feedbackBoardService.unlike(feedbackBoardId, authorizationToken);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -123,7 +130,7 @@ public class FeedbackBoardController {
     public ResponseEntity bookmarkFeedbackBoard (@PathVariable("feedbackBoardId") @Positive Long feedbackBoardId,
                                                  @RequestHeader(value = "Authorization") String authorizationToken) {
 
-        feedbackBoardService.bookmarkFeedbackBoard(feedbackBoardId);
+        feedbackBoardService.bookmarkFeedbackBoard(feedbackBoardId, authorizationToken);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -132,7 +139,7 @@ public class FeedbackBoardController {
     public ResponseEntity unbookmarkFeedbackBoard (@PathVariable("feedbackBoardId") @Positive Long feedbackBoardId,
                                                    @RequestHeader(value = "Authorization") String authorizationToken) {
 
-        feedbackBoardService.unbookmarkFeedbackBoard(feedbackBoardId);
+        feedbackBoardService.unbookmarkFeedbackBoard(feedbackBoardId, authorizationToken);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
