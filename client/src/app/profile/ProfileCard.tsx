@@ -99,7 +99,9 @@ const ProfileCard: React.FC<Props> = ({ memberId, initialData }) => {
         </div>
 
         {/* 자기소개 */}
-        {data.introduction && <p className="whitespace-pre font-bold text-sm w-3/4 text-center">{data.introduction}</p>}
+        {data.introduction && (
+          <p className="whitespace-pre-line font-bold text-sm w-3/4 text-center">{data.introduction}</p>
+        )}
 
         <div className="space-x-6 text-sm flex">
           <button
