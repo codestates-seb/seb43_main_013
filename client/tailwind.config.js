@@ -93,6 +93,32 @@ module.exports = {
               0 50px 25px rgba(99, 102, 241, 0.3)`,
           },
         },
+
+        "fade-down": {
+          "0%": { opacity: "0.01", transform: "translateY(-10%)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
+        "slide": {
+          "0%": { top: "2.1rem" },
+          "5%": { top: "0rem" },
+          "10%": { top: "-2.1rem" },
+          "15%": { top: "-4.2rem" },
+          "25%": { top: "-3.75rem" },
+          "35%": { top: "-5rem" },
+          "40%": { top: "-6.25rem" },
+          "45%": { top: "-7.5rem" },
+          "50%": { top: "-8.75rem" },
+          "55%": { top: "-10rem" },
+          "60%": { top: "-11.25rem" },
+          "65%": { top: "-12.5rem" },
+          "70%": { top: "-13.75rem" },
+          "75%": { top: "-15rem" },
+          "80%": { top: "-16.25rem" },
+          "85%": { top: "-17.5rem" },
+          "90%": { top: "-18.75rem" },
+          "85%": { top: "-20rem" },
+          "100%": { top: "-43.25rem" },
+        }
       },
       animation: {
         "skeleton-gradient": "skeleton-gradient 0.8s linear infinite alternate",
@@ -101,6 +127,7 @@ module.exports = {
         "fade-down": "fade-down 0.8s ease",
         "error-text-bounce": "error-text-bounce 0.3s ease infinite alternate",
         "not-found-text-bounce": "not-found-text-bounce 0.3s ease infinite alternate",
+        "spin-slow": "slide 5s infinite",
       },
       screens: {
         xs: "486px",
@@ -108,4 +135,4 @@ module.exports = {
     },
   },
   plugins: [],
-};
+}
