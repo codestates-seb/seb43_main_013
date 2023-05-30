@@ -48,7 +48,7 @@ public class OAuth2MemberService implements OAuth2UserService<OAuth2UserRequest,
     }
 
 
-    public void saveOauthMember (OAuth2User oAuth2User) {
+    public Member saveOauthMember (OAuth2User oAuth2User) {
 
         String email = String.valueOf(oAuth2User.getAttributes().get("email"));
         String name = String.valueOf(oAuth2User.getAttributes().get("name"));
@@ -83,7 +83,9 @@ public class OAuth2MemberService implements OAuth2UserService<OAuth2UserRequest,
             member.setOauth(true);
             member.setVerified(true);
 
-            memberRepository.save(member);
+            return memberRepository.save(member);
         }
+
+        return member;
     }
 }
