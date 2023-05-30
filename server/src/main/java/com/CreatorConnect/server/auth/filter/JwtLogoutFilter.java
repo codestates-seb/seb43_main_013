@@ -33,7 +33,7 @@ public class JwtLogoutFilter extends OncePerRequestFilter {
 
         // 요청 url이 DELETE /api/refresh-token 이 아닌 경우 필터를 적용하지 않음 || 리프레시 토큰이 없으면 필터 적용하지 않음
         return !request.getMethod().equals("DELETE")
-                || !uri.equals("/api/refresh-token")
+                || !uri.equals("/api/logout")
                 || !StringUtils.hasText(refreshToken);
     }
 
@@ -58,16 +58,16 @@ public class JwtLogoutFilter extends OncePerRequestFilter {
             // 3. redis에 저장된 refreshToken 삭제
             redisService.deleteRefreshToken(refreshToken);
 
-            // 4. redis에 accessToken 저장(로그아웃 된 토큰)
+            // 4. redis에 accessToken 저장 (로그아웃 된 토큰)
             redisService.setAccessTokenLogOut(accessToken, remainExpiration);
             log.info("로그아웃 성공, 남은 만료 시간 : {}", remainExpiration);
 
             response.setStatus(HttpStatus.OK.value());
             response.setCharacterEncoding("utf-8");
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+
         } catch (Exception e) {
             ErrorResponder.sendErrorResponse(response, HttpStatus.UNAUTHORIZED);
-
         }
     }
 
