@@ -174,27 +174,6 @@ public class FreeBoardService {
         } else {
             responses = getResponseList(freeBoards);
         }
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        List<FreeBoardDto.Response> responses = new ArrayList<>();
-//
-//        if (authentication != null && authentication.isAuthenticated() && !"anonymousUser".equals(authentication.getName())) {
-//            Member loggedinMember = memberService.findVerifiedMember(authentication.getName());
-//
-//            for (FreeBoard freeBoard : freeBoards.getContent()) {
-//                boolean bookmarked = loggedinMember.getBookmarks().stream()
-//                        .anyMatch(bookmark -> freeBoard.equals(bookmark.getFreeBoard()));
-//
-//                boolean liked = loggedinMember.getLikes().stream()
-//                        .anyMatch(like -> freeBoard.equals(like.getFreeBoard()));
-//
-//                FreeBoardDto.Response freeBoardResponse = mapper.freeBoardToFreeBoardResponseDto(freeBoard);
-//                freeBoardResponse.setBookmarked(bookmarked);
-//                freeBoardResponse.setLiked(liked);
-//                responses.add(freeBoardResponse);
-//            }
-//        } else {
-//            responses = getResponseList(freeBoards);
-//        }
 
         return new FreeBoardDto.MultiResponseDto<>(responses, freeBoards);
     }
@@ -238,28 +217,6 @@ public class FreeBoardService {
             responses = getResponseList(freeBoards);
         }
 
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        List<FreeBoardDto.Response> responses = new ArrayList<>();
-//
-//        if (authentication != null && authentication.isAuthenticated() && !"anonymousUser".equals(authentication.getName())) {
-//            Member loggedinMember = memberService.findVerifiedMember(authentication.getName());
-//
-//            for (FreeBoard freeBoard : freeBoards.getContent()) {
-//                boolean bookmarked = loggedinMember.getBookmarks().stream()
-//                        .anyMatch(bookmark -> freeBoard.equals(bookmark.getFreeBoard()));
-//
-//                boolean liked = loggedinMember.getLikes().stream()
-//                        .anyMatch(like -> freeBoard.equals(like.getFreeBoard()));
-//
-//                FreeBoardDto.Response freeBoardResponse = mapper.freeBoardToFreeBoardResponseDto(freeBoard);
-//                freeBoardResponse.setBookmarked(bookmarked);
-//                freeBoardResponse.setLiked(liked);
-//                responses.add(freeBoardResponse);
-//            }
-//        } else {
-//            responses = getResponseList(freeBoards);
-//        }
-
         return new FreeBoardDto.MultiResponseDto<>(responses, freeBoards);
     }
 
@@ -282,7 +239,7 @@ public class FreeBoardService {
      * 5. 매핑
      * 6. 리턴
      */
-    public FreeBoardDto.Response getFreeBoardDetail(long freeboardId) {
+    public FreeBoardDto.Response getFreeBoardDetail(long freeboardId, HttpServletRequest request) {
 
         // 1. 게시글 존재 여부 확인
         FreeBoard freeBoard = verifyFreeBoard(freeboardId);
@@ -296,20 +253,30 @@ public class FreeBoardService {
 
 
         // 3. 로그인 여부 검증
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String accessToken = request.getHeader("Authorization");
+
+        Member loggedinMember = null;
         boolean bookmarked = false;
         boolean liked = false;
 
-        if (authentication != null && authentication.isAuthenticated() && !"anonymousUser".equals(authentication.getName())) {
-            Member loggedinMember = memberService.findVerifiedMember(authentication.getName());
+        // 로그인 여부 확인
+        if (accessToken != null) {
+            // 로그인 했을 때
+            loggedinMember = memberService.getLoggedinMember(accessToken);
 
-            // 게시물을 북마크한 경우
-            bookmarked = loggedinMember.getBookmarks().stream()
-                    .anyMatch(bookmark -> freeBoard.equals(bookmark.getFreeBoard()));
+            if (loggedinMember != null) {
+                // 게시물을 북마크한 경우
+                if (loggedinMember.getBookmarks() != null) {
+                    bookmarked = loggedinMember.getBookmarks().stream()
+                            .anyMatch(bookmark -> freeBoard.equals(bookmark.getFreeBoard()));
+                }
 
-            // 게시물을 좋아요한 경우
-            liked = loggedinMember.getLikes().stream()
-                    .anyMatch(like -> freeBoard.equals(like.getFreeBoard()));
+                // 게시물을 좋아요한 경우
+                if (loggedinMember.getLikes() != null) {
+                    liked = loggedinMember.getLikes().stream()
+                            .anyMatch(like -> freeBoard.equals(like.getFreeBoard()));
+                }
+            }
         }
 
         // 4. 조회수 증가
