@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 
@@ -39,9 +41,10 @@ public class PromotionBoardController {
 
     // 게시글 상세 조회
     @GetMapping("/promotionboard/{promotionBoardId}")
-    public ResponseEntity<PromotionBoardResponseDto.Details> getPromotion(@PathVariable("promotionBoardId") @Positive Long promotionBoardId){
+    public ResponseEntity<PromotionBoardResponseDto.Details> getPromotion(@PathVariable("promotionBoardId") @Positive Long promotionBoardId,
+                                                                          HttpServletRequest request){
 
-        PromotionBoardResponseDto.Details response = promotionBoardService.responsePromotion(promotionBoardId);
+        PromotionBoardResponseDto.Details response = promotionBoardService.responsePromotion(promotionBoardId, request);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -50,9 +53,10 @@ public class PromotionBoardController {
     @GetMapping("/promotionboards")
     public ResponseEntity getpromotion(@RequestParam("sort") String sort,
                                        @RequestParam("page") @Positive int page,
-                                       @RequestParam("size") @Positive int size) {
+                                       @RequestParam("size") @Positive int size,
+                                       HttpServletRequest request) {
 
-        PromotionBoardResponseDto.Multi response = promotionBoardService.responsePromotions(sort, page, size);
+        PromotionBoardResponseDto.Multi response = promotionBoardService.responsePromotions(sort, page, size, request);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -62,9 +66,10 @@ public class PromotionBoardController {
     public ResponseEntity getPromotionByCategory(@PathVariable("category-id") long categoryId,
                                                  @RequestParam String sort,
                                                  @Positive @RequestParam int page,
-                                                 @Positive @RequestParam int size) {
+                                                 @Positive @RequestParam int size,
+                                                 HttpServletRequest request) {
 
-         PromotionBoardResponseDto.Multi response = promotionBoardService.getPromotionByCategory(categoryId, sort, page, size);
+         PromotionBoardResponseDto.Multi response = promotionBoardService.getPromotionByCategory(categoryId, sort, page, size, request);
 
          return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -84,7 +89,7 @@ public class PromotionBoardController {
     public ResponseEntity likePromotionBoard (@PathVariable("promotionboard-id") @Positive Long promotionBoardId,
                                          @RequestHeader(value = "Authorization") String authorizationToken) {
 
-        promotionBoardService.likePromotionBoard(promotionBoardId);
+        promotionBoardService.likePromotionBoard(promotionBoardId, authorizationToken);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -94,7 +99,7 @@ public class PromotionBoardController {
     public ResponseEntity unLikePromotionBoard (@PathVariable("promotionboard-id") @Positive Long promotionBoardId,
                                            @RequestHeader(value = "Authorization") String authorizationToken) {
 
-        promotionBoardService.unlikePromotionBoard(promotionBoardId);
+        promotionBoardService.unlikePromotionBoard(promotionBoardId, authorizationToken);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -104,7 +109,7 @@ public class PromotionBoardController {
     public ResponseEntity bookmarkPromotionBoard (@PathVariable("promotionboard-id") @Positive Long promotionBoardId,
                                                  @RequestHeader(value = "Authorization") String authorizationToken) {
 
-        promotionBoardService.bookmarkPromotionBoard(promotionBoardId);
+        promotionBoardService.bookmarkPromotionBoard(promotionBoardId, authorizationToken);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -114,7 +119,7 @@ public class PromotionBoardController {
     public ResponseEntity unbookmarkPromotionBoard (@PathVariable("promotionboard-id") @Positive Long promotionBoardId,
                                                    @RequestHeader(value = "Authorization") String authorizationToken) {
 
-        promotionBoardService.unbookmarkpromotionBoard(promotionBoardId);
+        promotionBoardService.unbookmarkpromotionBoard(promotionBoardId, authorizationToken);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
