@@ -24,6 +24,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -114,35 +115,41 @@ public class JobBoardService {
      * 1. 페이지네이션 적용 - 최신순 / 등록순 / 인기순
      * 2. 게시글 목록 가져오기
      */
-    public JobBoardDto.MultiResponseDto<JobBoardDto.Response> getAllJobBoards(int page, int size, String sort) {
+    public JobBoardDto.MultiResponseDto<JobBoardDto.Response> getAllJobBoards(int page, int size, String sort, HttpServletRequest request) {
 
         // 1. 페이지네이션 적용 - 최신순 / 등록순 / 인기순
         Page<JobBoard> jobBoards = jobBoardRepository.findAll(sortedBy(page, size, sort));
 
         // 2. 로그인한 멤버확인하고 게시글 목록 가져오기
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        List<JobBoardDto.Response> response = new ArrayList<>();
+        String accessToken = request.getHeader("Authorization");
 
-        if (authentication != null && authentication.isAuthenticated() && !"anonymousUser".equals(authentication.getName())) {
-            Member loggedinMember = memberService.findVerifiedMember(authentication.getName());
+        Member loggedinMember = null;
+        boolean bookmarked = false;
+        boolean liked = false;
+
+        List<JobBoardDto.Response> responses = new ArrayList<>();
+
+        if (accessToken != null){
+
+            loggedinMember = memberService.getLoggedinMember(accessToken);
 
             for (JobBoard jobBoard : jobBoards.getContent()) {
-                boolean bookmarked = loggedinMember.getBookmarks().stream()
+                bookmarked = loggedinMember.getBookmarks().stream()
                         .anyMatch(bookmark -> jobBoard.equals(bookmark.getJobBoard()));
 
-                boolean liked = loggedinMember.getLikes().stream()
+                liked = loggedinMember.getLikes().stream()
                         .anyMatch(like -> jobBoard.equals(like.getJobBoard()));
 
                 JobBoardDto.Response jobBoardResponse = mapper.jobBoardToJobBoardResponseDto(jobBoard);
                 jobBoardResponse.setBookmarked(bookmarked);
                 jobBoardResponse.setLiked(liked);
-                response.add(jobBoardResponse);
+                responses.add(jobBoardResponse);
             }
         } else {
-            response = mapper.jobBoardsToJobBoardResponseDtos(jobBoards.getContent());
+            responses = mapper.jobBoardsToJobBoardResponseDtos(jobBoards.getContent());
         }
 
-        return new JobBoardDto.MultiResponseDto<>(response, jobBoards);
+        return new JobBoardDto.MultiResponseDto<>(responses, jobBoards);
     }
 
     /**
@@ -150,36 +157,42 @@ public class JobBoardService {
      * 1. 페이지네이션 적용 - 최신순 / 등록순 / 인기순
      * 2. 게시글 목록 가져오기
      */
-    public JobBoardDto.MultiResponseDto<JobBoardDto.Response> getAllJobBoardsByCategory(Long jobCategoryId, int page, int size, String sort) {
+    public JobBoardDto.MultiResponseDto<JobBoardDto.Response> getAllJobBoardsByCategory(Long jobCategoryId, int page, int size, String sort, HttpServletRequest request) {
 
         // 1. 페이지네이션 적용 - 최신순 / 등록순 / 인기순
         Page<JobBoard> jobBoards =
                 jobBoardRepository.findJobBoardsByCategoryId(jobCategoryId, sortedBy(page, size, sort));
 
         // 2. 로그인한 멤버확인하고 게시글 목록 가져오기
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        List<JobBoardDto.Response> response = new ArrayList<>();
+        String accessToken = request.getHeader("Authorization");
 
-        if (authentication != null && authentication.isAuthenticated() && !"anonymousUser".equals(authentication.getName())) {
-            Member loggedinMember = memberService.findVerifiedMember(authentication.getName());
+        Member loggedinMember = null;
+        boolean bookmarked = false;
+        boolean liked = false;
+
+        List<JobBoardDto.Response> responses = new ArrayList<>();
+
+        if (accessToken != null){
+
+            loggedinMember = memberService.getLoggedinMember(accessToken);
 
             for (JobBoard jobBoard : jobBoards.getContent()) {
-                boolean bookmarked = loggedinMember.getBookmarks().stream()
+                bookmarked = loggedinMember.getBookmarks().stream()
                         .anyMatch(bookmark -> jobBoard.equals(bookmark.getJobBoard()));
 
-                boolean liked = loggedinMember.getLikes().stream()
+                liked = loggedinMember.getLikes().stream()
                         .anyMatch(like -> jobBoard.equals(like.getJobBoard()));
 
                 JobBoardDto.Response jobBoardResponse = mapper.jobBoardToJobBoardResponseDto(jobBoard);
                 jobBoardResponse.setBookmarked(bookmarked);
                 jobBoardResponse.setLiked(liked);
-                response.add(jobBoardResponse);
+                responses.add(jobBoardResponse);
             }
         } else {
-            response = mapper.jobBoardsToJobBoardResponseDtos(jobBoards.getContent());
+            responses = mapper.jobBoardsToJobBoardResponseDtos(jobBoards.getContent());
         }
 
-        return new JobBoardDto.MultiResponseDto<>(response, jobBoards);
+        return new JobBoardDto.MultiResponseDto<>(responses, jobBoards);
     }
 
     /**
@@ -189,7 +202,7 @@ public class JobBoardService {
      * 3. 호그인한 멤버
      * 4. 매핑
      */
-    public JobBoardDto.Response getJobBoardDetail(Long jobBoardId) {
+    public JobBoardDto.Response getJobBoardDetail(Long jobBoardId, HttpServletRequest request) {
 
         // 1. 게시글 존재 여부 확인
         JobBoard jobBoard = verifyJobBoard(jobBoardId);
@@ -197,21 +210,31 @@ public class JobBoardService {
         // 2. 조회수 증가
         addViews(jobBoard);
 
-        // 3. 로그인한 멤버
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        // 로그인한 멤버
+        String accessToken = request.getHeader("Authorization");
+
+        Member loggedinMember = null;
         boolean bookmarked = false;
         boolean liked = false;
 
-        if (authentication != null && authentication.isAuthenticated() && !"anonymousUser".equals(authentication.getName())) {
-            Member loggedinMember = memberService.findVerifiedMember(authentication.getName());
+        // 로그인 여부 확인
+        if (accessToken != null) {
+            // 로그인 했을 때
+            loggedinMember = memberService.getLoggedinMember(accessToken);
 
-            // 게시물을 북마크한 경우
-            bookmarked = loggedinMember.getBookmarks().stream()
-                    .anyMatch(bookmark -> jobBoard.equals(bookmark.getJobBoard()));
+            if (loggedinMember != null) {
+                // 게시물을 북마크한 경우
+                if (loggedinMember.getBookmarks() != null) {
+                    bookmarked = loggedinMember.getBookmarks().stream()
+                            .anyMatch(bookmark -> jobBoard.equals(bookmark.getJobBoard()));
+                }
 
-            // 게시물을 좋아요한 경우
-            liked = loggedinMember.getLikes().stream()
-                    .anyMatch(like -> jobBoard.equals(like.getJobBoard()));
+                // 게시물을 좋아요한 경우
+                if (loggedinMember.getLikes() != null) {
+                    liked = loggedinMember.getLikes().stream()
+                            .anyMatch(like -> jobBoard.equals(like.getJobBoard()));
+                }
+            }
         }
 
         // 4. 매핑
@@ -269,10 +292,10 @@ public class JobBoardService {
         jobBoardRepository.save(jobBoard);
     }
 
-    public void likeJobBoard (Long jobBoardId) {
+    public void likeJobBoard (Long jobBoardId, String authorizationToken) {
 
         JobBoard findjobBoard = verifyJobBoard(jobBoardId);
-        Member currentMember = memberService.getLoggedinMember();
+        Member currentMember = memberService.getLoggedinMember(authorizationToken);
 
         // 현재 로그인한 사용자가 해당 게시물을 좋아요 했는지 확인
         boolean isAlreadyLiked = currentMember.getLikes().stream()
@@ -300,10 +323,10 @@ public class JobBoardService {
         memberRepository.save(currentMember);
     }
 
-    public void unlikeJobBoard (Long jobBoardId) {
+    public void unlikeJobBoard (Long jobBoardId, String authorizationToken) {
 
         JobBoard findjobBoard = verifyJobBoard(jobBoardId);
-        Member currentMember = memberService.getLoggedinMember();
+        Member currentMember = memberService.getLoggedinMember(authorizationToken);
 
         // 현재 로그인한 사용자가 해당 게시물을 좋아요 했는지 확인
         Optional<Set<Like>> likes = Optional.ofNullable(currentMember.getLikes());
@@ -332,10 +355,10 @@ public class JobBoardService {
         memberRepository.save(currentMember);
     }
 
-    public void bookmarkJobBoard (Long jobBoardId) {
+    public void bookmarkJobBoard (Long jobBoardId, String authorizationToken) {
 
         JobBoard findjobBoard = verifyJobBoard(jobBoardId);
-        Member currentMember = memberService.getLoggedinMember();
+        Member currentMember = memberService.getLoggedinMember(authorizationToken);
 
         // 현재 로그인한 사용자가 해당 게시물을 북마크 했는지 확인
         boolean isAlreadyBookMarked = currentMember.getBookmarks().stream()
@@ -359,10 +382,10 @@ public class JobBoardService {
         memberRepository.save(currentMember);
     }
 
-    public void unbookmarkJobBoard (Long jobBoardId) {
+    public void unbookmarkJobBoard (Long jobBoardId, String authorizationToken) {
 
         JobBoard findjobBoard = verifyJobBoard(jobBoardId);
-        Member currentMember = memberService.getLoggedinMember();
+        Member currentMember = memberService.getLoggedinMember(authorizationToken);
 
         // 현재 로그인한 사용자가 해당 게시물을 북마크 했는지 확인
         Optional<Set<Bookmark>> bookmarks = Optional.ofNullable(currentMember.getBookmarks());
