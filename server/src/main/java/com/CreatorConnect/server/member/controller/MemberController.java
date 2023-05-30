@@ -105,30 +105,31 @@ public class MemberController {
     }
 
     @GetMapping(MEMBER_DEFAULT_URL + "/{member-id}")
-    public ResponseEntity getMember(@PathVariable("member-id") @Positive Long memberId) {
+    public ResponseEntity getMember(@PathVariable("member-id") @Positive Long memberId,
+                                    HttpServletRequest request) {
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String accessToken = request.getHeader("Authorization").replace("Bearer ", "");
 
-        final Member loginUser;
-        if (authentication != null && authentication.isAuthenticated() && !"anonymousUser".equals(authentication.getName())) {
-            loginUser = memberService.findVerifiedMember(authentication.getName());
-        } else {
-            loginUser = null;
+        Member loginMember = memberService.jwtTokenToMember(accessToken);
+
+        if (loginMember == null) {
+            throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND);
         }
 
-        Member findMember = memberService.findMember(memberId);
+        Member findMember = memberService.findVerifiedMember(memberId);
+
         if (findMember == null) {
             throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND);
         }
 
         MemberResponseDto responseDto = mapper.memberToMemberResponseDto(findMember);
 
-        if (loginUser != null) {
-            if (loginUser.getFollowings().stream().anyMatch(member -> findMember.equals(member))) {
+        if (loginMember != null) {
+            if (loginMember.getFollowings().stream().anyMatch(member -> findMember.equals(member))) {
                 responseDto.setFollowed(true);
             }
 
-            if (loginUser.getMemberId().equals(memberId)) {
+            if (loginMember.getMemberId().equals(memberId)) {
                 responseDto.setMyPage(true);
             }
         }
