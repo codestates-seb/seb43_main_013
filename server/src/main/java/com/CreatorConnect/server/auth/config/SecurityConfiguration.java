@@ -119,7 +119,7 @@ public class SecurityConfiguration {
         configuration.setExposedHeaders(Collections.singletonList("*"));
         configuration.setAllowCredentials(true);
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PATCH", "DELETE", "HEAD", "OPTIONS"));
-        configuration.addExposedHeader("Authorization");
+        configuration.addExposedHeader("Authorization, Refresh-Token");
         configuration.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
