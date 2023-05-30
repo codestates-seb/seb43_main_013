@@ -1,12 +1,14 @@
 package com.CreatorConnect.server.auth.oauth.controller;
 
 import com.CreatorConnect.server.auth.jwt.JwtTokenizer;
+import com.CreatorConnect.server.auth.jwt.TokenService;
 import com.CreatorConnect.server.auth.oauth.dto.KakaoProfile;
 import com.CreatorConnect.server.auth.oauth.dto.OAuthToken;
 import com.CreatorConnect.server.auth.oauth.handler.OAuth2MemberSuccessHandler;
 import com.CreatorConnect.server.auth.oauth.service.KakaoApiService;
 import com.CreatorConnect.server.auth.oauth.service.OAuth2MemberService;
 import com.CreatorConnect.server.auth.utils.CustomAuthorityUtils;
+import com.CreatorConnect.server.member.service.MemberService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.*;
 import org.springframework.security.core.Authentication;
@@ -29,15 +31,15 @@ import java.util.Map;
 public class KakaoController {
 
     private final KakaoApiService kakaoApiService;
-    private final JwtTokenizer jwtTokenizer;
     private final CustomAuthorityUtils authorityUtils;
     private final OAuth2MemberService oAuth2MemberService;
+    private final TokenService tokenService;
 
-    public KakaoController(KakaoApiService kakaoApiService, JwtTokenizer jwtTokenizer, CustomAuthorityUtils authorityUtils, OAuth2MemberService oAuth2MemberService) {
+    public KakaoController(KakaoApiService kakaoApiService, CustomAuthorityUtils authorityUtils, OAuth2MemberService oAuth2MemberService, TokenService tokenService) {
         this.kakaoApiService = kakaoApiService;
-        this.jwtTokenizer = jwtTokenizer;
         this.authorityUtils = authorityUtils;
         this.oAuth2MemberService = oAuth2MemberService;
+        this.tokenService = tokenService;
     }
 
     @GetMapping("/auth/kakao/callback")
@@ -63,7 +65,7 @@ public class KakaoController {
 
         Authentication authentication = new OAuth2AuthenticationToken(oAuth2User, Collections.emptyList(), "kakao");
 
-        AuthenticationSuccessHandler successHandler = new OAuth2MemberSuccessHandler(jwtTokenizer, authorityUtils, oAuth2MemberService);
+        AuthenticationSuccessHandler successHandler = new OAuth2MemberSuccessHandler(authorityUtils, oAuth2MemberService, tokenService);
 
         successHandler.onAuthenticationSuccess(request, response, authentication);
 

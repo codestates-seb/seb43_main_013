@@ -1,6 +1,7 @@
 package com.CreatorConnect.server.auth.oauth.controller;
 
 import com.CreatorConnect.server.auth.jwt.JwtTokenizer;
+import com.CreatorConnect.server.auth.jwt.TokenService;
 import com.CreatorConnect.server.auth.oauth.dto.KakaoProfile;
 import com.CreatorConnect.server.auth.oauth.dto.NaverProfile;
 import com.CreatorConnect.server.auth.oauth.dto.OAuthToken;
@@ -9,6 +10,7 @@ import com.CreatorConnect.server.auth.oauth.service.KakaoApiService;
 import com.CreatorConnect.server.auth.oauth.service.NaverApiService;
 import com.CreatorConnect.server.auth.oauth.service.OAuth2MemberService;
 import com.CreatorConnect.server.auth.utils.CustomAuthorityUtils;
+import com.CreatorConnect.server.member.service.MemberService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -40,15 +42,15 @@ import java.util.Map;
 @RestController
 public class NaverController {
 
-        private final JwtTokenizer jwtTokenizer;
         private final CustomAuthorityUtils authorityUtils;
         private final OAuth2MemberService oAuth2MemberService;
+        private final TokenService tokenService;
         private final NaverApiService naverApiService;
 
-        public NaverController(JwtTokenizer jwtTokenizer, CustomAuthorityUtils authorityUtils, OAuth2MemberService oAuth2MemberService, NaverApiService naverApiService) {
-                this.jwtTokenizer = jwtTokenizer;
+        public NaverController(CustomAuthorityUtils authorityUtils, OAuth2MemberService oAuth2MemberService, TokenService tokenService, NaverApiService naverApiService) {
                 this.authorityUtils = authorityUtils;
                 this.oAuth2MemberService = oAuth2MemberService;
+                this.tokenService = tokenService;
                 this.naverApiService = naverApiService;
         }
 
@@ -74,7 +76,7 @@ public class NaverController {
 
                 Authentication authentication = new OAuth2AuthenticationToken(oAuth2User, Collections.emptyList(), "kakao");
 
-                AuthenticationSuccessHandler successHandler = new OAuth2MemberSuccessHandler(jwtTokenizer, authorityUtils, oAuth2MemberService);
+                AuthenticationSuccessHandler successHandler = new OAuth2MemberSuccessHandler(authorityUtils, oAuth2MemberService, tokenService);
 
                 successHandler.onAuthenticationSuccess(request, response, authentication);
 
