@@ -171,9 +171,9 @@ public class FreeBoardService {
                 freeBoardResponse.setLiked(liked);
                 responses.add(freeBoardResponse);
             }
-        } else {
-            responses = getResponseList(freeBoards);
         }
+
+        responses = getResponseList(freeBoards);
 
         return new FreeBoardDto.MultiResponseDto<>(responses, freeBoards);
     }
