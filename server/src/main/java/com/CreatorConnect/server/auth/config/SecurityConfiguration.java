@@ -85,7 +85,7 @@ public class SecurityConfiguration {
                         .antMatchers("/h2/**").permitAll()
                         .antMatchers(HttpMethod.OPTIONS).permitAll()
                         .antMatchers(HttpMethod.POST, "/api/signup/**", "/api/login", "/api/refresh-token").permitAll()
-                        .antMatchers(HttpMethod.DELETE, "/api/refresh-token").permitAll()
+                        .antMatchers(HttpMethod.DELETE, "/api/logout").permitAll()
                         .antMatchers(HttpMethod.GET, "/", "/api/search/**", "/api/keyword/**").permitAll()
                         .antMatchers(HttpMethod.GET, "/api/login/**", "/auth/**", "/api/member/**").permitAll()
                         .antMatchers(HttpMethod.GET, "/api/freeboard/**", "/api/freeboards/**").permitAll()
