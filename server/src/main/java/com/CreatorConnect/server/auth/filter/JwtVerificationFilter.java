@@ -41,7 +41,7 @@ public class JwtVerificationFilter extends OncePerRequestFilter { // OncePerRequ
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         log.info("# JwtVerificationFilter");
 
-        if(checkResponseMethodAndURI(request)){
+        if (checkResponseMethodAndURI(request)){
             filterChain.doFilter(request, response);
             return;
         }
@@ -95,6 +95,7 @@ public class JwtVerificationFilter extends OncePerRequestFilter { // OncePerRequ
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 
+    // 만료된 토큰을 가지고 토큰이 필요없는 요청을 보냈을 때 처리
     private boolean checkResponseMethodAndURI(HttpServletRequest request){
 
         if(Objects.equals(request.getMethod(), "GET")){

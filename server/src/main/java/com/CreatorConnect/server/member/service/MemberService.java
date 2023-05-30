@@ -265,16 +265,20 @@ public class MemberService {
 
     // jws 에서 memberId 추출
     protected long getMemberIdFromJws(String jws) {
+
         String base64EncodedSecretKey = jwtTokenizer.encodeBase64SecretKey(jwtTokenizer.getSecretKey());
         Map<String, Object> claims = jwtTokenizer.getClaims(jws, base64EncodedSecretKey).getBody();
 
         return Long.parseLong(claims.get("memberId").toString());
     }
 
-    // 현재 로그인한 사용자 정보
-    public Member getLoggedinMember() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return findVerifiedMember(authentication.getName());
+    // 현재 로그인한 사용자 객체
+    public Member getLoggedinMember(String authorizationToken) {
+
+        String accessToken = authorizationToken.substring(7);
+        Long loggedInMemberId = getMemberIdFromJws(accessToken);
+
+        return findVerifiedMember(loggedInMemberId);
     }
 
     public void verifyActivatedMember (Member member){
