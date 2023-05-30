@@ -1,8 +1,7 @@
 package com.CreatorConnect.server.auth.jwt;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.Jwts;
+import com.CreatorConnect.server.exception.JwtVerificationException;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.io.Encoders;
 import io.jsonwebtoken.security.Keys;
@@ -55,26 +54,33 @@ public class JwtTokenizer {
 
         String refreshToken =
                 Jwts.builder()
-                .setSubject(subject)
-                .setIssuedAt(Calendar.getInstance().getTime())
-                .setExpiration(expiration)
-                .signWith(key)
-                .compact();
+                        .setSubject(subject)
+                        .setIssuedAt(Calendar.getInstance().getTime())
+                        .setExpiration(expiration)
+                        .signWith(key)
+                        .compact();
 
         return refreshToken;
     }
 
-    public Jws<Claims> getClaims(String jws, String base64EncodedSecretKey) {
+    public Jws<Claims> getClaims(String jws, String base64EncodedSecretKey) throws ExpiredJwtException {
 
         Key key = getKeyFromBase64EncodedKey(base64EncodedSecretKey); // base64 인코딩된 Secret Key 를 디코딩
 
-        // 검증 후, Claims 을 반환하는 용도
-        Jws<Claims> claims = Jwts.parserBuilder() // JWT 토큰을 검증하고 클레임을 반환하기 위해 JwtParser 객체 생성
-                .setSigningKey(key) // JWT 토큰의 서명과 비교하여 검증에 사용하는 시크릿 키 설정
-                .build() // JwtParser 객체 생성
-                .parseClaimsJws(jws); // JWT 토큰 문자열(jws)을 파싱 후 디코딩된 시크릿 키와 비교하여 검증
+        try {
+            // 검증 후, Claims 을 반환하는 용도
+            Jws<Claims> claims = Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(jws);
 
-        return claims; // 검증이 완료된 클레임(토큰 데이터)을 포함하는 Jws<Claims> 객체 반환
+            return claims;
+
+        } catch (ExpiredJwtException e) {
+            throw new JwtVerificationException("Expired Access-Token", e);
+        } catch (JwtException ee) {
+            throw ee;
+        }
     }
 
     // 단순 검증 용도

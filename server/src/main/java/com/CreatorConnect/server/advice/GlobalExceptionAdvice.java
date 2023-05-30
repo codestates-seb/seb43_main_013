@@ -1,6 +1,12 @@
 package com.CreatorConnect.server.advice;
 
+import com.CreatorConnect.server.auth.jwt.JwtTokenizer;
+import com.CreatorConnect.server.auth.jwt.TokenService;
+import com.CreatorConnect.server.auth.jwt.refreshtoken.RefreshTokenController;
+import com.CreatorConnect.server.auth.jwt.refreshtoken.RefreshTokenRepository;
 import com.CreatorConnect.server.exception.BusinessLogicException;
+import com.CreatorConnect.server.exception.JwtVerificationException;
+import com.CreatorConnect.server.member.repository.MemberRepository;
 import com.CreatorConnect.server.response.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -12,11 +18,26 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolationException;
 
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionAdvice {
+
+    private final JwtTokenizer jwtTokenizer;
+    private final MemberRepository memberRepository;
+    private final TokenService tokenService;
+    private final RefreshTokenRepository refreshTokenRepository;
+
+    public GlobalExceptionAdvice(JwtTokenizer jwtTokenizer, MemberRepository memberRepository, TokenService tokenService, RefreshTokenRepository refreshTokenRepository) {
+        this.jwtTokenizer = jwtTokenizer;
+        this.memberRepository = memberRepository;
+        this.tokenService = tokenService;
+        this.refreshTokenRepository = refreshTokenRepository;
+    }
+
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleMethodArgumentNotValidException(
@@ -77,4 +98,14 @@ public class GlobalExceptionAdvice {
 
         return ErrorResponse.of(HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+    @ExceptionHandler(JwtVerificationException.class)
+    public ResponseEntity<String> handleJwtVerificationException(JwtVerificationException exception,
+                                                                 HttpServletRequest request) {
+        log.error("Jwt verification failed", exception);
+
+        RefreshTokenController refreshTokenController = new RefreshTokenController(jwtTokenizer, memberRepository, tokenService, refreshTokenRepository);
+        return refreshTokenController.refreshAccessToken(request);
+    }
+
 }

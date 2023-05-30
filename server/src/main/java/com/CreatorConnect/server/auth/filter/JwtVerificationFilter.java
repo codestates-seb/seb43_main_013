@@ -7,6 +7,7 @@ import com.CreatorConnect.server.exception.ExceptionCode;
 import com.CreatorConnect.server.member.entity.Member;
 import com.CreatorConnect.server.redis.RedisService;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -41,7 +42,7 @@ public class JwtVerificationFilter extends OncePerRequestFilter { // OncePerRequ
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         log.info("# JwtVerificationFilter");
 
-        if (checkResponseMethodAndURI(request)){
+        if (checkResponseMethodAndURI(request)) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -60,8 +61,16 @@ public class JwtVerificationFilter extends OncePerRequestFilter { // OncePerRequ
         } catch (ExpiredJwtException ee) {
             // 액세스 토큰이 만료된 경우
             log.info("catch ExpiredJwtException");
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Access-Token expired");
-            return;
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("Access-Token expired");
+            request.setAttribute("exception", ee);
+
+        } catch (MalformedJwtException me) {
+            // JWT 토큰이 형식에 맞지 않는 경우
+            log.info("catch MalformedJwtException");
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("Invalid Access-Token");
+            request.setAttribute("exception", me);
 
         } catch (Exception e) {
             request.setAttribute("exception", e);
