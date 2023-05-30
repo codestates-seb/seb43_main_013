@@ -174,27 +174,6 @@ public class FreeBoardService {
         } else {
             responses = getResponseList(freeBoards);
         }
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        List<FreeBoardDto.Response> responses = new ArrayList<>();
-//
-//        if (authentication != null && authentication.isAuthenticated() && !"anonymousUser".equals(authentication.getName())) {
-//            Member loggedinMember = memberService.findVerifiedMember(authentication.getName());
-//
-//            for (FreeBoard freeBoard : freeBoards.getContent()) {
-//                boolean bookmarked = loggedinMember.getBookmarks().stream()
-//                        .anyMatch(bookmark -> freeBoard.equals(bookmark.getFreeBoard()));
-//
-//                boolean liked = loggedinMember.getLikes().stream()
-//                        .anyMatch(like -> freeBoard.equals(like.getFreeBoard()));
-//
-//                FreeBoardDto.Response freeBoardResponse = mapper.freeBoardToFreeBoardResponseDto(freeBoard);
-//                freeBoardResponse.setBookmarked(bookmarked);
-//                freeBoardResponse.setLiked(liked);
-//                responses.add(freeBoardResponse);
-//            }
-//        } else {
-//            responses = getResponseList(freeBoards);
-//        }
 
         return new FreeBoardDto.MultiResponseDto<>(responses, freeBoards);
     }
@@ -237,28 +216,6 @@ public class FreeBoardService {
         } else {
             responses = getResponseList(freeBoards);
         }
-
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        List<FreeBoardDto.Response> responses = new ArrayList<>();
-//
-//        if (authentication != null && authentication.isAuthenticated() && !"anonymousUser".equals(authentication.getName())) {
-//            Member loggedinMember = memberService.findVerifiedMember(authentication.getName());
-//
-//            for (FreeBoard freeBoard : freeBoards.getContent()) {
-//                boolean bookmarked = loggedinMember.getBookmarks().stream()
-//                        .anyMatch(bookmark -> freeBoard.equals(bookmark.getFreeBoard()));
-//
-//                boolean liked = loggedinMember.getLikes().stream()
-//                        .anyMatch(like -> freeBoard.equals(like.getFreeBoard()));
-//
-//                FreeBoardDto.Response freeBoardResponse = mapper.freeBoardToFreeBoardResponseDto(freeBoard);
-//                freeBoardResponse.setBookmarked(bookmarked);
-//                freeBoardResponse.setLiked(liked);
-//                responses.add(freeBoardResponse);
-//            }
-//        } else {
-//            responses = getResponseList(freeBoards);
-//        }
 
         return new FreeBoardDto.MultiResponseDto<>(responses, freeBoards);
     }
