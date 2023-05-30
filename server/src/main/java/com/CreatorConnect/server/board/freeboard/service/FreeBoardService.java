@@ -170,11 +170,11 @@ public class FreeBoardService {
                 freeBoardResponse.setBookmarked(bookmarked);
                 freeBoardResponse.setLiked(liked);
                 responses.add(freeBoardResponse);
+                responses = getResponseList(freeBoards);
             }
+        } else {
+            responses = getResponseList(freeBoards);
         }
-
-        responses = getResponseList(freeBoards);
-
         return new FreeBoardDto.MultiResponseDto<>(responses, freeBoards);
     }
 
@@ -249,7 +249,6 @@ public class FreeBoardService {
             TagDto.TagInfo tagInfo = tagMapper.tagToTagToBoard(tagToFreeBoard.getTag());
             return tagInfo;
         }).collect(Collectors.toList());
-
 
 
         // 3. 로그인 여부 검증
