@@ -11,6 +11,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 
@@ -49,9 +50,10 @@ public class JobBoardController {
     @GetMapping("/jobboards")
     public ResponseEntity getJobBoards(@RequestParam String sort,
                                        @RequestParam @Positive int page,
-                                       @RequestParam @Positive int size) {
+                                       @RequestParam @Positive int size,
+                                       HttpServletRequest request) {
 
-        JobBoardDto.MultiResponseDto<JobBoardDto.Response> pageJobBoards = jobBoardService.getAllJobBoards(page, size, sort);
+        JobBoardDto.MultiResponseDto<JobBoardDto.Response> pageJobBoards = jobBoardService.getAllJobBoards(page, size, sort, request);
 
         return new ResponseEntity<>(pageJobBoards, HttpStatus.OK);
     }
@@ -61,19 +63,21 @@ public class JobBoardController {
     public ResponseEntity getJobBoardsByCategory(@PathVariable("jobCategoryId") @Positive Long categoryId,
                                                  @RequestParam String sort,
                                                  @RequestParam @Positive int page,
-                                                 @RequestParam @Positive int size) {
+                                                 @RequestParam @Positive int size,
+                                                 HttpServletRequest request) {
 
         JobBoardDto.MultiResponseDto<JobBoardDto.Response> pageJobBoards =
-                jobBoardService.getAllJobBoardsByCategory(categoryId, page, size, sort);
+                jobBoardService.getAllJobBoardsByCategory(categoryId, page, size, sort, request);
 
         return new ResponseEntity<>(pageJobBoards, HttpStatus.OK);
     }
 
     // 구인구직 게시판 게시글 상세조회
     @GetMapping("/jobboard/{jobBoardId}")
-    public ResponseEntity getJobBoardDetail(@PathVariable("jobBoardId") @Positive Long jobBoardId) {
+    public ResponseEntity getJobBoardDetail(@PathVariable("jobBoardId") @Positive Long jobBoardId,
+                                            HttpServletRequest request) {
 
-        return new ResponseEntity<>(jobBoardService.getJobBoardDetail(jobBoardId), HttpStatus.OK);
+        return new ResponseEntity<>(jobBoardService.getJobBoardDetail(jobBoardId, request), HttpStatus.OK);
     }
 
     // 구인구직 게시판 삭제
@@ -91,7 +95,7 @@ public class JobBoardController {
     public ResponseEntity likeFreeBoard (@PathVariable("jobBoardId") @Positive Long jobBoardId,
                                          @RequestHeader(value = "Authorization") String authorizationToken) {
 
-        jobBoardService.likeJobBoard(jobBoardId);
+        jobBoardService.likeJobBoard(jobBoardId, authorizationToken);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -101,7 +105,7 @@ public class JobBoardController {
     public ResponseEntity unlikeFreeBoard (@PathVariable("jobBoardId") @Positive Long jobBoardId,
                                            @RequestHeader(value = "Authorization") String authorizationToken) {
 
-        jobBoardService.unlikeJobBoard(jobBoardId);
+        jobBoardService.unlikeJobBoard(jobBoardId, authorizationToken);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -111,7 +115,7 @@ public class JobBoardController {
     public ResponseEntity bookmarkFeedbackBoard (@PathVariable("jobBoardId") @Positive Long jobBoardId,
                                                  @RequestHeader(value = "Authorization") String authorizationToken) {
 
-        jobBoardService.bookmarkJobBoard(jobBoardId);
+        jobBoardService.bookmarkJobBoard(jobBoardId, authorizationToken);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -121,7 +125,7 @@ public class JobBoardController {
     public ResponseEntity unbookmarkFeedbackBoard (@PathVariable("jobBoardId") @Positive Long jobBoardId,
                                                    @RequestHeader(value = "Authorization") String authorizationToken) {
 
-        jobBoardService.unbookmarkJobBoard(jobBoardId);
+        jobBoardService.unbookmarkJobBoard(jobBoardId, authorizationToken);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
