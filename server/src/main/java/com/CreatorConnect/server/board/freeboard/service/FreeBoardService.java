@@ -136,6 +136,7 @@ public class FreeBoardService {
      * <자유 게시판 게시글 목록>
      * 1. 페이지네이션 적용 - 최신순 / 등록순 / 인기순
      * 2. 로그인 여부 검증
+     * 3. 태그 적용
      */
     public FreeBoardDto.MultiResponseDto<FreeBoardDto.Response> getAllFreeBoards(int page, int size, String sort, HttpServletRequest request) {
         // 1. 페이지네이션 적용 - 최신순 / 등록순 / 인기순
@@ -149,11 +150,13 @@ public class FreeBoardService {
             loggedinMember = memberService.getLoggedinMember(accessToken);
         }
 
+        // 3. 태그 적용
         List<FreeBoardDto.Response> responses = getLoginResponseList(freeBoards, loggedinMember);
 
         return new FreeBoardDto.MultiResponseDto<>(responses, freeBoards);
     }
 
+    // 태그 적용 메서드
     private List<FreeBoardDto.Response> getLoginResponseList(Page<FreeBoard> freeBoards, Member loggedinMember) {
         return freeBoards.getContent().stream().map(freeBoard -> {
             List<TagDto.TagInfo> tags = freeBoard.getTagBoards().stream()
@@ -198,44 +201,8 @@ public class FreeBoardService {
         List<FreeBoardDto.Response> responses = getLoginResponseList(freeBoards, loggedinMember);
 
         return new FreeBoardDto.MultiResponseDto<>(responses, freeBoards);
-//        String accessToken = request.getHeader("Authorization");
-//
-//        Member loggedinMember = null;
-//        boolean bookmarked = false;
-//        boolean liked = false;
-//
-//        List<FreeBoardDto.Response> responses = new ArrayList<>();
-//
-//        if (accessToken != null){
-//            loggedinMember = memberService.getLoggedinMember(accessToken);
-//
-//            for (FreeBoard freeBoard : freeBoards.getContent()) {
-//                bookmarked = loggedinMember.getBookmarks().stream()
-//                        .anyMatch(bookmark -> freeBoard.equals(bookmark.getFreeBoard()));
-//
-//                liked = loggedinMember.getLikes().stream()
-//                        .anyMatch(like -> freeBoard.equals(like.getFreeBoard()));
-//
-//                FreeBoardDto.Response freeBoardResponse = mapper.freeBoardToFreeBoardResponseDto(freeBoard);
-//                freeBoardResponse.setBookmarked(bookmarked);
-//                freeBoardResponse.setLiked(liked);
-//                responses.add(freeBoardResponse);
-//            }
-//        } else {
-//            responses = getResponseList(freeBoards);
-//        }
-
     }
 
-    // Response에 각 게시글의 태그 적용 메서드
-//    private List<FreeBoardDto.Response> getResponseList(Page<FreeBoard> freeBoards) {
-//        return freeBoards.getContent().stream().map(freeBoard -> {
-//            List<TagDto.TagInfo> tags = freeBoard.getTagBoards().stream()
-//                    .map(tagToFreeBoard -> tagMapper.tagToTagToBoard(tagToFreeBoard.getTag()))
-//                    .collect(Collectors.toList());
-//            return mapper.freeBoardToResponse(freeBoard, tags);
-//        }).collect(Collectors.toList());
-//    }
 
     /**
      * <자유 게시판 게시글 상세 조회>

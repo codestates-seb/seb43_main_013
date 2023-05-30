@@ -329,9 +329,9 @@ public class FeedbackBoardService {
 
             if (loggedinMember != null) {
                 boolean bookmarked = loggedinMember.getBookmarks().stream()
-                        .anyMatch(bookmark -> feedbackBoard.equals(bookmark.getFreeBoard()));
+                        .anyMatch(bookmark -> feedbackBoard.equals(bookmark.getFeedbackBoard()));
                 boolean liked = loggedinMember.getLikes().stream()
-                        .anyMatch(like -> feedbackBoard.equals(like.getFreeBoard()));
+                        .anyMatch(like -> feedbackBoard.equals(like.getFeedbackBoard()));
                 response.setBookmarked(bookmarked);
                 response.setLiked(liked);
             }
