@@ -110,7 +110,9 @@ public class MemberController {
                                     HttpServletRequest request) {
 
         String accessToken = request.getHeader("Authorization");
-        Member loginMember = memberService.getLoggedinMember(accessToken);
+
+        // 로그인한 멤버
+        Member loggedinMember = null;
         Member findMember = memberService.findVerifiedMember(memberId);
 
         if (findMember == null) {
@@ -119,13 +121,14 @@ public class MemberController {
 
         MemberResponseDto responseDto = mapper.memberToMemberResponseDto(findMember);
 
-        if (loginMember != null) {
+        if (accessToken != null) {
+            loggedinMember = memberService.getLoggedinMember(accessToken);
 
-            if (loginMember.getFollowings().stream().anyMatch(member -> findMember.equals(member))) {
+            if (loggedinMember.getFollowings().stream().anyMatch(member -> findMember.equals(member))) {
                 responseDto.setFollowed(true);
             }
 
-            if (loginMember.getMemberId().equals(memberId)) {
+            if (loggedinMember.getMemberId().equals(memberId)) {
                 responseDto.setMyPage(true);
             }
         }
