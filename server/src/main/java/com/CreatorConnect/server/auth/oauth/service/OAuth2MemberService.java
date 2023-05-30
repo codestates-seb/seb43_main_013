@@ -52,6 +52,7 @@ public class OAuth2MemberService implements OAuth2UserService<OAuth2UserRequest,
 
         String email = String.valueOf(oAuth2User.getAttributes().get("email"));
         String name = String.valueOf(oAuth2User.getAttributes().get("name"));
+
         String profileImageUrl;
         if (oAuth2User.getAttributes().containsKey("picture")) {
             profileImageUrl = String.valueOf(oAuth2User.getAttributes().get("picture"));
