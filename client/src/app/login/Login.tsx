@@ -43,7 +43,8 @@ const LoginWindow = () => {
       const response = await axios.post(`${baseUrl}/api/login`, data);
 
       /** 2023/05/13 - 응답의 토큰과 데이터를 전역상태로 저장 - by Kadesti */
-      const { authorization, refreshtoken } = response.headers;
+      const authorization = response.headers.authorization;
+      const refreshtoken = response.headers["refresh-token"];
 
       setMember(response.data);
       setAccessToken(authorization);
