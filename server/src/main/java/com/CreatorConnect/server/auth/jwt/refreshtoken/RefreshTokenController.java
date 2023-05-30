@@ -65,30 +65,5 @@ public class RefreshTokenController {
         }
     }
 
-//    @DeleteMapping("/api/refresh-token")
-//    public ResponseEntity deleteRefreshToken (HttpServletRequest request) {
-//        String refreshToken = request.getHeader("Refresh-Token");
-//        if (refreshToken != null) {
-//
-//            try {
-//                Optional<RefreshToken> findToken = refreshTokenRepository.findById(refreshToken);
-//                if (!findToken.isPresent()) {
-//                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid refresh-token by redis");
-//                }
-//
-//                refreshTokenRepository.deleteById(refreshToken);
-//
-//                Map<String, String> response = new HashMap<>();
-//                response.put("message", "refresh token deleted");
-//
-//                return ResponseEntity.ok().body(response);
-//
-//            } catch (Exception e) {
-//                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error occurred while deleting refresh-token");
-//            }
-//        } else {
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Missing refresh-token");
-//        }
-//    }
 }
 
