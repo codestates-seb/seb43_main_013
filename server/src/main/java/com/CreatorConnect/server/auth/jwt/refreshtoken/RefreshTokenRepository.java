@@ -45,7 +45,7 @@ public class RefreshTokenRepository {
         String memberIdAsString = valueOperations.get(refreshToken);
 
         // Redis 에서 주어진 리프레시 토큰의 값에 해당하는 멤버 ID를 조회.
-        // 값이 없는 경우 Optional.empty()를 반환합니다.
+        // 값이 없는 경우 Optional.empty()를 반환.
         if (Objects.isNull(memberIdAsString)) {
             return Optional.empty();
         }
