@@ -32,7 +32,7 @@ const LoginSide = ({ nickState }: { nickState: [boolean, React.Dispatch<boolean>
         <span className="mr-2 text-2xl cursor-pointer">{nickName}</span>
         {nickModal ? (
           <>
-            <NickModal setNickModal={setNickModal} />
+            <NickModal />
             <ChevronUpIcon className="w-7 cursor-pointer" />
           </>
         ) : (

@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 /** 2023/05/10 - 닉네임 클릭 후 등장 모달창 - by Kadesti */
-const NickModal = ({ setNickModal }: { setNickModal: React.Dispatch<boolean> }) => {
+const NickModal = () => {
   const router = useRouter();
   const { setAccessToken } = useTokenStore();
   const { setMember } = useMemberStore();
@@ -32,7 +32,6 @@ const NickModal = ({ setNickModal }: { setNickModal: React.Dispatch<boolean> }) 
     setMember(null);
     localStorage.removeItem("accessToken");
     localStorage.removeItem("member");
-    router.reload();
   };
 
   return (
