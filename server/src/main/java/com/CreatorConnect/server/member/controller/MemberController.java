@@ -111,11 +111,6 @@ public class MemberController {
 
         String accessToken = request.getHeader("Authorization");
         Member loginMember = memberService.getLoggedinMember(accessToken);
-
-        if (loginMember == null) {
-            throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND);
-        }
-
         Member findMember = memberService.findVerifiedMember(memberId);
 
         if (findMember == null) {
