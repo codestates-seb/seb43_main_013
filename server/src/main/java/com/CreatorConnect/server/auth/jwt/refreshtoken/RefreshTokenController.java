@@ -5,6 +5,7 @@ import com.CreatorConnect.server.auth.jwt.TokenService;
 import com.CreatorConnect.server.member.entity.Member;
 import com.CreatorConnect.server.member.repository.MemberRepository;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
@@ -12,10 +13,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -28,6 +31,12 @@ public class RefreshTokenController {
     private final MemberRepository memberRepository;
     private final TokenService tokenService;
     private final RefreshTokenRepository refreshTokenRepository;
+
+    @ExceptionHandler(ExpiredJwtException.class)
+    public ResponseEntity handleExpiredJwtException(HttpServletRequest request) {
+        log.info("catch ExpiredJwtException");
+        return refreshAccessToken(request);
+    }
 
     @PostMapping("/api/refresh-token")
     public ResponseEntity refreshAccessToken (HttpServletRequest request) {

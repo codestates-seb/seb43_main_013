@@ -51,13 +51,11 @@ public class MemberController {
     private final MemberMapper mapper;
     private final MemberService memberService;
     private final MemberRepository memberRepository;
-    private final RefreshTokenController refreshTokenController;
 
-    public MemberController(MemberMapper mapper, MemberService memberService, MemberRepository memberRepository, RefreshTokenController refreshTokenController) {
+    public MemberController(MemberMapper mapper, MemberService memberService, MemberRepository memberRepository) {
         this.mapper = mapper;
         this.memberService = memberService;
         this.memberRepository = memberRepository;
-        this.refreshTokenController = refreshTokenController;
     }
 
     @GetMapping("/")
@@ -126,7 +124,7 @@ public class MemberController {
         MemberResponseDto responseDto = mapper.memberToMemberResponseDto(findMember);
 
         if (loginUser != null) {
-            if (loginUser.getFollowings().stream().anyMatch(member -> member.equals(findMember))) {
+            if (loginUser.getFollowings().stream().anyMatch(member -> findMember.equals(member))) {
                 responseDto.setFollowed(true);
             }
 
