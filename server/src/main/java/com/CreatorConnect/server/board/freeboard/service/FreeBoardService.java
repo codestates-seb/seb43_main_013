@@ -142,40 +142,42 @@ public class FreeBoardService {
      * 2. 로그인 여부 검증
      */
     public FreeBoardDto.MultiResponseDto<FreeBoardDto.Response> getAllFreeBoards(int page, int size, String sort, HttpServletRequest request) {
-
         // 1. 페이지네이션 적용 - 최신순 / 등록순 / 인기순
         Page<FreeBoard> freeBoards = freeBoardRepository.findAll(sortedBy(page, size, sort));
 
         // 2. 로그인 여부 검증
         String accessToken = request.getHeader("Authorization");
-
         Member loggedinMember = null;
-        boolean bookmarked = false;
-        boolean liked = false;
 
-        List<FreeBoardDto.Response> responses = new ArrayList<>();
-
-        if (accessToken != null){
-
+        if (accessToken != null) {
             loggedinMember = memberService.getLoggedinMember(accessToken);
-
-            for (FreeBoard freeBoard : freeBoards.getContent()) {
-                bookmarked = loggedinMember.getBookmarks().stream()
-                        .anyMatch(bookmark -> freeBoard.equals(bookmark.getFreeBoard()));
-
-                liked = loggedinMember.getLikes().stream()
-                        .anyMatch(like -> freeBoard.equals(like.getFreeBoard()));
-
-                FreeBoardDto.Response freeBoardResponse = mapper.freeBoardToFreeBoardResponseDto(freeBoard);
-                freeBoardResponse.setBookmarked(bookmarked);
-                freeBoardResponse.setLiked(liked);
-                responses = getResponseList(freeBoards);
-                responses.add(freeBoardResponse);
-            }
-        } else {
-            responses = getResponseList(freeBoards);
         }
+
+        List<FreeBoardDto.Response> responses = getResponseList(freeBoards, loggedinMember);
+
         return new FreeBoardDto.MultiResponseDto<>(responses, freeBoards);
+    }
+
+    private List<FreeBoardDto.Response> getResponseList(Page<FreeBoard> freeBoards, Member loggedinMember) {
+        return freeBoards.getContent().stream().map(freeBoard -> {
+            List<TagDto.TagInfo> tags = freeBoard.getTagBoards().stream()
+                    .map(tagToFreeBoard -> tagMapper.tagToTagToBoard(tagToFreeBoard.getTag()))
+                    .collect(Collectors.toList());
+
+            FreeBoardDto.Response response = mapper.freeBoardToFreeBoardResponseDto(freeBoard);
+            response.setTags(tags);
+
+            if (loggedinMember != null) {
+                boolean bookmarked = loggedinMember.getBookmarks().stream()
+                        .anyMatch(bookmark -> freeBoard.equals(bookmark.getFreeBoard()));
+                boolean liked = loggedinMember.getLikes().stream()
+                        .anyMatch(like -> freeBoard.equals(like.getFreeBoard()));
+                response.setBookmarked(bookmarked);
+                response.setLiked(liked);
+            }
+
+            return response;
+        }).collect(Collectors.toList());
     }
 
     /**
