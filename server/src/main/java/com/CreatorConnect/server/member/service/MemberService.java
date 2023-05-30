@@ -115,12 +115,6 @@ public class MemberService {
     }
 
     @Transactional(readOnly = true)
-    public Member findMember(Long memberId) {
-
-        return findVerifiedMember(memberId);
-    }
-
-    @Transactional(readOnly = true)
     public Page<Member> findMembers(int page, int size) {
 
         return memberRepository.findAll(PageRequest.of(page, size,
