@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import java.util.*;
@@ -60,10 +61,11 @@ public class FreeBoardController {
     @GetMapping("/freeboards")
     public ResponseEntity getFreeBoards(@RequestParam String sort,
                                         @Positive @RequestParam int page,
-                                        @Positive @RequestParam int size) {
+                                        @Positive @RequestParam int size,
+                                        HttpServletRequest request) {
 
         FreeBoardDto.MultiResponseDto<FreeBoardDto.Response> pageFreeBoards =
-                freeBoardService.getAllFreeBoards(page, size, sort);
+                freeBoardService.getAllFreeBoards(page, size, sort, request);
 
         return new ResponseEntity<>(pageFreeBoards, HttpStatus.OK);
     }
@@ -73,10 +75,11 @@ public class FreeBoardController {
     public ResponseEntity getFreeBoardsByCategory(@PathVariable("categoryId") long categoryId,
                                                   @RequestParam String sort,
                                                   @Positive @RequestParam int page,
-                                                  @Positive @RequestParam int size) {
+                                                  @Positive @RequestParam int size,
+                                                  HttpServletRequest request) {
 
         FreeBoardDto.MultiResponseDto<FreeBoardDto.Response> pageFreeBoard =
-                freeBoardService.getAllFreeBoardsByCategory(categoryId, page, size, sort);
+                freeBoardService.getAllFreeBoardsByCategory(categoryId, page, size, sort, request);
 
         return new ResponseEntity<>(pageFreeBoard, HttpStatus.OK);
     }
@@ -102,7 +105,7 @@ public class FreeBoardController {
     public ResponseEntity likeFreeBoard (@PathVariable("freeBoardId") @Positive Long freeBoardId,
                                          @RequestHeader(value = "Authorization") String authorizationToken) {
 
-        freeBoardService.likeFreeBoard(freeBoardId);
+        freeBoardService.likeFreeBoard(freeBoardId, authorizationToken);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -111,7 +114,7 @@ public class FreeBoardController {
     public ResponseEntity unlikeFreeBoard (@PathVariable("freeBoardId") @Positive Long freeBoardId,
                                            @RequestHeader(value = "Authorization") String authorizationToken) {
 
-        freeBoardService.unlikeFreeBoard(freeBoardId);
+        freeBoardService.unlikeFreeBoard(freeBoardId, authorizationToken);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -120,7 +123,7 @@ public class FreeBoardController {
     public ResponseEntity bookmarkFeedbackBoard (@PathVariable("freeBoardId") @Positive Long freeBoardId,
                                                  @RequestHeader(value = "Authorization") String authorizationToken) {
 
-        freeBoardService.bookmarkFreeBoard(freeBoardId);
+        freeBoardService.bookmarkFreeBoard(freeBoardId, authorizationToken);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -129,7 +132,7 @@ public class FreeBoardController {
     public ResponseEntity unbookmarkFeedbackBoard (@PathVariable("freeBoardId") @Positive Long freeBoardId,
                                                    @RequestHeader(value = "Authorization") String authorizationToken) {
 
-        freeBoardService.unbookmarkFreeBoard(freeBoardId);
+        freeBoardService.unbookmarkFreeBoard(freeBoardId, authorizationToken);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
