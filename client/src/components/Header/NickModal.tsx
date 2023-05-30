@@ -1,19 +1,20 @@
+"use client";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Link from "next/link";
 import { useTokenStore } from "@/store/useTokenStore";
 import { useMemberStore } from "@/store/useMemberStore";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 /** 2023/05/10 - 닉네임 클릭 후 등장 모달창 - by Kadesti */
-const NickModal = ({ setNickModal }: { setNickModal: React.Dispatch<boolean> }) => {
+const NickModal = () => {
+  const router = useRouter();
   const { setAccessToken } = useTokenStore();
   const { setMember } = useMemberStore();
 
   const { member } = useMemberStore();
   const [memberLink, setMemberLink] = useState("");
-  const router = useRouter();
 
   useEffect(() => {
     if (member) setMemberLink(`/profile/${member.memberId}`);
@@ -31,7 +32,6 @@ const NickModal = ({ setNickModal }: { setNickModal: React.Dispatch<boolean> }) 
     setMember(null);
     localStorage.removeItem("accessToken");
     localStorage.removeItem("member");
-    router.reload();
   };
 
   return (

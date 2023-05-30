@@ -1,24 +1,5 @@
 import { create } from "zustand";
-
 import { Member } from "@/types/api";
-// interface Member {
-//   memberId: number;
-//   email: string;
-//   name: string;
-//   nickname: string;
-//   phone?: string;
-//   oauth: boolean;
-//   introduction?: string;
-//   link?: string;
-//   profileImageUrl: string;
-//   createdAt: string;
-//   modifiedAt: string;
-//   rename: string;
-//   followerCount?: number;
-//   followingCount?: number;
-//   followed?: boolean;
-//   myPage?: boolean;
-// }
 
 export interface MemberInfo {
   member?: Member | null;
