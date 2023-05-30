@@ -5,10 +5,12 @@ import { useState } from "react";
 import SearchDiv from "../components/Header/SearchDiv";
 import LoginSide from "../components/Header/LoginSide";
 import { useTokenStore } from "@/store/useTokenStore";
+import AuthCheck from "@/components/Header/AuthCheck";
 
 import HeaderLogo from "../components/Header/HeaderLogo";
 import SearchSide from "../components/Header/SearchSide";
 import headerArr from "../components/Header/HeaderArr";
+
 /** 2023/05/04 - 헤더 컴포넌트 - by Kadesti */
 const Header: React.FC = () => {
   const [hasToken, setHasToken] = useState(false);
@@ -24,6 +26,7 @@ const Header: React.FC = () => {
 
   return (
     <header className="bg-white h-[96px] border-b-4 flex justify-center">
+      <AuthCheck />
       <div className="flex w-full max-w-[1440px] items-center">
         <HeaderLogo />
         <SearchSide array={leftArr} />
