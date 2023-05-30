@@ -35,16 +35,26 @@ const RankClose: RankModalProps = ({ rankBind, curRank }) => {
   };
 
   return (
-    <div className="flex justify-between cursor-pointer relative">
+    <div className="flex justify-between cursor-pointer absolute top-4 right-0 h-full overflow-hidden">
       <button
-        className="hover:text-rose-400 flex"
+        className="flex flex-col animate-spin-slow"
         onClick={() => {
           if (rankModal) setRankModal(false);
           else setRankModal(true);
         }}
       >
-        <div className="text-xl">1</div>
-        <div className="ml-7 text-xl">{curRank[0]}</div>
+        <div className="flex hover:text-main-400">
+          <div className="text-xl">1</div>
+          <div className="text-xl">{curRank[0]}</div>
+        </div>
+        {/* {curRank.map((item, idx) => {
+          return (
+            <div className="flex hover:text-main-400">
+              <div className="text-xl mb-2">{idx + 1}</div>
+              <div className="ml-7 text-xl">{item}</div>
+            </div>
+          );
+        })} */}
       </button>
     </div>
   );
