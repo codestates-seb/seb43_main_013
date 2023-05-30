@@ -10,6 +10,7 @@ import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -24,6 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @Slf4j // jwt 검증 필터
 @RequiredArgsConstructor
@@ -38,6 +40,11 @@ public class JwtVerificationFilter extends OncePerRequestFilter { // OncePerRequ
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         log.info("# JwtVerificationFilter");
+
+        if(checkResponseMethodAndURI(request)){
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         String accessToken = request.getHeader("Authorization").replace("Bearer ", "");
         String isLogout = (String) redisTemplate.opsForValue().get(accessToken);
@@ -86,5 +93,32 @@ public class JwtVerificationFilter extends OncePerRequestFilter { // OncePerRequ
         List<GrantedAuthority> authorities = authorityUtils.createAuthorities((List) claims.get("roles"));
         Authentication authentication = new UsernamePasswordAuthenticationToken(email, null, authorities);
         SecurityContextHolder.getContext().setAuthentication(authentication);
+    }
+
+    private boolean checkResponseMethodAndURI(HttpServletRequest request){
+
+        if(Objects.equals(request.getMethod(), "GET")){
+
+            String requestURI = request.getRequestURI();
+
+            if(requestURI.contains("/api/search") || requestURI.contains("/api/keyword")){
+                return true;
+            } else if (requestURI.contains("/api/login") || requestURI.contains("/auth")){
+                return true;
+            } else if (requestURI.contains("/api/member")){
+                return true;
+            } else if (requestURI.contains("board")){
+                return true;
+            } else if (requestURI.contains("/api/notice")){
+                return true;
+            } else if (requestURI.contains("categor")){
+                return true;
+            } else if (requestURI.contains("/api/youtubevideos")){
+                return true;
+            } else {
+                return false;
+            }
+        }
+        return false;
     }
 }
