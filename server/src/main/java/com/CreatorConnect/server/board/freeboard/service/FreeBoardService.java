@@ -169,8 +169,8 @@ public class FreeBoardService {
                 FreeBoardDto.Response freeBoardResponse = mapper.freeBoardToFreeBoardResponseDto(freeBoard);
                 freeBoardResponse.setBookmarked(bookmarked);
                 freeBoardResponse.setLiked(liked);
-                responses.add(freeBoardResponse);
                 responses = getResponseList(freeBoards);
+                responses.add(freeBoardResponse);
             }
         } else {
             responses = getResponseList(freeBoards);
