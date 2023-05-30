@@ -20,18 +20,26 @@ const NickModal = () => {
     if (member) setMemberLink(`/profile/${member.memberId}`);
   }, [member]);
 
-  const logoutEvent = async (router: any) => {
-    const Authorization = localStorage.getItem("accessToken");
-    await axios.post(`${baseUrl}/api/logout`, {
-      headers: {
-        Authorization,
-      },
-    });
+  const logoutEvent = async () => {
+    try {
+      const Authorization = localStorage.getItem("accessToken");
+      const refreshToken = localStorage.getItem("refreshToken");
 
-    setAccessToken("");
-    setMember(null);
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("member");
+      await axios.delete(`${baseUrl}/api/logout`, {
+        headers: {
+          Authorization,
+          "Refresh-Token": refreshToken,
+        },
+      });
+
+      setAccessToken("");
+      setMember(null);
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      localStorage.removeItem("member");
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -45,7 +53,7 @@ const NickModal = () => {
       <li
         onClick={(e) => {
           e.preventDefault();
-          logoutEvent(router);
+          logoutEvent();
         }}
         className="cursor-pointer hover:text-black text-xl mb-2"
       >
