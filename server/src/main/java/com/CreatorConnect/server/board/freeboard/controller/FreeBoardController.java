@@ -86,9 +86,10 @@ public class FreeBoardController {
 
     // 자유 게시판 게시글 상세 조회
     @GetMapping("/freeboard/{freeboardId}")
-    public ResponseEntity getFreeBoardDetail(@Positive @PathVariable("freeboardId") long freeBoardId) {
+    public ResponseEntity getFreeBoardDetail(@Positive @PathVariable("freeboardId") long freeBoardId,
+                                             HttpServletRequest request) {
 
-        return new ResponseEntity<>(freeBoardService.getFreeBoardDetail(freeBoardId), HttpStatus.OK);
+        return new ResponseEntity<>(freeBoardService.getFreeBoardDetail(freeBoardId, request), HttpStatus.OK);
     }
 
     // 자유 게시판 게시글 삭제
