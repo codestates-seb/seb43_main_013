@@ -29,6 +29,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -112,7 +113,7 @@ public class PromotionBoardService {
     }
 
     // 개별 조회
-    public PromotionBoardResponseDto.Details responsePromotion(Long promotionBoardId) {
+    public PromotionBoardResponseDto.Details responsePromotion(Long promotionBoardId, HttpServletRequest request) {
 
         PromotionBoard foundPromotionBoard = findVerifiedPromotionBoard(promotionBoardId);
 
@@ -125,23 +126,31 @@ public class PromotionBoardService {
 
         // 조회수 증가
         addViews(foundPromotionBoard);
+        // 로그인한 멤버
+        String accessToken = request.getHeader("Authorization");
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Member loggedinMember = null;
         boolean bookmarked = false;
         boolean liked = false;
+// 로그인 여부 확인
+        if (accessToken != null) {
+            // 로그인 했을 때
+            loggedinMember = memberService.getLoggedinMember(accessToken);
 
-        if (authentication != null && authentication.isAuthenticated() && ! "anonymousUser".equals(authentication.getName())) {
-            Member loggedinMember = memberService.findVerifiedMember(authentication.getName());
+            if (loggedinMember != null) {
+                // 게시물을 북마크한 경우
+                if (loggedinMember.getBookmarks() != null) {
+                    bookmarked = loggedinMember.getBookmarks().stream()
+                            .anyMatch(bookmark -> foundPromotionBoard.equals(bookmark.getPromotionBoard()));
+                }
 
-            // 게시물을 북마크한 경우
-            bookmarked = loggedinMember.getBookmarks().stream()
-                    .anyMatch(bookmark -> foundPromotionBoard.equals(bookmark.getPromotionBoard()));
-
-            // 게시물을 좋아요한 경우
-            liked = loggedinMember.getLikes().stream()
-                    .anyMatch(like -> foundPromotionBoard.equals(like.getPromotionBoard()));
+                // 게시물을 좋아요한 경우
+                if (loggedinMember.getLikes() != null) {
+                    liked = loggedinMember.getLikes().stream()
+                            .anyMatch(like -> foundPromotionBoard.equals(like.getPromotionBoard()));
+                }
+            }
         }
-
         // 매핑
         PromotionBoardResponseDto.Details response = mapper.promotionBoardToResponse(foundPromotionBoard, tags);
         response.setBookmarked(bookmarked);
@@ -151,7 +160,8 @@ public class PromotionBoardService {
     }
 
     // 목록 조회
-    public PromotionBoardResponseDto.Multi<PromotionBoardResponseDto.Details> responsePromotions(String sort, int page, int size){
+    public PromotionBoardResponseDto.Multi<PromotionBoardResponseDto.Details> responsePromotions(String sort, int page, int size,
+                                                                                                 HttpServletRequest request){
         // Page 생성 - 최신순, 등록순, 인기순
         // 기본값 = 최신순
         Page<PromotionBoard> promotionBoards = promotionBoardRepository.findAll(sortedPageRequest(sort, page, size));
@@ -160,17 +170,23 @@ public class PromotionBoardService {
         PromotionBoardResponseDto.PageInfo pageInfo = new PromotionBoardResponseDto.PageInfo(promotionBoards.getNumber() + 1, promotionBoards.getSize(), promotionBoards.getTotalElements(), promotionBoards.getTotalPages());
 
         // 로그인한 멤버
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String accessToken = request.getHeader("Authorization");
+
+        Member loggedinMember = null;
+        boolean bookmarked = false;
+        boolean liked = false;
+
         List<PromotionBoardResponseDto.Details> responses = new ArrayList<>();
 
-        if (authentication != null && authentication.isAuthenticated() && !"anonymousUser".equals(authentication.getName())) {
-            Member loggedinMember = memberService.findVerifiedMember(authentication.getName());
+        if (accessToken != null){
+
+            loggedinMember = memberService.getLoggedinMember(accessToken);
 
             for (PromotionBoard promotionBoard : promotionBoards.getContent()) {
-                boolean bookmarked = loggedinMember.getBookmarks().stream()
+                bookmarked = loggedinMember.getBookmarks().stream()
                         .anyMatch(bookmark -> promotionBoard.equals(bookmark.getPromotionBoard()));
 
-                boolean liked = loggedinMember.getLikes().stream()
+                liked = loggedinMember.getLikes().stream()
                         .anyMatch(like -> promotionBoard.equals(like.getPromotionBoard()));
 
                 PromotionBoardResponseDto.Details promotionBoardResponse = mapper.prmotionBoardToPromotionBoardDetailsResponse(promotionBoard);
@@ -185,7 +201,7 @@ public class PromotionBoardService {
         return new PromotionBoardResponseDto.Multi<>(responses, pageInfo);
     }
 
-    public PromotionBoardResponseDto.Multi<PromotionBoardResponseDto.Details> getPromotionByCategory(Long promotionCategoryId, String sort, int page, int size){
+    public PromotionBoardResponseDto.Multi<PromotionBoardResponseDto.Details> getPromotionByCategory(Long promotionCategoryId, String sort, int page, int size, HttpServletRequest request){
         // page생성 - 카테고리 ID로 검색 후 정렬 적용
         Page<PromotionBoard> promotionBoards = promotionBoardRepository.findPromotionCategoryId(promotionCategoryId, sortedPageRequest(sort, page, size));
 
@@ -193,18 +209,23 @@ public class PromotionBoardService {
         PromotionBoardResponseDto.PageInfo pageInfo = new PromotionBoardResponseDto.PageInfo(promotionBoards.getNumber() + 1, promotionBoards.getSize(), promotionBoards.getTotalElements(), promotionBoards.getTotalPages());
 
         // 로그인한 멤버 후 게시글 목록
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String accessToken = request.getHeader("Authorization");
+
+        Member loggedinMember = null;
+        boolean bookmarked = false;
+        boolean liked = false;
+
         List<PromotionBoardResponseDto.Details> responses = new ArrayList<>();
 
-        if (authentication != null && authentication.isAuthenticated() && !"anonymousUser".equals(authentication.getName())) {
-            Member loggedinMember = memberService.findVerifiedMember(authentication.getName());
+        if (accessToken != null) {
+            loggedinMember = memberService.getLoggedinMember(accessToken);
 
             for (PromotionBoard promotionBoard : promotionBoards.getContent()) {
-                boolean bookmarked = loggedinMember.getBookmarks().stream()
-                        .anyMatch(bookmark -> promotionBoard.equals(bookmark.getPromotionBoard()));
+                bookmarked = loggedinMember.getBookmarks().stream()
+                        .anyMatch(bookmark -> promotionBoard.equals(bookmark.getFeedbackBoard()));
 
-                boolean liked = loggedinMember.getLikes().stream()
-                        .anyMatch(like -> promotionBoard.equals(like.getPromotionBoard()));
+                liked = loggedinMember.getLikes().stream()
+                        .anyMatch(like -> promotionBoard.equals(like.getFeedbackBoard()));
 
                 PromotionBoardResponseDto.Details promotionResponse = mapper.prmotionBoardToPromotionBoardDetailsResponse(promotionBoard);
                 promotionResponse.setBookmarked(bookmarked);
@@ -266,10 +287,10 @@ public class PromotionBoardService {
     }
 
     //북마크
-    public void bookmarkPromotionBoard(Long promotionBoardId) {
+    public void bookmarkPromotionBoard(Long promotionBoardId, String authorizationToken) {
 
         PromotionBoard findpromotionBoard = findVerifiedPromotionBoard(promotionBoardId);
-        Member currentMember = memberService.getLoggedinMember();
+        Member currentMember = memberService.getLoggedinMember(authorizationToken);
 
         // 현재 로그인한 사용자가 해당 게시물을 북마크 했는지 확인
         boolean isAlreadyBookMarked = currentMember.getBookmarks().stream()
@@ -295,10 +316,10 @@ public class PromotionBoardService {
         memberRepository.save(currentMember);
     }
 
-    public void unbookmarkpromotionBoard(Long promotionBoardId) {
+    public void unbookmarkpromotionBoard(Long promotionBoardId, String authorizationToken) {
 
         PromotionBoard promotionBoard = findVerifiedPromotionBoard(promotionBoardId);
-        Member currentMember = memberService.getLoggedinMember();
+        Member currentMember = memberService.getLoggedinMember(authorizationToken);
 
         // 현재 로그인한 사용자가 해당 게시물을 북마크 했는지 확인
         Optional<Set<Bookmark>> bookmarks = Optional.ofNullable(currentMember.getBookmarks());
@@ -321,10 +342,10 @@ public class PromotionBoardService {
         memberRepository.save(currentMember);
     }
 
-    public void likePromotionBoard (Long promotionBoardId) {
+    public void likePromotionBoard (Long promotionBoardId, String authorizationToken) {
 
         PromotionBoard findpromotionBoard = findVerifiedPromotionBoard(promotionBoardId);
-        Member currentMember = memberService.getLoggedinMember();
+        Member currentMember = memberService.getLoggedinMember(authorizationToken);
 
         // 현재 로그인한 사용자가 해당 게시물을 좋아요 했는지 확인
         boolean isAlreadyLiked = currentMember.getLikes().stream()
@@ -352,10 +373,10 @@ public class PromotionBoardService {
         memberRepository.save(currentMember);
     }
 
-    public void unlikePromotionBoard(Long promotionBoardId) {
+    public void unlikePromotionBoard(Long promotionBoardId, String authorizationToken) {
 
         PromotionBoard findPromotionBoard = findVerifiedPromotionBoard(promotionBoardId);
-        Member currentMember = memberService.getLoggedinMember();
+        Member currentMember = memberService.getLoggedinMember(authorizationToken);
 
         // 현재 로그인한 사용자가 해당 게시물을 좋아요 했는지 확인
         Optional<Set<Like>> likes = Optional.ofNullable(currentMember.getLikes());
