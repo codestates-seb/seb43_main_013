@@ -45,9 +45,9 @@ public class TokenService { // 토큰 생성
         String base64EncodedSecretKey = jwtTokenizer.encodeBase64SecretKey(jwtTokenizer.getSecretKey());
 
         String refreshToken = jwtTokenizer.generateRefreshToken(subject, expiration, base64EncodedSecretKey);
-
+        // String -> RefreshToken type
         RefreshToken rtk = new RefreshToken(refreshToken, member.getMemberId());
-
+        //  redis 에 저장
         refreshTokenRepository.save(rtk);
 
         return refreshToken;
