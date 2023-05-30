@@ -18,6 +18,9 @@
 <br />
 
 # 🧑‍💻 Tech Stack
+
+<img src="https://cdn.discordapp.com/attachments/1101063095088058466/1113039308950081616/undefined.png" alt="teck-stack" width="80%" />
+
 ## 🛠️ Tools
 | Git | Github | Discord | Notion | Figma |
 | :---: | :---: | :---: |:---: | :---: |
