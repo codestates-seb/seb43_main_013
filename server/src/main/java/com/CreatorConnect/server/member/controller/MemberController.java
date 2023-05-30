@@ -109,7 +109,7 @@ public class MemberController {
     public ResponseEntity getMember(@PathVariable("member-id") @Positive Long memberId,
                                     HttpServletRequest request) {
 
-        String accessToken = request.getHeader("Authorization").replace("Bearer ", "");
+        String accessToken = request.getHeader("Authorization");
         Member loginMember = memberService.getLoggedinMember(accessToken);
 
         if (loginMember == null) {
@@ -228,7 +228,7 @@ public class MemberController {
                                         @RequestParam(defaultValue = "10") int size,
                                         HttpServletRequest request) {
 
-        String accessToken = request.getHeader("Authorization").replace("Bearer ", "");
+        String accessToken = request.getHeader("Authorization");
 
         // 현재 로그인한 사용자 정보
         Member loginUser = memberService.getLoggedinMember(accessToken);
