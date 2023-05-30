@@ -3,6 +3,8 @@ package com.CreatorConnect.server.board.promotionboard.service;
 import com.CreatorConnect.server.board.categories.category.entity.Category;
 import com.CreatorConnect.server.board.categories.category.repository.CategoryRepository;
 import com.CreatorConnect.server.board.categories.category.service.CategoryService;
+import com.CreatorConnect.server.board.freeboard.dto.FreeBoardDto;
+import com.CreatorConnect.server.board.freeboard.entity.FreeBoard;
 import com.CreatorConnect.server.board.promotionboard.dto.PromotionBoardDto;
 import com.CreatorConnect.server.board.promotionboard.dto.PromotionBoardResponseDto;
 import com.CreatorConnect.server.board.promotionboard.entity.PromotionBoard;
@@ -171,32 +173,13 @@ public class PromotionBoardService {
 
         // 로그인한 멤버
         String accessToken = request.getHeader("Authorization");
-
         Member loggedinMember = null;
-        boolean bookmarked = false;
-        boolean liked = false;
 
-        List<PromotionBoardResponseDto.Details> responses = new ArrayList<>();
-
-        if (accessToken != null){
-
+        if (accessToken != null) {
             loggedinMember = memberService.getLoggedinMember(accessToken);
-
-            for (PromotionBoard promotionBoard : promotionBoards.getContent()) {
-                bookmarked = loggedinMember.getBookmarks().stream()
-                        .anyMatch(bookmark -> promotionBoard.equals(bookmark.getPromotionBoard()));
-
-                liked = loggedinMember.getLikes().stream()
-                        .anyMatch(like -> promotionBoard.equals(like.getPromotionBoard()));
-
-                PromotionBoardResponseDto.Details promotionBoardResponse = mapper.prmotionBoardToPromotionBoardDetailsResponse(promotionBoard);
-                promotionBoardResponse.setBookmarked(bookmarked);
-                promotionBoardResponse.setLiked(liked);
-                responses.add(promotionBoardResponse);
-            }
-        } else {
-            responses = getResponseList(promotionBoards);
         }
+
+        List<PromotionBoardResponseDto.Details> responses = getLoginResponseList(promotionBoards, loggedinMember);
 
         return new PromotionBoardResponseDto.Multi<>(responses, pageInfo);
     }
@@ -210,31 +193,13 @@ public class PromotionBoardService {
 
         // 로그인한 멤버 후 게시글 목록
         String accessToken = request.getHeader("Authorization");
-
         Member loggedinMember = null;
-        boolean bookmarked = false;
-        boolean liked = false;
-
-        List<PromotionBoardResponseDto.Details> responses = new ArrayList<>();
 
         if (accessToken != null) {
             loggedinMember = memberService.getLoggedinMember(accessToken);
-
-            for (PromotionBoard promotionBoard : promotionBoards.getContent()) {
-                bookmarked = loggedinMember.getBookmarks().stream()
-                        .anyMatch(bookmark -> promotionBoard.equals(bookmark.getFeedbackBoard()));
-
-                liked = loggedinMember.getLikes().stream()
-                        .anyMatch(like -> promotionBoard.equals(like.getFeedbackBoard()));
-
-                PromotionBoardResponseDto.Details promotionResponse = mapper.prmotionBoardToPromotionBoardDetailsResponse(promotionBoard);
-                promotionResponse.setBookmarked(bookmarked);
-                promotionResponse.setLiked(liked);
-                responses.add(promotionResponse);
-            }
-        } else {
-            responses = getResponseList(promotionBoards);
         }
+
+        List<PromotionBoardResponseDto.Details> responses = getLoginResponseList(promotionBoards, loggedinMember);
 
         return new PromotionBoardResponseDto.Multi<>(responses, pageInfo);
     }
@@ -277,12 +242,25 @@ public class PromotionBoardService {
         }
     }
     // 태그 적용 메서드
-    private List<PromotionBoardResponseDto.Details> getResponseList(Page<PromotionBoard> promotionBoards) {
+    private List<PromotionBoardResponseDto.Details> getLoginResponseList(Page<PromotionBoard> promotionBoards, Member loggedinMember) {
         return promotionBoards.getContent().stream().map(promotionBoard -> {
             List<TagDto.TagInfo> tags = promotionBoard.getTagBoards().stream()
                     .map(tagToPromotionBoard -> tagMapper.tagToTagToBoard(tagToPromotionBoard.getTag()))
                     .collect(Collectors.toList());
-            return mapper.promotionBoardToResponse(promotionBoard, tags);
+
+            PromotionBoardResponseDto.Details response = mapper.prmotionBoardToPromotionBoardDetailsResponse(promotionBoard);
+            response.setTags(tags);
+
+            if (loggedinMember != null) {
+                boolean bookmarked = loggedinMember.getBookmarks().stream()
+                        .anyMatch(bookmark -> promotionBoard.equals(bookmark.getPromotionBoard()));
+                boolean liked = loggedinMember.getLikes().stream()
+                        .anyMatch(like -> promotionBoard.equals(like.getPromotionBoard()));
+                response.setBookmarked(bookmarked);
+                response.setLiked(liked);
+            }
+
+            return response;
         }).collect(Collectors.toList());
     }
 

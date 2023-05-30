@@ -3,6 +3,8 @@ package com.CreatorConnect.server.board.feedbackboard.service;
 import com.CreatorConnect.server.board.feedbackboard.repository.FeedbackBoardRepository;
 import com.CreatorConnect.server.board.categories.category.entity.Category;
 import com.CreatorConnect.server.board.categories.category.repository.CategoryRepository;
+import com.CreatorConnect.server.board.freeboard.dto.FreeBoardDto;
+import com.CreatorConnect.server.board.freeboard.entity.FreeBoard;
 import com.CreatorConnect.server.exception.BusinessLogicException;
 import com.CreatorConnect.server.exception.ExceptionCode;
 import com.CreatorConnect.server.board.feedbackboard.dto.FeedbackBoardDto;
@@ -192,32 +194,15 @@ public class FeedbackBoardService {
 
         // 로그인한 멤버
         String accessToken = request.getHeader("Authorization");
-
         Member loggedinMember = null;
-        boolean bookmarked = false;
-        boolean liked = false;
 
-        List<FeedbackBoardResponseDto.Details> responses = new ArrayList<>();
-
-        if (accessToken != null){
-
+        if (accessToken != null) {
             loggedinMember = memberService.getLoggedinMember(accessToken);
 
-            for (FeedbackBoard feedbackBoard : feedbackBoardsPage.getContent()) {
-                bookmarked = loggedinMember.getBookmarks().stream()
-                        .anyMatch(bookmark -> feedbackBoard.equals(bookmark.getFeedbackBoard()));
-
-                liked = loggedinMember.getLikes().stream()
-                        .anyMatch(like -> feedbackBoard.equals(like.getFeedbackBoard()));
-
-                FeedbackBoardResponseDto.Details feedbackResponse = mapper.feedbackBoardToFeedbackBoardDetailsResponse(feedbackBoard);
-                feedbackResponse.setBookmarked(bookmarked);
-                feedbackResponse.setLiked(liked);
-                responses.add(feedbackResponse);
-            }
-        } else {
-            responses = getResponseList(feedbackBoardsPage);
         }
+
+        List<FeedbackBoardResponseDto.Details> responses = getLoginResponseList(feedbackBoardsPage, loggedinMember);
+
 
         return new FeedbackBoardResponseDto.Multi<>(responses, pageInfo);
     }
@@ -232,31 +217,15 @@ public class FeedbackBoardService {
 
         // 로그인한 멤버
         String accessToken = request.getHeader("Authorization");
-
         Member loggedinMember = null;
-        boolean bookmarked = false;
-        boolean liked = false;
-
-        List<FeedbackBoardResponseDto.Details> responses = new ArrayList<>();
 
         if (accessToken != null) {
             loggedinMember = memberService.getLoggedinMember(accessToken);
 
-            for (FeedbackBoard feedbackBoard : feedbackBoardsPage.getContent()) {
-                bookmarked = loggedinMember.getBookmarks().stream()
-                        .anyMatch(bookmark -> feedbackBoard.equals(bookmark.getFeedbackBoard()));
-
-                liked = loggedinMember.getLikes().stream()
-                        .anyMatch(like -> feedbackBoard.equals(like.getFeedbackBoard()));
-
-                FeedbackBoardResponseDto.Details feedbackResponse = mapper.feedbackBoardToFeedbackBoardDetailsResponse(feedbackBoard);
-                feedbackResponse.setBookmarked(bookmarked);
-                feedbackResponse.setLiked(liked);
-                responses.add(feedbackResponse);
-            }
-        } else {
-            responses = getResponseList(feedbackBoardsPage);
         }
+
+        List<FeedbackBoardResponseDto.Details> responses = getLoginResponseList(feedbackBoardsPage, loggedinMember);
+
 
         return new FeedbackBoardResponseDto.Multi<>(responses, pageInfo);
     }
@@ -270,31 +239,15 @@ public class FeedbackBoardService {
 
         // 로그인한 멤버
         String accessToken = request.getHeader("Authorization");
-
         Member loggedinMember = null;
-        boolean bookmarked = false;
-        boolean liked = false;
-
-        List<FeedbackBoardResponseDto.Details> responses = new ArrayList<>();
 
         if (accessToken != null) {
             loggedinMember = memberService.getLoggedinMember(accessToken);
 
-            for (FeedbackBoard feedbackBoard : feedbackBoardsPage.getContent()) {
-                bookmarked = loggedinMember.getBookmarks().stream()
-                        .anyMatch(bookmark -> feedbackBoard.equals(bookmark.getFeedbackBoard()));
-
-                liked = loggedinMember.getLikes().stream()
-                        .anyMatch(like -> feedbackBoard.equals(like.getFeedbackBoard()));
-
-                FeedbackBoardResponseDto.Details feedbackResponse = mapper.feedbackBoardToFeedbackBoardDetailsResponse(feedbackBoard);
-                feedbackResponse.setBookmarked(bookmarked);
-                feedbackResponse.setLiked(liked);
-                responses.add(feedbackResponse);
-            }
-        } else {
-            responses = getResponseList(feedbackBoardsPage);
         }
+
+        List<FeedbackBoardResponseDto.Details> responses = getLoginResponseList(feedbackBoardsPage, loggedinMember);
+
 
         return new FeedbackBoardResponseDto.Multi<>(responses, pageInfo);
     }
@@ -310,31 +263,15 @@ public class FeedbackBoardService {
 
         // 로그인한 멤버
         String accessToken = request.getHeader("Authorization");
-
         Member loggedinMember = null;
-        boolean bookmarked = false;
-        boolean liked = false;
-
-        List<FeedbackBoardResponseDto.Details> responses = new ArrayList<>();
 
         if (accessToken != null) {
             loggedinMember = memberService.getLoggedinMember(accessToken);
 
-            for (FeedbackBoard feedbackBoard : feedbackBoardsPage.getContent()) {
-                bookmarked = loggedinMember.getBookmarks().stream()
-                        .anyMatch(bookmark -> feedbackBoard.equals(bookmark.getFeedbackBoard()));
-
-                liked = loggedinMember.getLikes().stream()
-                        .anyMatch(like -> feedbackBoard.equals(like.getFeedbackBoard()));
-
-                FeedbackBoardResponseDto.Details feedbackResponse = mapper.feedbackBoardToFeedbackBoardDetailsResponse(feedbackBoard);
-                feedbackResponse.setBookmarked(bookmarked);
-                feedbackResponse.setLiked(liked);
-                responses.add(feedbackResponse);
-            }
-        } else {
-            responses = getResponseList(feedbackBoardsPage);
         }
+
+        List<FeedbackBoardResponseDto.Details> responses = getLoginResponseList(feedbackBoardsPage, loggedinMember);
+
 
         return new FeedbackBoardResponseDto.Multi<>(responses, pageInfo);
     }
@@ -381,12 +318,25 @@ public class FeedbackBoardService {
     }
 
     // Response 에 각 게시글의 태그 적용 메서드
-    private List<FeedbackBoardResponseDto.Details> getResponseList(Page<FeedbackBoard> feedbackBoards) {
+    private List<FeedbackBoardResponseDto.Details> getLoginResponseList(Page<FeedbackBoard> feedbackBoards, Member loggedinMember) {
         return feedbackBoards.getContent().stream().map(feedbackBoard -> {
             List<TagDto.TagInfo> tags = feedbackBoard.getTagBoards().stream()
-                    .map(tagToFreeBoard -> tagMapper.tagToTagToBoard(tagToFreeBoard.getTag()))
+                    .map(tagToFeedbackBoard -> tagMapper.tagToTagToBoard(tagToFeedbackBoard.getTag()))
                     .collect(Collectors.toList());
-            return mapper.feedbackBoardToResponse(feedbackBoard, tags);
+
+            FeedbackBoardResponseDto.Details response = mapper.feedbackBoardToFeedbackBoardDetailsResponse(feedbackBoard);
+            response.setTags(tags);
+
+            if (loggedinMember != null) {
+                boolean bookmarked = loggedinMember.getBookmarks().stream()
+                        .anyMatch(bookmark -> feedbackBoard.equals(bookmark.getFeedbackBoard()));
+                boolean liked = loggedinMember.getLikes().stream()
+                        .anyMatch(like -> feedbackBoard.equals(like.getFeedbackBoard()));
+                response.setBookmarked(bookmarked);
+                response.setLiked(liked);
+            }
+
+            return response;
         }).collect(Collectors.toList());
     }
 
