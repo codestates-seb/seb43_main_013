@@ -35,19 +35,19 @@ const RankClose: RankModalProps = ({ rankBind, curRank }) => {
   };
 
   return (
-    <div className="flex justify-between cursor-pointer absolute top-4 right-0 h-full overflow-hidden">
-      <button
-        className="flex flex-col animate-spin-slow"
-        onClick={() => {
-          if (rankModal) setRankModal(false);
-          else setRankModal(true);
-        }}
-      >
-        <div className="flex hover:text-main-400">
-          <div className="text-xl">1</div>
-          <div className="text-xl">{curRank[0]}</div>
-        </div>
-        {/* {curRank.map((item, idx) => {
+    // <div className="flex justify-between cursor-pointer absolute top-4 right-0 h-full overflow-hidden">
+    // <div className="flex justify-between cursor-pointer relative w-32">
+    <button
+      // className="flex flex-col animate-spin-slow"
+      className="flex justify-between cursor-pointer relative hover:text-main-400 w-40 pr-3"
+      onClick={() => {
+        if (rankModal) setRankModal(false);
+        else setRankModal(true);
+      }}
+    >
+      <div className="text-xl">1</div>
+      <div className="text-xl">{curRank[0]}</div>
+      {/* {curRank.map((item, idx) => {
           return (
             <div className="flex hover:text-main-400">
               <div className="text-xl mb-2">{idx + 1}</div>
@@ -55,8 +55,8 @@ const RankClose: RankModalProps = ({ rankBind, curRank }) => {
             </div>
           );
         })} */}
-      </button>
-    </div>
+    </button>
+    // </div>
   );
 };
 
