@@ -64,9 +64,10 @@ public class FeedbackBoardController {
     public ResponseEntity getFeedbacksByFeedbackCategory(@PathVariable("feedbackCategoryId") @Positive Long feedbackCategoryId,
                                                          @RequestParam("sort") String sort,
                                                          @RequestParam("page") @Positive int page,
-                                                         @RequestParam("size") @Positive int size) {
+                                                         @RequestParam("size") @Positive int size,
+                                                         HttpServletRequest request) {
 
-        FeedbackBoardResponseDto.Multi response = feedbackBoardService.responseFeedbacksByCategory(feedbackCategoryId, sort, page, size);
+        FeedbackBoardResponseDto.Multi response = feedbackBoardService.responseFeedbacksByCategory(feedbackCategoryId, sort, page, size, request);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -76,9 +77,10 @@ public class FeedbackBoardController {
     public ResponseEntity getFeedbacksByCategory(@PathVariable("categoryId") @Positive Long categoryId,
                                                  @RequestParam("sort") String sort,
                                                  @RequestParam("page") @Positive int page,
-                                                 @RequestParam("size") @Positive int size) {
+                                                 @RequestParam("size") @Positive int size,
+                                                 HttpServletRequest request) {
 
-        FeedbackBoardResponseDto.Multi response = feedbackBoardService.responseFeedbacksByFeedbackCategory(categoryId, sort, page, size);
+        FeedbackBoardResponseDto.Multi response = feedbackBoardService.responseFeedbacksByFeedbackCategory(categoryId, sort, page, size, request);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -89,9 +91,10 @@ public class FeedbackBoardController {
                                                          @PathVariable("categoryId") @Positive Long categoryId,
                                                          @RequestParam("sort") String sort,
                                                          @RequestParam("page") @Positive int page,
-                                                         @RequestParam("size") @Positive int size) {
+                                                         @RequestParam("size") @Positive int size,
+                                                                    HttpServletRequest request) {
 
-        FeedbackBoardResponseDto.Multi response = feedbackBoardService.responseFeedbacksByCategory(feedbackCategoryId, categoryId, sort, page, size);
+        FeedbackBoardResponseDto.Multi response = feedbackBoardService.responseFeedbacksByCategory(feedbackCategoryId, categoryId, sort, page, size, request);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -118,7 +121,7 @@ public class FeedbackBoardController {
     public ResponseEntity unlikeFeedbackBoard (@PathVariable("feedbackBoardId") @Positive Long feedbackBoardId,
                                                @RequestHeader(value = "Authorization") String authorizationToken) {
 
-        feedbackBoardService.unlike(feedbackBoardId);
+        feedbackBoardService.unlike(feedbackBoardId, authorizationToken);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -127,7 +130,7 @@ public class FeedbackBoardController {
     public ResponseEntity bookmarkFeedbackBoard (@PathVariable("feedbackBoardId") @Positive Long feedbackBoardId,
                                                  @RequestHeader(value = "Authorization") String authorizationToken) {
 
-        feedbackBoardService.bookmarkFeedbackBoard(feedbackBoardId);
+        feedbackBoardService.bookmarkFeedbackBoard(feedbackBoardId, authorizationToken);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -136,7 +139,7 @@ public class FeedbackBoardController {
     public ResponseEntity unbookmarkFeedbackBoard (@PathVariable("feedbackBoardId") @Positive Long feedbackBoardId,
                                                    @RequestHeader(value = "Authorization") String authorizationToken) {
 
-        feedbackBoardService.unbookmarkFeedbackBoard(feedbackBoardId);
+        feedbackBoardService.unbookmarkFeedbackBoard(feedbackBoardId, authorizationToken);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

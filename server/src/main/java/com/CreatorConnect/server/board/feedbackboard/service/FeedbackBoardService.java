@@ -63,11 +63,11 @@ public class FeedbackBoardService {
         // 카테고리 추가
         Optional<Category> category = categoryRepository.findByCategoryName(postDto.getCategoryName());
         feedbackBoard.setCategory(category.orElseThrow(() -> new BusinessLogicException(ExceptionCode.CATEGORY_NOT_FOUND)));
-        //피드백 카테고리 추가
+        // 피드백 카테고리 추가
         Optional<FeedbackCategory> feedbackCategory = feedbackCategoryRepository.findByFeedbackCategoryName(postDto.getFeedbackCategoryName());
         feedbackBoard.setFeedbackCategory(feedbackCategory.orElseThrow(() -> new BusinessLogicException(ExceptionCode.FEEDBACK_CATEGORY_NOT_FOUND)));
 
-        //저장
+        // 저장
         FeedbackBoard savedfeedbackBoard = feedbackBoardRepository.save(feedbackBoard);
 
         // 태그 저장
@@ -147,23 +147,29 @@ public class FeedbackBoardService {
 
         // 로그인한 멤버
         String accessToken = request.getHeader("Authorization");
-        boolean isLoggedIn = accessToken != null && accessToken.startsWith("Bearer ");
 
         Member loggedinMember = null;
         boolean bookmarked = false;
         boolean liked = false;
 
-        if (isLoggedIn) {
-            accessToken = accessToken.replace("Bearer ", "");
+        // 로그인 여부 확인
+        if (accessToken != null) {
+            // 로그인 했을 때
             loggedinMember = memberService.getLoggedinMember(accessToken);
 
-            // 게시물을 북마크한 경우
-            bookmarked = loggedinMember.getBookmarks().stream()
-                    .anyMatch(bookmark -> foundFeedbackBoard.equals(bookmark.getFeedbackBoard()));
+            if (loggedinMember != null) {
+                // 게시물을 북마크한 경우
+                if (loggedinMember.getBookmarks() != null) {
+                    bookmarked = loggedinMember.getBookmarks().stream()
+                            .anyMatch(bookmark -> foundFeedbackBoard.equals(bookmark.getFeedbackBoard()));
+                }
 
-            // 게시물을 좋아요한 경우
-            liked = loggedinMember.getLikes().stream()
-                    .anyMatch(like -> foundFeedbackBoard.equals(like.getFeedbackBoard()));
+                // 게시물을 좋아요한 경우
+                if (loggedinMember.getLikes() != null) {
+                    liked = loggedinMember.getLikes().stream()
+                            .anyMatch(like -> foundFeedbackBoard.equals(like.getFeedbackBoard()));
+                }
+            }
         }
 
         // 매핑
@@ -186,7 +192,6 @@ public class FeedbackBoardService {
 
         // 로그인한 멤버
         String accessToken = request.getHeader("Authorization");
-        boolean isLoggedIn = accessToken != null && accessToken.startsWith("Bearer ");
 
         Member loggedinMember = null;
         boolean bookmarked = false;
@@ -194,8 +199,8 @@ public class FeedbackBoardService {
 
         List<FeedbackBoardResponseDto.Details> responses = new ArrayList<>();
 
-        if (isLoggedIn) {
-            accessToken = accessToken.replace("Bearer ", "");
+        if (accessToken != null){
+
             loggedinMember = memberService.getLoggedinMember(accessToken);
 
             for (FeedbackBoard feedbackBoard : feedbackBoardsPage.getContent()) {
@@ -225,18 +230,23 @@ public class FeedbackBoardService {
         // pageInfo 가져오기
         FeedbackBoardResponseDto.PageInfo pageInfo = new FeedbackBoardResponseDto.PageInfo(feedbackBoardsPage.getNumber() + 1, feedbackBoardsPage.getSize(), feedbackBoardsPage.getTotalElements(), feedbackBoardsPage.getTotalPages());
 
-        // 로그인한 멤버 후 게시글 목록
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        // 로그인한 멤버
+        String accessToken = request.getHeader("Authorization");
+
+        Member loggedinMember = null;
+        boolean bookmarked = false;
+        boolean liked = false;
+
         List<FeedbackBoardResponseDto.Details> responses = new ArrayList<>();
 
-        if (authentication != null && authentication.isAuthenticated() && !"anonymousUser".equals(authentication.getName())) {
-            Member loggedinMember = memberService.findVerifiedMember(authentication.getName());
+        if (accessToken != null) {
+            loggedinMember = memberService.getLoggedinMember(accessToken);
 
             for (FeedbackBoard feedbackBoard : feedbackBoardsPage.getContent()) {
-                boolean bookmarked = loggedinMember.getBookmarks().stream()
+                bookmarked = loggedinMember.getBookmarks().stream()
                         .anyMatch(bookmark -> feedbackBoard.equals(bookmark.getFeedbackBoard()));
 
-                boolean liked = loggedinMember.getLikes().stream()
+                liked = loggedinMember.getLikes().stream()
                         .anyMatch(like -> feedbackBoard.equals(like.getFeedbackBoard()));
 
                 FeedbackBoardResponseDto.Details feedbackResponse = mapper.feedbackBoardToFeedbackBoardDetailsResponse(feedbackBoard);
@@ -251,25 +261,30 @@ public class FeedbackBoardService {
         return new FeedbackBoardResponseDto.Multi<>(responses, pageInfo);
     }
 
-    public FeedbackBoardResponseDto.Multi<FeedbackBoardResponseDto.Details> responseFeedbacksByFeedbackCategory(Long categoryId, String sort, int page, int size){
+    public FeedbackBoardResponseDto.Multi<FeedbackBoardResponseDto.Details> responseFeedbacksByFeedbackCategory(Long categoryId, String sort, int page, int size, HttpServletRequest request){
         // page생성 - 카테고리 ID로 검색 후 정렬 적용
         Page<FeedbackBoard> feedbackBoardsPage = feedbackBoardRepository.findFeedbackBoardsByCategoryId(categoryId, sortedPageRequest(sort, page, size));
 
         // pageInfo 가져오기
         FeedbackBoardResponseDto.PageInfo pageInfo = new FeedbackBoardResponseDto.PageInfo(feedbackBoardsPage.getNumber() + 1, feedbackBoardsPage.getSize(), feedbackBoardsPage.getTotalElements(), feedbackBoardsPage.getTotalPages());
 
-        // 로그인한 멤버 후 게시글 목록
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        // 로그인한 멤버
+        String accessToken = request.getHeader("Authorization");
+
+        Member loggedinMember = null;
+        boolean bookmarked = false;
+        boolean liked = false;
+
         List<FeedbackBoardResponseDto.Details> responses = new ArrayList<>();
 
-        if (authentication != null && authentication.isAuthenticated() && !"anonymousUser".equals(authentication.getName())) {
-            Member loggedinMember = memberService.findVerifiedMember(authentication.getName());
+        if (accessToken != null) {
+            loggedinMember = memberService.getLoggedinMember(accessToken);
 
             for (FeedbackBoard feedbackBoard : feedbackBoardsPage.getContent()) {
-                boolean bookmarked = loggedinMember.getBookmarks().stream()
+                bookmarked = loggedinMember.getBookmarks().stream()
                         .anyMatch(bookmark -> feedbackBoard.equals(bookmark.getFeedbackBoard()));
 
-                boolean liked = loggedinMember.getLikes().stream()
+                liked = loggedinMember.getLikes().stream()
                         .anyMatch(like -> feedbackBoard.equals(like.getFeedbackBoard()));
 
                 FeedbackBoardResponseDto.Details feedbackResponse = mapper.feedbackBoardToFeedbackBoardDetailsResponse(feedbackBoard);
@@ -286,25 +301,30 @@ public class FeedbackBoardService {
 
 
     // 피드백 카테고리 - 카테고리별 목록 조회
-    public FeedbackBoardResponseDto.Multi<FeedbackBoardResponseDto.Details> responseFeedbacksByCategory(Long feedbackCategoryId, Long categoryId, String sort, int page, int size){
+    public FeedbackBoardResponseDto.Multi<FeedbackBoardResponseDto.Details> responseFeedbacksByCategory(Long feedbackCategoryId, Long categoryId, String sort, int page, int size, HttpServletRequest request){
         // page생성 - 피드백 카테고리 ID 와 카테고리 ID로 검색 후 정렬 적용
         Page<FeedbackBoard> feedbackBoardsPage = feedbackBoardRepository.findFeedbackBoardsByFeedbackCategoryIdAndCategoryId(feedbackCategoryId, categoryId, sortedPageRequest(sort, page, size));
 
         // pageInfo 가져오기
         FeedbackBoardResponseDto.PageInfo pageInfo = new FeedbackBoardResponseDto.PageInfo(feedbackBoardsPage.getNumber() + 1, feedbackBoardsPage.getSize(), feedbackBoardsPage.getTotalElements(), feedbackBoardsPage.getTotalPages());
 
-        // 로그인한 멤버 조회 후 게시글 목록
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        // 로그인한 멤버
+        String accessToken = request.getHeader("Authorization");
+
+        Member loggedinMember = null;
+        boolean bookmarked = false;
+        boolean liked = false;
+
         List<FeedbackBoardResponseDto.Details> responses = new ArrayList<>();
 
-        if (authentication != null && authentication.isAuthenticated() && !"anonymousUser".equals(authentication.getName())) {
-            Member loggedinMember = memberService.findVerifiedMember(authentication.getName());
+        if (accessToken != null) {
+            loggedinMember = memberService.getLoggedinMember(accessToken);
 
             for (FeedbackBoard feedbackBoard : feedbackBoardsPage.getContent()) {
-                boolean bookmarked = loggedinMember.getBookmarks().stream()
+                bookmarked = loggedinMember.getBookmarks().stream()
                         .anyMatch(bookmark -> feedbackBoard.equals(bookmark.getFeedbackBoard()));
 
-                boolean liked = loggedinMember.getLikes().stream()
+                liked = loggedinMember.getLikes().stream()
                         .anyMatch(like -> feedbackBoard.equals(like.getFeedbackBoard()));
 
                 FeedbackBoardResponseDto.Details feedbackResponse = mapper.feedbackBoardToFeedbackBoardDetailsResponse(feedbackBoard);
@@ -401,10 +421,10 @@ public class FeedbackBoardService {
         memberRepository.save(currentMember);
     }
 
-    public void unlike(Long feedbackBoardId) {
+    public void unlike(Long feedbackBoardId, String authorizationToken) {
 
         FeedbackBoard findfeedbackBoard = findVerifiedFeedbackBoard(feedbackBoardId);
-        Member currentMember = memberService.getLoggedinMember();
+        Member currentMember = memberService.getLoggedinMember(authorizationToken);
 
         // 현재 로그인한 사용자가 해당 게시물을 좋아요 했는지 확인
         Optional<Set<Like>> likes = Optional.ofNullable(currentMember.getLikes());
@@ -433,10 +453,10 @@ public class FeedbackBoardService {
         memberRepository.save(currentMember);
     }
 
-    public void bookmarkFeedbackBoard(Long feedbackBoardId) {
+    public void bookmarkFeedbackBoard(Long feedbackBoardId, String authorizationToken) {
 
         FeedbackBoard findfeedbackBoard = findVerifiedFeedbackBoard(feedbackBoardId);
-        Member currentMember = memberService.getLoggedinMember();
+        Member currentMember = memberService.getLoggedinMember(authorizationToken);
 
         // 현재 로그인한 사용자가 해당 게시물을 북마크 했는지 확인
         boolean isAlreadyBookMarked = currentMember.getBookmarks().stream()
@@ -460,10 +480,10 @@ public class FeedbackBoardService {
         memberRepository.save(currentMember);
     }
 
-    public void unbookmarkFeedbackBoard(Long feedbackBoardId) {
+    public void unbookmarkFeedbackBoard(Long feedbackBoardId, String authorizationToken) {
 
         FeedbackBoard feedbackBoard = findVerifiedFeedbackBoard(feedbackBoardId);
-        Member currentMember = memberService.getLoggedinMember();
+        Member currentMember = memberService.getLoggedinMember(authorizationToken);
 
         // 현재 로그인한 사용자가 해당 게시물을 북마크 했는지 확인
         Optional<Set<Bookmark>> bookmarks = Optional.ofNullable(currentMember.getBookmarks());
