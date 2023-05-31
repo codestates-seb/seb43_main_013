@@ -58,6 +58,10 @@
 
 ## 📌 팀 소개 및 구현 기능
 
+![image](https://github.com/codestates-seb/seb43_main_013/assets/120197266/0b091f7f-51bc-49bd-bc10-8476b70e76b4)
+
+<br />
+
 ### 📤 BackEnd
 
 |[홍승현 (BE) (팀장)](https://github.com/seunghyun711)|[임종영 (BE)](https://github.com/lim3873)|[윤영우 (BE)](https://github.com/happy-camel)|[이미연 (BE)](https://github.com/leemiyeonn)|
