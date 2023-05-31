@@ -16,7 +16,7 @@ const LoginSide = ({ nickState }: { nickState: [boolean, React.Dispatch<boolean>
 
   useEffect(() => {
     const memberState = localStorage.getItem("member");
-    const nickname = memberState ? JSON.parse(memberState).name : "비회원";
+    const nickname = memberState ? JSON.parse(memberState).nickname : "비회원";
     const profile = memberState ? JSON.parse(memberState).profileImageUrl : false;
     setNickName(nickname);
     setProfileSrc(profile);
