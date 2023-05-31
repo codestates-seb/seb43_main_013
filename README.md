@@ -1,8 +1,10 @@
-# 🎞️ Creator Connect
+## 🎞️ Creator Connect
 + 👀 팀명: 13일의 금요일
 + ⏱️ 프로젝트 기간: `2023/04/28 ~ 2023/05/30`
 + ✏️ 한줄 소개: 초보 유튜버들이 소통하기 위한 커뮤니티
 + ⛓️ 배포 링크: [프로젝트 결과물](https://www.hard-coding.com)
+
+<br />
 
 ## 🧑‍💻 구현 기능
 1. 로그인 / 회원가입 / OAuth ( 구글, 카카오, 네이버 )
@@ -17,9 +19,11 @@
 
 <br />
 
-# 🧑‍💻 Tech Stack
+## 🧑‍💻 Tech Stack
 
 <img src="https://cdn.discordapp.com/attachments/1101063095088058466/1113039308950081616/undefined.png" alt="teck-stack" width="80%" />
+
+<br />
 
 ## 🛠️ Tools
 | Git | Github | Discord | Notion | Figma |
@@ -28,7 +32,7 @@
 
 <br />
 
-## 📥 FrontEnd
+### 📥 FrontEnd
 
 | TypeScript | React | Next.js | React-Query | Zustand | TailwindCss | Vercel |
 |:---:|:---:|:---:|:---:|:---:|:---:|:---:|
@@ -36,7 +40,7 @@
 
 <br />
 
-## 📤 BackEnd
+### 📤 BackEnd
 
 | Java 11 | Spring<br> Boot | Spring<br> Security | Gradle | MySQL | Redis | OAuth2 | JWT | thymeleaf | JPA |
 | :---: | :---:  | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
@@ -44,7 +48,7 @@
 
 <br />
 
-## 🚀 DevOps
+### 🚀 DevOps
 
 | AWS-EC2 | AWS-RDS | CodeDeploy | AWS-S3 | GitHub <br /> Actions | 
 | :---: | :---: | :---: | :---: | :---: |
@@ -52,9 +56,9 @@
 
 <br />
 
-# 📌 팀 소개 및 구현 기능
+## 📌 팀 소개 및 구현 기능
 
-## 📤 BackEnd
+### 📤 BackEnd
 
 |[홍승현 (BE) (팀장)](https://github.com/seunghyun711)|[임종영 (BE)](https://github.com/lim3873)|[윤영우 (BE)](https://github.com/happy-camel)|[이미연 (BE)](https://github.com/leemiyeonn)|
 |:--:|:--:|:--:|:--:|
@@ -63,7 +67,7 @@
 
 <br />
 
-## 📥 FrontEnd
+### 📥 FrontEnd
 
 |[김형욱 (FE) (팀장)](https://github.com/Kadesti)|[이호승 (FE)](https://github.com/leekoby)|[박상은 (FE)](https://github.com/1-blue)|
 |:--:|:--:|:--:|
@@ -72,7 +76,7 @@
 
 <br />
 
-# 💡 문서
+## 💡 문서
 1. [요구사항 정의서](https://docs.google.com/spreadsheets/d/1jxEzFm5AWrKZUcNSUWP9KveuJsD1YfrdaPoQd-U-w7w/edit?usp=sharing)
 2. [API 명세서](https://youtube-community.gitbook.io/youtube-community/)
 3. [테이블 명세서 + ERD](https://dbdiagram.io/d/644f4bc0dca9fb07c44b79e3)
