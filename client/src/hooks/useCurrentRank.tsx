@@ -6,7 +6,7 @@ const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 type rank = (setCurRank: React.Dispatch<string[]>) => void;
 const useCurrentRank: rank = (setCurRank) => {
   const currentRank = async () => {
-    const rankArr = await axios.get(`${baseUrl}/api/keyword/daily`);
+    const rankArr = await axios.get(`${baseUrl}/api/keyword/daily?page=1&size=10`);
     return rankArr.data.data;
   };
   currentRank().then((res) => setCurRank(res));

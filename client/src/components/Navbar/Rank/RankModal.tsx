@@ -30,19 +30,19 @@ const RankModal: RankModalProps = ({ rankBind, curRank }) => {
 
   return (
     <div
-      className="flex flex-col p-3 absolute w-32 right-0 top-14 cursor-pointer bg-white shadow-xl rounded-b-lg z-10"
+      className="flex flex-col p-3 absolute w-44 right-0 top-14 cursor-pointer bg-white shadow-xl rounded-b-lg z-10"
       ref={modalRef}
     >
       {curRank.map((data, idx) => {
         const last = idx === lastIdx ? "" : "mb-2";
         return (
           <div
-            className={`flex justify-between ${last}`}
+            className={`flex justify-between ${last} hover:text-main-400 hover:border-b-2 h-7`}
             onClick={() => router.push(`/search?keyword=${data}`)}
             key={idx}
           >
-            <div className="text-xl">{idx + 1}</div>
-            <div className="text-xl">{data}</div>
+            <div className="text-xl mr-4">{idx + 1}</div>
+            <div className="text-xl truncate">{data}</div>
           </div>
         );
       })}
