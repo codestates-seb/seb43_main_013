@@ -16,9 +16,9 @@ const LoginSide = ({ nickState }: { nickState: [boolean, React.Dispatch<boolean>
 
   useEffect(() => {
     const memberState = localStorage.getItem("member");
-    const name = memberState ? JSON.parse(memberState).nickname : "비회원";
+    const nickname = memberState ? JSON.parse(memberState).name : "비회원";
     const profile = memberState ? JSON.parse(memberState).profileImageUrl : false;
-    setNickName(name);
+    setNickName(nickname);
     setProfileSrc(profile);
   }, []);
 
@@ -29,10 +29,10 @@ const LoginSide = ({ nickState }: { nickState: [boolean, React.Dispatch<boolean>
         className="break-keep flex items-center cursor-pointer hover:text-slate-400 mr-2 relative"
       >
         <Avatar src={profileSrc || ""} className="mr-2 w-10 h-10" />
-        <span className="mr-2 text-2xl cursor-pointer">{nickName}</span>
+        <span className="mr-2 text-2xl cursor-pointer whitespace-nowrap">{nickName.slice(0, 8)}...</span>
         {nickModal ? (
           <>
-            <NickModal />
+            <NickModal setNickModal={setNickModal} />
             <ChevronUpIcon className="w-7 cursor-pointer" />
           </>
         ) : (

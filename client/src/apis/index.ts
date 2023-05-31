@@ -16,7 +16,7 @@ serverInstance.interceptors.request.use(function (config) {
     config.headers.Authorization = `${accessToken}`;
   }
   if (refreshToken) {
-    // config.headers.refresh = refreshToken;
+    config.headers["Refresh-Token"] = refreshToken; // Refresh-Token
   }
 
   return config;
