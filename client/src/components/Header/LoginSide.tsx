@@ -29,7 +29,10 @@ const LoginSide = ({ nickState }: { nickState: [boolean, React.Dispatch<boolean>
         className="break-keep flex items-center cursor-pointer hover:text-slate-400 mr-2 relative"
       >
         <Avatar src={profileSrc || ""} className="mr-2 w-10 h-10" />
-        <span className="mr-2 text-2xl cursor-pointer">{nickName}</span>
+        <span className="mr-2 text-2xl cursor-pointer whitespace-nowrap">
+          {nickName.slice(0, 8)}
+          {nickName.length >= 9 && "..."}
+        </span>
         {nickModal ? (
           <>
             <NickModal />
