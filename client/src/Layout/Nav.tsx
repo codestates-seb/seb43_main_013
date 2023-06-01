@@ -5,11 +5,11 @@ import { useEffect, useState } from "react";
 import MobileModal from "@/components/Navbar/MobileModal";
 
 interface Nav {
-  ({ mobileBind }: { mobileBind: [boolean, React.Dispatch<boolean>] }): JSX.Element;
+  mobileBind: [boolean, React.Dispatch<boolean>];
 }
 
 /** 2023/05/04 - 네브 컴포넌트 - by Kadesti */
-const Nav: Nav = ({ mobileBind }) => {
+const Nav: React.FC<Nav> = ({ mobileBind }) => {
   const [isMobileOpen, setMobileOpen] = mobileBind;
   const [nickName, setNickName] = useState("");
   const [profileSrc, setProfileSrc] = useState("");

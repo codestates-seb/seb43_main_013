@@ -12,14 +12,13 @@ import SearchSide from "../components/Header/SearchSide";
 import headerArr from "../components/Header/HeaderArr";
 
 import { Bars3Icon } from "@heroicons/react/24/solid";
-import { XMarkIcon } from "@heroicons/react/20/solid";
 
 interface Header {
-  ({ mobileBind }: { mobileBind: [boolean, React.Dispatch<boolean>] }): JSX.Element;
+  mobileBind: [boolean, React.Dispatch<boolean>];
 }
 
 /** 2023/05/04 - 헤더 컴포넌트 - by Kadesti */
-const Header: Header = ({ mobileBind }) => {
+const Header: React.FC<Header> = ({ mobileBind }) => {
   const [isMobileOpen, setMobileOpen] = mobileBind;
   const [hasToken, setHasToken] = useState(false);
   const { accessToken } = useTokenStore();
