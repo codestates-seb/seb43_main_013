@@ -72,7 +72,10 @@ const NickModal: React.FC<Props> = ({ setNickModal }) => {
   }, [setNickModal]);
 
   return (
-    <ul ref={modalRef} className="w-full p-3 bg-main-400 text-white absolute mt-48 z-10 rounded-xl flex flex-col">
+    <ul
+      ref={modalRef}
+      className="w-full p-3 bg-main-400 text-white absolute right-0 mt-10 z-10 rounded-xl flex flex-col"
+    >
       <Link href={memberLink} className="cursor-pointer hover:text-black text-xl mb-2">
         내 정보
       </Link>

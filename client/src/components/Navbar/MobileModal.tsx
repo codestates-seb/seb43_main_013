@@ -20,7 +20,7 @@ const MobileModal: React.FC<MobileModal> = ({ profileSrc, nickName, setMobileOpe
         className="w-full h-32 flex flex-col justify-center items-center mt-4 mb-16"
       >
         <Avatar src={profileSrc || ""} className="mr-2 mb-3 w-16 h-16" />
-        <div className="w-44 relative flex justify-center">
+        <div className="w-32 relative flex justify-center">
           <span className="mr-2 text-4xl cursor-pointer relative">{nickName}</span>
           <NameButton nickState={nickState} />
         </div>
