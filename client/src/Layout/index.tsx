@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 // store
 import { useLoadingStore } from "@/store";
@@ -17,6 +17,7 @@ import FullSpinner from "@/components/Spinner/FullSpinner";
 const Layout: React.FC<React.PropsWithChildren> = ({ children }) => {
   const { isLoading } = useLoadingStore((state) => state);
   const { setMember } = useMemberStore();
+  const mobileBind = useState(false);
 
   /** 2023/05/16 - 로그인한 유저 데이터 전역 상태에 저장 - by 1-blue */
   useEffect(() => {
@@ -29,8 +30,8 @@ const Layout: React.FC<React.PropsWithChildren> = ({ children }) => {
 
   return (
     <>
-      <Header />
-      <Nav />
+      <Header mobileBind={mobileBind} />
+      <Nav mobileBind={mobileBind} />
       <Main>{children}</Main>
       {/* <Footer /> */}
       {isLoading && <FullSpinner />}

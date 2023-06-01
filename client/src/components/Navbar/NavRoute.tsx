@@ -42,16 +42,16 @@ const NavRoute = () => {
   const pathname = usePathname();
 
   return (
-    <ul className="flex">
+    <ul className="flex flex-col px-3 md:flex-row">
       {link.map((item) => {
         const { name, link } = item;
         const actStyle = pathname.includes(link) ? "text-main-400 border-b-2 border-b-main-400" : "";
 
         return (
-          <Link href={link} key={link}>
+          <Link href={link} key={link} className="md:flex md:items-center">
             <li
               onClick={handleResetClick}
-              className={`cursor-pointer text-xl text-black hover:text-rose-400 h-8 mr-14 ${actStyle}`}
+              className={`cursor-pointer text-xl text-black hover:text-main-400 hover:border-b-2 hover:border-b-main-400 h-8 md:mr-14 mb-4 md:mb-0 ${actStyle}`}
             >
               {name}
             </li>

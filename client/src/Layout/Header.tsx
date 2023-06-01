@@ -11,8 +11,16 @@ import HeaderLogo from "../components/Header/HeaderLogo";
 import SearchSide from "../components/Header/SearchSide";
 import headerArr from "../components/Header/HeaderArr";
 
+import { Bars3Icon } from "@heroicons/react/24/solid";
+import { XMarkIcon } from "@heroicons/react/20/solid";
+
+interface Header {
+  ({ mobileBind }: { mobileBind: [boolean, React.Dispatch<boolean>] }): JSX.Element;
+}
+
 /** 2023/05/04 - 헤더 컴포넌트 - by Kadesti */
-const Header: React.FC = () => {
+const Header: Header = ({ mobileBind }) => {
+  const [isMobileOpen, setMobileOpen] = mobileBind;
   const [hasToken, setHasToken] = useState(false);
   const { accessToken } = useTokenStore();
 
@@ -27,11 +35,14 @@ const Header: React.FC = () => {
   return (
     <header className="bg-white h-[96px] border-b-4 flex justify-center">
       <AuthCheck />
-      <div className="flex w-full max-w-[1440px] items-center">
+      <div className="flex w-full max-w-[1440px] items-center px-4">
         <HeaderLogo />
         <SearchSide array={leftArr} />
         <SearchDiv />
         {hasToken ? <LoginSide nickState={nickState} /> : <SearchSide array={rightArr} />}
+        <button className="md:hidden hover:cursor-pointer">
+          <Bars3Icon className="w-11 min-w-[30px] hover:bg-main-300" onClick={() => setMobileOpen(true)} />
+        </button>
       </div>
     </header>
   );
