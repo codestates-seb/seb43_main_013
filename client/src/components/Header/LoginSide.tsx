@@ -1,8 +1,7 @@
 import React from "react";
-import { ChevronUpIcon, ChevronDownIcon } from "../HeaderIcon";
-import NickModal from "./NickModal";
 import { useEffect, useState } from "react";
 import Avatar from "../Avatar";
+import NameButton from "./NameButton";
 
 /**
  * 2023/05/10 - 로그인 상태의 검색창 우측 메뉴 - by Kadesti
@@ -23,21 +22,14 @@ const LoginSide = ({ nickState }: { nickState: [boolean, React.Dispatch<boolean>
   }, []);
 
   return (
-    <div className="flex items-center">
+    <div className="hidden md:flex items-center">
       <div
         onClick={() => setNickModal(!nickModal)}
         className="break-keep flex items-center cursor-pointer hover:text-slate-400 mr-2 relative"
       >
         <Avatar src={profileSrc || ""} className="mr-2 w-10 h-10" />
         <span className="mr-2 text-2xl cursor-pointer">{nickName}</span>
-        {nickModal ? (
-          <>
-            <NickModal />
-            <ChevronUpIcon className="w-7 cursor-pointer" />
-          </>
-        ) : (
-          <ChevronDownIcon className="w-7 cursor-pointer" />
-        )}
+        <NameButton nickModal={nickModal} />
       </div>
     </div>
   );

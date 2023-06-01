@@ -43,7 +43,7 @@ const NickModal = () => {
   };
 
   return (
-    <ul className="w-full p-3 bg-main-400 text-white absolute mt-48 z-10 rounded-xl flex flex-col">
+    <ul className="w-full p-3 bg-main-400 text-white absolute mt-10 right-0 z-10 rounded-xl flex flex-col">
       <Link href={memberLink} className="cursor-pointer hover:text-black text-xl mb-2">
         내 정보
       </Link>

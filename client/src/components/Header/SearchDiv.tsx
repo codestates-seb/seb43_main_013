@@ -23,10 +23,10 @@ const SearchDiv = () => {
 
   return (
     <button
-      className="group flex items-center border-2 md:border-[3px] w-full rounded-full mx-8 md:mx-16 border-sub-500 p-1.5 md:px-4 md:py-1 transition-colors hover:border-main-400"
+      className="group flex items-center border-2 md:border-[3px] w-4/5 md:w-full rounded-full mx-6 md:mx-16 border-sub-500 p-1.5 md:px-4 md:py-1 transition-colors hover:border-main-400"
       onClick={() => setInputModal(true)}
     >
-      <MagnifyingGlassIcon className="w-4 h-4 md:w-6 md:h-6 text-sub-500 stroke-2 transition-colors group-hover:text-main-400" />
+      <MagnifyingGlassIcon className="w-6 h-6 text-sub-500 stroke-2 transition-colors group-hover:text-main-400" />
       {keyword && (
         <span className="ml-3 text-sub-700 hidden md:inline-block text-sm transition-colors group-hover:text-main-400">
           {keyword}
