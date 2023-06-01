@@ -18,6 +18,7 @@ import Form from "@/components/Board/Form";
 import { validateYoutubeURL } from "@/libs";
 import { isAxiosError } from "axios";
 import { twMerge } from "tailwind-merge";
+import { useTokenStore } from "@/store/useTokenStore";
 
 // type
 interface Props {
@@ -28,6 +29,7 @@ interface Props {
 const ProfileEditForm: React.FC<Props> = ({ memberId }) => {
   const router = useRouter();
   const { member, setMember } = useMemberStore();
+  const { setAccessToken, setRefreshToken } = useTokenStore();
   const toast = useCustomToast();
 
   const [password, setPassword] = useState("");
@@ -72,7 +74,7 @@ const ProfileEditForm: React.FC<Props> = ({ memberId }) => {
       values.push(value);
     }
 
-    let pw = "";
+    let pw: string | null = null;
     let nickname = "";
     let phone = "";
     let link = "";
@@ -134,10 +136,10 @@ const ProfileEditForm: React.FC<Props> = ({ memberId }) => {
       // FIXME: 프로필 이미지
       await apiUpdateMember({
         password: pw,
-        nickname: member.nickname === nickname ? null : nickname,
-        phone: member.phone === phone ? null : phone,
-        link: member.link === link ? null : link,
-        introduction: member.introduction === introduction ? null : introduction,
+        nickname: member.nickname === nickname ? undefined : nickname,
+        phone: member.phone === phone ? undefined : phone,
+        link: member.link === link ? undefined : link,
+        introduction: member.introduction === introduction ? undefined : introduction,
         memberId,
       });
       apiLogOut({});
@@ -148,6 +150,8 @@ const ProfileEditForm: React.FC<Props> = ({ memberId }) => {
 
       localStorage.clear();
       setMember(null);
+      setAccessToken("");
+      setRefreshToken("");
     } catch (error) {
       console.error(error);
 
