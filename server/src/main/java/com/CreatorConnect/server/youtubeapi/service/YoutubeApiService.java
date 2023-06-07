@@ -49,44 +49,56 @@ public class YoutubeApiService {
 
     /**
      * <entity 저장 & dto변환 메서드>
-     * 1. iterator 로 데이터 하나씩 꺼내기
-     * 2. entity 저장 및 dto로 변환해서 dtoList에 추가
+     * 1. 응답받은 apiDataList에서 데이터 하나씩 가져오기(iterator 사용)
+     * 2. entity 업데이트 또는 생성
+     * 3. dto로 변환, dtoList에 추가
      */
     private void saveEntity(Iterator<Video> iteratorSearchResults, List<YoutubeApiDto.Details> responses, String categoryId) {
         // video id값 init
         Long id = 1L;
 
-        // 다음 데이터가 있으면 루프
+        // 루프 - 리스트에서 다음 데이터가 없을때까지
         while (iteratorSearchResults.hasNext()) {
 
-            //데이터 반환
+            // 데이터 가져오기
             Video singleVideo = iteratorSearchResults.next();
 
+            // 데이터에서 원하는 정보만 선택
             if (singleVideo.getKind().equals("youtube#video")) {
-                                // entity에 저장
+
+                // 데이터베이스에 기존 entity가 존재하는지 확인
+                // 존재하면 업데이트, 존재하지 않으면 새로 생성
                 VideoPK videoPK = new VideoPK(categoryId,id);
-                VideoEntity video = new VideoEntity();
+                Optional<VideoEntity> optionalVideo = youtubeApiRepository.findById(videoPK);
+                VideoEntity video = optionalVideo.orElseGet(VideoEntity::new);
+
+                // entity 데이터 init or update
                 video.setVideoPK(videoPK);
                 video.setYoutubeId(singleVideo.getId());
                 video.setYoutubeUrl("https://youtu.be/" + singleVideo.getId());
+
+                /** 썸네일 크기 지정 - maxres
+                 *             너비  *  높이
+                 *  default  = 120  *  90
+                 *  medium   = 320  *  180
+                 *  high     = 480  *  360
+                 *  standard = 640  *  480
+                 *  maxres   = 1280 *  720
+                 */
                 // 썸네일이 존재하면
                 if(singleVideo.getSnippet().getThumbnails().get("maxres") != null){
-                    /** 썸네일 크기 지정 - medium
-                     *             너비  *  높이
-                     *  default  = 120  *  90
-                     *  medium   = 320  *  180
-                     *  high     = 480  *  360
-                     *  standard = 640  *  480
-                     *  maxres   = 1280 *  720
-                     */
                     Thumbnail thumbnail = (Thumbnail) singleVideo.getSnippet().getThumbnails().get("maxres");
+                    // 썸네일 init or update
                     video.setThumbnailUrl(thumbnail.getUrl());
                 } else{
-                    // 존재하지 않으면 디폴트 썸네일
+                    // 썸네일이 존재하지 않으면 디폴트 썸네일로 지정
                     video.setThumbnailUrl("https://img.youtube.com/vi/fvtzZFhrKLE/maxresdefault.jpg");
                 }
+
                 // 타이틀 database에 넣을 때 이모지 제거
                 video.setTitle(mysqlUtf8Safe(singleVideo.getSnippet().getTitle()));
+
+                // 저장
                 youtubeApiRepository.save(video);
 
                 //entity - dto 변환
@@ -184,8 +196,11 @@ public class YoutubeApiService {
         if (optionalVideoEntity.isEmpty()) {
             return true;
         } else {
-            LocalDateTime date1 = optionalVideoEntity.orElseThrow(() -> new BusinessLogicException(ExceptionCode.VIDEO_NOT_FOUND)).getModifiedAt();
-            LocalDateTime date2 = LocalDateTime.now();
+            // date1 = 현재시간
+            LocalDateTime date1 = LocalDateTime.now();
+            // date2 = entity가 마지막으로 수정된 시간
+            LocalDateTime date2 = optionalVideoEntity.orElseThrow(() -> new BusinessLogicException(ExceptionCode.VIDEO_NOT_FOUND)).getModifiedAt();
+
             // DB에 엔티티 존재하면 수정된 시간 확인
             // 현재 시간과 1일 이상 차이나면 true 아니면 false
             return compareDay(date1, date2) >= 1;
