@@ -15,7 +15,7 @@ import java.util.Collection;
 import java.util.Optional;
 
 @Component
-public class MemberDetailsService implements UserDetailsService {
+public class MemberDetailsService implements UserDetailsService { // UserDetailsService 인터페이스의 메서드를 구현하여 사용자의 정보를 로드
     private final MemberRepository memberRepository;
     private final CustomAuthorityUtils authorityUtils;
 
@@ -26,12 +26,16 @@ public class MemberDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+
+        // 주어진 이메일(username)을 기반으로 회원 조회
         Optional<Member> optionalMember = memberRepository.findByEmail(username);
         Member findMember = optionalMember.orElseThrow(() -> new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND));
 
+        // 조회된 회원 정보를 기반으로 MemberDetails 객체를 생성하여 반환
         return new MemberDetails(findMember);
     }
 
+    // 내부 클래스인 MemberDetails 는 Member 엔티티를 UserDetails 인터페이스에 맞게 구현한 클래스
     private final class MemberDetails extends Member implements UserDetails {
 
         MemberDetails(Member member) {
@@ -52,6 +56,7 @@ public class MemberDetailsService implements UserDetailsService {
             return getEmail();
         }
 
+        // 사용자 계정의 상태를 나타내는 메서드
         @Override
         public boolean isAccountNonExpired() {
             return true;

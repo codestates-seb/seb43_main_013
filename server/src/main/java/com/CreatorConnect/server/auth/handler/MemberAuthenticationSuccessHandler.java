@@ -20,7 +20,7 @@ import java.util.Map;
 
 @Slf4j
 @Component
-public class MemberAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
+public class MemberAuthenticationSuccessHandler implements AuthenticationSuccessHandler { // 인증 성공 시 처리하는 핸들러
 
     private final MemberRepository memberRepository;
 
@@ -41,7 +41,7 @@ public class MemberAuthenticationSuccessHandler implements AuthenticationSuccess
 
         Member member = memberRepository.findByEmail(username).orElseThrow();
 
-        // response 에 JSON 형식으로 응답하기
+        // response 에 로그인한 사용자 정보 JSON 형식으로 응답하기
         ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
         objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS"));
 

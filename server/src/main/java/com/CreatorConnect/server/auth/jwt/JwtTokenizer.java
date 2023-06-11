@@ -12,7 +12,6 @@ import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 
 @Component // jwt 생성 및 검증
@@ -38,6 +37,7 @@ public class JwtTokenizer {
                                       String subject,
                                       Date expiration,
                                       String base64EncodedSecretKey) {
+
         Key key = getKeyFromBase64EncodedKey(base64EncodedSecretKey);
 
         return Jwts.builder()
@@ -93,7 +93,7 @@ public class JwtTokenizer {
                 .parseClaimsJws(jws);
     }
 
-    public Date getTokenExpiration(int expirationMinutes) {
+    public Date getTokenExpiration(int expirationMinutes) { // 현재 시간에서 expirationMinutes 을 더한 만료 일자를 반환
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.MINUTE, expirationMinutes);
         Date expiration = calendar.getTime();

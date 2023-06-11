@@ -58,9 +58,9 @@ public class NaverController {
         public ResponseEntity naverCallback(@RequestParam("code") String code, @RequestParam("state") String state,
                                             HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-                OAuthToken oAuthToken = naverApiService.tokenRequest(code); // 1.토큰 가져오기
+                OAuthToken oAuthToken = naverApiService.tokenRequest(code); // 토큰 가져오기
 
-                NaverProfile naverProfile = naverApiService.userInfoRequest(oAuthToken); // 2.유저정보 가져오기
+                NaverProfile naverProfile = naverApiService.userInfoRequest(oAuthToken); // 유저정보 가져오기
 
                 Map<String, Object> attributes = new HashMap<>();
                 attributes.put("id", naverProfile.getResponse().getId());

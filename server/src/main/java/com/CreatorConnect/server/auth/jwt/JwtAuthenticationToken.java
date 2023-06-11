@@ -5,7 +5,7 @@ import org.springframework.security.core.GrantedAuthority;
 
 import java.util.Collection;
 
-public class JwtAuthenticationToken extends AbstractAuthenticationToken {
+public class JwtAuthenticationToken extends AbstractAuthenticationToken {  // JWT 토큰을 인증 객체로 만들고, 이를 Authentication 객체로 설정
     private final String token;
 
     public JwtAuthenticationToken(String token) {
@@ -16,7 +16,7 @@ public class JwtAuthenticationToken extends AbstractAuthenticationToken {
     public JwtAuthenticationToken(String token, Collection<? extends GrantedAuthority> authorities) {
         super(authorities);
         this.token = token;
-        setAuthenticated(true);
+        setAuthenticated(true); // 인증된 상태로 설정
     }
 
     @Override

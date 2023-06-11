@@ -3,6 +3,7 @@ package com.CreatorConnect.server.auth.jwt.refreshtoken;
 import javax.persistence.Id;
 
 // @RedisHash(value = "refreshToken", timeToLive = 604800) - redis repository 사용시 활성화
+// 현재 redisTemplate 사용
 public class RefreshToken {
 
     @Id

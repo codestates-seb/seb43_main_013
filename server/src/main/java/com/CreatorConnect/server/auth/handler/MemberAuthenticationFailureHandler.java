@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Slf4j
-public class MemberAuthenticationFailureHandler implements AuthenticationFailureHandler {
+public class MemberAuthenticationFailureHandler implements AuthenticationFailureHandler { // 인증 실패 시 처리하는 핸들러
     @Override
     public void onAuthenticationFailure(HttpServletRequest request,
                                         HttpServletResponse response,

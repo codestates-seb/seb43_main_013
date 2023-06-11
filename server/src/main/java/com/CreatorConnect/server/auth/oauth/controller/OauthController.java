@@ -40,6 +40,8 @@ public class OauthController {
     // https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=JAnr85GxwFcBiBMCvdpL&state=vninaeonfd&redirect_uri=http://localhost:8080/auth/naver/callback
     // https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=JAnr85GxwFcBiBMCvdpL&state=vninaeonfd&redirect_uri=https://api.hard-coding.com/auth/naver/callback
 
+
+    // requeset : oauth 인증 성공 후 클라이언트에 전달한 토큰 - response : header 토큰, body 인증된 멤버 정보 응답
     @GetMapping("/api/login/oauth")
     public ResponseEntity oauthSuccessController(HttpServletRequest request,
                                                  HttpServletResponse response,

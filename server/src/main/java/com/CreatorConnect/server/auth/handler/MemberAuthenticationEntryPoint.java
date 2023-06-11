@@ -20,7 +20,7 @@ public class MemberAuthenticationEntryPoint implements AuthenticationEntryPoint 
         ErrorResponder.sendErrorResponse(response, HttpStatus.UNAUTHORIZED);
         response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
 
-        logExceptionMessage(authException, exception);// ( 인증 과정에서 발생한 예외, request attribute 에 저장 된 exception )
+        logExceptionMessage(authException, exception);// ( 인증 과정에서 발생한 예외, request 의 attribute 에 저장 된 exception )
     }
 
     private void logExceptionMessage(AuthenticationException authException, Exception exception) {
