@@ -30,7 +30,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     private final JwtTokenizer jwtTokenizer;
 
-
     @SneakyThrows // 예외처리 무시
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) {
@@ -58,7 +57,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         response.setHeader("Refresh-Token", refreshToken);
         response.setHeader("Access-Control-Expose-Headers", "Content-Length, Authorization, Refresh-Token");
 
-        // redis에 로그인 한 사용자의 refresh token이 없으면 해당 refresh token을 redis에 저장
+        // redis 에 로그인 한 사용자의 refresh token 이 없으면 해당 refresh token 을 redis 에 저장
         if (redisService.getRefreshToken(refreshToken) == null) {
             redisService.setRefreshToken(refreshToken, member.getEmail(), jwtTokenizer.getRefreshTokenExpirationMinutes());
             log.info("Refresh Token saved in Redis");

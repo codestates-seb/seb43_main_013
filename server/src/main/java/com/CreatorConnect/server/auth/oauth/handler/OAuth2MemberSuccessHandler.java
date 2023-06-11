@@ -1,11 +1,9 @@
 package com.CreatorConnect.server.auth.oauth.handler;
 
-import com.CreatorConnect.server.auth.jwt.JwtTokenizer;
 import com.CreatorConnect.server.auth.jwt.TokenService;
 import com.CreatorConnect.server.auth.oauth.service.OAuth2MemberService;
 import com.CreatorConnect.server.auth.utils.CustomAuthorityUtils;
 import com.CreatorConnect.server.member.entity.Member;
-import com.CreatorConnect.server.member.service.MemberService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -23,7 +21,7 @@ import java.util.*;
 
 @Slf4j
 @Component
-public class OAuth2MemberSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
+public class OAuth2MemberSuccessHandler extends SimpleUrlAuthenticationSuccessHandler { // OAuth2 인증이 성공한 경우 호출
 
     private final CustomAuthorityUtils authorityUtils;
     private final OAuth2MemberService oAuth2MemberService;
@@ -38,15 +36,16 @@ public class OAuth2MemberSuccessHandler extends SimpleUrlAuthenticationSuccessHa
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
 
-        var oAuth2User = (OAuth2User)authentication.getPrincipal();
+        var oAuth2User = (OAuth2User)authentication.getPrincipal(); // authentication 객체에서 OAuth2 사용자 정보를 추출
         String email = String.valueOf(oAuth2User.getAttributes().get("email"));
         List<String> authorities = authorityUtils.createRoles(email);
 
-        Member member = oAuth2MemberService.saveOauthMember(oAuth2User);
+        Member member = oAuth2MemberService.saveOauthMember(oAuth2User); // OAuth2 사용자 정보 저장
 
         redirect(request, response, member);
     }
 
+    // 토큰 생성 후 파라미터에 담아 리다이렉트
     private void redirect(HttpServletRequest request, HttpServletResponse response, Member member) throws IOException {
 
         String accessToken = tokenService.delegateAccessToken(member);
@@ -54,6 +53,7 @@ public class OAuth2MemberSuccessHandler extends SimpleUrlAuthenticationSuccessHa
 
         String uri = createURI(accessToken, refreshToken).toString();
         getRedirectStrategy().sendRedirect(request, response, uri);
+        // redirect strategy 를 가져와서 리디렉션 수행
     }
 
     private URI createURI(String accessToken, String refreshToken) {

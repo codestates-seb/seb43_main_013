@@ -45,9 +45,9 @@ public class KakaoController {
     @GetMapping("/auth/kakao/callback")
     public ResponseEntity kakaoCallback(@RequestParam("code") String code, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        OAuthToken oAuthToken = kakaoApiService.tokenRequest(code); // 1.토큰 가져오기
+        OAuthToken oAuthToken = kakaoApiService.tokenRequest(code); // 토큰 가져오기
 
-        KakaoProfile kakaoProfile = kakaoApiService.userInfoRequest(oAuthToken); // 2.유저정보 가져오기
+        KakaoProfile kakaoProfile = kakaoApiService.userInfoRequest(oAuthToken); // 유저정보 가져오기
 
         Map<String, Object> attributes = new HashMap<>();
         attributes.put("id", kakaoProfile.getId());
