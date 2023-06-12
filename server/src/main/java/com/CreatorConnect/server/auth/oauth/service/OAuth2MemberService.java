@@ -47,13 +47,15 @@ public class OAuth2MemberService implements OAuth2UserService<OAuth2UserRequest,
 
     }
 
+    // 클라이언트에서 전달받은 OAuth2 멤버 정보를 서버의 Member 엔티티로 저장
+    public Member saveOauthMember(OAuth2User oAuth2User) {
 
-    public Member saveOauthMember (OAuth2User oAuth2User) {
-
+        // OAuth2User 에서 이메일과 이름을 추출
         String email = String.valueOf(oAuth2User.getAttributes().get("email"));
         String name = String.valueOf(oAuth2User.getAttributes().get("name"));
 
         String profileImageUrl;
+        // 클라이언트마다 프로필 이미지를 의미하는 이름이 달라 처리
         if (oAuth2User.getAttributes().containsKey("picture")) {
             profileImageUrl = String.valueOf(oAuth2User.getAttributes().get("picture"));
         } else if (oAuth2User.getAttributes().containsKey("profileImage")) {
@@ -62,12 +64,16 @@ public class OAuth2MemberService implements OAuth2UserService<OAuth2UserRequest,
             profileImageUrl = null;
         }
 
+        // 이메일을 기반으로 권한(authorities) 생성
         List<String> authorities = authorityUtils.createRoles(email);
 
+        // 이메일로 이미 등록된 회원인지 조회
         Member member = memberRepository.findByEmail(email).orElse(null);
 
+        // 등록된 회원이 없을 경우 새로운 회원을 생성하여 저장
         if (member == null) {
 
+            // 임시 비밀번호와 임시 닉네임 생성
             String tempPW = UUID.randomUUID().toString().replace("-", "");
             tempPW = tempPW.substring(0,20);
 
@@ -87,6 +93,7 @@ public class OAuth2MemberService implements OAuth2UserService<OAuth2UserRequest,
             return memberRepository.save(member);
         }
 
+        // 이미 등록된 회원이 있을 경우 해당 회원을 반환
         return member;
     }
 }

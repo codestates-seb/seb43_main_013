@@ -75,9 +75,9 @@ public class ErrorResponse {
 
     @Getter
     public static class ConstraintViolationError {
-        private String propertyPath;
-        private Object rejectedValue;
-        private String reason;
+        private String propertyPath; // 속성 경로
+        private Object rejectedValue; // 거부된 값
+        private String reason; // 에러 이유
 
         private ConstraintViolationError(String propertyPath, Object rejectedValue,
                                          String reason) {

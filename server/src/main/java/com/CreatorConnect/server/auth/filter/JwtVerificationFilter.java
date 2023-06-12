@@ -31,7 +31,7 @@ import java.util.Objects;
 @Slf4j // jwt 검증 필터
 @RequiredArgsConstructor
 public class JwtVerificationFilter extends OncePerRequestFilter { // OncePerRequestFilter - request 마다 한번 수행
-
+    // JwtAuthenticationFilter 에서 로그인 인증 후, JWT 가 요청의 request header(Authorization)에 포함되어 있을 경우 동작
     private final JwtTokenizer jwtTokenizer;
 
     private final CustomAuthorityUtils authorityUtils;
@@ -42,7 +42,7 @@ public class JwtVerificationFilter extends OncePerRequestFilter { // OncePerRequ
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         log.info("# JwtVerificationFilter");
 
-        if (checkResponseMethodAndURI(request)) {
+        if (checkResponseMethodAndURI(request)) {  // 토큰이 필요 없는 요청인지 확인
             filterChain.doFilter(request, response);
             return;
         }
@@ -56,7 +56,7 @@ public class JwtVerificationFilter extends OncePerRequestFilter { // OncePerRequ
 
         try {
             Map<String, Object> claims = verifyJws(request);
-            setAuthenticationToContext(claims); // SecurityContext 에 검증 정보 저장
+            setAuthenticationToContext(claims); // 추출한 검증 정보를 SecurityContext 에 인증 정보로 설정
 
         } catch (ExpiredJwtException ee) {
             // 액세스 토큰이 만료된 경우
@@ -88,15 +88,15 @@ public class JwtVerificationFilter extends OncePerRequestFilter { // OncePerRequ
         // JWT 자격증명이 필요하지 않은 요청이라고 판단, 다음 Filter 로 위임
     }
 
-    private Map<String, Object> verifyJws(HttpServletRequest request) { // jwt 검증
-        String jws = request.getHeader("Authorization").replace("Bearer ", "");
+    private Map<String, Object> verifyJws(HttpServletRequest request) {
+        String jws = request.getHeader("Authorization").replace("Bearer ", ""); // 요청 헤더에서 JWT 추출
         String base64EncodedSecretKey = jwtTokenizer.encodeBase64SecretKey(jwtTokenizer.getSecretKey());
-        Map<String, Object> claims = jwtTokenizer.getClaims(jws, base64EncodedSecretKey).getBody();
+        Map<String, Object> claims = jwtTokenizer.getClaims(jws, base64EncodedSecretKey).getBody(); // JWT 를 검증하고 클레임 정보를 추출
 
         return claims;
     }
 
-    private void setAuthenticationToContext(Map<String, Object> claims) { // Authentication 객체 SecurityContext 에 저장
+    private void setAuthenticationToContext(Map<String, Object> claims) { // 클레임 정보를 사용하여 인증 객체를 생성하고 SecurityContext 에 설정
 
         String email = (String) claims.get("username");
         List<GrantedAuthority> authorities = authorityUtils.createAuthorities((List) claims.get("roles"));
@@ -129,6 +129,7 @@ public class JwtVerificationFilter extends OncePerRequestFilter { // OncePerRequ
                 return false;
             }
         }
+
         return false;
     }
 }

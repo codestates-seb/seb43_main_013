@@ -13,11 +13,11 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
-@PropertySource("classpath:application.yml")
+@PropertySource("classpath:application.yml") // application.yml 파일을 참조하여 속성 값을 로드
 @Configuration
-@ConfigurationProperties(prefix = "spring.redis")
+@ConfigurationProperties(prefix = "spring.redis") // spring.redis 접두사를 가진 속성 값을 주입
 @RequiredArgsConstructor
-@EnableRedisRepositories
+@EnableRedisRepositories // Redis 저장소를 사용하기 위한 Spring Data Redis 리포지토리를 활성화
 public class RedisConfig {
 
     @Value("${spring.redis.host}")
@@ -27,6 +27,7 @@ public class RedisConfig {
 
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
+        // 지정된 Redis 호스트와 포트를 사용하여 LettuceConnectionFactory 를 생성
         return new LettuceConnectionFactory(redisHost, redisPort);
     }
 

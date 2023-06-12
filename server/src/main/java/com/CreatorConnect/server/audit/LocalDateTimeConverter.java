@@ -8,6 +8,7 @@ import java.time.ZoneId;
 
 @Converter
 public class LocalDateTimeConverter implements AttributeConverter<LocalDateTime, Timestamp> {
+    // JPA 에서 LocalDateTime 타입과 데이터베이스의 Timestamp 타입 간의 변환 , 서울 시간대 설정
 
     @Override
     public Timestamp convertToDatabaseColumn(LocalDateTime localDateTime) {

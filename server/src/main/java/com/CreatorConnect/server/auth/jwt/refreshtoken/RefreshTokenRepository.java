@@ -55,6 +55,11 @@ public class RefreshTokenRepository {
         return Optional.of(new RefreshToken(refreshToken, memberId));
     }
 
+    /**
+     * 지정된 리프레시 토큰을 사용하여 Redis 에서 토큰 삭제
+     *
+     * @param refreshToken 삭제할 리프레시 토큰
+     */
     public void deleteById (final String refreshToken) {
         redisTemplate.delete(refreshToken);
     }
