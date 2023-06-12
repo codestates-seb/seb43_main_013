@@ -230,6 +230,7 @@ public class FeedbackBoardService {
         return new FeedbackBoardResponseDto.Multi<>(responses, pageInfo);
     }
 
+    // 카테고리로 목록 조회
     public FeedbackBoardResponseDto.Multi<FeedbackBoardResponseDto.Details> responseFeedbacksByFeedbackCategory(Long categoryId, String sort, int page, int size, HttpServletRequest request){
         // page생성 - 카테고리 ID로 검색 후 정렬 적용
         Page<FeedbackBoard> feedbackBoardsPage = feedbackBoardRepository.findFeedbackBoardsByCategoryId(categoryId, sortedPageRequest(sort, page, size));
