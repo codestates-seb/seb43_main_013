@@ -141,11 +141,11 @@ public class NoticeService {
     // 게시글 정렬 메서드
     private PageRequest sortedBy(int page, int size, String sort) {
 
-        if (sort.equals("최신순")) {
+        if (sort.equals("new")) {
             return PageRequest.of(page - 1, size, Sort.by("noticeId").descending());
-        } else if (sort.equals("등록순")) {
+        } else if (sort.equals("old")) {
             return PageRequest.of(page - 1, size, Sort.by("noticeId").ascending());
-        } else if (sort.equals("인기순")) {
+        } else if (sort.equals("best")) {
             return PageRequest.of(page - 1, size, Sort.by("viewCount", "noticeId").descending());
         } else {
             return PageRequest.of(page - 1, size, Sort.by("noticeId").ascending());

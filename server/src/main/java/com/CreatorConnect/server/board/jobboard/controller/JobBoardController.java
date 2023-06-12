@@ -46,18 +46,6 @@ public class JobBoardController {
         return new ResponseEntity<>(mapper.jobBoardToJobBoardResponseDto(updatedJobBoard), HttpStatus.OK);
     }
 
-    // 구인구직 게시판 게시글 목록
-    @GetMapping("/jobboards")
-    public ResponseEntity getJobBoards(@RequestParam String sort,
-                                       @RequestParam @Positive int page,
-                                       @RequestParam @Positive int size,
-                                       HttpServletRequest request) {
-
-        JobBoardDto.MultiResponseDto<JobBoardDto.Response> pageJobBoards = jobBoardService.getAllJobBoards(page, size, sort, request);
-
-        return new ResponseEntity<>(pageJobBoards, HttpStatus.OK);
-    }
-
     // 구인구직 게시판 카테고리 별 목록
     @GetMapping("/jobboards/jobcategories/{jobCategoryId}")
     public ResponseEntity getJobBoardsByCategory(@PathVariable("jobCategoryId") @Positive Long categoryId,

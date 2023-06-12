@@ -110,47 +110,6 @@ public class JobBoardService {
         return jobBoardRepository.save(checkedJobBoard);
     }
 
-    /**
-     * <구인구직 게시판 게시글 목록>
-     * 1. 페이지네이션 적용 - 최신순 / 등록순 / 인기순
-     * 2. 게시글 목록 가져오기
-     */
-    public JobBoardDto.MultiResponseDto<JobBoardDto.Response> getAllJobBoards(int page, int size, String sort, HttpServletRequest request) {
-
-        // 1. 페이지네이션 적용 - 최신순 / 등록순 / 인기순
-        Page<JobBoard> jobBoards = jobBoardRepository.findAll(sortedBy(page, size, sort));
-
-        // 2. 로그인한 멤버확인하고 게시글 목록 가져오기
-        String accessToken = request.getHeader("Authorization");
-
-        Member loggedinMember = null;
-        boolean bookmarked = false;
-        boolean liked = false;
-
-        List<JobBoardDto.Response> responses = new ArrayList<>();
-
-        if (accessToken != null){
-
-            loggedinMember = memberService.getLoggedinMember(accessToken);
-
-            for (JobBoard jobBoard : jobBoards.getContent()) {
-                bookmarked = loggedinMember.getBookmarks().stream()
-                        .anyMatch(bookmark -> jobBoard.equals(bookmark.getJobBoard()));
-
-                liked = loggedinMember.getLikes().stream()
-                        .anyMatch(like -> jobBoard.equals(like.getJobBoard()));
-
-                JobBoardDto.Response jobBoardResponse = mapper.jobBoardToJobBoardResponseDto(jobBoard);
-                jobBoardResponse.setBookmarked(bookmarked);
-                jobBoardResponse.setLiked(liked);
-                responses.add(jobBoardResponse);
-            }
-        } else {
-            responses = mapper.jobBoardsToJobBoardResponseDtos(jobBoards.getContent());
-        }
-
-        return new JobBoardDto.MultiResponseDto<>(responses, jobBoards);
-    }
 
     /**
      * <구인구직 게시판 게시글 목록>
@@ -159,9 +118,17 @@ public class JobBoardService {
      */
     public JobBoardDto.MultiResponseDto<JobBoardDto.Response> getAllJobBoardsByCategory(Long jobCategoryId, int page, int size, String sort, HttpServletRequest request) {
 
-        // 1. 페이지네이션 적용 - 최신순 / 등록순 / 인기순
-        Page<JobBoard> jobBoards =
-                jobBoardRepository.findJobBoardsByCategoryId(jobCategoryId, sortedBy(page, size, sort));
+        // page 생성
+        Page<JobBoard> jobBoards;
+
+        // 카테고리 ID가 1일 경우 전체 목록 조회, 아닐 경우 카테고리별 목록 조회
+        if(jobCategoryId == 1){
+            // 전체 목록 조회
+            jobBoards = jobBoardRepository.findAll(sortedBy(page, size, sort));
+        } else {
+            // 카테고리 ID로 검색 후 정렬 적용
+            jobBoards = jobBoardRepository.findJobBoardsByCategoryId(jobCategoryId, sortedBy(page, size, sort));
+        }
 
         // 2. 로그인한 멤버확인하고 게시글 목록 가져오기
         String accessToken = request.getHeader("Authorization");
@@ -274,11 +241,11 @@ public class JobBoardService {
     // 페이지네이션 정렬 기준 선택 메서드
     private PageRequest sortedBy(int page, int size, String sort) {
 
-        if (sort.equals("최신순")) {
+        if (sort.equals("new")) {
             return PageRequest.of(page - 1, size, Sort.by("jobBoardId").descending());
-        } else if (sort.equals("등록순")) {
+        } else if (sort.equals("old")) {
             return PageRequest.of(page - 1, size, Sort.by("jobBoardId").ascending());
-        } else if (sort.equals("인기순")) {
+        } else if (sort.equals("best")) {
             return PageRequest.of(page - 1, size, Sort.by("viewCount", "jobBoardId").descending());
         } else {
             return PageRequest.of(page - 1, size, Sort.by("jobBoardId").ascending());

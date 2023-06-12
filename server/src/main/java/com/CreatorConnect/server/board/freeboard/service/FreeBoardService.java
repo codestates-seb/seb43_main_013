@@ -132,30 +132,6 @@ public class FreeBoardService {
         return freeBoardRepository.save(checkedFreeBoard);
     }
 
-    /**
-     * <자유 게시판 게시글 목록>
-     * 1. 페이지네이션 적용 - 최신순 / 등록순 / 인기순
-     * 2. 로그인 여부 검증
-     * 3. 태그 적용
-     */
-    public FreeBoardDto.MultiResponseDto<FreeBoardDto.Response> getAllFreeBoards(int page, int size, String sort, HttpServletRequest request) {
-        // 1. 페이지네이션 적용 - 최신순 / 등록순 / 인기순
-        Page<FreeBoard> freeBoards = freeBoardRepository.findAll(sortedBy(page, size, sort));
-
-        // 2. 로그인 여부 검증
-        String accessToken = request.getHeader("Authorization");
-        Member loggedinMember = null;
-
-        if (accessToken != null) {
-            loggedinMember = memberService.getLoggedinMember(accessToken);
-        }
-
-        // 3. 태그 적용
-        List<FreeBoardDto.Response> responses = getLoginResponseList(freeBoards, loggedinMember);
-
-        return new FreeBoardDto.MultiResponseDto<>(responses, freeBoards);
-    }
-
     // 태그 적용 메서드
     private List<FreeBoardDto.Response> getLoginResponseList(Page<FreeBoard> freeBoards, Member loggedinMember) {
         return freeBoards.getContent().stream().map(freeBoard -> {
@@ -180,15 +156,24 @@ public class FreeBoardService {
     }
 
     /**
-     * <자유 게시판 카테고리 별 목록>
+     * <자유 게시판 목록 조회>
      * 1. 페이지네이션 적용 - 최신순 / 등록순 / 인기순
      * 2. 로그인 여부 검증
-     *
+     * 3. 태그 적용
      */
     public FreeBoardDto.MultiResponseDto<FreeBoardDto.Response> getAllFreeBoardsByCategory(long categoryId, int page, int size, String sort, HttpServletRequest request) {
 
-        // 1. 페이지네이션 적용
-        Page<FreeBoard> freeBoards = freeBoardRepository.findFreeBoardsByCategoryId(categoryId, sortedBy(page, size, sort));
+        // page생성
+        Page<FreeBoard> freeBoards;
+
+        // 1. 카테고리 ID가 1일 경우 전체 목록 조회, 아닐 경우 카테고리별 목록 조회
+        if(categoryId == 1){
+            // 전체 목록 조회
+            freeBoards = freeBoardRepository.findAll(sortedBy(page, size, sort));
+        } else {
+            // 카테고리 ID로 검색 후 정렬 적용
+            freeBoards = freeBoardRepository.findFreeBoardsByCategoryId(categoryId, sortedBy(page, size, sort));
+        }
 
         // 2. 로그인 여부 검증
         String accessToken = request.getHeader("Authorization");
@@ -198,11 +183,11 @@ public class FreeBoardService {
             loggedinMember = memberService.getLoggedinMember(accessToken);
         }
 
+        // 3. 태그 적용
         List<FreeBoardDto.Response> responses = getLoginResponseList(freeBoards, loggedinMember);
 
         return new FreeBoardDto.MultiResponseDto<>(responses, freeBoards);
     }
-
 
     /**
      * <자유 게시판 게시글 상세 조회>
@@ -300,11 +285,11 @@ public class FreeBoardService {
     // 페이지네이션 정렬 기준 선택 메서드
     private PageRequest sortedBy(int page, int size, String sort) {
 
-        if (sort.equals("최신순")) {
+        if (sort.equals("new")) {
             return PageRequest.of(page - 1, size, Sort.by("freeBoardId").descending());
-        } else if (sort.equals("등록순")) {
+        } else if (sort.equals("old")) {
             return PageRequest.of(page - 1, size, Sort.by("freeBoardId").ascending());
-        } else if (sort.equals("인기순")) {
+        } else if (sort.equals("best")) {
             return PageRequest.of(page - 1, size, Sort.by("viewCount", "freeBoardId").descending());
         } else {
             return PageRequest.of(page - 1, size, Sort.by("freeBoardId").ascending());

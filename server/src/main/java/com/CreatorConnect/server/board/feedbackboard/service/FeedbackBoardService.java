@@ -184,23 +184,23 @@ public class FeedbackBoardService {
 
     // 목록 조회
     public FeedbackBoardResponseDto.Multi<FeedbackBoardResponseDto.Details> responseFeedbacks(Long feedbackCategoryId, Long categoryId, String sort, int page, int size, HttpServletRequest request){
+
         // page생성
         Page<FeedbackBoard> feedbackBoardsPage;
 
+        // 카테고리 ID, 피드백 카테고리 ID가 모두 1일 경우 전체 목록 조회
+        // 둘 중 하나만 ID값이 1인 경우, 해당 카테고리만 전체 조회, 나머지 카테고리는 선택해서 조회
         if (feedbackCategoryId == 1 && categoryId == 1){
             // 전체 목록 조회
             feedbackBoardsPage = feedbackBoardRepository.findAll(sortedPageRequest(sort, page, size));
         } else if (feedbackCategoryId == 1){
             // 피드백 카테고리 - 전체검색, 카테고리 - 선택된 것만 검색
-            // page생성 - 카테고리 ID로 검색 후 정렬 적용
             feedbackBoardsPage = feedbackBoardRepository.findFeedbackBoardsByCategoryId(categoryId, sortedPageRequest(sort, page, size));
         } else if (categoryId == 1) {
             // 피드백 카테고리 - 선택, 카테고리 - 전체
-            // page생성 - 피드백 카테고리 ID로 검색 후 정렬 적용
             feedbackBoardsPage = feedbackBoardRepository.findFeedbackBoardsByFeedbackCategoryId(feedbackCategoryId, sortedPageRequest(sort, page, size));
         } else{
             // 피드백 카테고리 - 선택, 카테고리 - 선택
-            // page생성 - 피드백 카테고리 ID 와 카테고리 ID로 검색 후 정렬 적용
             feedbackBoardsPage = feedbackBoardRepository.findFeedbackBoardsByFeedbackCategoryIdAndCategoryId(feedbackCategoryId, categoryId, sortedPageRequest(sort, page, size));
         }
 
@@ -252,11 +252,11 @@ public class FeedbackBoardService {
     // 페이지 정렬 메서드
     private PageRequest sortedPageRequest(String sort, int page, int size) {
 
-        if(Objects.equals(sort,"최신순")){
+        if(Objects.equals(sort,"new")){
             return PageRequest.of(page - 1, size, Sort.by("feedbackBoardId").descending());
-        } else if(Objects.equals(sort,"등록순")){
+        } else if(Objects.equals(sort,"old")){
             return PageRequest.of(page - 1, size, Sort.by("feedbackBoardId").ascending());
-        } else if(Objects.equals(sort,"인기순")){
+        } else if(Objects.equals(sort,"best")){
             return PageRequest.of(page - 1, size, Sort.by("viewCount","feedbackBoardId").descending());
         } else {
             return PageRequest.of(page - 1, size, Sort.by("feedbackBoardId").descending());

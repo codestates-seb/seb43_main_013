@@ -50,18 +50,6 @@ public class PromotionBoardController {
     }
 
     // 게시글 목록 조회
-    @GetMapping("/promotionboards")
-    public ResponseEntity getpromotion(@RequestParam("sort") String sort,
-                                       @RequestParam("page") @Positive int page,
-                                       @RequestParam("size") @Positive int size,
-                                       HttpServletRequest request) {
-
-        PromotionBoardResponseDto.Multi response = promotionBoardService.responsePromotions(sort, page, size, request);
-
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-    // 카테고리 별 조회
     @GetMapping("/promotionboards/categories/{category-id}")
     public ResponseEntity getPromotionByCategory(@PathVariable("category-id") long categoryId,
                                                  @RequestParam String sort,

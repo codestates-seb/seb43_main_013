@@ -161,32 +161,19 @@ public class PromotionBoardService {
         return response;
     }
 
-    // 목록 조회
-    public PromotionBoardResponseDto.Multi<PromotionBoardResponseDto.Details> responsePromotions(String sort, int page, int size,
-                                                                                                 HttpServletRequest request){
-        // Page 생성 - 최신순, 등록순, 인기순
-        // 기본값 = 최신순
-        Page<PromotionBoard> promotionBoards = promotionBoardRepository.findAll(sortedPageRequest(sort, page, size));
-
-        // pageInfo 가져오기
-        PromotionBoardResponseDto.PageInfo pageInfo = new PromotionBoardResponseDto.PageInfo(promotionBoards.getNumber() + 1, promotionBoards.getSize(), promotionBoards.getTotalElements(), promotionBoards.getTotalPages());
-
-        // 로그인한 멤버
-        String accessToken = request.getHeader("Authorization");
-        Member loggedinMember = null;
-
-        if (accessToken != null) {
-            loggedinMember = memberService.getLoggedinMember(accessToken);
-        }
-
-        List<PromotionBoardResponseDto.Details> responses = getLoginResponseList(promotionBoards, loggedinMember);
-
-        return new PromotionBoardResponseDto.Multi<>(responses, pageInfo);
-    }
-
     public PromotionBoardResponseDto.Multi<PromotionBoardResponseDto.Details> getPromotionByCategory(Long promotionCategoryId, String sort, int page, int size, HttpServletRequest request){
-        // page생성 - 카테고리 ID로 검색 후 정렬 적용
-        Page<PromotionBoard> promotionBoards = promotionBoardRepository.findPromotionCategoryId(promotionCategoryId, sortedPageRequest(sort, page, size));
+
+        // Page 생성
+        Page<PromotionBoard> promotionBoards;
+
+        // 카테고리 ID가 1일 경우 전체 목록 조회, 아닐 경우 카테고리별 목록 조회
+        if(promotionCategoryId == 1){
+            // 전체 목록 조회
+            promotionBoards = promotionBoardRepository.findAll(sortedPageRequest(sort, page, size));
+        } else {
+            // 카테고리 ID로 검색 후 정렬 적용
+            promotionBoards = promotionBoardRepository.findPromotionCategoryId(promotionCategoryId, sortedPageRequest(sort, page, size));
+        }
 
         // pageInfo 가져오기
         PromotionBoardResponseDto.PageInfo pageInfo = new PromotionBoardResponseDto.PageInfo(promotionBoards.getNumber() + 1, promotionBoards.getSize(), promotionBoards.getTotalElements(), promotionBoards.getTotalPages());
@@ -231,11 +218,11 @@ public class PromotionBoardService {
 
     //페이지 정렬 메서드
     private PageRequest sortedPageRequest(String sort, int page, int size) {
-        if (Objects.equals(sort, "최신순")) {
+        if (Objects.equals(sort, "new")) {
             return PageRequest.of(page - 1, size, Sort.by("promotionBoardId").descending());
-        } else if (Objects.equals(sort, "등록순")) {
+        } else if (Objects.equals(sort, "old")) {
             return PageRequest.of(page - 1, size, Sort.by("promotionBoardId").ascending());
-        } else if (Objects.equals(sort, "인기순")) {
+        } else if (Objects.equals(sort, "best")) {
             return PageRequest.of(page - 1, size, Sort.by("viewCount", "promotionBoardId").descending());
         } else {
             return PageRequest.of(page - 1, size, Sort.by("promotionBoardId").descending());
