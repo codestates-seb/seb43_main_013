@@ -22,13 +22,13 @@ const YoutubeItem: React.FC<Props> = ({ youtubeData, onOpen }) => {
     <>
       <div className="relative inline-block w-auto h-[225px] overflow-hidden rounded-lg bg-main-100 shadow-main m-1 p-1">
         <div className="inline-block w-full h-full">
-          <Image
+          <img
             src={`${youtubeData.thumbnailUrl}`}
             width={400}
             height={500}
             alt={`${youtubeData.title}`}
             placeholder="blur"
-            blurDataURL="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mM0/g8AAWsBNAUUB5MAAAAASUVORK5CYII="
+            // blurDataURL="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mM0/g8AAWsBNAUUB5MAAAAASUVORK5CYII="
           />
         </div>
         <div
