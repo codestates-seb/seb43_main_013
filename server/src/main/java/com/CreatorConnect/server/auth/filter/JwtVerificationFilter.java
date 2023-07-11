@@ -31,11 +31,9 @@ import java.util.Objects;
 @Slf4j // jwt 검증 필터
 @RequiredArgsConstructor
 public class JwtVerificationFilter extends OncePerRequestFilter { // OncePerRequestFilter - request 마다 한번 수행
-    // JwtAuthenticationFilter 에서 로그인 인증 후, JWT 가 요청의 request header(Authorization)에 포함되어 있을 경우 동작
+
     private final JwtTokenizer jwtTokenizer;
-
     private final CustomAuthorityUtils authorityUtils;
-
     private final RedisTemplate redisTemplate;
 
     @Override
@@ -129,7 +127,6 @@ public class JwtVerificationFilter extends OncePerRequestFilter { // OncePerRequ
                 return false;
             }
         }
-
         return false;
     }
 }

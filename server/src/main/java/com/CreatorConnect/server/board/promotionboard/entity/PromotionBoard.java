@@ -36,7 +36,7 @@ public class PromotionBoard extends Auditable implements Board {
     private String channelName;
     @Column
     private String subscriberCount;
-    @Column(nullable = false, columnDefinition = "TEXT")
+    @Column(nullable = false, columnDefinition = "LONGTEXT")
     private String content;
     @Column
     private Long commentCount;
