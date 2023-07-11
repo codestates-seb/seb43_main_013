@@ -31,7 +31,7 @@ public class JobBoard extends Auditable implements Board {
     @Column(nullable = false)
     private String title; // 게시글 제목
 
-    @Column(nullable = false, columnDefinition = "TEXT")
+    @Column(nullable = false, columnDefinition = "LONGTEXT")
     private String content; // 게시글 내용
 
     @Column

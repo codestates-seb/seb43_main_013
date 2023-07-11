@@ -34,7 +34,7 @@ public class FeedbackBoard extends Auditable implements Board {
     private String title;
     @Column
     private String link;
-    @Column(nullable = false, columnDefinition = "TEXT")
+    @Column(nullable = false, columnDefinition = "LONGTEXT")
     private String content;
     @Column
     private Long commentCount;
