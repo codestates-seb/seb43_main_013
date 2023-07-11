@@ -87,8 +87,8 @@ public class MemberService {
     public Member updateMember(Long memberId, Member member) {
 
         Member findMember = findVerifiedMember(memberId);
+        // 로그인 유저, 작성한 유저 검증 로직
         verifiedAuthenticatedMember(findMember.getMemberId());
-
         verifyExistsNickname(member.getNickname());
         verifyExistsPhone(member.getPhone());
 
@@ -228,7 +228,7 @@ public class MemberService {
     }
 
     // 인증 멤버 검증 ( Authentication )
-    public void verifiedAuthenticatedByAuthenticationMember(Long memberId) {
+    public void verifiedAuthenticatedMemberByAuthentication(Long memberId) {
 
         // securitycontextholder 인증 검증 방식
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -237,10 +237,9 @@ public class MemberService {
         if (!authentication.getName().equals(findMember.getEmail())) {
             throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_ALLOWED);
         }
-
     }
 
-    // 인증 멤버 검증 ( header - access-token )
+    // 인증 멤버 검증 ( Token )
     public void verifiedAuthenticatedMember(Long memberId) {
 
         if(getHeader("Authorization") == null){

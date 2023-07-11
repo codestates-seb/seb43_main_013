@@ -23,11 +23,8 @@ import java.io.IOException;
 @Slf4j
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private final AuthenticationManager authenticationManager;
-
     private final TokenService tokenService;
-
     private final RedisService redisService;
-
     private final JwtTokenizer jwtTokenizer;
 
     @SneakyThrows // 예외처리 무시

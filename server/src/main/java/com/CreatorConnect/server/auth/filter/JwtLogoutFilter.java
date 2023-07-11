@@ -23,7 +23,6 @@ import java.util.Date;
 @RequiredArgsConstructor
 public class JwtLogoutFilter extends OncePerRequestFilter {
     private final JwtTokenizer jwtTokenizer;
-
     private final RedisService redisService;
 
     @Override
@@ -31,7 +30,7 @@ public class JwtLogoutFilter extends OncePerRequestFilter {
         String uri = request.getRequestURI();
         String refreshToken = request.getHeader("Refresh-Token");
 
-        // 요청 url이 DELETE /api/refresh-token 이 아닌 경우 필터를 적용하지 않음 || 리프레시 토큰이 없으면 필터 적용하지 않음
+        // 요청 url이 DELETE /api/logout 이 아닌 경우 필터를 적용하지 않음 || 리프레시 토큰이 없으면 필터 적용하지 않음
         return !request.getMethod().equals("DELETE")
                 || !uri.equals("/api/logout")
                 || !StringUtils.hasText(refreshToken);
